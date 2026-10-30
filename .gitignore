@@ -1,0 +1,7 @@
+.tools/
+.openai/
+build/
+.DS_Store
+*.tar
+*.tar.gz
+!dist/source/*.tar.gz
