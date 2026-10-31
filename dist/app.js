@@ -2,6 +2,7 @@
 (() => {
   const $ = id => document.getElementById(id);
   const frame = $('game');
+  const edition = document.body?.dataset.edition === 'rainbow' ? 'rainbow' : 'classic';
   const keys = { ArrowUp:54, Comma:54, ArrowDown:56, Slash:56, ArrowRight:27, KeyX:27, ArrowLeft:29, KeyZ:29, Period:55, KeyB:5, Space:44, KeyH:11, KeyS:22 };
   let state = 'idle', muted = true, bootTimer, mode = 'practice';
   let inputMode = 0, trainerEnabled = false;
@@ -34,7 +35,7 @@
     $('loading-text').textContent = 'Ladataan peliä…';
     $('mode-label').textContent = mode === 'combat' ? '/ ILMATAISTELU' : '/ HARJOITTELU';
     frame.hidden = false;
-    frame.src = `runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&trainer=${trainerEnabled ? 1 : 0}&run=${Date.now()}`;
+    frame.src = `runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&trainer=${trainerEnabled ? 1 : 0}&edition=${edition}&run=${Date.now()}`;
     clearTimeout(bootTimer);
     bootTimer = setTimeout(() => fail('Pelin lataaminen kesti liian kauan. Tarkista yhteys ja yritä uudelleen.'), 45000);
   }

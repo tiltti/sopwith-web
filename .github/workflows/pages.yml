@@ -41,7 +41,9 @@ jobs:
             sudo apt-get install -y libsdl2-dev
           fi
           node tests/browser-controls.mjs
+          node tests/rainbow-renderer.mjs
           python scripts/test_trainer.py
+          python scripts/test_scene.py
 
       - name: Build game and corresponding source archive
         run: python scripts/build.py
@@ -50,6 +52,7 @@ jobs:
         run: |
           node --check dist/app.js
           node --check dist/runner.js
+          node --check dist/rainbow-renderer.js
           python scripts/verify_release.py
 
       - name: Configure GitHub Pages

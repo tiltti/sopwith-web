@@ -3,53 +3,36 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0c0e13">
-  <meta name="description" content="Sopwith II selaimessa. Ohjausohjeet, CGA-paletti ja alkuperäisen projektin lähdekoodi.">
-  <title>Sopwith II</title>
-  <link rel="icon" href="plane.png" type="image/png">
+  <meta name="theme-color" content="#101a29">
+  <meta name="description" content="Sopwith Tribute: alkuperäinen Sopwith II selaimessa ja värikäs Rainbow Patrol -tribuuttiversio.">
+  <title>Sopwith Tribute</title>
+  <link rel="icon" href="assets/tribute-mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="tribute.css?v=20261031-rainbow1">
 </head>
-<body>
-  <a class="skip" href="#start">Siirry peliin</a>
-  <header class="site-header wrap">
-    <a class="wordmark" href="./" aria-label="Sopwith II, etusivu"><img src="plane.png" alt="" width="48" height="48">SOPWITH<span>II</span></a>
-    <nav aria-label="Päävalikko"><a class="active" href="#lento">Pelaa</a><a href="info.html">Info</a></nav>
-    <div class="edition"><span class="status-dot"></span> WEB EDITION <span class="version">/ 0.1</span></div>
+<body class="collection-body">
+  <a class="skip" href="#versiot">Siirry versioihin</a>
+<header class="collection-header">
+    <a class="collection-brand" href="./" aria-label="Sopwith Tribute, etusivu"><img src="assets/tribute-mark.svg" width="48" height="48" alt=""><span><strong>SOPWITH</strong><small>TRIBUTE</small></span></a>
+    <nav class="edition-nav" aria-label="Versiot ja tiedot"><a href="./" aria-current="page">Etusivu</a><a href="rainbow.html">Rainbow Patrol</a><a href="classic.html">Sopwith II</a><a href="info.html">Info</a></nav>
+    <a class="nav-source" href="https://github.com/tiltti/sopwith-web" target="_blank" rel="noopener">GitHub ↗</a>
   </header>
-
   <main class="wrap">
-    <h1 class="sr-only">Sopwith II</h1>
-
-    <section id="lento" class="play-layout" aria-label="Sopwith-peli">
-      <div class="game-column">
-        <div class="instrument-bar"><div class="flight-label"><span class="crosshair" aria-hidden="true">⊕</span> LENTOKENTTÄ <span id="mode-label">/ HARJOITTELU</span></div><div id="flight-status" role="status" aria-live="polite"><span class="status-dot"></span><span id="status-text">Valmiina lähtöön</span></div></div>
-        <div id="screen" class="screen">
-          <iframe id="game" title="Sopwith-peli" allow="autoplay; fullscreen" tabindex="-1" hidden></iframe>
-          <div id="launch" class="launch-layer">
-            <div class="horizon" aria-hidden="true"><svg viewBox="0 0 960 130" preserveAspectRatio="none"><path d="M0 100H90L120 94H160L210 50H270L300 70H390L440 100H570L620 80H650L700 20H760L810 62H850L890 100H960"/></svg></div>
-            <div class="launch-content"><img class="hero-plane" src="plane.png" alt="Alkuperäinen pikseligrafiikalla piirretty kaksitaso" width="160" height="160"><h2>SOPWITH <span>II</span></h2>
-              <fieldset class="mode-picker"><legend class="sr-only">Pelitila</legend><label><input type="radio" name="mode" value="practice" checked><span>Harjoittelu<small>Opi lentämään</small></span></label><label><input type="radio" name="mode" value="combat"><span>Ilmataistelu<small>Vastaan tietokone</small></span></label></fieldset>
-              <button id="start" class="primary"><span aria-hidden="true">▶</span> Aloita peli <span class="button-arrow" aria-hidden="true">↗</span></button>
-              <p class="launch-hint">Näppäimistöllä tai näytön ohjaimilla</p>
-            </div>
-            <p class="screen-credit">© DAVID L. CLARK · BMB COMPUSCIENCE · SDL SOPWITH</p>
-          </div>
-          <div id="loading" class="message-layer" hidden><span class="loader" aria-hidden="true"></span><h2>Ladataan peliä</h2><p id="loading-text">Ladataan peliä…</p></div>
-          <div id="paused" class="message-layer" hidden><span class="pause-symbol" aria-hidden="true">Ⅱ</span><h2>Tauko</h2><button id="resume" class="primary">Jatka peliä <span aria-hidden="true">→</span></button><p>P tai Esc jatkaa peliä.</p></div>
-          <div id="error" class="message-layer" hidden><span class="pause-symbol" aria-hidden="true">!</span><h2>Peli ei käynnistynyt.</h2><p id="error-text">Pelitiedostojen lataaminen epäonnistui.</p><button id="retry" class="primary">Yritä uudelleen <span aria-hidden="true">↻</span></button></div>
-        </div>
-        <div class="game-toolbar"><div class="toolbar-group"><button id="pause" disabled><span aria-hidden="true">Ⅱ</span> <span id="pause-label">Tauko</span><kbd>P</kbd></button><button id="restart" disabled><span aria-hidden="true">↻</span> Uusi peli</button></div><div class="toolbar-group"><button id="mute" aria-pressed="true"><span id="sound-icon" aria-hidden="true">◖×</span><span id="sound-label">Äänet pois</span></button><button id="fullscreen" aria-label="Koko näyttö"><span aria-hidden="true">⛶</span><span>Koko näyttö</span></button></div></div>
-        <div id="touch-controls" class="touch-controls" hidden aria-label="Näytön peliohjaimet"><div class="touch-group"><button data-scan="54" aria-label="Nokka ylös">↑<small>NOKKA</small></button><button data-scan="56" aria-label="Nokka alas">↓<small>NOKKA</small></button><button data-scan="27" aria-label="Lisää kaasua">＋<small>KAASU</small></button><button data-scan="29" aria-label="Vähennä kaasua">−<small>KAASU</small></button></div><div class="touch-group"><button data-scan="11" aria-label="Palaa tukikohtaan">H<small>KOTIIN</small></button><button data-scan="55" aria-label="Käännä kone ympäri">↻<small>KÄÄNNÄ</small></button><button data-scan="5" class="bomb-button">B<small>POMMI</small></button><button data-scan="44" class="fire-button">●<small>AMMU</small></button></div></div>
-        <div class="under-screen"><p><span class="cyan" aria-hidden="true">↳</span> Vinkki ensimmäiseen lentoon: <kbd>X</kbd> lisää vauhtia, sitten <kbd>,</kbd> nostaa nokkaa.</p><button id="touch-toggle" aria-pressed="false">Näyttöohjaimet <span aria-hidden="true">＋</span></button></div>
-      </div>
-
-      <aside class="flight-manual" id="ohjeet" aria-labelledby="manual-title"><div class="manual-heading"><span class="eyebrow">NÄPPÄIMISTÖ</span><span class="manual-mark" aria-hidden="true">✳</span></div><h2 id="manual-title">Ohjaus</h2><dl class="controls-list"><div><dt>Kaasu + / −</dt><dd><kbd>X</kbd><kbd>Z</kbd></dd></div><div><dt>Nokka ylös / alas</dt><dd><kbd>,</kbd><kbd>/</kbd></dd></div><div><dt>Käännä kone</dt><dd><kbd>.</kbd></dd></div><div><dt>Konekivääri</dt><dd><kbd class="wide-key">Välilyönti</kbd></dd></div><div><dt>Pudota pommi</dt><dd><kbd>B</kbd></dd></div><div><dt>Palaa tukikohtaan</dt><dd><kbd>H</kbd></dd></div></dl><p class="arrow-note">Myös nuolinäppäimet toimivat: <span>↑ ↓</span> nokka, <span>← →</span> kaasu.<br><kbd>S</kbd> vaihtaa ääniä lennon aikana. Valikossa S valitsee single player -tilan.</p><details class="display-settings"><summary>Näytön asetukset <span aria-hidden="true">＋</span></summary><label for="palette">Väripaletti</label><select id="palette"><option value="0">Alkuperäinen CGA</option><option value="1">CGA: vihreä / punainen / keltainen</option></select></details></aside>
+    <div class="collection-intro"><div><p class="collection-label">DAVID L. CLARKIN PELIN KUNNIAKSI</p><h1>Sopwith Tribute</h1><p>Sopwith II selaimessa ja sen rinnalla oma tribuuttiversio.</p></div></div>
+    <section class="edition-grid" id="versiot" aria-label="Pelattavat versiot">
+      <a class="edition-card" href="rainbow.html" aria-label="Pelaa Sopwith: Rainbow Patrol">
+        <div class="edition-art"><canvas data-rainbow-preview width="640" height="400" aria-label="Rainbow Patrol: punainen kaksitaso, sininen taivas ja värikäs pikselimaisema"></canvas><span class="edition-tag">OMA TRIBUUTTIVERSIO / 0.1</span></div>
+        <div class="card-copy"><div class="card-title"><h2>Rainbow Patrol</h2><span aria-hidden="true">↗</span></div><p>Amiga-henkinen pikseligrafiikka, värikkäät maisemat ja Sopwithin pelilogiikka.</p><div class="edition-meta"><span>C / WASM + CANVAS</span><span>Pelaa →</span></div></div>
+      </a>
+      <a class="edition-card" href="classic.html" aria-label="Pelaa alkuperäistä Sopwith II -versiota">
+        <div class="edition-art"><img src="assets/classic-cover.svg" alt="Sopwith II:n CGA-ilme: musta taivas ja syaani-magenta kaksitaso" width="640" height="400"><span class="edition-tag classic-tag">ALKUPERÄINEN CGA</span></div>
+        <div class="card-copy"><div class="card-title"><h2>Sopwith II</h2><span aria-hidden="true">↗</span></div><p>Alkuperäiset grafiikat, PC-kaiutinäänet ja kaksi CGA-palettia. Pohjana SDL Sopwith 2.9.0.</p><div class="edition-meta"><span>C / SDL2 / WASM</span><span>Pelaa →</span></div></div>
+      </a>
     </section>
-
-    <section id="tiedot" class="project-links" aria-label="Alkuperäiset projektit ja lähdekoodi"><p>Alkuperäinen peli: David L. Clark / BMB Compuscience.<br>Selainversion pohja: SDL Sopwith 2.9.0, Simon Howard ja muut tekijät.</p><div><a href="https://www.sopwith.org/" target="_blank" rel="noopener">sopwith.org ↗</a><a href="https://github.com/fragglet/sdl-sopwith" target="_blank" rel="noopener">SDL Sopwith ↗</a><a href="source/sopwith-web-source.tar.gz" download>Tämän version lähdekoodi ↓</a></div></section>
+    <p class="collection-note">Molemmat versiot ovat pelattavissa näppäimistöllä tai näyttöohjaimilla. Äänet ovat aluksi pois päältä. <a href="info.html">Tekniikka, tekijät ja lähdekoodi →</a></p>
+    <section class="project-links" aria-label="Alkuperäiset projektit"><p>Alkuperäinen peli: David L. Clark / BMB Compuscience.<br>Pelimoottori: SDL Sopwith 2.9.0, Simon Howard ja muut tekijät.</p><div><a href="https://www.sopwith.org/" target="_blank" rel="noopener">sopwith.org ↗</a><a href="https://github.com/fragglet/sdl-sopwith" target="_blank" rel="noopener">SDL Sopwith ↗</a><a href="https://github.com/tiltti/sopwith-web" target="_blank" rel="noopener">GitHub ↗</a></div></section>
   </main>
-  <footer class="site-footer wrap"><p>SOPWITH II <span>·</span> WEB 0.1</p><div><a href="source/AUTHORS.txt">Tekijät</a><a href="source/COPYING.md">GPL v2+</a><span class="footer-colors" aria-hidden="true"><i></i><i></i><i></i></span></div></footer>
-  <noscript><p class="no-script">Pelaaminen vaatii JavaScriptin ja WebAssembly-tuen.</p></noscript>
-  <script src="app.js?v=20261031-trainer1"></script>
+  <footer class="site-footer wrap"><p>SOPWITH TRIBUTE <span>·</span> 2026</p><div><a href="source/AUTHORS.txt">Alkuperäiset tekijät</a><a href="source/COPYING.md">GPL v2+</a><a href="source/sopwith-web-source.tar.gz" download>Lähdekoodi ↓</a></div></footer>
+  <script src="rainbow-renderer.js?v=20261031-rainbow1"></script>
 </body>
 </html>

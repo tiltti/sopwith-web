@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges">
+  <title>Sopwith Tribute — kaksitaso ja sateenkaari</title>
+  <path fill="#263b55" d="M16 3h32v4h8v8h5v34h-5v8h-8v4H16v-4H8v-8H3V15h5V7h8z"/>
+  <path fill="#ed786b" d="M10 30V18h5v-5h7V9h20v4h7v5h5v12h-4V20h-5v-4h-6v-3H25v3h-6v4h-5v10z"/>
+  <path fill="#ffdb81" d="M14 30V20h5v-4h6v-3h14v3h6v4h5v10h-4v-8h-4v-3h-5v-2H27v2h-5v3h-4v8z"/>
+  <path fill="#a4cf40" d="M18 30v-8h4v-3h5v-2h10v2h5v3h4v8h-4v-6h-4v-3H26v3h-4v6z"/>
+  <path fill="#71cebb" d="M22 30v-6h4v-3h12v3h4v6h-4v-3H26v3z"/>
+  <path fill="#34365b" d="M6 28h7v9h16v-5h8v5h16v-7h4v18h-5v-4H39v3h-3v6h-4v-6h-8v6h-4v-7h-4v-3h-6v-6H6zM17 28h33v5H17zM21 43h29v5H21z"/>
+  <path fill="#ed786b" d="M8 30h3v9h42v3H17v-2h-5v-4H8z"/>
+  <path fill="#c65368" d="M17 41h35v2H20v-1h-3z"/>
+  <path fill="#ffdb81" d="M18 29h31v3H18zm4 15h27v3H22z"/>
+  <path fill="#fff2ce" d="M18 29h31v1H18zm5 15h25v1H23zm31-12h2v14h-2zM23 32h2v7h-2zm19 0h2v7h-2z"/>
+  <path fill="#54b8e1" d="M30 34h6v4h-6z"/>
+  <path fill="#98e6ed" d="M31 34h4v1h-4zM19 55h25v1H19z"/>
+</svg>

@@ -24,7 +24,7 @@ class References(HTMLParser):
 
 
 def main():
-    for name in ("index.html", "runner.html", "info.html"):
+    for name in ("index.html", "classic.html", "rainbow.html", "runner.html", "info.html"):
         parser = References()
         parser.feed((DIST / name).read_text())
         for relative in parser.paths:
@@ -38,7 +38,10 @@ def main():
     archive = DIST / "source/sopwith-web-source.tar.gz"
     with tarfile.open(archive, "r:gz") as bundle:
         for relative in ("web/bridge.c", "web/trainer.c", "scripts/build.py", "LICENSE", "NOTICE.md",
-                         "third_party/sdl-sopwith/src/swmain.c", "dist/app.js", "dist/runner.js", "dist/info.html"):
+                         "web/scene.c", "web/scene.h", "tests/scene.c", "tests/rainbow-renderer.mjs", "scripts/test_scene.py",
+                         "third_party/sdl-sopwith/src/swmain.c", "dist/app.js", "dist/runner.js", "dist/info.html",
+                         "dist/classic.html", "dist/rainbow.html", "dist/rainbow-renderer.js", "dist/tribute.css",
+                         "dist/assets/tribute-mark.svg", "dist/assets/classic-cover.svg"):
             member = bundle.extractfile("sopwith-web/" + relative)
             assert member is not None and member.read() == (ROOT / relative).read_bytes(), \
                 f"Source archive does not match the working source: {relative}"

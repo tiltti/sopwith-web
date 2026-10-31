@@ -1,0 +1,34 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+
+const calls=[];
+function context() { return {fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
+function canvas() { const c=context();return {dataset:{},getContext:()=>c}; }
+const scope={window:{},document:{querySelectorAll:()=>[],createElement:()=>canvas()},Int32Array,Math};
+vm.runInNewContext(await readFile(new URL('../dist/rainbow-renderer.js',import.meta.url),'utf8'),scope);
+const Renderer=scope.window.RainbowRenderer;
+const display=canvas(),renderer=new Renderer(display);
+const scene=new Int32Array(Renderer.LENGTH),heap=new Uint8Array(64);
+assert.equal(renderer.drawScene(scene,heap),false,'No scene is drawn before the C game has initialised.');
+scene.set([1,10,100,2000,152,100,9000,200,5,5,0,5,0,1,1,100]);
+scene.fill(40,Renderer.HEADER,Renderer.HEADER+320);
+const r=Renderer.HEADER+320;
+scene.set([1,1,152,100,0,0,1,2,2,16,1,9000,4,0,1,0],r);
+heap.set([0,1,2,3],16);
+const beforeScene=scene.slice(),beforeHeap=heap.slice();
+assert.equal(renderer.drawScene(scene,heap),true);
+assert.equal(display.dataset.renderer,'rainbow');
+assert.equal(display.dataset.tick,'10');
+assert.equal(display.dataset.objects,'1');
+assert.deepEqual(scene,beforeScene,'The renderer must not alter game state.');
+assert.deepEqual(heap,beforeHeap,'Original sprite/collision masks must remain unchanged.');
+assert.ok(calls.some(x=>x[0]==='image'&&x[2]===103&&x[3]===197),'Native world position must map to the same screen position at 2x resolution.');
+assert.ok(calls.some(x=>x[0]==='rect'&&x[1]===0&&x[2]===318&&x[3]===2&&x[4]===82),'The ground edge must match the native height field.');
+assert.equal(renderer.trail.length,1);
+renderer.drawScene(scene,heap);
+assert.equal(renderer.trail.length,1,'Repeated animation frames must not add extra trail samples.');
+scene[1]=11;scene[4]=300;renderer.drawScene(scene,heap);
+assert.equal(renderer.trail.length,1,'A respawn/teleport must not draw a trail across the level.');
+console.log('Rainbow renderer: scene ABI, world-to-screen alignment, untouched masks and tick-based trails verified.');

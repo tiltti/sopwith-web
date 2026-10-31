@@ -23,7 +23,7 @@ def main():
     sources = sorted((UPSTREAM / "src").glob("*.c"))
     sources += [UPSTREAM / "src/sdl" / name for name in
                 ("main.c", "video.c", "pcsound.c", "controller.c")]
-    sources += [ROOT / "web/bridge.c", ROOT / "web/trainer.c"]
+    sources += [ROOT / "web/bridge.c", ROOT / "web/trainer.c", ROOT / "web/scene.c"]
     env = os.environ.copy()
     env["EM_CONFIG"] = str(EMSDK / ".emscripten")
     env["EMSDK_PYTHON"] = sys.executable
@@ -35,8 +35,8 @@ def main():
            "-sSUPPORT_LONGJMP=emscripten", "-sFORCE_FILESYSTEM", "-lidbfs.js", "-Wl,-u,ntohs",
            "-sALLOW_MEMORY_GROWTH", "-sENVIRONMENT=web", "-sMODULARIZE",
            "-sEXPORT_NAME=createSopwith", "-sINVOKE_RUN=0",
-           '-sEXPORTED_FUNCTIONS=["_main","_web_key","_web_pause","_web_palette","_web_sound","_web_read","_web_trainer","_web_input_mode"]',
-           '-sEXPORTED_RUNTIME_METHODS=["FS","IDBFS","callMain"]',
+           '-sEXPORTED_FUNCTIONS=["_main","_web_key","_web_pause","_web_palette","_web_sound","_web_read","_web_trainer","_web_input_mode","_web_scene"]',
+           '-sEXPORTED_RUNTIME_METHODS=["FS","IDBFS","callMain","HEAP32","HEAPU8"]',
            "-o", str(OUTPUT / "engine/sopwith.js")]
     if not source_only:
         subprocess.run(cmd, cwd=ROOT, env=env, check=True)
@@ -56,6 +56,8 @@ def main():
         for path in OUTPUT.iterdir():
             if path.is_file() and path.suffix in (".html", ".js", ".css", ".svg"):
                 bundle.add(path, arcname="sopwith-web/dist/" + path.name)
+        if (OUTPUT / "assets").exists():
+            bundle.add(OUTPUT / "assets", arcname="sopwith-web/dist/assets")
     print("Packaged complete source archive." if source_only else
           "Built dist/engine/sopwith.wasm and complete source archive.")
 

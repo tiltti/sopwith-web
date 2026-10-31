@@ -1,5 +1,28 @@
 # Validation
 
+## 2026-10-31: Tribute collection and Rainbow Patrol
+
+- The homepage now links separate Rainbow Patrol, Sopwith II and Info pages.
+  Ordinary page navigation destroys the previous game's iframe/engine.
+- Rainbow Patrol uses the same unmodified upstream C game, with a new read-only
+  scene adapter and a 640×400 Canvas 2D pixel renderer. Classic uses the original
+  SDL renderer. Both use the same WASM build and browser input integration.
+- Native scene-adapter tests cover terrain bounds, player resources, object
+  fields, missing symbols, uninitialised state and unchanged game objects.
+- Renderer tests check native world-to-screen alignment, ground heights,
+  unchanged sprite/collision bytes and trail sampling by native game tick.
+- Existing keyboard/trainer integration tests pass with the edition selector.
+- Browser QA: both practice and combat start in Rainbow Patrol. Throttle and
+  elevator inputs produce real native movement; firing uses ammunition (200 to
+  197) and dropping a bomb consumes one (5 to 4). Audio remains unavailable/off.
+- Pause holds both native and rendered ticks at 82; the scene remains frozen.
+- Switching through the shared navigation opens the classic edition, which
+  starts with its original SDL/CGA image. No fullscreen or audible tests were run.
+- The shared home page and the Rainbow Patrol game were visually inspected.
+  The source archive includes the new renderer, scene adapter, assets and tests.
+- This first edition adds graphics, not a separate flight model or new levels.
+  Physical mobile-device testing has not been performed for this revision.
+
 ## 2026-10-31: trainer, native input and Info page
 
 - Native C integration tests use the real upstream crash, respawn and weapon
@@ -66,7 +89,8 @@ has not been established.
 ## Known limits
 
 - Multiplayer is not part of this browser milestone.
-- A custom gameplay variant is deferred until the classic version is accepted.
+- Rainbow Patrol currently shares the classic flight model and levels; custom
+  mechanics and new obstacle courses are not implemented yet.
 - The compiler reports an upstream signed-char warning in SDL video text input.
 - SDL prints a non-fatal warning about main-loop vsync timing. The explicit
   browser timer still runs the original game logic at its defined 10 ticks/s.

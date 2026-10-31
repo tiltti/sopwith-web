@@ -95,7 +95,7 @@
     if (msg.type === 'mute') { params.set('muted', msg.value ? '1' : '0'); audio(); }
     if (msg.type === 'palette' && game) game._web_palette(msg.value);
     if (msg.type === 'trainer') window.trainer(msg.enabled);
-    if (msg.type === 'focus') { canvas.focus(); audio(); }
+    if (msg.type === 'focus') { canvas.focus({preventScroll:true}); audio(); }
   });
   window.openManual = () => send('manual');
   window.promptForInstall = () => send('manual');
@@ -104,7 +104,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261031-trainer1',
+      locateFile: name => 'engine/' + name + '?v=20261031-rainbow1',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -125,6 +125,26 @@
     if (storage) setInterval(() => FS.syncfs(false, () => {}), 1500);
     window.sopwith = game;
     game._web_trainer(trainerEnabled ? 1 : 0);
+    if (params.get('edition') === 'rainbow' && window.RainbowRenderer) {
+      const display = document.getElementById('rainbow');
+      const renderer = new RainbowRenderer(display);
+      let renderedTick = -1, wasActive = false;
+      const draw = () => {
+        const active = game._web_input_mode() === 1;
+        display.hidden = !active;
+        canvas.style.visibility = active ? 'hidden' : 'visible';
+        const tick = game._web_read(0);
+        if (active && (tick !== renderedTick || !wasActive)) {
+          const ptr = game._web_scene() >>> 2;
+          const scene = game.HEAP32.subarray(ptr,ptr+RainbowRenderer.LENGTH);
+          renderer.drawScene(scene,game.HEAPU8,trainerEnabled);
+          renderedTick = scene[1];
+        }
+        wasActive = active;
+        requestAnimationFrame(draw);
+      };
+      requestAnimationFrame(draw);
+    }
     setInterval(() => {
       canvas.dataset.tick = String(game._web_read(0));
       canvas.dataset.planeX = String(game._web_read(1));
@@ -146,7 +166,7 @@
       if (game._web_read(1) >= 0) {
         clearInterval(readyPoll);
         game._web_palette(Number(params.get('palette') || 0));
-        send('ready', { inputMode:game._web_input_mode() }); canvas.focus(); audio();
+        send('ready', { inputMode:game._web_input_mode() }); canvas.focus({preventScroll:true}); audio();
       }
     }, 100);
     // The original game loop yields through Asyncify; no DOS emulation is used.

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" shape-rendering="crispEdges">
+  <title>Sopwith II — CGA</title>
+  <path fill="#000" d="M0 0h640v400H0z"/>
+  <g fill="#fff" font-family="monospace" font-size="13"><text x="20" y="28">SCORE 000000</text><text x="470" y="28">SOPWITH II</text></g>
+  <path fill="none" stroke="#fff" stroke-width="2" d="M0 356h112l24-3h54l20 4h68l20-7h26l24-34h36l34-49h26l32 20h19l27 53h33l28 17h56"/>
+  <path fill="#0ff" d="M51 332h70v22H51zm4-10h62v10H55zm7-6h48v6H62zm14 23h18v15H76z"/>
+  <path fill="#000" d="M77 340h16v14H77z"/>
+  <g transform="translate(269 181) scale(3)"><path fill="#f0f" d="M0 4h2v3h5V5h2v2h7v4H5V9H2V7H0z"/><path fill="#0ff" d="M3 1h13v2H3zm2 10h11v2H5z"/><path fill="#fff" d="M7 3h1v4H7zm6 0h1v4h-1zm4 1h1v8h-1z"/></g>
+  <g fill="#fff"><path d="M208 213h3v2h-3zm-18 2h2v2h-2zm-18 0h2v2h-2z"/><path d="M153 352h2v3h-2zm3 0h2v3h-2z"/></g>
+  <path fill="#f0f" d="M490 317h28v3h-28zm7-6h13v6h-13zm-7 9h28v9h-28z"/>
+</svg>

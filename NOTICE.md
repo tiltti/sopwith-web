@@ -14,7 +14,15 @@ author or the SDL Sopwith maintainers.
   source port. The complete credited author list is preserved in
   [AUTHORS](third_party/sdl-sopwith/AUTHORS).
 - **Sopwith Web contributors, 2026** — browser page, build integration,
-  input bridge, pause and browser timer adaptation.
+  input bridge, pause, browser timer adaptation, read-only scene adapter,
+  Rainbow Patrol pixel renderer and the Sopwith Tribute insignia.
+
+Rainbow Patrol uses the original engine's sprite silhouettes and terrain data
+with new colours and pixel shading. Its background scenery, UI and insignia
+were created for this project. Amiga-era games, Rainbow Islands and Rovio's
+RETRY are visual references; no artwork, audio or code from those games is
+distributed here. Rainbow Patrol is an independent tribute and is not an
+official release from those games' creators.
 
 The game and new adaptation code are licensed under **GNU General Public
 License version 2 or, at your option, any later version**

@@ -73,7 +73,7 @@ async function pageTests() {
   const get = id => { if (!elements.has(id)) elements.set(id, element()); return elements.get(id); };
   const child = { postMessage:msg => sent.push(msg), focus() {} };
   get('game').contentWindow = child;
-  const scope = { document:{getElementById:get, querySelector:() => ({value:'practice'}),querySelectorAll:() => [],
+  const scope = { document:{body:{dataset:{edition:'rainbow'}},getElementById:get, querySelector:() => ({value:'practice'}),querySelectorAll:() => [],
     addEventListener:(name,fn) => {documentHandlers[name] = fn;}}, location:{origin},
     matchMedia:() => ({matches:false}), localStorage:{getItem:() => null,setItem() {}},
     setTimeout:() => 1, clearTimeout() {}, console,
@@ -83,6 +83,7 @@ async function pageTests() {
   assert.equal(get('mute')['aria-pressed'], 'true', 'Sound starts off.');
   scope.trainer(); get('start').listeners.click();
   assert.match(get('game').src,/trainer=1/);
+  assert.match(get('game').src,/edition=rainbow/, 'The tribute page must request the new renderer.');
   const message = data => windowHandlers.message({origin,source:child,data:{sopwith:true,...data}});
   message({type:'ready',inputMode:0});
   documentHandlers.keydown(event('KeyS','s'));

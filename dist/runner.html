@@ -8,11 +8,15 @@
     html,body { margin:0; width:100%; height:100%; overflow:hidden; background:#000; }
     body { position:relative; }
     canvas { position:absolute; inset:0; display:block; width:100%!important; height:100%!important; object-fit:contain; image-rendering:pixelated; outline:none; touch-action:none; }
+    #rainbow { pointer-events:none; }
+    [hidden] { display:none!important; }
   </style>
 </head>
 <body>
   <canvas id="canvas" width="960" height="600" tabindex="0" aria-label="Sopwithin pelialue"></canvas>
-  <script src="engine/sopwith.js?v=20261031-trainer1"></script>
-  <script src="runner.js?v=20261031-trainer1"></script>
+  <canvas id="rainbow" width="640" height="400" aria-hidden="true" hidden></canvas>
+  <script src="engine/sopwith.js?v=20261031-rainbow1"></script>
+  <script src="rainbow-renderer.js?v=20261031-rainbow1"></script>
+  <script src="runner.js?v=20261031-rainbow1"></script>
 </body>
 </html>

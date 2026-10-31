@@ -1,4 +1,4 @@
-# Sopwith Web
+# Sopwith Tribute
 
 **[Play in your browser](https://tiltti.github.io/sopwith-web/)** ·
 [Original project](https://www.sopwith.org/) ·
@@ -10,11 +10,35 @@ port. Original CGA artwork, terrain, physics and PC-speaker sound are provided
 by that project. This is a work in progress; exact equivalence to the 1985 DOS
 executable has not been established.
 
-The current milestone is a working classic browser version. A separate custom
-variant is planned later; its gameplay is not part of this first milestone.
-The page contains the game, control instructions, CGA palette selection and
-project/source links. Audio starts disabled on every page load and can be
+The collection homepage links two separately playable editions:
+
+- **[Sopwith II](https://tiltti.github.io/sopwith-web/classic.html)**: the classic
+  SDL/CGA renderer, two palettes and original PC-speaker sound.
+- **[Sopwith: Rainbow Patrol](https://tiltti.github.io/sopwith-web/rainbow.html)**:
+  an Amiga-inspired 640×400 pixel renderer with shaded sprites, bright skies,
+  parallax clouds, a rainbow, flight trails and new instruments. Its first
+  release retains the classic game's controls, physics, AI, terrain and combat.
+
+The common navigation links are normal pages, so changing editions stops the
+previous game. More editions can be added without changing either engine path.
+Audio starts disabled on every page load and can be
 enabled with the sound button or S. It never starts automatically.
+
+## Rainbow Patrol renderer
+
+`web/scene.c` exports a read-only snapshot of the current C game state. Its
+versioned integer ABI is documented in `web/scene.h`: a 24-integer header,
+320 ground heights and up to 256 object records of 16 integers. Sprite bytes
+remain owned by the original engine. `dist/rainbow-renderer.js` reads a fresh
+heap view when a native tick changes and draws at twice the native resolution.
+The terrain and sprite silhouettes use the same data as native collisions.
+Menus, text entry and end screens fall back to the original SDL display.
+
+The scene adapter does not change game state or upstream sources. Artwork in
+`dist/assets/tribute-mark.svg` and the background renderer is original to this
+project. Amiga-era pixel games, Rainbow Islands and Rovio's RETRY are visual
+references; their assets and code are not included. A separate flight model or
+new obstacle courses are not implemented in this first visual edition.
 
 ## Source and credits
 
@@ -85,7 +109,9 @@ C / SDL2 / Emscripten / WASM architecture and source provenance.
 
 ```sh
 node tests/browser-controls.mjs
+node tests/rainbow-renderer.mjs
 python3 scripts/test_trainer.py
+python3 scripts/test_scene.py
 python3 scripts/verify_release.py
 ```
 
@@ -99,9 +125,9 @@ The [Pages workflow](.github/workflows/pages.yml) builds the C game from source
 with Emscripten 4.0.10 and deploys `dist/` after a successful push to `main`.
 Pull requests run the build and release checks without deploying.
 
-Development continues in this repository. First, verify the classic game's
-behavior against the original DOS release. A custom gameplay variant can then
-be developed alongside it while preserving the classic mode and author credits.
+Development continues in this repository. The classic path remains available
+alongside Rainbow Patrol. Future custom mechanics and levels can be developed
+in that edition while retaining the classic mode and original author credits.
 
 ## Other static hosting
 
