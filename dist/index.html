@@ -13,7 +13,7 @@
   <a class="skip" href="#start">Siirry peliin</a>
   <header class="site-header wrap">
     <a class="wordmark" href="./" aria-label="Sopwith II, etusivu"><img src="plane.png" alt="" width="48" height="48">SOPWITH<span>II</span></a>
-    <nav aria-label="Päävalikko"><a class="active" href="#lento">Pelaa</a><a href="#tiedot">Projektit <span aria-hidden="true">↗</span></a></nav>
+    <nav aria-label="Päävalikko"><a class="active" href="#lento">Pelaa</a><a href="info.html">Info</a></nav>
     <div class="edition"><span class="status-dot"></span> WEB EDITION <span class="version">/ 0.1</span></div>
   </header>
 
@@ -43,13 +43,13 @@
         <div class="under-screen"><p><span class="cyan" aria-hidden="true">↳</span> Vinkki ensimmäiseen lentoon: <kbd>X</kbd> lisää vauhtia, sitten <kbd>,</kbd> nostaa nokkaa.</p><button id="touch-toggle" aria-pressed="false">Näyttöohjaimet <span aria-hidden="true">＋</span></button></div>
       </div>
 
-      <aside class="flight-manual" id="ohjeet" aria-labelledby="manual-title"><div class="manual-heading"><span class="eyebrow">NÄPPÄIMISTÖ</span><span class="manual-mark" aria-hidden="true">✳</span></div><h2 id="manual-title">Ohjaus</h2><dl class="controls-list"><div><dt>Kaasu + / −</dt><dd><kbd>X</kbd><kbd>Z</kbd></dd></div><div><dt>Nokka ylös / alas</dt><dd><kbd>,</kbd><kbd>/</kbd></dd></div><div><dt>Käännä kone</dt><dd><kbd>.</kbd></dd></div><div><dt>Konekivääri</dt><dd><kbd class="wide-key">Välilyönti</kbd></dd></div><div><dt>Pudota pommi</dt><dd><kbd>B</kbd></dd></div><div><dt>Palaa tukikohtaan</dt><dd><kbd>H</kbd></dd></div></dl><p class="arrow-note">Myös nuolinäppäimet toimivat: <span>↑ ↓</span> nokka, <span>← →</span> kaasu.</p><details class="display-settings"><summary>Näytön asetukset <span aria-hidden="true">＋</span></summary><label for="palette">Väripaletti</label><select id="palette"><option value="0">Alkuperäinen CGA</option><option value="1">CGA: vihreä / punainen / keltainen</option></select></details></aside>
+      <aside class="flight-manual" id="ohjeet" aria-labelledby="manual-title"><div class="manual-heading"><span class="eyebrow">NÄPPÄIMISTÖ</span><span class="manual-mark" aria-hidden="true">✳</span></div><h2 id="manual-title">Ohjaus</h2><dl class="controls-list"><div><dt>Kaasu + / −</dt><dd><kbd>X</kbd><kbd>Z</kbd></dd></div><div><dt>Nokka ylös / alas</dt><dd><kbd>,</kbd><kbd>/</kbd></dd></div><div><dt>Käännä kone</dt><dd><kbd>.</kbd></dd></div><div><dt>Konekivääri</dt><dd><kbd class="wide-key">Välilyönti</kbd></dd></div><div><dt>Pudota pommi</dt><dd><kbd>B</kbd></dd></div><div><dt>Palaa tukikohtaan</dt><dd><kbd>H</kbd></dd></div></dl><p class="arrow-note">Myös nuolinäppäimet toimivat: <span>↑ ↓</span> nokka, <span>← →</span> kaasu.<br><kbd>S</kbd> vaihtaa ääniä lennon aikana. Valikossa S valitsee single player -tilan.</p><details class="display-settings"><summary>Näytön asetukset <span aria-hidden="true">＋</span></summary><label for="palette">Väripaletti</label><select id="palette"><option value="0">Alkuperäinen CGA</option><option value="1">CGA: vihreä / punainen / keltainen</option></select></details></aside>
     </section>
 
     <section id="tiedot" class="project-links" aria-label="Alkuperäiset projektit ja lähdekoodi"><p>Alkuperäinen peli: David L. Clark / BMB Compuscience.<br>Selainversion pohja: SDL Sopwith 2.9.0, Simon Howard ja muut tekijät.</p><div><a href="https://www.sopwith.org/" target="_blank" rel="noopener">sopwith.org ↗</a><a href="https://github.com/fragglet/sdl-sopwith" target="_blank" rel="noopener">SDL Sopwith ↗</a><a href="source/sopwith-web-source.tar.gz" download>Tämän version lähdekoodi ↓</a></div></section>
   </main>
   <footer class="site-footer wrap"><p>SOPWITH II <span>·</span> WEB 0.1</p><div><a href="source/AUTHORS.txt">Tekijät</a><a href="source/COPYING.md">GPL v2+</a><span class="footer-colors" aria-hidden="true"><i></i><i></i><i></i></span></div></footer>
   <noscript><p class="no-script">Pelaaminen vaatii JavaScriptin ja WebAssembly-tuen.</p></noscript>
-  <script src="app.js"></script>
+  <script src="app.js?v=20261031-trainer1"></script>
 </body>
 </html>

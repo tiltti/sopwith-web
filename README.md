@@ -28,8 +28,8 @@ enabled with the sound button or S. It never starts automatically.
   [copyright and dependency notices](NOTICE.md), and upstream headers.
 
 The vendored upstream directory is unchanged. The new browser integration is
-in `web/bridge.c`, `web/config.h`, `scripts/build.py` and the top-level files in
-`dist/`. The bridge supplies browser input, pause and a timer that excludes
+in `web/`, `scripts/` and the top-level files in
+`dist/`. The bridge supplies browser input, pause, trainer controls and a timer that excludes
 paused time. All new integration files are also GPL v2 or later.
 
 ## Build
@@ -66,6 +66,32 @@ X / right arrow: increase throttle. Z / left arrow: decrease throttle.
 Comma / up arrow: elevator up. Slash / down arrow: elevator down.
 Period: roll. Space: fire. B: bomb. H: return home. P / Escape: pause.
 On-screen buttons provide the same game inputs on touch devices.
+S toggles sound during flight. In native game menus S remains the single-player
+selection; menu navigation and text entry are handled by the original game.
+
+## Console trainer
+
+On the game page, enter `trainer()` in the browser's JavaScript developer
+console. The player's bombs, gun ammunition and lives are replenished between
+game ticks. Crashes, crash/respawn delays, fuel use, firing rates and mission
+outcomes retain their normal behavior. Use `trainer(false)` to disable it.
+The setting carries over to new games on the same page but resets on reload.
+It can also be enabled before starting a game. It affects only the player.
+
+The [Info page](https://tiltti.github.io/sopwith-web/info.html) documents the
+C / SDL2 / Emscripten / WASM architecture and source provenance.
+
+## Validation
+
+```sh
+node tests/browser-controls.mjs
+python3 scripts/test_trainer.py
+python3 scripts/verify_release.py
+```
+
+The native trainer test requires a C compiler, `pkg-config` and SDL2 development
+files. It runs the original crash/respawn and weapon functions with SDL's dummy
+video/audio drivers. GitHub Actions runs these tests before building/deploying.
 
 ## GitHub Pages and continued development
 

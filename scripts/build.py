@@ -23,7 +23,7 @@ def main():
     sources = sorted((UPSTREAM / "src").glob("*.c"))
     sources += [UPSTREAM / "src/sdl" / name for name in
                 ("main.c", "video.c", "pcsound.c", "controller.c")]
-    sources += [ROOT / "web/bridge.c"]
+    sources += [ROOT / "web/bridge.c", ROOT / "web/trainer.c"]
     env = os.environ.copy()
     env["EM_CONFIG"] = str(EMSDK / ".emscripten")
     env["EMSDK_PYTHON"] = sys.executable
@@ -35,7 +35,7 @@ def main():
            "-sSUPPORT_LONGJMP=emscripten", "-sFORCE_FILESYSTEM", "-lidbfs.js", "-Wl,-u,ntohs",
            "-sALLOW_MEMORY_GROWTH", "-sENVIRONMENT=web", "-sMODULARIZE",
            "-sEXPORT_NAME=createSopwith", "-sINVOKE_RUN=0",
-           '-sEXPORTED_FUNCTIONS=["_main","_web_key","_web_pause","_web_palette","_web_sound","_web_read"]',
+           '-sEXPORTED_FUNCTIONS=["_main","_web_key","_web_pause","_web_palette","_web_sound","_web_read","_web_trainer","_web_input_mode"]',
            '-sEXPORTED_RUNTIME_METHODS=["FS","IDBFS","callMain"]',
            "-o", str(OUTPUT / "engine/sopwith.js")]
     if not source_only:
@@ -49,7 +49,7 @@ def main():
         shutil.copyfile(notice, OUTPUT / "source" / notice.name)
     # Distribute the complete corresponding game source and build integration.
     with tarfile.open(OUTPUT / "source/sopwith-web-source.tar.gz", "w:gz") as bundle:
-        for name in ("third_party/sdl-sopwith", "web", "scripts", "licenses", ".github",
+        for name in ("third_party/sdl-sopwith", "web", "scripts", "tests", "licenses", ".github",
                      "README.md", "COPYING.md", "LICENSE", "NOTICE.md"):
             bundle.add(ROOT / name, arcname="sopwith-web/" + name,
                        filter=lambda info: None if "__pycache__" in info.name else info)

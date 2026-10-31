@@ -1,4 +1,26 @@
-# Validation — 2026-10-30
+# Validation
+
+## 2026-10-31: trainer, native input and Info page
+
+- Native C integration tests use the real upstream crash, respawn and weapon
+  functions with SDL's headless driver. The normal fifth crash ends the game;
+  trainer mode passes eight full crash/respawn cycles with the normal delay.
+- The normal gun exhausts 200 rounds; trainer mode fires 220. The normal bomb
+  supply exhausts five bombs; trainer mode drops ten. Bomb cooldown stays at
+  ten ticks. Fuel and mission outcomes are not modified.
+- Disabling trainer restores normal resource consumption.
+- JavaScript event tests confirm that S, arrows, Esc and letters remain native
+  in game menus and text entry, while flight shortcuts still function during
+  active flight. Shifted slash key release is also checked.
+- Top-level trainer commands propagate into new games; sound starts muted.
+- Info-page and source-archive links are included in release verification.
+- Browser verification: S opens the native single-player submenu, Esc returns
+  to the main menu, and S followed by E starts a game while audio remains off.
+- With trainer enabled in the real WASM engine, firing and dropping a bomb
+  leave the replenished ammunition/bomb counters at 200/5.
+- The Info page was rendered and inspected in the browser.
+
+## 2026-10-30: initial browser version
 
 ## Build and provenance
 
@@ -48,5 +70,5 @@ has not been established.
 - The compiler reports an upstream signed-char warning in SDL video text input.
 - SDL prints a non-fatal warning about main-loop vsync timing. The explicit
   browser timer still runs the original game logic at its defined 10 ticks/s.
-- The source archive has been packaged, but a clean rebuild on another machine
-  has not been run.
+- A clean Linux rebuild and deployment were completed successfully by GitHub
+  Actions for the initial public release.

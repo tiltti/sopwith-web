@@ -4,11 +4,18 @@
   const frame = $('game');
   const keys = { ArrowUp:54, Comma:54, ArrowDown:56, Slash:56, ArrowRight:27, KeyX:27, ArrowLeft:29, KeyZ:29, Period:55, KeyB:5, Space:44, KeyH:11, KeyS:22 };
   let state = 'idle', muted = true, bootTimer, mode = 'practice';
+  let inputMode = 0, trainerEnabled = false;
   const loadPref = (name, fallback) => { try { return localStorage.getItem('sopwith.' + name) ?? fallback; } catch { return fallback; } };
   const savePref = (name, value) => { try { localStorage.setItem('sopwith.' + name, String(value)); } catch {} };
   const post = (type, extra = {}) => frame.contentWindow?.postMessage({ sopwith:true, type, ...extra }, location.origin);
   const setStatus = text => { $('status-text').textContent = text; };
   const focusGame = () => { if (state === 'playing') { frame.contentWindow?.focus(); post('focus'); } };
+  window.trainer = (enabled = true) => {
+    if (typeof enabled !== 'boolean') throw new TypeError('Use trainer() or trainer(false).');
+    trainerEnabled = enabled;
+    post('trainer', { enabled });
+    return { enabled, unlimitedLives:enabled, unlimitedBombs:enabled, unlimitedAmmo:enabled, invincible:false };
+  };
   function setMuted(value) {
     muted = value;
     $('mute').setAttribute('aria-pressed', String(value));
@@ -22,12 +29,12 @@
   }
   function start() {
     mode = document.querySelector('input[name="mode"]:checked').value;
-    state = 'loading'; $('screen').classList.add('in-flight'); showLayer('loading'); setStatus('Ladataan peliä');
+    state = 'loading'; inputMode = 0; $('screen').classList.add('in-flight'); showLayer('loading'); setStatus('Ladataan peliä');
     $('pause').disabled = true; $('restart').disabled = false;
     $('loading-text').textContent = 'Ladataan peliä…';
     $('mode-label').textContent = mode === 'combat' ? '/ ILMATAISTELU' : '/ HARJOITTELU';
     frame.hidden = false;
-    frame.src = `runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&run=${Date.now()}`;
+    frame.src = `runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&trainer=${trainerEnabled ? 1 : 0}&run=${Date.now()}`;
     clearTimeout(bootTimer);
     bootTimer = setTimeout(() => fail('Pelin lataaminen kesti liian kauan. Tarkista yhteys ja yritä uudelleen.'), 45000);
   }
@@ -50,7 +57,7 @@
   function reset() {
     clearTimeout(bootTimer); post('release');
     frame.src = 'about:blank'; frame.hidden = true;
-    state = 'idle'; $('screen').classList.remove('in-flight'); showLayer('launch'); setStatus('Ei käynnissä');
+    state = 'idle'; inputMode = 0; $('screen').classList.remove('in-flight'); showLayer('launch'); setStatus('Ei käynnissä');
     $('pause-label').textContent = 'Tauko';
     $('pause').disabled = true; $('restart').disabled = true;
     $('start').focus();
@@ -111,13 +118,13 @@
   }
   document.addEventListener('keydown', event => {
     if (['SELECT','INPUT','TEXTAREA'].includes(event.target.tagName) || event.ctrlKey || event.metaKey || event.altKey) return;
-    if ((event.code === 'KeyP' || event.code === 'Escape') && ['playing','paused'].includes(state)) {
+    if ((event.code === 'KeyP' || event.code === 'Escape') && (state === 'paused' || state === 'playing' && inputMode === 1)) {
       event.preventDefault(); if (!event.repeat) pause(); return;
     }
-    if (event.code === 'KeyS' && ['playing','paused'].includes(state)) {
+    if (event.code === 'KeyS' && (state === 'paused' || state === 'playing' && inputMode === 1)) {
       event.preventDefault(); if (!event.repeat) setMuted(!muted); return;
     }
-    if (state === 'playing' && keys[event.code] && event.target.tagName !== 'BUTTON') {
+    if (state === 'playing' && inputMode === 1 && keys[event.code] && event.target.tagName !== 'BUTTON') {
       event.preventDefault(); if (!event.repeat) post('key', { scan:keys[event.code], down:true });
     }
   });
@@ -130,13 +137,15 @@
     if (event.origin !== location.origin || event.source !== frame.contentWindow || !event.data?.sopwith) return;
     const msg = event.data;
     if (msg.type === 'ready' && state === 'loading') {
-      clearTimeout(bootTimer); state = 'playing'; showLayer(null); setStatus('Peli käynnissä');
+      clearTimeout(bootTimer); state = 'playing'; inputMode = msg.inputMode; showLayer(null); setStatus('Peli käynnissä');
       $('pause').disabled = false; $('restart').disabled = false;
       post('mute', { value:muted }); focusGame();
     }
     if (msg.type === 'error' && state !== 'idle' && state !== 'error') fail('Pelin käynnistys epäonnistui. Voit yrittää uudelleen.');
     if (msg.type === 'pause-request') pause();
     if (msg.type === 'mute-request') setMuted(!muted);
+    if (msg.type === 'input-mode') inputMode = msg.mode;
+    if (msg.type === 'trainer-state') trainerEnabled = msg.enabled;
     if (msg.type === 'manual') { pause(true); $('ohjeet').scrollIntoView({ behavior:'smooth', block:'center' }); }
     if (msg.type === 'ended') reset();
   });

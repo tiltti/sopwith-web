@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c0e13">
+  <meta name="description" content="Sopwith Webin teknologia, lähdekoodin alkuperä ja C → WebAssembly -porttaus.">
+  <title>Info — Sopwith II</title>
+  <link rel="icon" href="plane.png" type="image/png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="info.css">
+</head>
+<body>
+  <a class="skip" href="#sisalto">Siirry sisältöön</a>
+  <header class="site-header wrap">
+    <a class="wordmark" href="./" aria-label="Sopwith II, pelisivu"><img src="plane.png" alt="" width="48" height="48">SOPWITH<span>II</span></a>
+    <nav aria-label="Päävalikko"><a href="./">Pelaa</a><a class="active" href="info.html" aria-current="page">Info</a></nav>
+    <div class="edition">C → WEBASSEMBLY</div>
+  </header>
+  <main id="sisalto" class="wrap info-content">
+    <h1>Info</h1>
+    <p class="info-lead">Mistä tämä versio on portattu ja miten peli toimii selaimessa.</p>
+
+    <section aria-labelledby="alkupera"><h2 id="alkupera">Alkuperäinen peli ja lähdekoodi</h2>
+      <p>David L. Clark teki alkuperäisen Sopwithin BMB Compusciencelle vuonna 1984. Sopwith II ilmestyi vuonna 1985. Clark julkaisi myöhemmin pelin lähdekoodin, josta Simon Howard ja muut kehittäjät ovat jatkaneet ylläpidettyä <a href="https://github.com/fragglet/sdl-sopwith" target="_blank" rel="noopener">SDL Sopwith -porttausta</a>.</p>
+      <p>Tämän selainversion pohja on SDL Sopwithin versio <strong>2.9.0</strong>. Sen C-lähdekoodi ja grafiikka ovat mukana repositorion <code>third_party/sdl-sopwith/</code>-hakemistossa muuttamattomina. Alkuperäistä DOS-versiota on käytetty vertailuun; täydellistä vastaavuutta fysiikassa ja tekoälyssä ei ole vielä varmistettu.</p>
+      <p>Selainkohtaiset muutokset ovat erillisissä tiedostoissa: näppäinohjaus, tauko, ajastus, trainer ja verkkosivun käyttöliittymä. Tämä on itsenäinen selainversio, jonka tekijätiedot ja alkuperäiset projektit on säilytetty mukana.</p>
+    </section>
+
+    <section aria-labelledby="tekniikka"><h2 id="tekniikka">Käytetyt tekniikat</h2>
+      <div class="info-table"><table><thead><tr><th>Tekniikka</th><th>Tehtävä tässä pelissä</th></tr></thead><tbody>
+        <tr><td>C</td><td>Pelilogiikka, lentäminen, tekoäly, törmäykset, ammukset ja alkuperäisten grafiikoiden piirtäminen.</td></tr>
+        <tr><td>SDL 2.32.0</td><td>Piirtämisen, näppäimistön ja äänen rajapinnat. Emscripten sovittaa ne selaimen toimintoihin.</td></tr>
+        <tr><td>Emscripten 4.0.10</td><td>Käännöstyökalusto, jolla C-koodi ja SDL2 käännetään selaimelle.</td></tr>
+        <tr><td>WebAssembly (WASM)</td><td>Käännetty ohjelmamuoto, jota selain suorittaa. Pelin varsinainen ohjelma on <code>sopwith.wasm</code>-tiedostossa.</td></tr>
+        <tr><td>JavaScript, HTML ja CSS</td><td>Pelin lataaminen, aloitusnäkymä, taukopainike, äänisäätö, paletti ja näyttöohjaimet.</td></tr>
+        <tr><td>IndexedDB</td><td>Asetusten ja paikallisten pistetulosten tallennus tämän selaimen muistiin.</td></tr>
+        <tr><td>GitHub Actions ja Pages</td><td>Automaattinen käännös, tarkistukset ja valmiiden pelitiedostojen julkaiseminen verkkoon.</td></tr>
+      </tbody></table></div>
+      <p>WASM on käännöksen tulosmuoto. Tässä versiossa lähdekieli on C ja verkkosivun kieli JavaScript; Rustia ei ole käytetty.</p>
+    </section>
+
+    <section aria-labelledby="porttaus"><h2 id="porttaus">Miten porttaus toimii?</h2>
+      <ol class="build-flow" aria-label="Käännöksen ja suorittamisen vaiheet"><li>C-lähdekoodi ja SDL2</li><li>Emscripten-käännös</li><li>WASM ja lataus-JavaScript</li><li>Suoritus selaimessa</li></ol>
+      <p>Emscripten kääntää ylläpidetyn C-pelin WebAssemblyksi. Selain lataa WASM-tiedoston ja sitä tukevan JavaScriptin. Pelin laskenta tapahtuu omalla laitteellasi, ja SDL2 piirtää kuvan sivun canvas-elementtiin. Alkuperäinen EXE kuuluu vertailuaineistoon; julkaistu peli suorittaa lähdekoodista tehtyä WASM-käännöstä.</p>
+      <p>Pelilogiikka etenee alkuperäisen porttauksen mukaisesti kymmenen askelta sekunnissa. Asyncify mahdollistaa vanhan pelisilmukan tauottamisen niin, että selain ehtii käsitellä sivua ja näppäimistöä. Taukopainike pysäyttää pelin ajan kulumisen.</p>
+      <p>Pelin oma kuva on <strong>320 × 200 pikseliä</strong>. Se skaalataan pelialueelle. Alkuperäinen CGA-paletti käyttää mustaa, syaania, magentaa ja valkoista; toinen valittava paletti käyttää mustaa, vihreää, punaista ja keltaista.</p>
+      <p>Äänet syntyvät alkuperäisen PC-kaiuttimen äänenmuodostuksen pohjalta selaimen äänirajapintaan. Peli käynnistyy hiljaisena. Äänet saa päälle pelisivun painikkeesta tai lennon aikana S-näppäimellä.</p>
+    </section>
+
+    <section aria-labelledby="ohjaus"><h2 id="ohjaus">Valikot ja näppäimet</h2>
+      <p>Alkuperäisissä valikoissa näppäimet menevät pelin omille valinnoille: esimerkiksi <kbd>S</kbd> valitsee single player -tilan ja <kbd>Esc</kbd> palaa takaisin. Käytä valikossa näkyviä kirjain- ja numerovalintoja. Nimen kirjoittamisen aikana kirjaimet ovat tavallista tekstinsyöttöä.</p>
+      <p>Lennon aikana <kbd>S</kbd> vaihtaa ääniä ja <kbd>P</kbd> tai <kbd>Esc</kbd> asettaa pelin tauolle. Muut ohjaimet ovat <a href="./#ohjeet">pelisivulla</a>.</p>
+    </section>
+
+    <section aria-labelledby="trainer"><h2 id="trainer">Trainer konsolista</h2>
+      <p>Avaa <a href="./">pelisivulla</a> selaimen kehittäjätyökalujen JavaScript-konsoli ja kirjoita:</p>
+      <pre><code>trainer()</code></pre>
+      <p>Trainer antaa rajattomasti elämiä, pommeja ja konekiväärin ammuksia. Kone voi edelleen tuhoutua normaalisti ja palaa tukikohtaan tavallisen viiveen jälkeen. Polttoaine kuluu normaalisti, ja aseiden tulinopeus pysyy ennallaan.</p>
+      <p>Trainer pois päältä:</p><pre><code>trainer(false)</code></pre>
+      <p>Asetus säilyy uuden pelin käynnistyksessä samalla sivulla. Sivun uudelleenlataus palauttaa tavallisen pelin. Trainerin voi kytkeä myös ennen pelin käynnistämistä.</p>
+    </section>
+
+    <section aria-labelledby="lahteet"><h2 id="lahteet">Lähdekoodi, lisenssi ja lisätiedot</h2>
+      <p>Peli ja tämän version sovitukset on julkaistu lisenssillä <strong>GNU GPL v2 tai uudempi</strong>. Alkuperäiset copyright-merkinnät sekä SDL2:n ja Emscriptenin lisenssitekstit sisältyvät julkaisuun.</p>
+      <ul class="info-links"><li><a href="https://github.com/tiltti/sopwith-web" target="_blank" rel="noopener">Tämän selainversion GitHub-repositorio</a></li><li><a href="source/sopwith-web-source.tar.gz" download>Julkaistua peliä vastaava lähdekoodipaketti</a></li><li><a href="source/NOTICE.md">Tekijä- ja lisenssitiedot</a></li><li><a href="https://www.sopwith.org/" target="_blank" rel="noopener">sopwith.org</a></li><li><a href="https://fragglet.github.io/sdl-sopwith/" target="_blank" rel="noopener">SDL Sopwithin projektisivu</a></li><li><a href="https://emscripten.org/docs/introducing_emscripten/about_emscripten.html" target="_blank" rel="noopener">Emscriptenin dokumentaatio</a></li><li><a href="https://webassembly.org/" target="_blank" rel="noopener">WebAssemblyn esittely</a></li></ul>
+    </section>
+  </main>
+  <footer class="site-footer wrap"><p>SOPWITH II <span>·</span> WEB</p><div><a href="./">Pelaa</a><a href="source/AUTHORS.txt">Tekijät</a><a href="source/COPYING.md">GPL v2+</a></div></footer>
+</body>
+</html>

@@ -10484,6 +10484,10 @@ var _fflush = makeInvalidEarlyAccess("_fflush");
 
 var _web_pause = Module["_web_pause"] = makeInvalidEarlyAccess("_web_pause");
 
+var _web_trainer = Module["_web_trainer"] = makeInvalidEarlyAccess("_web_trainer");
+
+var _web_input_mode = Module["_web_input_mode"] = makeInvalidEarlyAccess("_web_input_mode");
+
 var _web_key = Module["_web_key"] = makeInvalidEarlyAccess("_web_key");
 
 var _web_palette = Module["_web_palette"] = makeInvalidEarlyAccess("_web_palette");
@@ -10612,6 +10616,8 @@ function assignWasmExports(wasmExports) {
   Module["_main"] = _main = createExportWrapper("__main_argc_argv", 2);
   _fflush = createExportWrapper("fflush", 1);
   Module["_web_pause"] = _web_pause = createExportWrapper("web_pause", 1);
+  Module["_web_trainer"] = _web_trainer = createExportWrapper("web_trainer", 1);
+  Module["_web_input_mode"] = _web_input_mode = createExportWrapper("web_input_mode", 0);
   Module["_web_key"] = _web_key = createExportWrapper("web_key", 2);
   Module["_web_palette"] = _web_palette = createExportWrapper("web_palette", 1);
   Module["_web_sound"] = _web_sound = createExportWrapper("web_sound", 1);

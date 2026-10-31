@@ -34,6 +34,15 @@ jobs:
           python .tools/emsdk/emsdk.py install 4.0.10
           python .tools/emsdk/emsdk.py activate 4.0.10
 
+      - name: Test controls and native game rules
+        run: |
+          if ! pkg-config --exists sdl2; then
+            sudo apt-get update
+            sudo apt-get install -y libsdl2-dev
+          fi
+          node tests/browser-controls.mjs
+          python scripts/test_trainer.py
+
       - name: Build game and corresponding source archive
         run: python scripts/build.py
 
