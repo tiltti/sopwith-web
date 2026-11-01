@@ -69,6 +69,8 @@ the top-ten high-score list with qualifying submitted local runs highlighted.
 Entry shows the provisional rank even below tenth place. The pause/settings
 screens use the game's own style. Fullscreen transitions do not pause the game
 through a transient visibility event; changing tabs normally still does.
+The splash menu also has a KOKO NÄYTTÖ toggle before starting a game; its label
+changes to IKKUNATILA while fullscreen is active.
 
 `dist/rainbow-audio.js` uses five named Web Audio voice slots. Recorded CC0
 gunfire, impacts, explosions, cow, bird and jingle cues are bundled alongside

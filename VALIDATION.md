@@ -1,5 +1,14 @@
 # Validation
 
+## 2026-11-01: Splash fullscreen option
+
+- The title menu delegates its fullscreen button to the existing fullscreen
+  handler without starting a flight or toggling sound. Fullscreen-change events
+  synchronize the title label and pressed state, including Escape/browser exit.
+- Existing browser-control/fullscreen visibility regressions pass. The splash
+  layout is checked without repeatedly entering/exiting fullscreen on the user's
+  display.
+
 ## 2026-11-01: Respawn startup, ground-fire selection and top ten
 
 - Startup follows the native player's killed-to-live transition and level changes,

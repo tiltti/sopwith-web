@@ -82,6 +82,7 @@
   $('resume').addEventListener('click', () => pause(false));
   if(edition==='rainbow')$('play-again')?.addEventListener('click',start);
   $('mute').addEventListener('click', () => { setMuted(!muted); focusGame(); });
+  if(edition==='rainbow')$('title-fullscreen')?.addEventListener('click',()=>$('fullscreen').click());
   $('fullscreen').addEventListener('click', async () => {
     const column = document.querySelector('.game-column');
     fullscreenTransition=true;
@@ -99,8 +100,14 @@
     }
   });
   const fullscreenLabel = () => {
-    const label=document.fullscreenElement || document.webkitFullscreenElement ? 'Poistu koko näytöstä' : 'Koko näyttö';
+    const active=!!(document.fullscreenElement || document.webkitFullscreenElement);
+    const label=active ? 'Poistu koko näytöstä' : 'Koko näyttö';
     $('fullscreen').lastElementChild.textContent=label;$('fullscreen').setAttribute('aria-label',label);
+    if(edition==='rainbow'&&$('title-fullscreen')){
+      $('title-fullscreen').textContent=active?'Ikkunatila':'Koko näyttö';
+      $('title-fullscreen').setAttribute('aria-pressed',String(active));
+      $('title-fullscreen').setAttribute('aria-label',label);
+    }
   };
   document.addEventListener('fullscreenchange', fullscreenLabel);
   document.addEventListener('webkitfullscreenchange', fullscreenLabel);
