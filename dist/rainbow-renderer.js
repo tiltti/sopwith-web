@@ -485,10 +485,17 @@
       text(c,'BOMB',557,9,P.pale);text(c,s[8],598,8,P.gold,2);
       text(c,'HOME',557,25,P.pale);text(c,s[16]?'ON':s[4]<s[15]?'>':'<',598,24,P.cream,2);
       const target=this.effects.filter(e=>e.type===6&&s[1]-e.tick<28).at(-1);
-      if(target)text(c,target.size<0?'FRIENDLY TARGET HIT':'TARGET DESTROYED',242,56,target.size<0?P.red:P.gold,1);
-      else if(s[12]===1)text(c,'MISSION COMPLETE',244,56,P.gold);
+      if(target){
+        const label=target.size<0?'FRIENDLY TARGET HIT':'TARGET DESTROYED';
+        const x=target.size<0?244:256,color=target.size<0?P.red:P.gold;
+        text(c,'> '+label+' <',x-16,54,color,2);this.canvas.dataset.notification=label;
+      }
+      else {delete this.canvas.dataset.notification;
+
+      if(s[12]===1)text(c,'MISSION COMPLETE',244,56,P.gold);
       else if(s[13]===3)text(c,'PLANE LOST',280,56,P.red);
       else if(s[16])text(c,'RETURNING TO BASE',244,56,P.cream);
+      }
       c.restore();
     }
     demo() {

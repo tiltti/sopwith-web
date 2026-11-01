@@ -85,4 +85,8 @@ renderer.drawScene(scene,heap,false,effects,ground);assert.equal(renderer.effect
 scene[1]=29;renderer.drawScene(scene,heap,false,effects,ground);assert.equal(renderer.effects.length,0);
 scene[12]=1;renderer.drawScene(scene,heap,false,effects,ground);
 assert.equal(display.dataset.renderer,'rainbow','Winning must keep the same renderer.');
+scene[12]=0;scene[1]=30;effects.set([1,2,2,6,2,30,6,200,80,4]);
+renderer.drawScene(scene,heap,false,effects,ground);
+assert.equal(display.dataset.notification,'TARGET DESTROYED');
+scene[1]=59;renderer.drawScene(scene,heap,false,effects,ground);assert.equal(display.dataset.notification,undefined);
 console.log('Rainbow renderer: alignment, level grounded arch, visible optional bomb marker, bomb estimate, effect deduplication/expiry and unchanged masks verified.');
