@@ -225,5 +225,29 @@ int main(void)
     shell->ob_life=1;int before_impact=events[1];assert(!moveshot(shell));
     assert(events[1]==before_impact+1&&events[4+(before_impact%32)*6+2]==1);
     puts("Rainbow ground combat: one muzzle event, ballistic tank shell, one cow reaction and one target-destroyed event.");
+    fresh_game(false);int base_targets=numtarg[FACTION_PLAYER1]+numtarg[FACTION_PLAYER2];
+    WebVariant_SetEnabled(true);++countmove;WebVariant_Apply(consoleplayer);
+    int guns=0,slopes=0;OBJECTS *gun=NULL,*building=NULL;
+    for(OBJECTS *ob=objtop;ob;ob=ob->ob_next){
+        if(WebVariant_ObjectKind(ob)==20){
+            guns++;gun=ob;assert(ob->ob_symbol->w==16);assert(abs(ob->ob_x-consoleplayer->ob_original_ob->x)>=85);
+            slopes+=abs((int)ground[ob->ob_x+15]-(int)ground[ob->ob_x])>=3;
+        }else if(ob->ob_type==TARGET&&ob->ob_orient==TARGET_FACTORY)building=ob;
+        if(ob->ob_type==OX){int left=16,right=0,top=16,bottom=0;
+            for(int y=0;y<16;y++)for(int x=0;x<16;x++)if(ob->ob_symbol->data[y*16+x]){left=imin(left,x);right=imax(right,x+1);top=imin(top,y);bottom=imax(bottom,y+1);}
+            assert(right-left<=7&&bottom-top<=5);
+        }
+    }
+    assert(guns>0&&slopes>0&&gun&&building);
+    assert(numtarg[FACTION_PLAYER1]+numtarg[FACTION_PLAYER2]==base_targets+guns);
+    for(i=0;i<(int)currgame->gm_max_x;i++)assert(ground[i]==currgame->gm_ground[i]);
+    OBJECTS *before_shot=objbot;WebVariant_InitShot(building,consoleplayer);assert(objbot==before_shot);
+    consoleplayer->ob_x=gun->ob_x+30;consoleplayer->ob_y=gun->ob_y+25;consoleplayer->ob_dx=consoleplayer->ob_dy=0;
+    WebVariant_InitShot(gun,consoleplayer);assert(objbot!=before_shot&&objbot->ob_owner==gun);
+    puts("Rainbow terrain/defenses: continuous source slopes, independent AA targets on hills, runway clearance, target counts, resized cow masks and no invisible building guns verified.");
+    OBJECTS *flock=allocobj();flock->ob_type=FLOCK;flock->ob_state=FINISHED;flock->ob_life=-1;flock->ob_symbol=&symbol_pixel;
+    ++countmove;WebVariant_Apply(consoleplayer);events=WebVariant_Effects();int newest=4+((events[1]-1)%32)*6;
+    assert(events[newest+2]==2&&events[newest+5]==6);
+    puts("Bird flock collision: one grouped feather/squawk event with flock intensity.");
     return 0;
 }

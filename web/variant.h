@@ -12,6 +12,10 @@ bool WebVariant_IsEnabled(void);
 void WebVariant_Apply(OBJECTS *player);
 void WebVariant_BombRelease(bool release);
 int WebVariant_GoHome(OBJECTS *player);
+int WebVariant_ObjectKind(const OBJECTS *ob);
+void WebVariant_InitShot(OBJECTS *owner,OBJECTS *target);
+void WebVariant_TargetMask(OBJECTS *target);
+void WebVariant_CowMask(OBJECTS *cow);
 void WebVariant_ShellImpact(OBJECTS *shot);
 /* [version, newest-id, count, stride], then ring records:
  * Types: 1 blast, 2 feathers, 3 cow down, 4 bomb released,

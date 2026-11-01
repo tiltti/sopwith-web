@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 
 const calls=[];
-function context() { return {setTransform(){},scale(){},translate(){},rotate(){},save(){},restore(){},beginPath(){},ellipse(){},fill(){},strokeRect(){},createRadialGradient(){return {addColorStop(){}};},fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
+function context() { return {setTransform(){},scale(){},translate(){},rotate(){},save(){},restore(){},beginPath(){},moveTo(...a){calls.push(['move',...a]);},lineTo(...a){calls.push(['line',...a]);},closePath(){},ellipse(){},fill(){},strokeRect(){},createRadialGradient(){return {addColorStop(){}};},fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
 function canvas() { const c=context();return {dataset:{},getContext:()=>c}; }
 const scope={window:{},document:{querySelectorAll:()=>[],createElement:()=>canvas()},Int32Array,Math};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-renderer.js',import.meta.url),'utf8'),scope);
@@ -38,21 +38,11 @@ assert.equal(renderer.trail.length,1,'A respawn/teleport must not draw a trail a
 assert.equal(display.dataset.rainbow,'true');
 scene[2]=600;renderer.drawScene(scene,heap);
 assert.equal(display.dataset.rainbow,'false','The landmark must not repeat farther across the map.');
-// Different ground heights must clip a level arch, never shear its shape.
-scene[2]=100;scene[22]=20;scene[23]=80;calls.length=0;
-renderer.landmark(scene);
-const archColumns=new Map();
-for(const [,x,y,,,color] of calls) {
-  const key=`${color}:${x}`;
-  archColumns.set(key,Math.min(y,archColumns.get(key)??Infinity));
-}
-assert.ok(archColumns.size>100);
-for(const [key,top] of archColumns) {
-  const [color,x]=key.split(':');
-  assert.equal(archColumns.get(`${color}:${440-Number(x)}`),top,
-    'Every rainbow band must have equal heights on opposite sides of its centre.');
-}
-assert.ok(calls.some(c=>c[2]>=398),'The feet extend below terrain so its mask can cover them.');
+// The continuous arch remains level and feet are clipped by foreground terrain.
+scene[2]=100;scene[22]=20;scene[23]=80;calls.length=0;renderer.landmark(scene);
+const arch=calls.filter(c=>c[0]==='move'||c[0]==='line').slice(0,241);
+assert.equal(arch.length,241);
+for(let i=0;i<arch.length;i++)assert.ok(Math.abs(arch[i][2]-arch[240-i][2])<1e-8,'Continuous rainbow bands stay level over uneven ground.');
 const ground=new Int32Array(2000).fill(40);
 const plane=scene.subarray(r,r+Renderer.STRIDE);
 const hit=Renderer.predictBomb(plane,ground);
@@ -90,3 +80,20 @@ renderer.drawScene(scene,heap,false,effects,ground);
 assert.equal(display.dataset.notification,'TARGET DESTROYED');
 scene[1]=59;renderer.drawScene(scene,heap,false,effects,ground);assert.equal(display.dataset.notification,undefined);
 console.log('Rainbow renderer: alignment, level grounded arch, visible optional bomb marker, bomb estimate, effect deduplication/expiry and unchanged masks verified.');
+
+const activeTarget=new Int32Array([4,5,500,80,0,0,2,16,16]);
+calls.length=0;renderer.hud(scene,[activeTarget],false,ground);
+assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#ed786b'),'Active enemy ground targets are red.');
+activeTarget[1]=3;calls.length=0;renderer.hud(scene,[activeTarget],false,ground);
+assert.ok(!calls.some(r=>r[0]==='rect'&&r.at(-1)==='#ed786b'),'Destroyed targets cannot keep a red active marker.');
+assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#526d78'),'Destroyed locations retain a subdued cross marker.');
+
+// The same killed aircraft emits one bailout, then keeps a burning wreck.
+scope.window.RainbowAssets={loaded:true,sprite:()=>null,pilotPose:()=>({width:54,height:70})};
+scene[14]=1;scene[1]=59;scene[26]=0;plane[0]=1;plane[1]=1;plane[16]=128;plane[3]=180;plane[12]=4;plane[13]=-4;
+renderer.drawScene(scene,heap,false,null,ground);
+scene[1]=60;plane[1]=4;renderer.drawScene(scene,heap,false,null,ground);
+assert.equal(renderer.bailouts.length,1);assert.equal(renderer.bailouts[0].burning,true);
+renderer.drawScene(scene,heap,false,null,ground);assert.equal(renderer.bailouts.length,1,'Repaint cannot eject the pilot twice.');
+scene[1]=61;plane[1]=3;renderer.drawScene(scene,heap,false,null,ground);assert.equal(renderer.bailouts.length,1);
+console.log('Crash visuals: one bailout per disabled plane, deterministic occasional burning canopy and persistent wreck fire verified.');

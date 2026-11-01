@@ -26,7 +26,7 @@ class References(HTMLParser):
 
 
 def main():
-    for name in ("index.html", "classic.html", "rainbow.html", "runner.html", "info.html"):
+    for name in ("index.html", "classic.html", "rainbow.html", "runner.html", "info.html", "look-lab.html"):
         parser = References()
         parser.feed((DIST / name).read_text())
         for relative in parser.paths:
@@ -41,13 +41,13 @@ def main():
         data = (ROOT / item["path"]).read_bytes()
         assert len(data) == item["bytes"] and hashlib.sha256(data).hexdigest() == item["sha256"], \
             f"Asset integrity mismatch: {item['path']}"
-    for name in ("COPYING.md", "AUTHORS.txt", "NOTICE.md", "SDL2-LICENSE.txt", "Emscripten-LICENSE.txt"):
+    for name in ("COPYING.md", "AUTHORS.txt", "NOTICE.md", "SDL2-LICENSE.txt", "Emscripten-LICENSE.txt", "CC-BY-4.0.txt"):
         assert (DIST / "source" / name).stat().st_size > 0, f"Missing notice: {name}"
 
     archive = DIST / "source/sopwith-web-source.tar.gz"
     with tarfile.open(archive, "r:gz") as bundle:
         for relative in ("web/bridge.c", "web/trainer.c", "scripts/build.py", "LICENSE", "NOTICE.md",
-                         "web/move.c", "tests/home.c", "scripts/test_home.py", "dist/rainbow-ui.css", "dist/rainbow-ui.js", "dist/rainbow-timeline.js", "tests/rainbow-timeline.mjs",
+                         "dist/look-lab.html", "dist/look-lab.js", "dist/look-lab.css", "dist/title-audio.js", "tests/title-audio.mjs", "scripts/prepare_audio_v05.py", "web/move.c", "tests/home.c", "scripts/test_home.py", "dist/rainbow-ui.css", "dist/rainbow-ui.js", "dist/rainbow-timeline.js", "tests/rainbow-timeline.mjs",
                          "web/scene.c", "web/scene.h", "web/variant.c", "web/variant.h", "tests/scene.c", "tests/rainbow-renderer.mjs", "scripts/test_scene.py",
                          "third_party/sdl-sopwith/src/swmain.c", "dist/app.js", "dist/runner.js", "dist/info.html",
                          "dist/classic.html", "dist/rainbow.html", "dist/rainbow-renderer.js", "dist/tribute.css",

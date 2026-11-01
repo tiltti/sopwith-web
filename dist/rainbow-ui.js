@@ -24,6 +24,10 @@
     if(wasPlaying)$('pause').click();
     closePanel();resumeAfterPanel=wasPlaying;panel=name;$('panel-'+name).hidden=false;
     $('launch').inert=true;$('paused').inert=true;$('complete').inert=true;
+    if(name==='scores'){
+      const ended=document.body.dataset.gameState==='ended';
+      $('scores-new-flight').hidden=$('scores-main-menu').hidden=!ended;$('scores-back').hidden=ended;
+    }
     const first=$('panel-'+name).querySelector('button,input,select');first?.focus({preventScroll:true});
     select(0);
   }
@@ -39,6 +43,9 @@
   document.querySelectorAll('[data-close-panel]').forEach(button=>button.addEventListener('click',closePanel));
   window.addEventListener('sopwith-menu',event=>openPanel(event.detail));
   window.addEventListener('sopwith-layer',()=>{closePanel();select(0);});
+  $('scores-new-flight').addEventListener('click',()=>{closePanel();$('play-again').click();});
+  $('scores-main-menu').addEventListener('click',()=>{closePanel();$('restart').click();});
+  window.addEventListener('sopwith-score-saved',()=>openPanel('scores'));
   $('settings-fullscreen').addEventListener('click',()=>{const resume=resumeAfterPanel;closePanel();if(resume)$('resume').click();$('fullscreen').click();});
   $('settings-sound').addEventListener('click',()=>{$('mute').click();syncSettings();});
   function syncSettings() {$('settings-sound').textContent='ÄÄNET: '+($('mute').getAttribute('aria-pressed')==='true'?'POIS':'PÄÄLLÄ');}
@@ -49,6 +56,7 @@
     document.querySelectorAll('[data-initial-focus]').forEach((button,i)=>{
       button.textContent=$('score-name').value[i];button.parentElement.classList.toggle('active',i===cursor);
     });
+    window.dispatchEvent(new CustomEvent('sopwith-initials'));
   }
   function setLetter(character) {
     const chars=[...initials()];chars[cursor]=character;$('score-name').value=chars.join('');paintInitials();
@@ -80,7 +88,7 @@
         paintInitials();return;
       }
     }
-    if(panel&&event.code==='Escape'){event.preventDefault();event.stopImmediatePropagation();closePanel();return;}
+    if(panel&&event.code==='Escape'){event.preventDefault();event.stopImmediatePropagation();const end=panel==='scores'&&document.body.dataset.gameState==='ended';closePanel();if(end)$('restart').click();return;}
     if(['INPUT','SELECT','TEXTAREA'].includes(event.target.tagName))return;
     items=menuItems();if(!items.length)return;
     if(['ArrowUp','ArrowDown','Enter','Space'].includes(event.code)) {

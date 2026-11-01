@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 7850,
-      "sha256": "4626ef60f49d8dea8249575e47d4c84e2bf34d24aa2fa5fc50cc45e5ed557475"
+      "bytes": 10649,
+      "sha256": "32f4b43c66830002f1925954ca8ae3d8cdd7e1ab2b8dd8dab23f765c692ffd36"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -14,13 +14,83 @@
     },
     {
       "path": "dist/assets/audio/README.md",
-      "bytes": 2505,
-      "sha256": "efaf30297efe4e26aa49cb56b395112499dc0567941924c92ce230fb50f9b655"
+      "bytes": 4620,
+      "sha256": "ad18e47de74dac2ccdbce6123c458d421ac05aa8b34902afe08706137d1d4b27"
     },
     {
       "path": "dist/assets/audio/SOURCES.json",
       "bytes": 5752,
       "sha256": "960cf8ab5810c241d906d4d4a85f4e7180ca4677edf90813842aa0779835925d"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/SOURCES.json",
+      "bytes": 5602,
+      "sha256": "d8c4bfbbe4c860056925769f75f8bae21839d77f336dccdae8864f1c331a0c6c"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/bird.wav",
+      "bytes": 14670,
+      "sha256": "4f80d7d11c1cf3f9fd1724d1e3a08f63594a93fb08619444ffe2e753afbbb64b"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/fanfare.wav",
+      "bytes": 106988,
+      "sha256": "8e3d6eac4baa8a441b952c0ab3a1202397a284b7826b79432d450a0730a1e9d7"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/moo.wav",
+      "bytes": 77254,
+      "sha256": "bc3eb893f951b5e3a08c572a5426877469a819f80b093bf5bb53f49353d564ba"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/original/castlefanfare.ogg",
+      "bytes": 61363,
+      "sha256": "a7d37b48477f22f6699eacffebade031079fa0649d0d3b3fbe2bd2da4f6c71eb"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/original/cow-moo-8.mp3",
+      "bytes": 254521,
+      "sha256": "8172880d85714d56de54c65e097f8e473cf2666b3f060bc4c37acdac1726691b"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/original/crow-2764.wav",
+      "bytes": 49504,
+      "sha256": "f6d5cb6c91f9ee47ba358d5e993a998079182076231b612de4e225e2572ef662"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/original/radial-j22.mp3",
+      "bytes": 3495374,
+      "sha256": "1d97bb8ff2c78a28f76267471b92316e709dd81a4d8053c1c336473cb08b575b"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/original/sad-trombone.mp3",
+      "bytes": 120891,
+      "sha256": "de4a029a0537dbecaf49b4936b0969919f5b7b54083d3859d584b5c4cc7dee3d"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/original/war-theme-v2.ogg",
+      "bytes": 6890306,
+      "sha256": "1291731b7f99e58655954e5e6d1f256dc522601664bcd9c3d9d0d4618f020d3e"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/radial-idle.wav",
+      "bytes": 127106,
+      "sha256": "d1d6ad13a407a6b0f27595f38e37e2d2b6c2d82325d18ef5cd0a52d6e87ab2a2"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/startup.wav",
+      "bytes": 105938,
+      "sha256": "e0b1683487cca531ce6e7a52bbe8b5af3c35ffdde100ef22a77be0067816bf2a"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/title-theme.m4a",
+      "bytes": 2340689,
+      "sha256": "88bbdf9cd2ad0408913bb6b95f309416400f8c9ccc10093e2e6587f467542d01"
+    },
+    {
+      "path": "dist/assets/audio/audition-v05/wah-wah.wav",
+      "bytes": 229628,
+      "sha256": "3ee1569599c0ceba46f354e9334722143b5f7b3d82cc7479058da0997a9251ac"
     },
     {
       "path": "dist/assets/audio/cow-moo.wav",
@@ -103,9 +173,29 @@
       "sha256": "b83dd916f142b034726c2d55d9407b2ded95add8ed14690d1cce3e8770e17898"
     },
     {
+      "path": "dist/assets/previews/rainbow-look-a.png",
+      "bytes": 50169,
+      "sha256": "a72140885c48d229e99b802d4785a11aca0180852c5029551160d3cacc8f7d9e"
+    },
+    {
+      "path": "dist/assets/previews/rainbow-look-b.png",
+      "bytes": 49755,
+      "sha256": "8dc5fd9ba1e7662ce384ef18993f555189b1f71f400f05d83e93ab7cccfeac6c"
+    },
+    {
+      "path": "dist/assets/previews/rainbow-look-c.png",
+      "bytes": 50974,
+      "sha256": "244ca40a94aa4bf080eaa4414f908dc42b7fca2b0a8856ab6ce8db06439470c6"
+    },
+    {
       "path": "dist/assets/rainbow-cow-reaction-v1.png",
       "bytes": 992391,
       "sha256": "2fc524280abba50756f327e151364d494daad36cfa077a3dd5c0308925eafff7"
+    },
+    {
+      "path": "dist/assets/rainbow-defense-pilots-v1.png",
+      "bytes": 2167095,
+      "sha256": "1c0b27472e3d98fcca86cb569329c548485919304dcedc047e44aa50d518f12c"
     },
     {
       "path": "dist/assets/rainbow-extras-v1.png",

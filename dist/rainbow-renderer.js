@@ -59,7 +59,7 @@
       }
       if(right<left)continue;
       const l=Math.round(left*s),r=Math.round(right*s),top=Math.round(row*s),bottom=Math.round((row+1)*s);
-      rect(c,x+l,y+top,r-l,Math.max(1,bottom-top),ramp[Math.min(6,Math.floor(row/5))]);
+      rect(c,x+l,y+top,r-l,Math.max(1,bottom-top),row>29?'#9de4e9':row>25?'#c5f4ee':'#edfff1');
     }
   }
   function polygon(c,points,color) {
@@ -78,14 +78,13 @@
   function rainbow(c,xLeft,yLeft,xRight,yRight) {
     const colors=[P.red,P.yellow,P.grass,P.mint,P.blue,P.purple];
     const rx=(xRight-xLeft)/2,cx=xLeft+rx,ry=145,base=Math.max(yLeft,yRight);
-    // Keep the ellipse level even when the terrain under its feet is uneven.
-    // Both feet extend below ground; foreground terrain hides the excess.
-    for(let x=-rx;x<=rx;x+=2) for(let band=0;band<6;band++) {
-      const outerX=rx-band*5,innerX=outerX-5;
-      if(Math.abs(x)>outerX)continue;
-      const top=-(ry-band*5)*Math.sqrt(1-(x/outerX)**2);
-      const bottom=Math.abs(x)>=innerX?H-base:-(ry-(band+1)*5)*Math.sqrt(1-(x/innerX)**2);
-      for(let y=Math.floor(top/2)*2;y<=bottom;y+=2)rect(c,cx+x,base+y,2,2,colors[band]);
+    for(let band=0;band<6;band++){
+      const outerX=rx-band*5,innerX=outerX-5,outerY=ry-band*5,innerY=outerY-5;
+      c.fillStyle=colors[band];c.beginPath();
+      for(let i=0;i<=240;i++){const a=Math.PI-i/240*Math.PI,x=cx+Math.cos(a)*outerX,y=base-Math.sin(a)*outerY;i?c.lineTo(x,y):c.moveTo(x,y);}
+      c.lineTo(cx+outerX,H);c.lineTo(cx+innerX,H);
+      for(let i=0;i<=240;i++){const a=i/240*Math.PI;c.lineTo(cx+Math.cos(a)*innerX,base-Math.sin(a)*innerY);}
+      c.lineTo(cx-innerX,H);c.lineTo(cx-outerX,H);c.closePath();c.fill();
     }
   }
   function mapPoint(x,y,width) {return {x:185+Math.max(0,Math.min(1,x/width))*259,y:H+6+39-Math.max(0,Math.min(199,y))/199*39};}
@@ -151,17 +150,19 @@
       this.effects=[];this.lastEffectId=0;this.aimEnabled=true;this.bombHeld=false;
       this.aimVisible=false;this.aimActivations=0;
       this.cowDeaths=new Map();this.terrainCache=null;this.smokeBrush=null;
+      this.airplanes=new Map();this.bailouts=[];this.darkSmokeBrush=null;
     }
     background(camera=0,tick=0) {
       const c=this.c;
       const bands=['#3b9bd6','#40a6e1','#49b2e7','#56bfed','#68cbef','#82d8ef','#a4e8ee','#c9f5ef'];
       bands.forEach((color,i) => rect(c,0,i*50,W,51,color));
       const sunX=552-Math.round(camera*.035)%95;
-      for(let y=-16;y<=16;y+=2) {
-        const r=Math.floor(Math.sqrt(16*16-y*y)/2)*2;
-        rect(c,sunX-r,63+y,r*2+2,2,P.gold);
+      for(let i=0;i<12;i++){
+        const a=i*Math.PI/6,dx=Math.cos(a),dy=Math.sin(a),px=-dy,py=dx;
+        c.fillStyle='#ffe99b';c.beginPath();c.moveTo(sunX+dx*19+px,63+dy*19+py);c.lineTo(sunX+dx*24,63+dy*24);c.lineTo(sunX+dx*19-px,63+dy*19-py);c.closePath();c.fill();
       }
-      rect(c,sunX-6,53,10,10,P.cream);
+      c.fillStyle='#ffe99b';c.beginPath();c.ellipse(sunX,63,15.5,15.5,0,0,Math.PI*2);c.fill();
+      c.fillStyle='#fff2ba';c.beginPath();c.ellipse(sunX,63,12.5,12.5,0,0,Math.PI*2);c.fill();
       for (let i=-1;i<5;i++) {
         let x=i*210-((camera*.11+tick*.12)%210);
         cloud(c,x,62+((i+5)%3)*39,i%2===0?1.5:1.05);
@@ -273,12 +274,15 @@
     drawEffects(camera,tick) {
       const c=this.c;
       for(const e of this.effects) {
-        const age=tick-e.tick,x=(e.x-camera)*2,y=(199-e.y)*2;
+        const age=Math.max(0,tick-e.tick),x=(e.x-camera)*2,y=(199-e.y)*2;
         if(x < -100 || x>W+100)continue;
         if(e.type===2) {
-          for(let i=0;i<7;i++) {
-            const a=i*2.4+e.id,px=x+Math.cos(a)*(3+age*1.4),py=y+Math.sin(a)*(3+age)+age*age*.12;
-            rect(c,px,py,3,1,P.cream);rect(c,px+1,py+1,1,1,P.teal);
+          const count=e.size>1?28:12;
+          for(let i=0;i<count;i++) {
+            const a=i*2.399+e.id,spread=3+age*(e.size>1?2:1.4),px=x+Math.cos(a)*spread,py=y+Math.sin(a)*spread*.55+age*age*.13;
+            c.save();c.translate(px,py);c.rotate(a+age*.16);
+            c.fillStyle=i%4===0?P.darkSmoke:P.cream;c.beginPath();c.ellipse(0,0,i%3===0?3:2,.7,0,0,Math.PI*2);c.fill();
+            c.fillStyle=P.teal;c.fillRect(-2,0,4,.3);c.restore();
           }
           continue;
         }
@@ -375,10 +379,66 @@
       if(this.sprites.size>600)this.sprites.clear();
       this.sprites.set(key,out); return out;
     }
+    foundation(r,camera,ground){
+      if(!ground?.length||r[0]!==4||[3,4,5,6].includes(r[15]))return;
+      const c=this.c,left=r[2],base=r[3]-r[8],sx=(left-camera)*2,top=(199-base)*2,width=r[7]*2;
+      for(let x=0;x<r[7];x++){
+        const g=ground[Math.max(0,Math.min(ground.length-1,Math.round(left+x)))],bottom=(199-g)*2;
+        if(bottom<=top)continue;
+        rect(c,sx+x*2,top,2,bottom-top+1,'#a89470');
+        for(let y=top+4;y<bottom;y+=4)rect(c,sx+x*2,y,2,.7,'#7d765e');
+        if(x%4===0)rect(c,sx+x*2,top,.7,bottom-top,'#d0bc91');
+      }
+      rect(c,sx,top,width,1,'#ddd3a5');
+    }
+    observeAircraft(objects,time,tick,ground) {
+      const active=new Set();
+      for(const r of objects)if(r[0]===1){
+        const id=r[16]||r[2],old=this.airplanes.get(id);active.add(id);
+        const floor=ground?.[Math.max(0,Math.min(ground.length-1,Math.round(r[2]+r[7]/2)))]??0;
+        if(r[1]===4&&old?.state!==4&&r[3]-floor>18){
+          this.bailouts.push({id,start:time,x:r[2]+r[7]/2,y:r[3]-r[8]/2,dx:r[12],burning:((id>>>4)+tick)%4===0});
+        }
+        const trail=old?.trail||[];
+        if((r[1]===4||r[1]===3)&&old?.tick!==tick)trail.push({x:r[2]+r[7]/2,y:r[3]-r[8]/2,tick});
+        this.airplanes.set(id,{state:r[1],tick,trail:trail.filter(p=>tick-p.tick<28).slice(-28)});
+      }
+      for(const id of this.airplanes.keys())if(!active.has(id))this.airplanes.delete(id);
+      this.bailouts=this.bailouts.filter(p=>time-p.start<180).slice(-12);
+    }
+    drawPlaneFire(r,camera,time) {
+      if(![3,4].includes(r[1]))return;
+      if(!this.darkSmokeBrush){
+        const b=document.createElement('canvas');b.width=b.height=64;const c=b.getContext('2d'),g=c.createRadialGradient(32,32,1,32,32,31);
+        g.addColorStop(0,'rgba(52,62,76,.8)');g.addColorStop(.55,'rgba(90,105,116,.5)');g.addColorStop(1,'rgba(90,105,116,0)');c.fillStyle=g;c.fillRect(0,0,64,64);this.darkSmokeBrush=b;
+      }
+      const c=this.c,id=r[16]||r[2],trail=this.airplanes.get(id)?.trail||[];
+      for(const p of trail){const age=Math.max(0,time-p.tick),size=5+age*.7;c.save();c.globalAlpha=Math.max(0,.8-age/40);c.drawImage(this.darkSmokeBrush,(p.x-camera)*2-size,(199-p.y)*2-size-age*1.6,size*2,size*2);c.restore();}
+      const x=(r[2]-camera)*2+r[7],y=(199-r[3])*2+r[8];
+      for(let i=0;i<5;i++){
+        const dx=(i-2)*2.6,h=5+(Math.sin(time*2.7+i*1.8)+1)*5;
+        polygon(c,[[x+dx-3,y+3],[x+dx-2,y-h],[x+dx+1,y-h*.55],[x+dx+3,y-h-2],[x+dx+4,y+2]],P.red);
+        polygon(c,[[x+dx-1,y+2],[x+dx,y-h*.6],[x+dx+2,y+1]],P.gold);
+      }
+    }
+    drawBailouts(camera,time,ground) {
+      const c=this.c;
+      for(const p of this.bailouts){
+        const seconds=Math.max(0,(time-p.start)/10),open=seconds>.6;
+        const x=p.x+p.dx*1.8*(1-Math.exp(-seconds*2.5))+Math.sin(seconds*1.2)*1.2;
+        const floor=ground?.[Math.max(0,Math.min(ground.length-1,Math.round(x)))]??0;
+        const y=Math.max(floor+2,p.y+6*(1-Math.exp(-seconds*8))-(open?1.44+(seconds-.6)*5.5:4*seconds*seconds));
+        if(y===floor+2&&seconds>12)continue;
+        const sprite=window.RainbowAssets?.pilotPose(open?(p.burning?2:1):0);if(!sprite)continue;
+        const w=sprite.width/DETAIL,h=sprite.height/DETAIL,sx=(x-camera)*2,sy=(199-y)*2;
+        c.save();c.translate(sx,sy);c.rotate(open?Math.sin(seconds*2)*.06:seconds*.8);c.drawImage(sprite,-w/2,-h,w,h);c.restore();
+      }
+      this.canvas.dataset.parachutes=String(this.bailouts.length);
+    }
     drawScene(scene,heap,trainer=false,effects=null,ground=null) {
       if(scene[0]!==3||scene[3]===0)return false;
       const c=this.c,tick=scene[1],time=scene[26]||tick,camera=scene[2];
-      if(tick<this.lastTick){this.effects=[];this.lastEffectId=effects?.[1]||0;this.cowDeaths.clear();}
+      if(tick<this.lastTick){this.effects=[];this.lastEffectId=effects?.[1]||0;this.cowDeaths.clear();this.airplanes.clear();this.bailouts=[];}
       this.readEffects(effects,tick);
       if(tick!==this.lastTick) {
         const last=this.trail.at(-1);
@@ -397,6 +457,8 @@
         const r=scene.subarray(HEADER+GROUND+i*STRIDE,HEADER+GROUND+(i+1)*STRIDE);objects.push(r);
         if(r[0]===9&&r[1]!==5&&!this.cowDeaths.has(r[16]||r[2]))this.cowDeaths.set(r[16]||r[2],tick);
       }
+      this.observeAircraft(objects,time,tick,ground);
+      for(const r of objects)this.foundation(r,camera,ground);
       for(const r of objects) {
         const [type,,x,y,,,,w,h]=r, sx=(x-camera)*2,sy=(199-y)*2;
         if(sx < -w*2-3||sx>W||sy>H||sy < -h*2-3)continue;
@@ -426,19 +488,31 @@
         if(type===9&&r[1]!==5&&window.RainbowAssets?.loaded) {
           const age=Math.max(0,time-this.cowDeaths.get(r[16]||r[2])),pose=window.RainbowAssets.cowPose(Math.min(3,Math.floor(age/2)));
           const g=ground?.[Math.max(0,Math.min(ground.length-1,Math.floor(x+8)))]??199-(sy+h*2)/2;
-          if(pose)c.drawImage(pose,sx,(199-g)*2-pose.height/DETAIL,pose.width/DETAIL,pose.height/DETAIL);
+          if(pose)c.drawImage(pose,sx+w-pose.width/(DETAIL*2),(199-g)*2-pose.height/DETAIL,pose.width/DETAIL,pose.height/DETAIL);
           continue;
         }
-        const sprite=this.sprite(r,heap);if(sprite)c.drawImage(sprite,sx-1,sy-1,w*2+2,h*2+2);
-        if(type===4&&r[1]===5) {
-          const shot=this.effects.find(e=>e.type===5&&Math.abs(e.x-(x+w/2))<20&&tick-e.tick<3),recoil=shot?Math.max(0,3-(time-shot.tick)*2):0;
-          if(r[15]===3){const d=shot?Math.sign(shot.size):scene[4]<x?-1:1,bx=sx+w+d*(8-recoil);rect(c,Math.min(sx+w,bx),sy+h-5,Math.abs(bx-sx-w)+3,3,'#43574a');rect(c,bx,sy+h-5,2,3,'#152f37');}
-          else if([0,1,8,9,10,11,12].includes(r[15])) {
-            // Visible rooftop AA emplacement for buildings that can fire.
-            c.fillStyle='#354d4d';c.beginPath();c.ellipse(sx+w,sy+4,6,3,0,0,Math.PI*2);c.fill();
-            const d=shot?Math.sign(shot.size):scene[4]<x?-1:1;rect(c,sx+w-1,sy-1,3,6,'#9ba986');rect(c,sx+w+(d<0?-10+recoil:0),sy,12-recoil,2,'#364951');rect(c,sx+w-1,sy-3,3,3,'#e2c38d');
-          }
+        let visualRecord=r,groundBlend=0;
+        if(type===1&&r[1]===1&&r[10]===1&&ground?.length){
+          const floor=ground[Math.max(0,Math.min(ground.length-1,Math.round(r[2]+w/2)))];
+          if(r[3]-floor<15){groundBlend=scene[17]?1:Math.max(0,1-scene[11]/4);visualRecord=Float64Array.from(r);visualRecord[4]+=(r[5]?-.67:.67)*groundBlend;}
         }
+        if(type===1&&r[1]===4) {
+          visualRecord=Float64Array.from(r);
+          visualRecord[4]=(Math.atan2(r[13],r[12])*8/Math.PI+16)%16;
+        }
+        const sprite=this.sprite(visualRecord,heap);
+        if(sprite){
+          const dw=sprite.worldWidth??w*2+2,dh=sprite.worldHeight??h*2+2;
+          if(type===4&&[3,4,5,20].includes(r[15])&&ground?.length){
+            const l=Math.max(0,Math.min(ground.length-1,Math.round(x))),right=Math.min(ground.length-1,l+w-1);
+            const slope=Math.atan2(-(ground[right]-ground[l]),w-1);
+            const shot=this.effects.find(e=>e.type===5&&Math.abs(e.x-x-w/2)<20&&tick-e.tick<2),kick=shot?Math.max(0,2-(time-shot.tick)*1.5):0;
+            c.save();c.translate(sx+w,sy+h*2);c.rotate(slope*(r[15]===20?.35:1));
+            if(r[15]===3&&scene[4]<x)c.scale(-1,1);
+            c.drawImage(sprite,-dw/2-kick,-dh+1,dw,dh);c.restore();
+          }else c.drawImage(sprite,sx+w-dw/2,sy+h-dh/2+groundBlend*3.2,dw,dh);
+        }
+        if(type===1)this.drawPlaneFire(r,camera,time);
         if(type===1 && r[10]===0 && r[1]!==3) {
           rect(c,sx+w-1,sy-6,3,2,P.redShade);rect(c,sx+w,sy-7,1,4,P.redShade);
         }
@@ -450,7 +524,8 @@
       if(aimVisible&&!this.aimVisible)this.aimActivations++;
       this.aimVisible=aimVisible;
       this.canvas.dataset.aimActivations=String(this.aimActivations);
-      this.drawEffects(camera,tick);
+      this.drawEffects(camera,time);
+      this.drawBailouts(camera,time,ground);
       // Native low-altitude collision geometry is preserved all the way down
       // to the original bottom edge; the information strip lives below the world.
       this.hud(scene,objects,trainer,ground);
@@ -476,8 +551,13 @@
       }
       for(const r of objects)if([1,4,7,8,9,12].includes(r[0])) {
         const point=mapPoint(r[2]+r[7]/2,r[3]-r[8]/2,s[3]);
-        const color=r[10]?P.gold:r[0]===1?P.red:r[0]===7||r[0]===8?P.white:r[0]===9?P.sand:r[6]===1?P.mint:P.red;
-        rect(c,point.x-(r[10]?2:1),point.y-H,r[10]?5:r[0]===4?3:2,r[0]===1?3:2,color);
+        const inactive=r[0]===4?r[1]!==5:r[0]===1?![1,6,8,9].includes(r[1]):r[0]===12?r[1]!==1:r[0]===9?r[1]!==5:false;
+        if(inactive){
+          rect(c,point.x-1,point.y-H,3,1,'#b2c1b7');rect(c,point.x,point.y-H-1,1,3,'#526d78');
+        }else{
+          const color=r[10]?P.gold:r[0]===1?P.red:r[0]===7||r[0]===8?P.white:r[0]===9?P.sand:r[6]===1?P.mint:P.red;
+          rect(c,point.x-(r[10]?2:1),point.y-H,r[10]?5:r[0]===4?3:2,r[0]===1?3:2,color);
+        }
       }
       c.strokeStyle='#9ce3e5';c.lineWidth=.6;c.strokeRect(185+s[2]/s[3]*260,6,320/s[3]*260,40);
       text(c,'FUEL',458,9,P.pale);rect(c,486,8,60,7,P.outline);rect(c,487,9,Math.max(0,Math.min(58,s[6]/9000*58)),5,P.mint);

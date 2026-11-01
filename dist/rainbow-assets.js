@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),cache=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),cache=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -9,6 +9,7 @@
     [26,916,286,299],[450,956,85,257],[682,952,233,243],[965,1031,263,174]];
   const extraFrames=[[58,89,306,443],[467,93,252,438],[758,128,493,403],[1267,332,490,199],
     [16,633,529,197],[622,691,295,110],[1060,624,162,206],[1447,586,261,249]];
+  const defenseFrames=[[46,62,451,376],[576,65,431,375],[1066,205,449,244]];
   const cowFrames=[[39,172,542,455],[670,266,532,361],[25,879,583,214],[641,915,593,183]];
   let loaded=false;
   function frameFor(r) {
@@ -18,6 +19,7 @@
     if(type===10)return 21;
     if(type===11)return 22;
     if(type===4) {
+      if(r[15]===20)return state!==5?26:r[4]===8?25:24;
       if(state!==5)return r[15]===3?20:r[15]===0?19:18;
       return ({0:4,1:5,2:7,3:6,4:8,5:9,6:16,7:10,18:11,19:17})[r[15]]??-1;
     }
@@ -28,15 +30,16 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=3,okay=true;
+    let remaining=4,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
     cows.onload=()=>done(cows.width===1254&&cows.height===1254);
-    atlas.onerror=extras.onerror=cows.onerror=()=>done(false);
+    pilots.onload=()=>done(pilots.width===1536&&pilots.height===1024);
+    atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=()=>done(false);
     atlas.src='assets/rainbow-sprites-v1.png';
     extras.src='assets/rainbow-extras-v1.png';
-    cows.src='assets/rainbow-cow-reaction-v1.png';
+    cows.src='assets/rainbow-cow-reaction-v1.png';pilots.src='assets/rainbow-defense-pilots-v1.png';
   }); }
   function sprite(r,heap) {
     if(!loaded){load();return null;}
@@ -44,22 +47,25 @@
     if(index<0||w<1||h<1||w>256||h>256||ptr<0||ptr+w*h>heap.length)return null;
     const key=[index,type,state,angle,orient,w,h,ptr,r[12]<0].join(':');
     if(cache.has(key))return cache.get(key);
-    const out=document.createElement('canvas');out.width=(w*2+2)*DETAIL;out.height=(h*2+2)*DETAIL;
+    const out=document.createElement('canvas');
+    const rotating=type===1||type===10,worldSize=type===1?46:type===10?30:0;
+    out.worldWidth=rotating?worldSize:w*2+2;out.worldHeight=rotating?worldSize:h*2+2;
+    out.width=out.worldWidth*DETAIL;out.height=out.worldHeight*DETAIL;
     const c=out.getContext('2d');c.imageSmoothingEnabled=true;c.scale(DETAIL,DETAIL);
-    const sheet=index<16?atlas:extras,crop=index<16?frames[index]:extraFrames[index-16];
+    const sheet=index<16?atlas:index<24?extras:pilots,crop=index<16?frames[index]:index<24?extraFrames[index-16]:defenseFrames[index-24];
     let left=w,top=h,right=0,bottom=0;
     for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(heap[ptr+y*w+x]) {
       left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x+1);bottom=Math.max(bottom,y+1);
     }
     if(right<=left||bottom<=top)return null;
     const bx=left*2+1,by=top*2+1,bw=(right-left)*2,bh=(bottom-top)*2;
-    if(type===1&&index!==3||type===10) {
-      // Rotate the new artwork inside the original native frame bounds.
-      // This canvas is visual only; original masks still own all collisions.
-      const a=-angle*Math.PI/8,co=Math.abs(Math.cos(a)),si=Math.abs(Math.sin(a)),fw=type===10?24:32,fh=type===10?8:20;
-      const scale=Math.min(bw/(fw*co+fh*si),bh/(fw*si+fh*co));
-      c.translate(bx+bw/2,by+bh/2);c.rotate(a);c.scale(1,type===1&&orient?-1:1);
-      c.drawImage(sheet,...crop,-fw/2*scale,-fh/2*scale,fw*scale,fh*scale);
+    if(rotating) {
+      // Keep aircraft/missile dimensions constant through a turn. The native
+      // mask's changing axis-aligned bounds must never rescale the artwork.
+      const a=state===3&&type===1?0:-angle*Math.PI/8;
+      const fw=type===10?24:32,fh=type===10?8:fw*crop[3]/crop[2];
+      c.translate(worldSize/2,worldSize/2);c.rotate(a);c.scale(1,type===1&&orient&&state!==3?-1:1);
+      c.drawImage(sheet,...crop,-fw/2,-fh/2,fw,fh);
     } else if(type===7) {
       for(const [x,y] of [[.05,.15],[.4,0],[.7,.3],[.2,.65],[.6,.75]])
         c.drawImage(sheet,...crop,Math.round(bx+x*bw*.75),Math.round(by+y*bh*.7),Math.ceil(bw*.3),Math.ceil(bh*.3));
@@ -75,8 +81,15 @@
     frame=Math.max(0,Math.min(3,frame));const key='cow:'+frame;
     if(cache.has(key))return cache.get(key);
     const crop=cowFrames[frame],out=document.createElement('canvas');
-    out.width=34*DETAIL;out.height=Math.ceil(34*crop[3]/crop[2]*DETAIL);
+    out.width=14*DETAIL;out.height=Math.ceil(14*crop[3]/crop[2]*DETAIL);
     out.getContext('2d').drawImage(cows,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
   }
-  window.RainbowAssets={DETAIL,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
+  function pilotPose(frame) {
+    if(!loaded)return null;
+    const bounds=[[99,671,336,276],[570,490,398,503],[1068,483,430,513]],crop=bounds[frame],width=frame===0?8:18;
+    const key='pilot:'+frame;if(cache.has(key))return cache.get(key);
+    const out=document.createElement('canvas');out.width=width*DETAIL;out.height=Math.ceil(width*crop[3]/crop[2]*DETAIL);
+    out.getContext('2d').drawImage(pilots,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
+  }
+  window.RainbowAssets={DETAIL,pilotPose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
 })();

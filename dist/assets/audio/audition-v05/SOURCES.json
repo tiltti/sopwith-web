@@ -1,0 +1,146 @@
+{
+  "acquired": "2026-11-01",
+  "sources": [
+    {
+      "name": "fanfare",
+      "title": "Trumpet Fanfare",
+      "author": "Graciano Choc / gchoc",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://opengameart.org/content/trumpet-fanfare",
+      "downloadUrl": "https://opengameart.org/sites/default/files/castlefanfare_0.ogg",
+      "original": "original/castlefanfare.ogg",
+      "output": "fanfare.wav",
+      "conversion": "Full source; mono 22050 Hz PCM16 WAV"
+    },
+    {
+      "name": "wah-wah",
+      "title": "wah wah sad trombone.wav",
+      "author": "kirbydx",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://freesound.org/people/kirbydx/sounds/175409/",
+      "downloadUrl": "https://cdn.freesound.org/previews/175/175409_1326576-hq.mp3",
+      "original": "original/sad-trombone.mp3",
+      "output": "wah-wah.wav",
+      "acquisition": "Freesound public HQ MP3 preview; not the login-only WAV master",
+      "conversion": "Mono 22050 Hz PCM16; gain 0.7, 15ms attack fade, final 300ms fade from 4.9 seconds"
+    },
+    {
+      "name": "moo",
+      "title": "Cow moo #8",
+      "author": "spurioustransients",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://freesound.org/people/spurioustransients/sounds/513565/",
+      "downloadUrl": "https://cdn.freesound.org/previews/513/513565_2898771-hq.mp3",
+      "original": "original/cow-moo-8.mp3",
+      "output": "moo.wav",
+      "acquisition": "Freesound public HQ MP3 preview; not the login-only WAV master",
+      "conversion": "Trim 2.8 seconds for 1.75 seconds; original pitch; mono 22050 Hz PCM16; gain 1.8; 35ms attack and 150ms tail fades"
+    },
+    {
+      "name": "bird",
+      "title": "Crow #1 (2764)",
+      "author": "Joseph SARDIN / BigSoundBank",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://bigsoundbank.com/crow-1-s2764.html",
+      "downloadUrl": "https://bigsoundbank.com/UPLOAD/bwf-en/2764.wav",
+      "original": "original/crow-2764.wav",
+      "output": "bird.wav",
+      "conversion": "Full 0.325-second source; mono 22050 Hz PCM16; 8ms attack and final 70ms fades"
+    },
+    {
+      "name": "radial",
+      "title": "Flywheel starting radial engine",
+      "author": "Torsten Nilsson",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://www.soundsofchanges.eu/sound/flywheel-starting-radial-engine/",
+      "licenseEvidence": "https://www.soundsofchanges.eu/use-the-sounds/",
+      "downloadUrl": "https://www.soundsofchanges.eu/soundfiles/578/578606fb6e8ce.mp3",
+      "original": "original/radial-j22.mp3",
+      "outputs": [
+        "startup.wav",
+        "radial-idle.wav"
+      ],
+      "acquisition": "Provider MP3 rendition of J22 engine start, recorded 2016-07-07; not the 96 kHz WAV master",
+      "conversion": "Startup: trim 39.1 seconds for 2.4 seconds, compressor threshold .03 ratio 3 makeup 1.5, attack/tail fades; idle: source 60..63 seconds duplicated with .12-second crossfade, take 1.5..4.38 seconds for a continuous 2.88-second loop; both mono 22050 Hz PCM16"
+    },
+    {
+      "name": "title-theme",
+      "title": "War Theme (version 2)",
+      "author": "Spring Spring",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://opengameart.org/content/war-theme",
+      "downloadUrl": "https://opengameart.org/sites/default/files/war%20theme%20ver%202_0.ogg",
+      "original": "original/war-theme-v2.ogg",
+      "output": "title-theme.m4a",
+      "conversion": "Full composition; stereo 22050 Hz AAC 64 kbps; low-pass 7000 Hz and 150ms attack fade"
+    }
+  ],
+  "files": [
+    {
+      "path": "bird.wav",
+      "bytes": 14670,
+      "sha256": "4f80d7d11c1cf3f9fd1724d1e3a08f63594a93fb08619444ffe2e753afbbb64b"
+    },
+    {
+      "path": "fanfare.wav",
+      "bytes": 106988,
+      "sha256": "8e3d6eac4baa8a441b952c0ab3a1202397a284b7826b79432d450a0730a1e9d7"
+    },
+    {
+      "path": "moo.wav",
+      "bytes": 77254,
+      "sha256": "bc3eb893f951b5e3a08c572a5426877469a819f80b093bf5bb53f49353d564ba"
+    },
+    {
+      "path": "original/castlefanfare.ogg",
+      "bytes": 61363,
+      "sha256": "a7d37b48477f22f6699eacffebade031079fa0649d0d3b3fbe2bd2da4f6c71eb"
+    },
+    {
+      "path": "original/cow-moo-8.mp3",
+      "bytes": 254521,
+      "sha256": "8172880d85714d56de54c65e097f8e473cf2666b3f060bc4c37acdac1726691b"
+    },
+    {
+      "path": "original/crow-2764.wav",
+      "bytes": 49504,
+      "sha256": "f6d5cb6c91f9ee47ba358d5e993a998079182076231b612de4e225e2572ef662"
+    },
+    {
+      "path": "original/radial-j22.mp3",
+      "bytes": 3495374,
+      "sha256": "1d97bb8ff2c78a28f76267471b92316e709dd81a4d8053c1c336473cb08b575b"
+    },
+    {
+      "path": "original/sad-trombone.mp3",
+      "bytes": 120891,
+      "sha256": "de4a029a0537dbecaf49b4936b0969919f5b7b54083d3859d584b5c4cc7dee3d"
+    },
+    {
+      "path": "original/war-theme-v2.ogg",
+      "bytes": 6890306,
+      "sha256": "1291731b7f99e58655954e5e6d1f256dc522601664bcd9c3d9d0d4618f020d3e"
+    },
+    {
+      "path": "radial-idle.wav",
+      "bytes": 127106,
+      "sha256": "d1d6ad13a407a6b0f27595f38e37e2d2b6c2d82325d18ef5cd0a52d6e87ab2a2"
+    },
+    {
+      "path": "startup.wav",
+      "bytes": 105938,
+      "sha256": "e0b1683487cca531ce6e7a52bbe8b5af3c35ffdde100ef22a77be0067816bf2a"
+    },
+    {
+      "path": "title-theme.m4a",
+      "bytes": 2340689,
+      "sha256": "88bbdf9cd2ad0408913bb6b95f309416400f8c9ccc10093e2e6587f467542d01"
+    },
+    {
+      "path": "wah-wah.wav",
+      "bytes": 229628,
+      "sha256": "3ee1569599c0ceba46f354e9334722143b5f7b3d82cc7479058da0997a9251ac"
+    }
+  ]
+}

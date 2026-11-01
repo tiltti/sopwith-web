@@ -25,7 +25,7 @@ the engine playback rate with native speed. Runtime gain, pitch, stereo pan,
 short envelopes and a low-pass filter give an Amiga-era sample-player feel.
 The original PC-speaker renderer remains in the classic edition.
 
-The mixer has four named voice slots. It creates no AudioContext or sample
+The current mixer has five named voice slots. It creates no AudioContext or sample
 requests until sound is explicitly enabled. Pause, mute and round end stop
 all voices. No third-party audio host is contacted during play.
 
@@ -37,8 +37,43 @@ from 0.15 seconds for 1.95 seconds, amplified 1.7×, and converted to mono 22050
 8-bit PCM as `cow-moo.wav`. Exact source URL/hash and conversion are recorded in
 `web/moo-source.json` and `SOURCES.json`.
 
-The bomb's falling whistle and release clunk, cannon report and short target
-fanfare are synthesized by original GPL code in `rainbow-audio.js`. They use
-22050 Hz, 8-bit quantization and the same four voice slots. Cannon bursts and
-machine guns cannot cut off a cow reaction or the short fanfare. Muted events
+The bomb's falling whistle and release clunk and cannon report are synthesized
+by original GPL code in `rainbow-audio.js`. They use 22050 Hz and 8-bit
+quantization. Cannon bursts and machine guns cannot cut off a cow reaction;
+recorded fanfares use a separate jingle slot. Muted events
 are consumed silently and never replayed when sound is enabled later.
+
+
+## v0.5 recorded cues and splash music
+
+The currently used new cues are in `audition-v05/`, with retained provider source
+files, exact source URLs, licenses, conversion details and SHA-256 in
+`audition-v05/SOURCES.json`. The older cow source above remains for provenance.
+
+- Fanfare: **Graciano Choc / gchoc**, “Trumpet Fanfare”, OpenGameArt, CC0.
+- Friendly-target disappointment: **kirbydx**, “wah wah sad trombone.wav”,
+  Freesound, CC0. The downloaded public HQ MP3 rendition is retained.
+- Cow: **spurioustransients**, “Cow moo #8”, Freesound, CC0. A 1.75-second
+  excerpt at original pitch replaces the previous slowed-down cow.
+- Bird impact: **Joseph SARDIN**, “Crow #1 / 2764”, BigSoundBank, CC0.
+- Startup/idle: **Torsten Nilsson**, “Flywheel starting radial engine”,
+  [Sounds of Changes](https://www.soundsofchanges.eu/sound/flywheel-starting-radial-engine/),
+  **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)**.
+  Recorded 7 July 2016; Swedish J22 / STWC-3 Twin Wasp radial engine.
+  Adapted from the provider MP3: a compressed/faded 2.4-second startup excerpt
+  and a crossfaded 2.88-second idle loop. This is not a Sopwith Camel recording.
+  Full license text: `licenses/CC-BY-4.0.txt`, also distributed in `source/`.
+- Splash: **Spring Spring**, “War Theme (version 2)”,
+  [OpenGameArt](https://opengameart.org/content/war-theme), CC0.
+  Original composition with military/orchestral/FM character; not a historical
+  WWII recording. Full piece converted to 22050 Hz stereo AAC at 64 kbps,
+  low-passed at 7 kHz. Original OGG retained.
+
+The game mixer now has five bounded slots, allowing recorded fanfares to play
+alongside gunfire. Splash music uses a separate opt-in HTML audio player and
+stops before play. Startup plays once for a new sound-enabled run; pause/unmute
+cannot replay it. The game still creates no audio requests or contexts on a
+muted launch. The look study page has explicit audition buttons only.
+
+Regenerate from retained sources with `python scripts/prepare_audio_v05.py`
+(requires ffmpeg's native AAC encoder). No runtime audio comes from third parties.

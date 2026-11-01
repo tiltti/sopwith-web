@@ -17,9 +17,10 @@ author or the SDL Sopwith maintainers.
   input bridge, pause, browser timer adaptation, read-only scene adapter,
   Rainbow Patrol pixel renderer and the Sopwith Tribute insignia.
 
-Rainbow Patrol keeps the original engine's collision masks and terrain data.
-New illustrated sprites are fitted to the occupied native frame bounds;
-their visual contours are separate from the unchanged collision pixels.
+Rainbow Patrol uses the original engine's collision and terrain data as its base.
+New illustrated sprites are fitted around the native world positions;
+their visual contours are separate from collision pixels. Aircraft masks remain
+native. Rainbow 0.5 supplies smaller cow masks and independent ground AA masks.
 Its background scenery, UI and insignia were created for this project.
 The new sprite atlases and splash were created with the built-in OpenAI
 imagegen tool. The full selected PNGs and final prompts are distributed in
@@ -37,9 +38,9 @@ Game SFX Index mirror after the official download returned HTTP 403. Official
 license listings, mirror commit, verification scope and runtime changes are
 recorded in its README and SOURCES.json. The classic edition's original
 PC-speaker sound is unchanged. A CC0 cow recording by **Joseph SARDIN**, from
-[BigSoundBank, Moo 0845](https://bigsoundbank.com/moo-s0845.html), is retained and
-trimmed for the cow reaction. The whistle, cannon report and fanfare are
-original synthesized cues in the GPL mixer code.
+[BigSoundBank, Moo 0845](https://bigsoundbank.com/moo-s0845.html), is retained
+as the previous cow reaction. Its replacement is credited below. The whistle
+and cannon report are original synthesized cues in the GPL mixer code.
 
 The arcade UI uses **Press Start 2P**, Copyright 2012 The Press Start 2P Project
 Authors, under **SIL Open Font License 1.1**. Its unmodified font, source record
@@ -59,7 +60,8 @@ notices have not been removed or replaced.
 Rainbow-only rules live in `web/variant.c`. `web/move.c` wraps the original
 return-to-base call so the Rainbow edition can hand off to landing one flight
 step earlier; the classic path calls the original function. Tank shells add
-ballistic gravity only in Rainbow. The vendored upstream source is unchanged and pinned to the
+ballistic gravity only in Rainbow. Rainbow 0.5 restores continuous source terrain,
+places buildings on foundations and gives them independent AA defenses. The vendored upstream source is unchanged and pinned to the
 `sdl-sopwith-2.9.0` release. Its source URL and archive SHA-256 are recorded in
 [web/UPSTREAM.json](web/UPSTREAM.json). The original DOS executable is retained
 separately for local comparison; it is not distributed in this repository.
@@ -83,3 +85,31 @@ binary. Redistribution should retain all of them.
 - <https://www.sopwith.org/>
 - <https://github.com/fragglet/sdl-sopwith>
 - <https://fragglet.github.io/sdl-sopwith/>
+
+
+## Rainbow 0.5 additional artwork and audio
+
+The defense/pilot atlas `dist/assets/rainbow-defense-pilots-v1.png` was created
+with the built-in OpenAI imagegen tool. Its unmodified full output and exact
+prompt are distributed in `dist/assets/ARTWORK.md`. Look studies A/B/C are
+code-rendered scenes made from this project's own assets, not RETRY screenshots.
+
+New CC0 sounds: Graciano Choc / gchoc, **Trumpet Fanfare** (OpenGameArt);
+kirbydx, **wah wah sad trombone.wav** (Freesound); spurioustransients,
+**Cow moo #8** (Freesound); Joseph SARDIN, **Crow #1 / 2764** (BigSoundBank).
+Splash music: Spring Spring, **War Theme (version 2)**, OpenGameArt, CC0.
+
+The radial engine startup and idle loop are adapted from **Flywheel starting
+radial engine**, recorded by **Torsten Nilsson**, 7 July 2016, available from
+[Sounds of Changes](https://www.soundsofchanges.eu/sound/flywheel-starting-radial-engine/),
+under **[Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/)**.
+Edits: short excerpts, mono 22050 Hz PCM conversion, startup dynamics/fades and
+an idle-loop crossfade. The provider MP3 is retained with the source/hash record
+in `dist/assets/audio/audition-v05/`. Full CC BY 4.0 text is distributed in
+`licenses/CC-BY-4.0.txt` and the deployed `source/` directory. It is a J22 / Twin
+Wasp radial engine recording, not a recording of a Sopwith aircraft.
+
+The external audio retains its stated CC0 / CC BY 4.0 license; those licenses
+are separate from the GPL license of the game code. The exact credits, original
+provider renditions, modifications, source URLs and hashes are recorded in
+`dist/assets/audio/audition-v05/SOURCES.json` and `dist/assets/audio/README.md`.

@@ -3,7 +3,7 @@
   const panel=document.getElementById('leaderboard');if(!panel)return;
   const $=id=>document.getElementById(id),frame=$('game');
   const edition=document.body.dataset.edition==='rainbow'?'rainbow':'classic';
-  let endpoint=null,ticket=null,runKey='',pending=null,trainerUsed=false,mode='practice',loading=0;
+  let endpoint=null,ticket=null,runKey='',pending=null,trainerUsed=false,mode='practice',loading=0,boardRows=[],savedRun='';
   const arcade=document.body.dataset.layout==='arcade';
   const status=text=>{$('scores-status').textContent=text;if($('arcade-score-status'))$('arcade-score-status').textContent=text;};
   const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}};
@@ -27,11 +27,26 @@
     });
     if(!rows.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=4;td.textContent='Ei vielä tuloksia tässä pelitilassa.';tr.append(td);body.append(tr);}
   }
+  function drawEntryBoard(){
+    if(!arcade||!$('entry-scores-rows'))return;
+    const body=$('entry-scores-rows');body.replaceChildren();if(!pending)return;
+    const rows=[...boardRows,{...pending,nickname:$('score-name').value.toUpperCase().padEnd(3,'A').slice(0,3),runId:runKey,provisional:true}];
+    rows.sort((a,b)=>b.score-a.score||Number(a.provisional)-Number(b.provisional));
+    const rank=rows.findIndex(r=>r.provisional)+1;$('entry-rank').textContent='SIJOITUS: '+rank;
+    rows.forEach((row,i)=>{
+      if(i>7&&!row.provisional)return;const tr=document.createElement('tr');
+      if(row.provisional)tr.className='current';
+      for(const value of [i+1,row.nickname,row.score]){const td=document.createElement('td');td.textContent=String(value);tr.append(td);}
+      body.append(tr);
+    });
+  }
+  if(arcade){window.addEventListener('sopwith-initials',drawEntryBoard);$('score-name').addEventListener('input',drawEntryBoard);}
   async function refresh() {
     await ready;const id=++loading,selected=$('scores-mode').value;
     try {
       const rows=endpoint?(await api(`/api/scores?edition=${edition}&mode=${selected}`)).scores:read(localKey(),[]);
-      if(id!==loading)return;draw(rows);status('');
+      if(id!==loading)return;boardRows=rows;draw(rows);drawEntryBoard();status('');
+      if(arcade&&savedRun){const index=rows.findIndex(row=>row.runId===savedRun);if(index>=0)$('scores-rows').children[index].className='current';}
     }catch{if(id===loading)status('Listan lataaminen epäonnistui. Voit yrittää uudelleen.');}
   }
   async function begin() {
@@ -51,8 +66,9 @@
     if(msg.type==='trainer-state'&&msg.enabled)trainerUsed=true;
     if(msg.type==='score-ready') {
       trainerUsed=trainerUsed||msg.trainerUsed;
-      if(trainerUsed){status('Trainer-lennon tulosta ei lisätä ennätyslistalle.');return;}
+      if(trainerUsed){status('Trainer-lennon tulosta ei lisätä ennätyslistalle.');if(arcade)window.dispatchEvent(new CustomEvent('sopwith-score-saved'));return;}
       pending={score:msg.score,level:msg.level,ticks:msg.ticks,trainerUsed:false};
+      if(arcade){$('scores-mode').value=mode;drawEntryBoard();refresh();}
       $('score-result').textContent=`Lennon tulos: ${msg.score} pistettä.`;
       $('score-consent').textContent=endpoint?'Nimimerkkisi ja tuloksesi näkyvät kaikille pelaajille.':'Tulos tallennetaan tähän selaimeen.';
       $('score-form').hidden=false;
@@ -77,7 +93,7 @@
       }
       write('sopwith.score-name',nickname);
       if(runKey===key){pending=null;$('score-form').hidden=true;$('scores-mode').value=mode;}
-      await refresh();status('Tulos tallennettu.');
+      savedRun=key;await refresh();status('Tulos tallennettu.');if(arcade)window.dispatchEvent(new CustomEvent('sopwith-score-saved'));
     } catch {status('Tulosta ei saatu tallennettua. Tulos säilyy lomakkeella uutta yritystä varten.');}
     finally{$('score-submit').disabled=false;}
   });

@@ -108,3 +108,26 @@ source rectangles and animation timing are in `rainbow-assets.js`.
 Final prompt:
 
 > Use case: stylized-concept. Asset type: one production cow reaction animation sprite atlas, transparent square canvas, exactly FOUR separate cow poses in a 2x2 layout with very generous empty gutters. The attached atlas is a character and style reference ONLY. Use the same cream dairy cow with warm brown patches, little horns and pink udder, side view facing RIGHT, rich original Amiga-style shaded pixel art. Maintain the same proportions, character and colors across all four poses. Top left: cow startled, head raised, front knees beginning to buckle. Top right: cow visibly TOPPLING ONTO ITS SIDE, legs folding under its belly, body tilted about 30 degrees. Bottom left: cow falling onto the ground, body on its side, legs folded, small dizzy eye and head resting sideways. Bottom right: cow LYING FLAT ON ITS SIDE, brown-and-cream body horizontal, folded legs, eyes closed, head resting on the ground. Non-graphic cartoon arcade reaction: absolutely no blood, wounds, gore, grayscale or shrinking. Each entire pose has a transparent background, no ground rectangle, no text, no labels, no borders, no extra objects. Crisp illustrated game asset detail matching the attached original art, NOT simple CGA pixels. All four cows fully separated with ample padding. The last pose must clearly read as a fallen cow lying down, not a standing cow scaled smaller.
+
+
+## Defense / pilot atlas, 2026-11-01
+
+`rainbow-defense-pilots-v1.png` (1536×1024 RGBA) is the complete selected output
+from the built-in OpenAI imagegen tool. The original main atlas was a style
+reference. Source rectangles were measured without altering the image.
+The top row supplies integrated crewed AA guns facing right/left and their
+wreck; the bottom row supplies freefall, cream parachute and burning-canopy poses.
+The generated soft alpha outside each object is cropped by the source rectangles.
+
+Final prompt:
+
+> Use case: stylized-concept. Asset type: production game sprite atlas, SIX separate sprites in a 3-column by 2-row grid on a genuinely transparent background. Use the attached original atlas as STYLE REFERENCE only: richly shaded Amiga-era pixel art with crisp readable silhouettes, warm olive metal, brass, cream highlights and dark navy outlines, not vector icons and not coarse CGA pixels. Exactly six clearly separated complete sprites, generous transparent gutters, no labels, no text, no scenery. Top row left: a standalone small WWII-style antiaircraft gun emplacement aimed diagonally UP RIGHT, mounted on a broad low olive tripod pedestal with two small olive-uniformed helmeted crew members physically operating it, complete base, gun, wheels/gears and coherent crew all one integrated sprite. Top row middle: same complete antiaircraft emplacement aimed UP LEFT with coherent crew. Top row right: a damaged destroyed version of the emplacement, collapsed bent barrel, dark olive wreck and a little debris, no crew gore. Bottom row left: a small WWI biplane pilot jumping/falling freely, goggles, leather helmet, brown flight suit and cream scarf, arms and legs apart; only the human figure and packed parachute. Bottom row middle: same pilot hanging below a fully deployed round CREAM PARACHUTE with thin clearly visible suspension lines, full canopy and pilot together, entire pose inside its cell. Bottom row right: same full parachute pose with an amber/red canopy and a few orange flames on the fabric edge, pilot intact, cartoon peril with absolutely no blood or gore. All shapes and humans must have meaningful illustrated detail like the source atlas, not crude rectangles. No ground strips. Each sprite individually centered within its own grid cell, no touching or overlap between sprites. Landscape atlas composition.
+
+## Look studies A/B/C
+
+`look-lab.html` uses this project's own sprite crops and a standalone code-drawn
+scene at three background pixel/detail levels. These are static art-direction
+studies, not recordings of live gameplay. Clouds use flat color clusters,
+without a shade gradient. Terrain, foundations, rays and rainbows are code art.
+No RETRY pixels are bundled. Selecting a study does not yet select a live-game
+renderer profile.

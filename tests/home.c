@@ -20,7 +20,7 @@ int main(void) {
     failures=successes=0;
     for(int offset=-700;offset<=700;offset+=350)for(int altitude=25;altitude<=125;altitude+=50)for(int direction=-1;direction<=1;direction+=2) {
         playmode=PLAYMODE_SINGLE;WebVariant_SetEnabled(edition==1);swinitlevel();
-        OBJECTS *p=consoleplayer;
+        OBJECTS *p=consoleplayer;WebVariant_Apply(p);
         int x=clamp_range(20,p->ob_original_ob->x+offset,currgame->gm_max_x-30);
         p->ob_x=x;p->ob_y=clamp_max(ground[x]+altitude,180);p->ob_athome=false;p->ob_home=true;
         /* Begin clear of solid scenery; an initial overlap cannot be

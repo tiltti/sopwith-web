@@ -1,5 +1,51 @@
 # Validation
 
+## 2026-11-01: Rainbow 0.5 bug fixes and A/B/C art studies
+
+- Aircraft art uses invariant world dimensions in a padded rotation canvas.
+  Tests compare all 16 headings and verify that a falling wreck rotates.
+  Resting aircraft use a tail-down pose that lifts progressively during roll.
+- Cow art is 14 logical pixels wide, including its four falling poses. Native
+  Rainbow-only cow masks are independently resampled to 7×5 occupied pixels;
+  upstream masks stay untouched and classic uses the original mask.
+- Rainbow restores the continuous source ground instead of native per-building
+  flattening. Buildings have visible foundations; tanks/vehicles follow slope.
+  Independent AA units have their own native collision masks, target counts and
+  firing. Building shots are suppressed, so no invisible rooftop shooter remains.
+  Tests cover hill placements, runway clearance, native target counts and firing.
+- The minimap uses red only for active enemy objects; inactive/destroyed locations
+  retain a subdued cross marker. Marker-state and continuous-arch symmetry
+  regression tests pass.
+- Disabled planes have rotating wrecks, animated smoke/fire, descending crash
+  audio and one bailout per plane. Canopy motion is time-based, with an occasional
+  burning-canopy variation. Tests check one-time ejection and repaint deduplication.
+- Bird/flock hits emit a grouped native feather event, a short recorded corvid
+  cry and 12/28 feather/debris particles. Sound is rate-limited to one per 3 ticks.
+- Recorded trumpet, sad trombone and normal-pitch moo replace earlier synthesized
+  or slowed cues. A short 2.4-second real radial startup is armed only for a new
+  sound-enabled run. Recorded idle follows it; mute/resume cannot replay startup.
+  Five in-game voice slots keep jingles independent from gunfire.
+- Splash music is opt-in, has no request before explicit sound enable, stops on
+  play/tab hiding/mute and uses a retained CC0 orchestral/FM composition. Tests
+  verify the lifecycle without speaker output. Radial audio is CC BY 4.0 with
+  complete attribution, modifications, provider source bytes and license text.
+- Three look studies use identical positions/assets at background grid/detail
+  levels 1.5, 0.75 and 1/3 logical pixels. They are static art-direction compositions,
+  not captures of native gameplay. The live final profile awaits user selection.
+  Native browser screenshots are saved for comparison without changing fullscreen.
+- Browser end-screen fixture showed the previous Q7Z/1234 entry and provisional
+  rank 2 behind the initials. Typing Z05 and saving opened the final board
+  automatically, retaining the new local entry and the new-game/main-menu actions.
+- Browser audio harness decoded all ten WAVs plus two synthesized cues. An
+  OfflineAudioContext mix reached peak 0.1274 and RMS 0.0221 without speaker
+  output; the AAC splash track reported 283.7 seconds of playable metadata.
+- Classic browser smoke test with the same WASM build displayed the original
+  SDL canvas and kept the Rainbow canvas hidden. Native classic rule tests pass.
+  The existing early main-loop-timing warning is still logged during boot.
+- Actual audio quality still needs the user's subjective listening review; no
+  claim of a listening test or authentic Amiga hardware emulation is made.
+
+
 ## 2026-11-01: Rainbow 0.4 arcade UI, smooth display and combat feedback
 
 - Production framebuffer is 1920×1404. The 640×400 logical world is separate

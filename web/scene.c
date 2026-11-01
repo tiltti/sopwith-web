@@ -14,6 +14,7 @@
 #include "swmain.h"
 #include "swinit.h"
 #include "scene.h"
+#include "variant.h"
 
 static int scene[WEB_SCENE_HEADER + SCR_WDTH + WEB_SCENE_OBJECTS * WEB_SCENE_STRIDE];
 
@@ -65,7 +66,7 @@ EMSCRIPTEN_KEEPALIVE const int *web_scene(void)
         r[11] = ob->ob_life;
         r[12] = ob->ob_dx; r[13] = ob->ob_dy;
         r[14] = ob->ob_clr;
-        r[15] = ob->ob_original_ob ? ob->ob_original_ob->orient : 0;
+        r[15] = WebVariant_ObjectKind(ob);
         r[16] = (int)(uintptr_t)ob;
         r[17] = ob->ob_owner == consoleplayer ? 1 : !ob->ob_owner ? 0
             : ob->ob_owner->ob_type == TARGET ? 100 + ob->ob_owner->ob_orient

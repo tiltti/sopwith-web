@@ -13,6 +13,8 @@ OBJECTS *consoleplayer, *objtop;
 int countmove, displx, maxcrash, gamenum;
 playmode_t playmode;
 
+int WebVariant_ObjectKind(const OBJECTS *ob){return ob->ob_original_ob?ob->ob_original_ob->orient:0;}
+
 int main(void)
 {
     const int *s = web_scene();

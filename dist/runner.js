@@ -132,7 +132,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261101-arcade4',
+      locateFile: name => 'engine/' + name + '?v=20261101-v05b',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -154,7 +154,7 @@
     window.sopwith = game;
     game._web_variant(params.get('edition') === 'rainbow' ? 1 : 0);
     game._web_trainer(trainerEnabled ? 1 : 0);
-    if(params.get('edition')==='rainbow'&&window.RainbowAudio)sampleMixer=new RainbowAudio();
+    if(params.get('edition')==='rainbow'&&window.RainbowAudio)sampleMixer=new RainbowAudio({startup:params.get('muted')==='0'});
     if (params.get('edition') === 'rainbow' && window.RainbowRenderer) {
       const display = document.getElementById('rainbow');
       const renderer = new RainbowRenderer(display);

@@ -26,6 +26,7 @@
     $('sound-icon').textContent = value ? '◖×' : '◖))';
     $('mute').setAttribute('aria-label', value ? 'Laita äänet päälle' : 'Mykistä äänet');
     post('mute', { value });
+    if(document.body?.dataset.layout==='arcade')window.dispatchEvent?.(new CustomEvent('sopwith-mute',{detail:{muted:value}}));
   }
   function showLayer(id) {
     for (const layer of ['launch', 'loading', 'paused', 'error', 'complete']) {

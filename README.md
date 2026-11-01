@@ -35,10 +35,13 @@ snaps across respawns and holds its clock while paused.
 The Canvas 2D framebuffer is **1920 × 1404**: a logical 640 × 400 flight area,
 plus a separate 68-pixel instrument strip, rendered at 3× detail. Higher-detail
 atlas crops remain intact instead of first reducing them to a 34-pixel sprite.
-Terrain strips are cached and slide smoothly. The map plots true world altitude,
+Terrain strips are cached and slide smoothly. The original source landscape is
+restored under buildings; foundations bridge slopes instead of cutting abrupt
+platforms. Vehicles follow the slope. Cow collision masks are scaled with the art. The map plots true world altitude,
 birds and ground objects below the flight area; no instruments hide targets.
+Aircraft artwork now keeps the same world dimensions through every rotation.
 The scene includes soft drifting smoke, muzzle flashes, brass-colored tracers,
-rooftop AA emplacements, tank recoil, ballistic tank shells and animated cows
+independent crewed ground AA emplacements, tank recoil, ballistic tank shells and animated cows
 that topple and remain lying down. One level rainbow is masked by actual terrain.
 
 The Sopwith flight model, AI, terrain and native collision masks remain the base.
@@ -55,17 +58,23 @@ Rainbow-only integration rules are in `web/variant.c`:
 - Ground tank shots have gravity and their own muzzle events. Target destruction
   gives a brief TARGET DESTROYED message and fanfare. Friendly targets are identified.
 
-`dist/rainbow-ui.js` supplies keyboard/mouse/touch arcade menus. Game over asks for
-exactly three A–Z/0–9 initials, editable by typing or arrows. The pause/settings
+`dist/rainbow-ui.js` supplies keyboard/mouse/touch arcade menus. Game over shows the current board and provisional rank behind
+exactly three A–Z/0–9 initials, editable by typing or arrows. Saving ends on
+the high-score list with the submitted local run highlighted. The pause/settings
 screens use the game's own style. Fullscreen transitions do not pause the game
 through a transient visibility event; changing tabs normally still does.
 
-`dist/rainbow-audio.js` uses four named Web Audio voice slots. Five Kenney CC0
-samples and Joseph SARDIN's CC0 moo are bundled as original files plus 22050 Hz
-8-bit mono WAV conversions. Whistle/clunk, cannon and fanfare cues are synthesized
-by original code. Sounds follow native events, with priorities protecting the
-cow reaction and fanfare. No context or sample request exists before explicit
-sound enable. Mute/pause/loss stop voices. Classic retains its PC-speaker audio.
+`dist/rainbow-audio.js` uses five named Web Audio voice slots. Recorded CC0
+gunfire, impacts, explosions, cow, bird and jingle cues are bundled alongside
+a CC BY 4.0 radial-engine recording. Retained provider files, conversions and
+attribution are documented in the audio README. Whistle/clunk and cannon cues
+are synthesized by original code. Sounds follow native events, with priorities
+protecting the cow reaction and fanfare. No context or sample request exists
+before explicit sound enable. Mute/pause/loss stop voices. The recorded trumpet fanfare and friendly-target
+sad trombone have their own bounded jingle slot. A short real radial-engine startup
+plays only for a new sound-enabled run; it cannot replay on unmute. Disabled
+aircraft descend with fire/smoke, crash audio and an occasional burning parachute
+bailout. Bird/flock hits have grouped squawks and feather sprays. Classic retains its PC-speaker audio.
 
 `dist/assets/ARTWORK.md` records all full imagegen PNGs and prompts. The arcade
 font is Press Start 2P under OFL 1.1. Provenance/licenses are in `NOTICE.md` and
@@ -73,6 +82,20 @@ font is Press Start 2P under OFL 1.1. Provenance/licenses are in `NOTICE.md` and
 Rainbow Islands and Amiga-era games are references; none of their files is bundled.
 WebGL or Three.js is not required for this measured 2D path. A separate flight
 model and new obstacle courses are future work.
+
+## Art-direction studies
+
+[Compare A/B/C](https://tiltti.github.io/sopwith-web/look-lab.html) renders the
+same composed scene at three environment pixel/detail levels. It includes
+flat-color clouds, slope foundations, proportional animals and integrated AA
+art. Airfield, hillside and bailout scenes, aircraft rotation, optional animation
+and PNG export are provided. These are art-direction studies, not three playable
+engines. The final live environment profile awaits the user's selection.
+
+Splash music is Spring Spring's CC0 **War Theme (version 2)**, converted to
+22050 Hz stereo AAC. It is an original military/orchestral/FM-style composition,
+not a historical WWII recording. The splash sound button is opt-in; title music
+stops before gameplay. Full source/license details are in the audio README.
 
 ## High scores
 
@@ -162,6 +185,7 @@ node tests/rainbow-renderer.mjs
 node tests/rainbow-assets.mjs
 node tests/rainbow-audio.mjs
 node tests/rainbow-timeline.mjs
+node tests/title-audio.mjs
 node tests/leaderboard.mjs
 python3 scripts/test_trainer.py
 python3 scripts/test_scene.py

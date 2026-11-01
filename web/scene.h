@@ -12,7 +12,8 @@
  * ground-height-array-pointer, 3 reserved. Rainbow span is 220 native pixels.
  * Then 320 visible ground heights (native upward Y coordinates).
  * Object record: type, state, world-x/y, angle, orientation, faction, width,
- * height, sprite-byte-pointer, is-player, life, dx/dy, colour, original-orient,
+ * height, sprite-byte-pointer, is-player, life, dx/dy, colour, visual-kind
+ * (original-orient, or 20 for independent Rainbow AA),
  * object-id, owner-kind (1 player, 2 other plane, 100+target-kind).
  * Sprite bytes index the original 4-colour masks; zero is transparent. */
 #define WEB_SCENE_VERSION 3
