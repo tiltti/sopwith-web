@@ -35,6 +35,21 @@ assert.equal(renderer.trail.length,1,'A respawn/teleport must not draw a trail a
 assert.equal(display.dataset.rainbow,'true');
 scene[2]=600;renderer.drawScene(scene,heap);
 assert.equal(display.dataset.rainbow,'false','The landmark must not repeat farther across the map.');
+// Different ground heights must clip a level arch, never shear its shape.
+scene[2]=100;scene[22]=20;scene[23]=80;calls.length=0;
+renderer.landmark(scene);
+const archColumns=new Map();
+for(const [,x,y,,,color] of calls) {
+  const key=`${color}:${x}`;
+  archColumns.set(key,Math.min(y,archColumns.get(key)??Infinity));
+}
+assert.ok(archColumns.size>100);
+for(const [key,top] of archColumns) {
+  const [color,x]=key.split(':');
+  assert.equal(archColumns.get(`${color}:${440-Number(x)}`),top,
+    'Every rainbow band must have equal heights on opposite sides of its centre.');
+}
+assert.ok(calls.some(c=>c[2]>=398),'The feet extend below terrain so its mask can cover them.');
 const ground=new Int32Array(2000).fill(40);
 const plane=scene.subarray(r,r+Renderer.STRIDE);
 const hit=Renderer.predictBomb(plane,ground);
@@ -43,6 +58,16 @@ plane[12]=-4;
 assert.ok(Renderer.predictBomb(plane,ground).x<plane[2],'The impact estimate follows the actual launch velocity.');
 plane[12]=4;plane[3]=180;
 assert.ok(Renderer.predictBomb(plane,ground).ticks>hit.ticks,'A higher release takes longer to reach the ground.');
+calls.length=0;renderer.aim(scene,[plane],ground);
+assert.ok(display.dataset.aimX,'An airborne plane with bombs has an impact marker.');
+const marker=calls.filter(c=>['#fff2ce','#ffdb81','#263b55'].includes(c[5]));
+const markerWidth=Math.max(...marker.map(c=>c[1]+c[3]))-Math.min(...marker.map(c=>c[1]));
+assert.ok(markerWidth>=23,'The outlined impact marker must remain large enough to see.');
+assert.ok(marker.some(c=>c[5]==='#fff2ce')&&marker.some(c=>c[5]==='#263b55'),
+  'The marker needs both a bright face and a dark outline for sky/grass contrast.');
+renderer.aimEnabled=false;calls.length=0;renderer.aim(scene,[plane],ground);
+assert.equal(calls.length,0,'The optional aim switch still hides the entire guide.');
+renderer.aimEnabled=true;
 scene[2]=100;scene[1]=12;
 const effects=new Int32Array(196);effects.set([1,1,1,6,1,12,1,200,80,2]);
 renderer.drawScene(scene,heap,false,effects,ground);assert.equal(renderer.effects.length,1);
@@ -50,4 +75,4 @@ renderer.drawScene(scene,heap,false,effects,ground);assert.equal(renderer.effect
 scene[1]=29;renderer.drawScene(scene,heap,false,effects,ground);assert.equal(renderer.effects.length,0);
 scene[12]=1;renderer.drawScene(scene,heap,false,effects,ground);
 assert.equal(display.dataset.renderer,'rainbow','Winning must keep the same renderer.');
-console.log('Rainbow renderer: alignment, one anchored landmark, bomb estimate, effect deduplication/expiry and unchanged masks verified.');
+console.log('Rainbow renderer: alignment, level grounded arch, visible optional bomb marker, bomb estimate, effect deduplication/expiry and unchanged masks verified.');

@@ -71,14 +71,13 @@
   }
   function rainbow(c,xLeft,yLeft,xRight,yRight) {
     const colors=[P.red,P.yellow,P.grass,P.mint,P.blue,P.purple];
-    const rx=(xRight-xLeft)/2,cx=xLeft+rx,ry=145;
-    // One world-anchored arch. Both feet extend under the true terrain;
-    // foreground ground masks them, including different endpoint heights.
+    const rx=(xRight-xLeft)/2,cx=xLeft+rx,ry=145,base=Math.max(yLeft,yRight);
+    // Keep the ellipse level even when the terrain under its feet is uneven.
+    // Both feet extend below ground; foreground terrain hides the excess.
     for(let x=-rx;x<=rx;x+=2) for(let band=0;band<6;band++) {
       const outerX=rx-band*5,innerX=outerX-5;
       if(Math.abs(x)>outerX)continue;
       const top=-(ry-band*5)*Math.sqrt(1-(x/outerX)**2);
-      const base=yLeft+(yRight-yLeft)*(x+rx)/(rx*2);
       const bottom=Math.abs(x)>=innerX?H-base:-(ry-(band+1)*5)*Math.sqrt(1-(x/innerX)**2);
       for(let y=Math.floor(top/2)*2;y<=bottom;y+=2)rect(c,cx+x,base+y,2,2,colors[band]);
     }
@@ -264,16 +263,23 @@
       const player=objects.find(r=>r[10]===1),hit=predictBomb(player,ground);
       if(!hit)return;
       const c=this.c,camera=scene[2],x=(hit.x-camera)*2,y=(199-hit.y)*2;
-      if(x<7||x>W-7)return;
+      if(x<12||x>W-12)return;
       this.canvas.dataset.aimX=String(hit.x);this.canvas.dataset.aimY=String(hit.y);
       for(let i=1;i<hit.path.length;i+=2) {
         const p=hit.path[i],px=(p.x-camera)*2,py=(199-p.y)*2;
         if(px>3&&px<W-3&&py>43&&py<y-9)rect(c,px,py,2,2,P.cloudDeep);
       }
-      rect(c,x-6,y-7,4,1,P.cream);rect(c,x-6,y-7,1,4,P.cream);
-      rect(c,x+3,y-7,4,1,P.cream);rect(c,x+6,y-7,1,4,P.cream);
-      rect(c,x-2,y-5,5,1,P.ink);rect(c,x,y-7,1,5,P.ink);
-      rect(c,x-2,y-1,5,1,P.gold);
+      // A compact 21-pixel bracket, outlined on both sky and bright grass.
+      for(const side of [-1,1]) {
+        const left=x+(side<0?-10:5),edge=x+(side<0?-10:9);
+        for(const top of [y-13,y-5]) {
+          rect(c,left-1,top-1,8,4,P.ink);rect(c,left,top,6,2,P.cream);
+        }
+        rect(c,edge-1,y-14,4,12,P.ink);rect(c,edge,y-13,2,10,P.cream);
+      }
+      rect(c,x-4,y-9,9,4,P.ink);rect(c,x-1,y-12,3,10,P.ink);
+      rect(c,x-3,y-8,7,2,P.gold);rect(c,x,y-11,1,8,P.gold);
+      rect(c,x-2,y-1,5,2,P.ink);rect(c,x-1,y-1,3,1,P.gold);
     }
     sprite(record,heap) {
       const [type,state,,,,,faction,w,h,ptr,,life,,,,orient]=record;

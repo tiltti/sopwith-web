@@ -1,5 +1,16 @@
 # Validation
 
+## 2026-11-01: Level rainbow and clearer bomb marker
+
+- The rainbow uses one horizontal baseline below both endpoint ground heights.
+  Terrain clips its feet without shearing the arch. A regression test compares
+  mirrored column heights in every band over uneven ground.
+- The bomb marker has a 21-pixel bright bracket with a dark outline (23 pixels
+  overall), up from 13 pixels. Prediction and collision behaviour are unchanged.
+- Browser QA at the native starting location inspected the level arch and
+  ground masking, then flew to display the marker at world x=1308, y=64.
+  The aim switch still hides/restores it while paused. Audio remained off.
+
 ## 2026-11-01: Rainbow combat/visual fixes and score persistence
 
 - The rainbow is one world landmark, with feet extending underneath the true
