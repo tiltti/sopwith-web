@@ -15,55 +15,64 @@ The collection homepage links two separately playable editions:
 - **[Sopwith II](https://tiltti.github.io/sopwith-web/classic.html)**: the classic
   SDL/CGA renderer, two palettes and original PC-speaker sound.
 - **[Sopwith: Rainbow Patrol](https://tiltti.github.io/sopwith-web/rainbow.html)**:
-  an Amiga-inspired 640×400 pixel renderer with shaded sprites, bright skies,
-  parallax clouds, a rainbow, flight trails and new instruments. Its first
-  release retains the classic flight model, AI and terrain. The new edition
-  adds a rapid bomb salvo with downward separation, a switchable ground-impact
-  estimate while B is held, original pixel explosion/feather effects and its
-  own end/retry view. A painted splash, detailed aircraft/animal/target atlases,
-  rounded clouds, tracers and muzzle flashes replace the first art pass.
+  a separate, screen-filling Amiga-inspired arcade edition. A painted splash,
+  pixel-font menus and three-character high-score entry surround a higher-detail
+  renderer with a smooth camera, illustrated sprites and a dedicated bottom HUD.
 
-The common navigation links are normal pages, so changing editions stops the
-previous game. More editions can be added without changing either engine path.
-Audio starts disabled on every page load and can be
-enabled with the sound button or S. It never starts automatically.
+The hub and info pages are separate from the game. Changing editions stops the
+previous game. Audio starts disabled on every page load and can be enabled with
+the sound button or S during flight. It never starts automatically.
 
-## Rainbow Patrol renderer
+## Rainbow Patrol renderer and variant rules
 
-`web/scene.c` exports a read-only snapshot of the current C game state. Its
-versioned integer ABI is documented in `web/scene.h`: a 28-integer header,
-320 ground heights and up to 256 object records of 16 integers. Sprite bytes
-remain owned by the original engine. `dist/rainbow-renderer.js` reads a fresh
-heap view when a native tick changes and draws at twice the native resolution.
-Terrain geometry and all collision masks remain native. New visual sprites
-fit the occupied bounds of the native frames, with their own illustrated
-contours; they do not replace or modify the engine's collision pixels.
-Native menus/text entry retain SDL; the mission end and retry view stay in the
-Rainbow theme. A single rainbow landmark has world coordinates and feet masked
-by the actual terrain. It no longer repeats or stops above the ground.
+`web/scene.c` exports a read-only native snapshot: ABI v3 has a 28-integer header,
+320 ground heights and up to 256 object records of 18 integers, including stable
+object identity and projectile-owner kind. The C simulation remains at 10 Hz.
+`dist/rainbow-timeline.js` interpolates camera, positions and aircraft angles on
+requestAnimationFrame, without changing collision masks or native state. It
+snaps across respawns and holds its clock while paused.
 
-`dist/rainbow-assets.js` extracts explicitly bounded atlas frames, preserves
-their aspect ratios and rotates aircraft within the native frame bounds.
-Artwork and final imagegen prompts are recorded in `dist/assets/ARTWORK.md`.
-The splash starts with a click, touch or Space. The optional impact guide
-appears only while the bomb key/screen button is held and clears on release,
-blur or pause. The ordinary supply remains five bombs; returning to base
-replenishes it normally.
+The Canvas 2D framebuffer is **1920 × 1404**: a logical 640 × 400 flight area,
+plus a separate 68-pixel instrument strip, rendered at 3× detail. Higher-detail
+atlas crops remain intact instead of first reducing them to a 34-pixel sprite.
+Terrain strips are cached and slide smoothly. The map plots true world altitude,
+birds and ground objects below the flight area; no instruments hide targets.
+The scene includes soft drifting smoke, muzzle flashes, brass-colored tracers,
+rooftop AA emplacements, tank recoil, ballistic tank shells and animated cows
+that topple and remain lying down. One level rainbow is masked by actual terrain.
 
-Rainbow uses `dist/rainbow-audio.js`, a four-voice Web Audio sample mixer.
-Five Kenney CC0 originals and their 22050 Hz 8-bit mono WAV conversions are
-bundled locally. Engine pitch follows native speed; gunfire, release and
-explosion cues follow actual game state. Mute/pause/end stop all voices.
-No AudioContext or sample request is created until the player enables sound.
-Classic retains its SDL PC-speaker audio. Provenance, conversions and hashes
-are in `dist/assets/audio/`; `web/ASSET-LOCK.json` locks the full asset roster.
+The Sopwith flight model, AI, terrain and native collision masks remain the base.
+Rainbow-only integration rules are in `web/variant.c`:
 
-The scene adapter does not change game state or upstream sources. Artwork in
-`dist/assets/tribute-mark.svg` and the background renderer is original to this
-project. Amiga-era pixel games, Rainbow Islands and Rovio's RETRY are visual
-references; their assets and code are not included. A separate flight model or
-new obstacle courses are not implemented yet. `web/variant.c` is enabled only
-for Rainbow Patrol and preserves the classic edition's weapon timing.
+- Hold B/the screen bomb control to aim; release to drop **one** bomb. A quick
+  tap does the same. Holding cannot spend the whole stock. Blur/pause cancel.
+- Five starting bombs; returning to base replenishes supplies. Separate releases
+  may leave several bombs airborne. The guide estimates terrain impact, without
+  accounting for intervening buildings or other objects.
+- A return-to-base wrapper captures the aircraft one flight step earlier, before
+  collision checking can crash it into the runway during its final approach.
+  The original autopilot remains in the classic edition.
+- Ground tank shots have gravity and their own muzzle events. Target destruction
+  gives a brief TARGET DESTROYED message and fanfare. Friendly targets are identified.
+
+`dist/rainbow-ui.js` supplies keyboard/mouse/touch arcade menus. Game over asks for
+exactly three A–Z/0–9 initials, editable by typing or arrows. The pause/settings
+screens use the game's own style. Fullscreen transitions do not pause the game
+through a transient visibility event; changing tabs normally still does.
+
+`dist/rainbow-audio.js` uses four named Web Audio voice slots. Five Kenney CC0
+samples and Joseph SARDIN's CC0 moo are bundled as original files plus 22050 Hz
+8-bit mono WAV conversions. Whistle/clunk, cannon and fanfare cues are synthesized
+by original code. Sounds follow native events, with priorities protecting the
+cow reaction and fanfare. No context or sample request exists before explicit
+sound enable. Mute/pause/loss stop voices. Classic retains its PC-speaker audio.
+
+`dist/assets/ARTWORK.md` records all full imagegen PNGs and prompts. The arcade
+font is Press Start 2P under OFL 1.1. Provenance/licenses are in `NOTICE.md` and
+`dist/assets/`; `web/ASSET-LOCK.json` locks the complete asset roster. RETRY,
+Rainbow Islands and Amiga-era games are references; none of their files is bundled.
+WebGL or Three.js is not required for this measured 2D path. A separate flight
+model and new obstacle courses are future work.
 
 ## High scores
 
@@ -119,15 +128,16 @@ python3 -m http.server 8080 --bind 127.0.0.1 --directory dist
 ```
 
 Open <http://127.0.0.1:8080>. An HTTP server is required for WASM loading.
-The game is a static website. Its settings and high scores are stored locally
-in the browser's IndexedDB when available. No backend or account is required
+The game is a static website. Native settings use IndexedDB; browser preferences
+and high scores use localStorage when available. No backend or account is required
 by the game itself.
 
 ## Controls
 
 X / right arrow: increase throttle. Z / left arrow: decrease throttle.
 Comma / up arrow: elevator up. Slash / down arrow: elevator down.
-Period: roll. Space: fire. B: bomb. H: return home. P / Escape: pause.
+Period: roll. Space: fire. B: bomb (Rainbow: hold to aim, release to drop).
+H: return home. P / Escape: pause.
 On-screen buttons provide the same game inputs on touch devices.
 S toggles sound during flight. In native game menus S remains the single-player
 selection; menu navigation and text entry are handled by the original game.
@@ -149,9 +159,13 @@ C / SDL2 / Emscripten / WASM architecture and source provenance.
 ```sh
 node tests/browser-controls.mjs
 node tests/rainbow-renderer.mjs
+node tests/rainbow-assets.mjs
+node tests/rainbow-audio.mjs
+node tests/rainbow-timeline.mjs
 node tests/leaderboard.mjs
 python3 scripts/test_trainer.py
 python3 scripts/test_scene.py
+python3 scripts/test_home.py
 python3 scripts/verify_release.py
 ```
 

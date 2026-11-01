@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include "sw.h"
 #include "swmain.h"
 #include "scene.h"
@@ -28,6 +29,7 @@ int main(void)
                       .ob_life=8700, .ob_rounds=199, .ob_bombs=4, .ob_crashcnt=2,
                       .ob_faction=FACTION_PLAYER1, .ob_symbol=&symbol,
                       .ob_drwflg=true, .ob_original_ob=&original, .ob_next=&enemy};
+    enemy.ob_owner=&player;
     OBJECTS before_player=player, before_enemy=enemy;
     currgame=&game; ground=terrain; consoleplayer=objtop=&player;
     playmode=PLAYMODE_SINGLE; countmove=123; displx=8; maxcrash=5;
@@ -40,8 +42,10 @@ int main(void)
     const int *r=s+WEB_SCENE_HEADER+320;
     assert(r[0]==PLANE && r[2]==160 && r[3]==100 && r[6]==FACTION_PLAYER1);
     assert(r[7]==2 && r[8]==2 && r[10]==1);
+    assert(r[16]==(int)(uintptr_t)&player);
     r+=WEB_SCENE_STRIDE;
     assert(r[0]==TARGET && r[2]==500 && r[10]==0 && r[15]==3);
+    assert(r[16]==(int)(uintptr_t)&enemy&&r[17]==1);
     assert(memcmp(&player,&before_player,sizeof(player))==0);
     assert(memcmp(&enemy,&before_enemy,sizeof(enemy))==0);
     assert(terrain[8]==8 && mask[2]==2);

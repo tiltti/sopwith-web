@@ -1,0 +1,16 @@
+<!doctype html><html lang="fi"><meta charset="utf-8"><title>Arcade UI fixture</title>
+<style>body{margin:0;background:#243b55;color:#fff2ce;font:14px monospace}nav{height:48px;display:flex;gap:20px;align-items:center;padding:0 20px}button{padding:8px}iframe{width:100%;height:calc(100vh - 48px);border:0;display:block}</style>
+<nav><span>Development-only end-screen fixture (local score 1234)</span><button id="end">Show GAME OVER</button><span id="result"></span></nav>
+<iframe id="app" src="../dist/rainbow.html" title="Production arcade UI"></iframe>
+<script>
+const app=document.getElementById('app');
+document.getElementById('end').onclick=()=>{
+ const w=app.contentWindow,d=app.contentDocument;
+ if(d.body.dataset.gameState!=='playing'){document.getElementById('result').textContent='Start practice first.';return;}
+ d.getElementById('pause').click();
+ const source=d.getElementById('game').contentWindow;
+ for(const data of [{type:'round-ended',score:1234},{type:'score-ready',score:1234,level:2,ticks:500,trainerUsed:false}])
+   w.dispatchEvent(new MessageEvent('message',{origin:location.origin,source,data:{sopwith:true,...data}}));
+ document.getElementById('result').textContent='Fixture messages delivered; real simulation paused.';
+};
+</script></html>

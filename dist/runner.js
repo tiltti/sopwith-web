@@ -4,10 +4,11 @@
   const params = new URLSearchParams(location.search);
   const held = new Set();
   const physicalHeld = new Map();
-  let game, paused = false, storage = false, visualRenderer, sampleMixer, repaint = false;
+  let game, paused = false, storage = false, visualRenderer, visualTimeline, sampleMixer, repaint = false;
   let trainerEnabled = params.get('trainer') === '1';
   let trainerUsed = trainerEnabled, scoreSent = false;
   let lastInputMode = -1;
+  const clock=()=>typeof performance==='undefined'?Date.now():performance.now();
   const send = (type, extra = {}) => parent.postMessage({ sopwith: true, type, ...extra }, location.origin);
   const keyMap = {
     ArrowUp:54, Comma:54, ArrowDown:56, Slash:56, ArrowRight:27, KeyX:27,
@@ -29,12 +30,18 @@
   }
   function key(scancode, down) {
     if (!game || paused || !scancode) return;
+    const wasHeld=held.has(scancode);
     if (down) held.add(scancode); else held.delete(scancode);
     updateAim();
+    if(scancode===5&&params.get('edition')==='rainbow') {
+      if(!down&&wasHeld)game._web_bomb(1);
+      return;
+    }
     game._web_key(scancode, down ? 1 : 0);
   }
   function release() {
-    if (game) for (const scan of held) game._web_key(scan, 0);
+    if (game) for (const scan of held) if(scan!==5||params.get('edition')!=='rainbow')game._web_key(scan, 0);
+    game?._web_bomb?.(0);
     held.clear();
     physicalHeld.clear();
     updateAim();
@@ -53,6 +60,7 @@
   }
   function pause(value) {
     release();
+    if(value)visualTimeline?.pause(clock());else visualTimeline?.resume(clock());
     paused = value;
     game?._web_pause(value ? 1 : 0);
     audio();
@@ -124,7 +132,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261101-amiga1',
+      locateFile: name => 'engine/' + name + '?v=20261101-arcade4',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -154,30 +162,34 @@
       renderer.aimEnabled=params.get('aim')!=='0';
       updateAim();
       window.RainbowAssets?.ready.then(()=>{repaint=true;});
-      let renderedTick = -1, wasActive = false, endSent = false;
-      const draw = () => {
+      visualTimeline=window.RainbowTimeline?new RainbowTimeline():null;
+      let renderedTick=-1,wasActive=false,endSent=false,snapshot,effects,ground,lastDisplay;
+      let frameCount=0,metricAt=clock(),drawTotal=0;
+      const draw = (now=clock()) => {
         const inputMode=game._web_input_mode();
         let active=inputMode===1 || inputMode===0 && game._web_read(9)>0;
-        const tick = game._web_read(0);
-        if (active && (tick !== renderedTick || !wasActive || repaint)) {
-          const ptr = game._web_scene() >>> 2;
-          const scene = game.HEAP32.subarray(ptr,ptr+RainbowRenderer.LENGTH);
-          const effectPtr=game._web_effects()>>>2;
-          const effects=game.HEAP32.subarray(effectPtr,effectPtr+196);
-          const groundPtr=scene[24]>>>2;
-          const ground=game.HEAP32.subarray(groundPtr,groundPtr+scene[3]);
-          sampleMixer?.step(scene,effects);
-          active=renderer.drawScene(scene,game.HEAPU8,trainerEnabled,effects,ground);
-          if(active && scene[12]===2 && !endSent) {
-            endSent=true;pause(true);
-            send('round-ended',{score:scene[10]});
-          }
-          renderedTick = scene[1];
-          repaint=false;
+        const tick=game._web_read(0);
+        if(active&&(tick!==renderedTick||!wasActive)) {
+          const ptr=game._web_scene()>>>2;
+          snapshot=game.HEAP32.slice(ptr,ptr+RainbowRenderer.LENGTH);
+          const effectPtr=game._web_effects()>>>2;effects=game.HEAP32.slice(effectPtr,effectPtr+196);
+          const groundPtr=snapshot[24]>>>2;ground=game.HEAP32.slice(groundPtr,groundPtr+snapshot[3]);
+          visualTimeline?.push(snapshot,now);sampleMixer?.step(snapshot,effects);
+          renderedTick=tick;
+          if(snapshot[12]===2&&!endSent) {endSent=true;pause(true);send('round-ended',{score:snapshot[10]});}
         }
-        display.hidden = !active;
-        canvas.style.visibility = active ? 'hidden' : 'visible';
-        wasActive = active;
+        if(active&&snapshot&&(!paused||repaint||!lastDisplay)) {
+          const begin=clock();
+          const displayScene=visualTimeline?.sample(now)||snapshot;
+          active=renderer.drawScene(displayScene,game.HEAPU8,trainerEnabled,effects,ground);
+          lastDisplay=displayScene;repaint=false;frameCount++;drawTotal+=clock()-begin;
+        }
+        if(now-metricAt>=1000) {
+          display.dataset.fps=(frameCount*1000/(now-metricAt)).toFixed(1);
+          display.dataset.drawMs=(drawTotal/Math.max(1,frameCount)).toFixed(2);
+          frameCount=0;drawTotal=0;metricAt=now;
+        }
+        display.hidden=!active;canvas.style.visibility=active?'hidden':'visible';wasActive=active;
         requestAnimationFrame(draw);
       };
       requestAnimationFrame(draw);

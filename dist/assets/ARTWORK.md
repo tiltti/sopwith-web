@@ -15,7 +15,8 @@ project's GPL-2.0-or-later source. They are not taken from another game.
   water tower, ruins, a tank wreck, missile, flare and windsock. The first
   atlas was a style reference. Source rectangles are measured explicitly.
 
-The game remains a Canvas renderer with a 640×400 logical framebuffer. The
+The Canvas renderer uses a 640×400 logical flight area plus a 68-pixel HUD,
+rendered into a 1920×1404 framebuffer. The
 art is Amiga-inspired; this is not a claim of authentic Amiga palette or
 hardware compatibility. Clouds and combat particles are original code art.
 
@@ -95,3 +96,15 @@ pixels, no labels or borders. Exactly 8 sprites, row-major order:
 Amiga deluxe-game pixel clusters, not CGA and not a vector icon. Preserve
 natural proportions and leave generous transparent space all around each
 object. No company logos, no text. Transparent background.
+
+
+## Cow reaction atlas, 2026-11-01
+
+File: `rainbow-cow-reaction-v1.png` (1254 × 1254 RGBA). Generated with the
+built-in OpenAI imagegen tool, using this project's main sprite atlas as the
+character/style reference. The complete original output is retained. Runtime
+source rectangles and animation timing are in `rainbow-assets.js`.
+
+Final prompt:
+
+> Use case: stylized-concept. Asset type: one production cow reaction animation sprite atlas, transparent square canvas, exactly FOUR separate cow poses in a 2x2 layout with very generous empty gutters. The attached atlas is a character and style reference ONLY. Use the same cream dairy cow with warm brown patches, little horns and pink udder, side view facing RIGHT, rich original Amiga-style shaded pixel art. Maintain the same proportions, character and colors across all four poses. Top left: cow startled, head raised, front knees beginning to buckle. Top right: cow visibly TOPPLING ONTO ITS SIDE, legs folding under its belly, body tilted about 30 degrees. Bottom left: cow falling onto the ground, body on its side, legs folded, small dizzy eye and head resting sideways. Bottom right: cow LYING FLAT ON ITS SIDE, brown-and-cream body horizontal, folded legs, eyes closed, head resting on the ground. Non-graphic cartoon arcade reaction: absolutely no blood, wounds, gore, grayscale or shrinking. Each entire pose has a transparent background, no ground rectangle, no text, no labels, no borders, no extra objects. Crisp illustrated game asset detail matching the attached original art, NOT simple CGA pixels. All four cows fully separated with ample padding. The last pose must clearly read as a fallen cow lying down, not a standing cow scaled smaller.

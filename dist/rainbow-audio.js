@@ -2,7 +2,7 @@
 // Kenney CC0 samples: assets/audio/SOURCES.json and LICENSE.txt.
 (() => {
   const SAMPLE={engine:'engineCircular_000',gun:'impactPunch_heavy_000',
-    metal:'impactMetal_light_000',blast:'explosionCrunch_000',boom:'lowFrequency_explosion_000'};
+    metal:'impactMetal_light_000',blast:'explosionCrunch_000',boom:'lowFrequency_explosion_000',moo:'cow-moo'};
   class RainbowAudio {
     constructor(options={}) {
       this.Context=options.AudioContext||window.AudioContext||window.webkitAudioContext;
@@ -28,6 +28,7 @@
             if(!response.ok)throw new Error(`Sample unavailable: ${file}`);
             this.buffers[name]=await this.context.decodeAudioData(await response.arrayBuffer());
           }));
+          this.makeCues();
         }
         await this.context.resume();await this.loading;
         if(!this.requested)return;
@@ -40,8 +41,31 @@
       voice.source.disconnect();voice.gain.disconnect();voice.pan?.disconnect();
     }
     stopAll() {for(const channel of [...this.voices.keys()])this.stop(channel);}
-    play(channel,name,{gain=.2,rate=1,pan=0,duration,loop=false}={}) {
+    makeCues() {
+      const rate=22050,make=(name,seconds,fn)=>{
+        const b=this.context.createBuffer(1,Math.ceil(rate*seconds),rate),data=b.getChannelData(0);
+        let phase=0,seed=12345;
+        for(let i=0;i<data.length;i++) {
+          const t=i/rate;seed=(Math.imul(seed,1664525)+1013904223)|0;
+          const noise=(seed>>>0)/2147483648-1;
+          const value=fn(t,noise,frequency=>{phase+=frequency/rate;return Math.sin(phase*Math.PI*2);});
+          data[i]=Math.round(Math.max(-1,Math.min(1,value))*127)/127;
+        }
+        this.buffers[name]=b;
+      };
+      make('whistle',3.2,(t,n,sine)=>{
+        const clunk=t<.06?n*(1-t/.06)*.65:0;
+        return clunk+sine(1600*Math.exp(-t*.7)+220+12*Math.sin(t*32))*Math.min(1,t/.025)*Math.max(0,1-t/3.2)*.42;
+      });
+      make('cannon',.85,(t,n,sine)=>(n*.55+sine(100*Math.exp(-t*12)+42)*.65)*Math.exp(-t*7)*Math.min(1,t/.003));
+      make('fanfare',.85,(t,n,sine)=>{
+        const notes=[784,988,1175,1568],index=Math.min(3,Math.floor(t/.13)),start=index*.13,end=index===3?.85:(index+1)*.13;
+        return sine(notes[index])*Math.min(1,(t-start)/.008,(end-t)/.045)*.4;
+      });
+    }
+    play(channel,name,{gain=.2,rate=1,pan=0,duration,loop=false,priority=0}={}) {
       if(!this.enabled||!this.buffers[name])return null;
+      if((this.voices.get(channel)?.priority??-1)>priority)return this.voices.get(channel);
       this.stop(channel);
       const source=this.context.createBufferSource(),level=this.context.createGain();
       source.buffer=this.buffers[name];source.playbackRate.value=rate;source.loop=loop;
@@ -49,7 +73,7 @@
       const stereo=this.context.createStereoPanner?.();
       if(stereo){stereo.pan.value=Math.max(-1,Math.min(1,pan));level.connect(stereo);stereo.connect(this.master);}
       else level.connect(this.master);
-      const voice={source,gain:level,pan:stereo};this.voices.set(channel,voice);
+      const voice={source,gain:level,pan:stereo,priority,name};this.voices.set(channel,voice);
       source.onended=()=>{if(this.voices.get(channel)===voice)this.stop(channel);};
       const now=this.context.currentTime;source.start(now);
       if(duration){level.gain.setValueAtTime(gain,now);level.gain.exponentialRampToValueAtTime(.001,now+duration);source.stop(now+duration+.01);}
@@ -59,9 +83,9 @@
       const tick=scene[1];if(tick===this.lastTick)return;
       const reset=tick<this.lastTick;this.lastTick=tick;
       if(reset){this.stopAll();this.lastEffect=effects?.[1]||0;this.lastBombs=null;}
-      const camera=scene[2],audible=this.enabled&&scene[12]===0;
+      const camera=scene[2],audible=this.enabled&&scene[12]!==2;
       if(!audible)this.stopAll();
-      if(audible&&[1,6,8,9].includes(scene[13])) {
+      if(audible&&scene[12]===0&&[1,6,8,9].includes(scene[13])) {
         let engine=this.voices.get('engine');
         if(!engine)engine=this.play('engine','engine',{loop:true,gain:.08});
         engine?.source.playbackRate.setTargetAtTime(.6+scene[11]*.055,this.context.currentTime,.12);
@@ -70,30 +94,33 @@
       if(audible) {
         let shot=null;
         for(let i=0;i<scene[14];i++) {
-          const r=scene.subarray(348+i*16,348+(i+1)*16);
-          if(r[0]===3&&r[11]>=9&&r[2]>=camera-40&&r[2]<=camera+360){shot=r;break;}
+          const r=scene.subarray(348+i*18,348+(i+1)*18);
+          if(r[0]===3&&r[17]<100&&r[11]>=9&&r[2]>=camera-40&&r[2]<=camera+360){shot=r;break;}
         }
         if(shot) {
           const pan=(shot[2]-camera-160)/180;
           this.play('gun','gun',{gain:.28,rate:1.8,pan,duration:.075});
-          this.play('mechanical','metal',{gain:.055,rate:2.1,pan,duration:.045});
         }
-        if(this.lastBombs!==null&&scene[8]<this.lastBombs)
-          this.play('mechanical','metal',{gain:.1,rate:.65,duration:.14});
       }
       this.lastBombs=scene[8];
       if(effects?.[0]===1) {
-        let latest=null;
+        const pending=[];
         for(let i=0;i<32;i++) {
           const at=4+i*6,id=effects[at],age=tick-effects[at+1];
-          if(id>this.lastEffect&&age>=0&&age<3&&effects[at+2]===1&&Math.abs(effects[at+3]-camera-160)<360)
-            if(!latest||id>latest.id)latest={id,x:effects[at+3],size:effects[at+5]};
+          if(id>this.lastEffect&&age>=0&&age<3&&Math.abs(effects[at+3]-camera-160)<500)
+            pending.push({id,type:effects[at+2],x:effects[at+3],size:effects[at+5]});
         }
         this.lastEffect=effects[1];
-        if(audible&&latest) {
-          const pan=(latest.x-camera-160)/180;
-          this.play('fx','blast',{gain:.35,rate:1.05-latest.size*.08,pan});
-          this.play('mechanical','boom',{gain:.22,rate:.9,pan});
+        if(audible)for(const event of pending.sort((a,b)=>a.id-b.id)) {
+          const pan=(event.x-camera-160)/180;
+          if(event.type===4)this.play('mechanical','whistle',{gain:.2,pan,priority:3});
+          if(event.type===5)this.play('fx','cannon',{gain:.45,rate:Math.abs(event.size)===4?.85:1.1,pan,priority:1});
+          if(event.type===1) {
+            this.stop('mechanical');this.play('mechanical','blast',{gain:.42,rate:1.05-event.size*.08,pan,priority:2});
+            this.play('fx','boom',{gain:.24,rate:.9,pan,priority:1});
+          }
+          if(event.type===3)this.play('fx','moo',{gain:.65,rate:.88,pan,priority:4});
+          if(event.type===6&&event.size>=0)this.play('gun','fanfare',{gain:.24,priority:3});
         }
       }
     }

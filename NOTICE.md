@@ -36,7 +36,14 @@ Impact Sounds, both **CC0-1.0**. The unmodified OGG originals, converted
 Game SFX Index mirror after the official download returned HTTP 403. Official
 license listings, mirror commit, verification scope and runtime changes are
 recorded in its README and SOURCES.json. The classic edition's original
-PC-speaker sound is unchanged.
+PC-speaker sound is unchanged. A CC0 cow recording by **Joseph SARDIN**, from
+[BigSoundBank, Moo 0845](https://bigsoundbank.com/moo-s0845.html), is retained and
+trimmed for the cow reaction. The whistle, cannon report and fanfare are
+original synthesized cues in the GPL mixer code.
+
+The arcade UI uses **Press Start 2P**, Copyright 2012 The Press Start 2P Project
+Authors, under **SIL Open Font License 1.1**. Its unmodified font, source record
+and full license are in `dist/assets/fonts/` and `licenses/PressStart2P-OFL.txt`.
 
 Additional references discussed during development include Triplane Turmoil
 and Super Sukkula. Their game files and artwork are not bundled. The new
@@ -49,7 +56,10 @@ License version 2 or, at your option, any later version**
 [COPYING.md](COPYING.md), and individual source-file notices. Existing upstream
 notices have not been removed or replaced.
 
-The vendored upstream source is unchanged and pinned to the
+Rainbow-only rules live in `web/variant.c`. `web/move.c` wraps the original
+return-to-base call so the Rainbow edition can hand off to landing one flight
+step earlier; the classic path calls the original function. Tank shells add
+ballistic gravity only in Rainbow. The vendored upstream source is unchanged and pinned to the
 `sdl-sopwith-2.9.0` release. Its source URL and archive SHA-256 are recorded in
 [web/UPSTREAM.json](web/UPSTREAM.json). The original DOS executable is retained
 separately for local comparison; it is not distributed in this repository.

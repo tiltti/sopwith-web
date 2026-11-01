@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 6090,
-      "sha256": "785821a06d37e38e86e2834131a61d3f6e46e73f287e14331277e8e699700df7"
+      "bytes": 7850,
+      "sha256": "4626ef60f49d8dea8249575e47d4c84e2bf34d24aa2fa5fc50cc45e5ed557475"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -14,13 +14,18 @@
     },
     {
       "path": "dist/assets/audio/README.md",
-      "bytes": 1676,
-      "sha256": "661500a3a988a95fb6c0bbab3ab77b9852b786c998b5439c43545058248275b6"
+      "bytes": 2505,
+      "sha256": "efaf30297efe4e26aa49cb56b395112499dc0567941924c92ce230fb50f9b655"
     },
     {
       "path": "dist/assets/audio/SOURCES.json",
-      "bytes": 4848,
-      "sha256": "6c93dc30deaca3d394f2875820fa4b829367e01f0a65f1b546fa07873377f12d"
+      "bytes": 5752,
+      "sha256": "960cf8ab5810c241d906d4d4a85f4e7180ca4677edf90813842aa0779835925d"
+    },
+    {
+      "path": "dist/assets/audio/cow-moo.wav",
+      "bytes": 43286,
+      "sha256": "429e96497bc0bfd23cef7cf5a026b4f0e7e266f0813c95749e4ab5f1a7492b18"
     },
     {
       "path": "dist/assets/audio/engineCircular_000.wav",
@@ -73,9 +78,34 @@
       "sha256": "3cb48d86dab63140cfb9aaeea4d4a6846abaca5831d157d8adbec0490da26343"
     },
     {
+      "path": "dist/assets/audio/original/moo-0845.wav",
+      "bytes": 2233504,
+      "sha256": "996fed8b1c27360f2950657a1a2d710f4cae9e0c7c65300937722ec0b423abaa"
+    },
+    {
       "path": "dist/assets/classic-cover.svg",
       "bytes": 989,
       "sha256": "a34ae60becb77d00574e92a01ac4eba0a7e17b35dafe002a60cfc8c7379be43e"
+    },
+    {
+      "path": "dist/assets/fonts/OFL.txt",
+      "bytes": 4414,
+      "sha256": "a9a71896a5529847aef353d53b15f28d50dfacec1ce9ad58f7192239b981dbaf"
+    },
+    {
+      "path": "dist/assets/fonts/PressStart2P-Regular.ttf",
+      "bytes": 118204,
+      "sha256": "034c77f1f05ec89421e4a63f0e3a4ca1ecf852cc6d2bf611f126f275728e017d"
+    },
+    {
+      "path": "dist/assets/fonts/SOURCE.json",
+      "bytes": 316,
+      "sha256": "b83dd916f142b034726c2d55d9407b2ded95add8ed14690d1cce3e8770e17898"
+    },
+    {
+      "path": "dist/assets/rainbow-cow-reaction-v1.png",
+      "bytes": 992391,
+      "sha256": "2fc524280abba50756f327e151364d494daad36cfa077a3dd5c0308925eafff7"
     },
     {
       "path": "dist/assets/rainbow-extras-v1.png",

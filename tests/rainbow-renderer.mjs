@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 
 const calls=[];
-function context() { return {fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
+function context() { return {setTransform(){},scale(){},translate(){},rotate(){},save(){},restore(){},beginPath(){},ellipse(){},fill(){},strokeRect(){},createRadialGradient(){return {addColorStop(){}};},fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
 function canvas() { const c=context();return {dataset:{},getContext:()=>c}; }
 const scope={window:{},document:{querySelectorAll:()=>[],createElement:()=>canvas()},Int32Array,Math};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-renderer.js',import.meta.url),'utf8'),scope);
@@ -12,7 +12,7 @@ const Renderer=scope.window.RainbowRenderer;
 const display=canvas(),renderer=new Renderer(display);
 const scene=new Int32Array(Renderer.LENGTH),heap=new Uint8Array(64);
 assert.equal(renderer.drawScene(scene,heap),false,'No scene is drawn before the C game has initialised.');
-scene.set([2,10,100,2000,152,100,9000,200,5,5,0,5,0,1,1,100]);
+scene.set([3,10,100,2000,152,100,9000,200,5,5,0,5,0,1,1,100]);
 scene[21]=100;scene[22]=40;scene[23]=40;
 scene.fill(40,Renderer.HEADER,Renderer.HEADER+320);
 const r=Renderer.HEADER+320;
@@ -21,6 +21,9 @@ heap.set([0,1,2,3],16);
 const beforeScene=scene.slice(),beforeHeap=heap.slice();
 assert.equal(renderer.drawScene(scene,heap),true);
 assert.equal(display.dataset.renderer,'rainbow');
+assert.equal(display.width,1920);assert.equal(display.height,1404);
+assert.ok(Renderer.mapPoint(100,199,2000).y>=400,'The entire minimap is outside the flight area.');
+assert.ok(Renderer.mapPoint(100,199,2000).y<Renderer.mapPoint(100,0,2000).y,'Real altitude determines map height.');
 assert.equal(display.dataset.tick,'10');
 assert.equal(display.dataset.objects,'1');
 assert.deepEqual(scene,beforeScene,'The renderer must not alter game state.');
@@ -54,6 +57,8 @@ const ground=new Int32Array(2000).fill(40);
 const plane=scene.subarray(r,r+Renderer.STRIDE);
 const hit=Renderer.predictBomb(plane,ground);
 assert.ok(hit&&hit.x>plane[2]&&hit.y===40&&hit.ticks>5);
+const smoothPlane=Float64Array.from(plane);smoothPlane[2]+=.5;
+assert.ok(Renderer.predictBomb(smoothPlane,ground),'The interpolated plane must retain a stable bomb guide between native ticks.');
 plane[12]=-4;
 assert.ok(Renderer.predictBomb(plane,ground).x<plane[2],'The impact estimate follows the actual launch velocity.');
 plane[12]=4;plane[3]=180;

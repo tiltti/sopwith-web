@@ -6,3 +6,5 @@ node_modules/
 *.tar
 *.tar.gz
 !dist/source/*.tar.gz
+
+__pycache__/

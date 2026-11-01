@@ -19,11 +19,13 @@ static Uint32 paused_at, paused_duration;
 
 EMSCRIPTEN_KEEPALIVE void web_pause(int value)
 {
+    if (value) WebVariant_BombRelease(false);
     if ((value != 0) == paused) return;
     if (value) paused_at = SDL_GetTicks();
     else paused_duration += SDL_GetTicks() - paused_at;
     paused = value != 0;
 }
+EMSCRIPTEN_KEEPALIVE void web_bomb(int release) { WebVariant_BombRelease(release != 0); }
 
 int Timer_GetMS(void)
 {

@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "third_party/sdl-sopwith/src"
 
 
-def main():
+def main(test_source="trainer.c"):
     output = ROOT / "build"
     output.mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="trainer-test-", dir=output) as directory:
@@ -25,9 +25,9 @@ def main():
         video_object = temporary / "video.o"
         subprocess.run([compiler, *flags, *cflags, "-DVid_GetPrefPath=Native_Vid_GetPrefPath",
                         "-c", str(SRC / "sdl/video.c"), "-o", str(video_object)], check=True)
-        sources = sorted(SRC.glob("*.c"))
+        sources = sorted(p for p in SRC.glob("*.c") if p.name != "swmove.c")
         sources += [SRC / "sdl" / name for name in ("pcsound.c", "timer.c", "controller.c")]
-        sources += [ROOT / "web/trainer.c", ROOT / "web/variant.c", ROOT / "tests/trainer.c"]
+        sources += [ROOT / "web/trainer.c", ROOT / "web/variant.c", ROOT / "web/move.c", ROOT / "tests" / test_source]
         binary = temporary / "trainer-test"
         subprocess.run([compiler, *flags, *cflags, '-DWEB_TEST_PREF_PATH="' + str(prefs) + '/"',
                         *map(str, sources), str(video_object), *libs, "-lm", "-o", str(binary)], check=True)

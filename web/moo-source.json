@@ -1,0 +1,12 @@
+{
+  "author": "Joseph SARDIN",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "sourceUrl": "https://bigsoundbank.com/moo-s0845.html",
+  "downloadUrl": "https://bigsoundbank.com/UPLOAD/bwf-en/0845.wav",
+  "path": "moo-0845.wav",
+  "bytes": 2233504,
+  "sha256": "996fed8b1c27360f2950657a1a2d710f4cae9e0c7c65300937722ec0b423abaa",
+  "acquired": "2026-11-01",
+  "conversion": "ffmpeg: start 0.15 seconds, duration 1.95 seconds, gain 1.7, mono, 22050 Hz unsigned 8-bit PCM"
+}

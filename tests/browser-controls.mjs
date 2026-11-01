@@ -66,7 +66,7 @@ async function runnerTests() {
 }
 
 async function pageTests() {
-  const elements = new Map(), documentHandlers = {}, windowHandlers = {}, sent = [];
+  const elements = new Map(), documentHandlers = {}, windowHandlers = {}, sent = [], animationFrames=[];
   function element() { return { hidden:true, value:'0', dataset:{}, listeners:{}, lastElementChild:{},
     classList:{add() {},remove() {}}, setAttribute(name,value) { this[name] = value; },
     addEventListener(name,fn) { this.listeners[name] = fn; }, focus() {} }; }
@@ -79,6 +79,7 @@ async function pageTests() {
     setTimeout:() => 1, clearTimeout() {}, console,
     addEventListener:(name,fn) => {windowHandlers[name] = fn;} };
   scope.window = scope;
+  scope.requestAnimationFrame=fn=>animationFrames.push(fn);
   vm.runInNewContext(await readFile(new URL('../dist/app.js',import.meta.url),'utf8'),scope);
   assert.equal(get('mute')['aria-pressed'], 'true', 'Sound starts off.');
   scope.trainer(); get('start').listeners.click();
@@ -96,7 +97,15 @@ async function pageTests() {
   assert.equal(get('mute')['aria-pressed'], 'false');
   scope.trainer(false); get('restart').listeners.click(); get('start').listeners.click();
   assert.match(get('game').src,/trainer=0/);
-  message({type:'ready',inputMode:1});message({type:'round-ended',score:250});
+  message({type:'ready',inputMode:1});
+  scope.document.querySelector=()=>({requestFullscreen:async()=>{scope.document.hidden=true;documentHandlers.visibilitychange();}});
+  const pauses=()=>sent.filter(x=>x.type==='pause'&&x.value).length;
+  const beforeFullscreen=pauses();await get('fullscreen').listeners.click();
+  assert.equal(pauses(),beforeFullscreen,'A transient fullscreen visibility event cannot pause the parked plane.');
+  while(animationFrames.length)animationFrames.shift()();
+  documentHandlers.visibilitychange();assert.equal(pauses(),beforeFullscreen+1,'Normal tab hiding still pauses.');
+  scope.document.hidden=false;get('resume').listeners.click();
+  message({type:'round-ended',score:250});
   assert.equal(get('complete').hidden,false);
   assert.equal(get('complete-score').textContent,'Pisteet: 250');
   get('play-again').listeners.click();assert.match(get('game').src,/edition=rainbow/);
@@ -109,15 +118,15 @@ await pageTests();
 // Regression: the native end screen has input mode zero, but must retain
 // the tribute renderer rather than exposing the underlying CGA canvas.
 {
-  const handlers={},frames=[],sent=[],pauseChanges=[],aimFrames=[];
+  const handlers={},frames=[],sent=[],pauseChanges=[],aimFrames=[],bombChanges=[];
   let inputMode=1,end=0,tick=10;
   const normal={dataset:{},style:{},focus(){}},display={dataset:{}};
-  const heap=new Int32Array(9000);heap[0]=2;heap[3]=2000;
+  const heap=new Int32Array(9000);heap[0]=3;heap[3]=2000;
   const engine={HEAP32:heap,HEAPU8:new Uint8Array(heap.buffer),IDBFS:{},
     FS:{mkdir(){},mount(){},syncfs(initial,cb){cb(null);},mkdirTree(){},
       analyzePath(){return {exists:false};},writeFile(){},readFile(){return '';}}
     ,_web_variant(){},_web_trainer(){},_web_palette(){},_web_key(){},_web_sound(){},
-    _web_input_mode:()=>inputMode,_web_read:n=>n===9?end:n===0?tick:160,
+    _web_bomb:x=>bombChanges.push(x),_web_input_mode:()=>inputMode,_web_read:n=>n===9?end:n===0?tick:160,
     _web_scene:()=>0,_web_effects:()=>20000,_web_pause:x=>pauseChanges.push(x),callMain(){}};
   const parent={postMessage:msg=>sent.push(msg)};
   class Renderer{static LENGTH=4444;drawScene(s){aimFrames.push(this.bombHeld);return s[3]>0;}}
@@ -131,15 +140,19 @@ await pageTests();
   await new Promise(resolve=>setImmediate(resolve));
   frames.shift()();assert.equal(display.hidden,false);
   assert.equal(aimFrames.at(-1),false,'Aim starts hidden.');
-  handlers.keydown(event('KeyB','b'));frames.shift()();
+  handlers.keydown(event('KeyB','b'));handlers.keydown({...event('KeyB','b'),repeat:true});frames.shift()();
+  assert.equal(bombChanges.filter(x=>x===1).length,0,'Holding B never launches a bomb.');
   assert.equal(aimFrames.at(-1),true,'Holding physical B repaints aim without waiting for a game tick.');
   handlers.keyup(event('KeyB','b'));frames.shift()();
   assert.equal(aimFrames.at(-1),false,'Releasing B immediately hides aim.');
+  assert.equal(bombChanges.filter(x=>x===1).length,1,'One release launches exactly one bomb.');
+  handlers.keyup(event('KeyB','b'));assert.equal(bombChanges.filter(x=>x===1).length,1);
   const touch=down=>handlers.message({origin,source:parent,data:{sopwith:true,type:'key',scan:5,down}});
   touch(true);frames.shift()();assert.equal(aimFrames.at(-1),true,'The screen bomb button also shows aim.');
   touch(false);frames.shift()();assert.equal(aimFrames.at(-1),false);
   touch(true);frames.shift()();handlers.blur();frames.shift()();
   assert.equal(aimFrames.at(-1),false,'Losing focus cannot leave aim or the bomb key stuck.');
+  assert.equal(bombChanges.filter(x=>x===1).length,2,'Blur cancels the hold without dropping a bomb.');
   touch(true);frames.shift()();
   handlers.message({origin,source:parent,data:{sopwith:true,type:'pause',value:true}});frames.shift()();
   assert.equal(aimFrames.at(-1),false,'Pausing releases the aim control.');

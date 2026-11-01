@@ -7,6 +7,7 @@
   const keys = { ArrowUp:54, Comma:54, ArrowDown:56, Slash:56, ArrowRight:27, KeyX:27, ArrowLeft:29, KeyZ:29, Period:55, KeyB:5, Space:44, KeyH:11, KeyS:22 };
   let state = 'idle', muted = true, bootTimer, mode = 'practice';
   let inputMode = 0, trainerEnabled = false;
+  let fullscreenTransition = false;
   const loadPref = (name, fallback) => { try { return localStorage.getItem('sopwith.' + name) ?? fallback; } catch { return fallback; } };
   const savePref = (name, value) => { try { localStorage.setItem('sopwith.' + name, String(value)); } catch {} };
   const post = (type, extra = {}) => frame.contentWindow?.postMessage({ sopwith:true, type, ...extra }, location.origin);
@@ -29,6 +30,10 @@
   function showLayer(id) {
     for (const layer of ['launch', 'loading', 'paused', 'error', 'complete']) {
       if($(layer))$(layer).hidden = layer !== id;
+    }
+    if(document.body?.dataset.layout==='arcade') {
+      document.body.dataset.gameState=state;
+      window.dispatchEvent?.(new CustomEvent('sopwith-layer',{detail:{layer:id,state}}));
     }
   }
   function start() {
@@ -76,6 +81,7 @@
   $('mute').addEventListener('click', () => { setMuted(!muted); focusGame(); });
   $('fullscreen').addEventListener('click', async () => {
     const column = document.querySelector('.game-column');
+    fullscreenTransition=true;
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
       else if (document.webkitFullscreenElement) document.webkitExitFullscreen();
@@ -84,10 +90,14 @@
       else setStatus('Koko näyttö ei ole käytettävissä tässä selaimessa');
       focusGame();
     } catch { setStatus('Selain esti koko näytön tilan'); }
+    finally {
+      const next=window.requestAnimationFrame||((fn)=>setTimeout(fn,0));
+      next(()=>next(()=>{fullscreenTransition=false;}));
+    }
   });
   const fullscreenLabel = () => {
-    $('fullscreen').lastElementChild.textContent =
-      document.fullscreenElement || document.webkitFullscreenElement ? 'Poistu koko näytöstä' : 'Koko näyttö';
+    const label=document.fullscreenElement || document.webkitFullscreenElement ? 'Poistu koko näytöstä' : 'Koko näyttö';
+    $('fullscreen').lastElementChild.textContent=label;$('fullscreen').setAttribute('aria-label',label);
   };
   document.addEventListener('fullscreenchange', fullscreenLabel);
   document.addEventListener('webkitfullscreenchange', fullscreenLabel);
@@ -147,7 +157,7 @@
   document.addEventListener('keyup', event => {
     if (state === 'playing' && keys[event.code]) { post('key', { scan:keys[event.code], down:false }); }
   });
-  document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'playing') pause(true); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'playing' && !fullscreenTransition) pause(true); });
   window.addEventListener('blur', () => post('release'));
   window.addEventListener('message', event => {
     if (event.origin !== location.origin || event.source !== frame.contentWindow || !event.data?.sopwith) return;
@@ -167,7 +177,11 @@
       $('complete-score').textContent='Pisteet: '+msg.score;
       $('pause').disabled=true;$('play-again').focus();
     }
-    if (msg.type === 'manual') { pause(true); $('ohjeet').scrollIntoView({ behavior:'smooth', block:'center' }); }
+    if (msg.type === 'manual') {
+      pause(true);
+      if(document.body?.dataset.layout==='arcade')window.dispatchEvent(new CustomEvent('sopwith-menu',{detail:'help'}));
+      else $('ohjeet').scrollIntoView({ behavior:'smooth', block:'center' });
+    }
     if (msg.type === 'ended') reset();
   });
   setMuted(true);

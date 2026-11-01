@@ -20,10 +20,10 @@ def main():
         sys.exit("Emscripten missing. Follow README.md to install Emscripten 4.0.10 locally.")
     (OUTPUT / "engine").mkdir(parents=True, exist_ok=True)
     (OUTPUT / "source").mkdir(parents=True, exist_ok=True)
-    sources = sorted((UPSTREAM / "src").glob("*.c"))
+    sources = sorted(p for p in (UPSTREAM / "src").glob("*.c") if p.name != "swmove.c")
     sources += [UPSTREAM / "src/sdl" / name for name in
                 ("main.c", "video.c", "pcsound.c", "controller.c")]
-    sources += [ROOT / "web/bridge.c", ROOT / "web/trainer.c", ROOT / "web/scene.c", ROOT / "web/variant.c"]
+    sources += [ROOT / "web/bridge.c", ROOT / "web/trainer.c", ROOT / "web/scene.c", ROOT / "web/variant.c", ROOT / "web/move.c"]
     env = os.environ.copy()
     env["EM_CONFIG"] = str(EMSDK / ".emscripten")
     env["EMSDK_PYTHON"] = sys.executable
@@ -35,7 +35,7 @@ def main():
            "-sSUPPORT_LONGJMP=emscripten", "-sFORCE_FILESYSTEM", "-lidbfs.js", "-Wl,-u,ntohs",
            "-sALLOW_MEMORY_GROWTH", "-sENVIRONMENT=web", "-sMODULARIZE",
            "-sEXPORT_NAME=createSopwith", "-sINVOKE_RUN=0",
-           '-sEXPORTED_FUNCTIONS=["_main","_web_key","_web_pause","_web_palette","_web_sound","_web_read","_web_trainer","_web_input_mode","_web_scene","_web_variant","_web_effects"]',
+           '-sEXPORTED_FUNCTIONS=["_main","_web_key","_web_bomb","_web_pause","_web_palette","_web_sound","_web_read","_web_trainer","_web_input_mode","_web_scene","_web_variant","_web_effects"]',
            '-sEXPORTED_RUNTIME_METHODS=["FS","IDBFS","callMain","HEAP32","HEAPU8"]',
            "-o", str(OUTPUT / "engine/sopwith.js")]
     if not source_only:
@@ -50,7 +50,7 @@ def main():
     # Distribute the complete corresponding game source and build integration.
     with tarfile.open(OUTPUT / "source/sopwith-web-source.tar.gz", "w:gz") as bundle:
         for name in ("third_party/sdl-sopwith", "web", "server", "scripts", "tests", "licenses", ".github",
-                     "README.md", "COPYING.md", "LICENSE", "NOTICE.md"):
+                     "README.md", "COPYING.md", "LICENSE", "NOTICE.md", "VALIDATION.md"):
             bundle.add(ROOT / name, arcname="sopwith-web/" + name,
                        filter=lambda info: None if any(p in ("__pycache__", "node_modules", ".git") for p in Path(info.name).parts) else info)
         for path in OUTPUT.iterdir():

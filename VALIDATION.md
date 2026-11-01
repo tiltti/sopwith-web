@@ -1,5 +1,46 @@
 # Validation
 
+## 2026-11-01: Rainbow 0.4 arcade UI, smooth display and combat feedback
+
+- Production framebuffer is 1920×1404. The 640×400 logical world is separate
+  from its 68-pixel bottom HUD. Browser telemetry measured 60.0–60.1 fps with
+  about 1.0–2.0 ms draw time at the normal desktop viewport. This is a local
+  observation, not a performance guarantee. Native simulation remains 10 Hz.
+- Timeline tests cover camera/object interpolation, stable native IDs, angle
+  wrapping, pause/resume timing and respawn snapping. Rendering remains read-only.
+- Browser QA: a 1.4-second physical B hold produced one aim activation and spent
+  one bomb on release (5 to 4), not a salvo. The screen bomb control also spent
+  one bomb. No sound was enabled; active audio voices remained zero. A regression
+  fixes fractional-coordinate terrain indexing that initially made aim flicker.
+- Headless native rules tests cover queued release/cancel, simultaneous bombs,
+  unchanged classic weapon timing, event deduplication, cow hits, destroyed
+  ground targets/enemy aircraft, ballistic shells and a shell-expiry burst.
+- Autopilot audit starts from 30 positions/altitudes/headings clear of scenery,
+  with animals/enemies disabled. Classic baseline: 28 successes, 2 crashes.
+  Rainbow's earlier landing handoff: 30 successes, 0 crashes. This isolates the
+  final-approach issue; it does not guarantee avoidance of every moving obstacle.
+- Standalone splash and pause menus were visually inspected in the browser.
+  A development-only end-screen fixture exercised the production UI: Q7Z/1234
+  was entered, saved and read back after reload from the local practice board.
+  Actual native five-life game-over behavior and Rainbow end-renderer retention
+  are independently covered by C and browser integration tests.
+- The six real WAVs and three original synthetic cues all contain nonzero data.
+  Production four-voice mixer output rendered into OfflineAudioContext without
+  a speaker: peak 0.1247, RMS 0.0227. Cue selection, priority, deduplication and
+  silent/default/mute/end behavior pass automated tests. No listening test is
+  claimed. BigSoundBank CC0 moo and Press Start 2P OFL provenance are included.
+- Fullscreen was not repeatedly exercised on the user's display. Synthetic
+  integration coverage confirms transient fullscreen visibility changes do not
+  pause, while a normally hidden tab still does. There is a direct rail button.
+- The sprite gallery displays all four full-color cow reaction poses at constant
+  width. Browser QA also inspected the 390-pixel portrait menu in an embedded
+  viewport, without changing the user's browser size.
+- Classic browser smoke test with the new WASM build: original canvas visible,
+  Rainbow canvas hidden, supplies 5 bombs/200 rounds, zero active sound voices.
+- Public score service remains private; release config still has endpoint=null.
+  No shared-score deployment or game-dev CLI admission receipt is claimed.
+
+
 ## 2026-11-01: Amiga artwork, splash and sample audio
 
 - Three imagegen PNGs are retained with their final prompts. Explicit atlas

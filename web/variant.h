@@ -10,7 +10,12 @@
 void WebVariant_SetEnabled(bool enabled);
 bool WebVariant_IsEnabled(void);
 void WebVariant_Apply(OBJECTS *player);
+void WebVariant_BombRelease(bool release);
+int WebVariant_GoHome(OBJECTS *player);
+void WebVariant_ShellImpact(OBJECTS *shot);
 /* [version, newest-id, count, stride], then ring records:
- * [id, native-tick, type (1 blast / 2 feathers), world-x, world-y, size]. */
+ * Types: 1 blast, 2 feathers, 3 cow down, 4 bomb released,
+ * 5 ground cannon fired (size = signed target-kind+1, sign is direction),
+ * 6 target destroyed (size < 0 means friendly). */
 const int *WebVariant_Effects(void);
 #endif

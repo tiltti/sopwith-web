@@ -4,7 +4,8 @@
   const $=id=>document.getElementById(id),frame=$('game');
   const edition=document.body.dataset.edition==='rainbow'?'rainbow':'classic';
   let endpoint=null,ticket=null,runKey='',pending=null,trainerUsed=false,mode='practice',loading=0;
-  const status=text=>{$('scores-status').textContent=text;};
+  const arcade=document.body.dataset.layout==='arcade';
+  const status=text=>{$('scores-status').textContent=text;if($('arcade-score-status'))$('arcade-score-status').textContent=text;};
   const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}};
   const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}};
   const localKey=()=>`sopwith.scores.${edition}.${$('scores-mode').value}`;
@@ -61,8 +62,8 @@
   $('score-name').value=read('sopwith.score-name','');
   $('score-form').addEventListener('submit',async event=>{
     event.preventDefault();if(!pending)return;
-    const nickname=$('score-name').value.trim().normalize('NFC');
-    if(!/^[\p{L}\p{N} _.-]{1,18}$/u.test(nickname)){status('Käytä nimimerkissä 1–18 kirjainta, numeroa, välilyöntiä, pistettä tai viivaa.');return;}
+    const nickname=arcade?$('score-name').value.trim().toUpperCase():$('score-name').value.trim().normalize('NFC');
+    if(arcade?!/^[A-Z0-9]{3}$/.test(nickname):!/^[\p{L}\p{N} _.-]{1,18}$/u.test(nickname)){status(arcade?'SYÖTÄ KOLME KIRJAINTA TAI NUMEROA.':'Käytä nimimerkissä 1–18 kirjainta, numeroa, välilyöntiä, pistettä tai viivaa.');return;}
     const result=pending,key=runKey;$('score-submit').disabled=true;
     try {
       if(endpoint) {
@@ -81,7 +82,10 @@
     finally{$('score-submit').disabled=false;}
   });
   $('scores-refresh').addEventListener('click',refresh);
-  $('result-score')?.addEventListener('click',()=>{panel.scrollIntoView({behavior:'smooth',block:'center'});$('score-name').focus({preventScroll:true});});
+  $('result-score')?.addEventListener('click',()=>{
+    if(arcade)window.dispatchEvent(new CustomEvent('sopwith-menu',{detail:'scores'}));
+    else {panel.scrollIntoView({behavior:'smooth',block:'center'});$('score-name').focus({preventScroll:true});}
+  });
   $('scores-mode').addEventListener('change',refresh);
   setInterval(()=>{if(!document.hidden&&endpoint)refresh();},30000);
   refresh();

@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="fi"><meta charset="utf-8"><base href="../dist/"><title>Rainbow media check (silent)</title>
-<style>body{background:#243b55;color:#fff2ce;font:16px monospace;padding:24px}canvas{display:block;max-width:100%;image-rendering:pixelated;background:#79cce5}button{padding:12px;margin:16px 0}pre{white-space:pre-wrap}</style>
+<style>body{background:#243b55;color:#fff2ce;font:16px monospace;padding:24px}canvas{display:block;max-width:100%;image-rendering:auto;background:#79cce5}button{padding:12px;margin:16px 0}pre{white-space:pre-wrap}</style>
 <h1>Rainbow Patrol — media check</h1><p>This development-only page renders sprite frames and audio offline. It never connects sound to a speaker.</p>
-<canvas id="gallery" width="800" height="560"></canvas><button id="check">Check samples silently</button><pre id="result">Ready</pre>
+<canvas id="gallery" width="800" height="700"></canvas><button id="check">Check samples silently</button><pre id="result">Ready</pre>
 <details><summary>390 px splash layout</summary><iframe title="Phone splash preview" src="../dist/rainbow.html" width="390" height="844" loading="lazy" style="border:1px solid #98e6ed;display:block"></iframe></details>
 <script src="../dist/rainbow-assets.js"></script>
 <script src="../dist/rainbow-audio.js"></script>
@@ -18,6 +18,10 @@ types.forEach(([name,type,kind,state=type===4||type===9?5:1],i)=>{
   const sprite=RainbowAssets.sprite(r,heap),x=18+(i%5)*158,y=12+Math.floor(i/5)*132;
   if(sprite)c.drawImage(sprite,x,y,128,84);c.fillStyle='#263b55';c.font='13px monospace';c.fillText(name,x,y+105);
 });
+[0,1,2,3].forEach((frame,i)=>{
+ const sprite=RainbowAssets.cowPose(frame),x=20+i*180,y=570;
+ c.drawImage(sprite,x,y,136,sprite.height/sprite.width*136);c.fillText('Cow reaction '+frame,x,y+100);
+});
 document.getElementById('check').onclick=async()=>{
  try {
   const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
@@ -25,20 +29,24 @@ document.getElementById('check').onclick=async()=>{
   class SilentContext {
     state='running';destination=context.destination;
     get currentTime(){return context.currentTime;}
-    createGain(){return context.createGain();}createBiquadFilter(){return context.createBiquadFilter();}
+    createBuffer(...args){return context.createBuffer(...args);}createGain(){return context.createGain();}createBiquadFilter(){return context.createBiquadFilter();}
     createStereoPanner(){return context.createStereoPanner();}createBufferSource(){return context.createBufferSource();}
     decodeAudioData(data){return context.decodeAudioData(data);}
     async resume(){this.state='running';}async suspend(){this.state='suspended';}
   }
   const mixer=new RainbowAudio({AudioContext:SilentContext});await mixer.setEnabled(true);
-  const scene=new Int32Array(4600);scene[1]=10;scene[3]=2000;scene[8]=5;scene[11]=5;scene[13]=1;scene[14]=1;
-  scene.set([3,0,170,100,0,0,1,1,1,0,0,9,12,0],348);
+  const scene=new Int32Array(5000);scene[1]=10;scene[3]=2000;scene[8]=5;scene[11]=5;scene[13]=1;scene[14]=1;
+  scene.set([3,0,170,100,0,0,1,1,1,0,0,9,12,0,1,0,123,1],348);
   const effects=new Int32Array(196);effects.set([1,1,1,6,1,10,1,190,80,2]);
   mixer.step(scene,effects);const voices=mixer.voices.size;
+  for(const [name,buffer] of Object.entries(mixer.buffers)){
+    const samples=buffer.getChannelData(0);
+    if(!samples.some(x=>Math.abs(x)>.001))throw new Error('Silent buffer: '+name);
+  }
   const rendered=await context.startRendering(),data=rendered.getChannelData(0);
   const peak=data.reduce((max,x)=>Math.max(max,Math.abs(x)),0),rms=Math.sqrt(data.reduce((sum,x)=>sum+x*x,0)/data.length);
   if(!(peak>0&&peak<1&&rms>0))throw new Error('Invalid audio signal');
-  output.textContent=`PASS: ${Object.keys(mixer.buffers).length} real WAVs, ${voices} production mixer voices rendered offline. Peak=${peak.toFixed(4)} RMS=${rms.toFixed(4)}. No speaker output.`;
+  output.textContent=`PASS: ${Object.keys(mixer.buffers).length} buffers (6 WAV + 3 synth), ${voices} production mixer voices rendered offline. Peak=${peak.toFixed(4)} RMS=${rms.toFixed(4)}. No speaker output.`;
   output.dataset.pass='true';
  } catch(error){output.textContent='FAIL: '+error;output.dataset.pass='false';}
 };

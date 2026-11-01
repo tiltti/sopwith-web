@@ -159,6 +159,19 @@ int main(void)
     assert(old == objbot);
     puts("Rainbow: five bombs coexist in flight, ammo is consumed, empty stock blocks firing; enemies retain their delay.");
 
+    fresh_game(false);WebVariant_SetEnabled(true);
+    consoleplayer->ob_athome=false;consoleplayer->ob_y=170;
+    for(i=0;i<20;i++){++countmove;WebVariant_Apply(consoleplayer);}
+    assert(consoleplayer->ob_bombs==5);
+    WebVariant_BombRelease(true);++countmove;WebVariant_Apply(consoleplayer);
+    assert(consoleplayer->ob_bombs==4 && objbot->ob_type==BOMB);
+    assert(WebVariant_Effects()[1]==1 && WebVariant_Effects()[6]==4);
+    for(i=0;i<20;i++){++countmove;WebVariant_Apply(consoleplayer);}
+    assert(consoleplayer->ob_bombs==4);
+    WebVariant_BombRelease(true);WebVariant_BombRelease(false);++countmove;WebVariant_Apply(consoleplayer);
+    assert(consoleplayer->ob_bombs==4);
+    puts("Rainbow B: hold does not fire; one release spends one bomb; blur/pause cancel pending releases.");
+
     consoleplayer->ob_bdelay = 9;
     WebVariant_SetEnabled(false);
     WebVariant_Apply(consoleplayer);
@@ -186,5 +199,31 @@ int main(void)
     ++countmove;WebVariant_Apply(consoleplayer);assert(events[1] == 2);
     assert(consoleplayer->ob_endsts == PLAYING && bird->ob_life == -1);
     puts("Rainbow effects: native explosion fragments group into one blast; bird hits produce one feather event without extra damage.");
+    fresh_game(false);WebVariant_SetEnabled(true);
+    OBJECTS *tank=NULL,*cow=NULL;
+    for(OBJECTS *ob=objtop;ob;ob=ob->ob_next){
+        if(ob->ob_type==TARGET&&ob->ob_orient==TARGET_TANK)tank=ob;
+        if(ob->ob_type==OX)cow=ob;
+    }
+    assert(tank&&cow);consoleplayer->ob_x=tank->ob_x+40;consoleplayer->ob_y=tank->ob_y+30;consoleplayer->ob_dx=consoleplayer->ob_dy=0;
+    initshot(tank,consoleplayer);OBJECTS *shell=objbot;
+    assert(shell->ob_type==SHOT);int initial_dy=shell->ob_dy;
+    countmove=200;WebVariant_Apply(consoleplayer);
+    assert(shell->ob_life==28&&shell->ob_dy==initial_dy+2);
+    events=WebVariant_Effects();assert(events[1]==1&&events[6]==5);
+    countmove++;WebVariant_Apply(consoleplayer);assert(events[1]==1);
+    countmove++;WebVariant_Apply(consoleplayer);assert(shell->ob_dy==initial_dy+1&&events[1]==1);
+    cow->ob_state=CRASHED;tank->ob_state=CRASHED;tank->ob_faction=FACTION_PLAYER2;
+    countmove++;WebVariant_Apply(consoleplayer);assert(events[1]==3);
+    int cows=0,targets=0;
+    for(i=0;i<events[2];i++){int type=events[4+i*6+2];cows+=type==3;targets+=type==6;}
+    assert(cows==1&&targets==1);
+    countmove++;WebVariant_Apply(consoleplayer);assert(events[1]==3);
+    OBJECTS *enemy_plane=planes[1];enemy_plane->ob_faction=FACTION_PLAYER2;enemy_plane->ob_state=FALLING;
+    countmove++;int before_plane=events[1];WebVariant_Apply(consoleplayer);assert(events[1]==before_plane+1);
+    countmove++;WebVariant_Apply(consoleplayer);assert(events[1]==before_plane+1);
+    shell->ob_life=1;int before_impact=events[1];assert(!moveshot(shell));
+    assert(events[1]==before_impact+1&&events[4+(before_impact%32)*6+2]==1);
+    puts("Rainbow ground combat: one muzzle event, ballistic tank shell, one cow reaction and one target-destroyed event.");
     return 0;
 }

@@ -66,6 +66,10 @@ EMSCRIPTEN_KEEPALIVE const int *web_scene(void)
         r[12] = ob->ob_dx; r[13] = ob->ob_dy;
         r[14] = ob->ob_clr;
         r[15] = ob->ob_original_ob ? ob->ob_original_ob->orient : 0;
+        r[16] = (int)(uintptr_t)ob;
+        r[17] = ob->ob_owner == consoleplayer ? 1 : !ob->ob_owner ? 0
+            : ob->ob_owner->ob_type == TARGET ? 100 + ob->ob_owner->ob_orient
+            : ob->ob_owner->ob_type == PLANE ? 2 : 0;
         ++n;
     }
     scene[14] = n;

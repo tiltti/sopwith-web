@@ -10484,6 +10484,8 @@ var _fflush = makeInvalidEarlyAccess("_fflush");
 
 var _web_pause = Module["_web_pause"] = makeInvalidEarlyAccess("_web_pause");
 
+var _web_bomb = Module["_web_bomb"] = makeInvalidEarlyAccess("_web_bomb");
+
 var _web_trainer = Module["_web_trainer"] = makeInvalidEarlyAccess("_web_trainer");
 
 var _web_variant = Module["_web_variant"] = makeInvalidEarlyAccess("_web_variant");
@@ -10622,6 +10624,7 @@ function assignWasmExports(wasmExports) {
   Module["_main"] = _main = createExportWrapper("__main_argc_argv", 2);
   _fflush = createExportWrapper("fflush", 1);
   Module["_web_pause"] = _web_pause = createExportWrapper("web_pause", 1);
+  Module["_web_bomb"] = _web_bomb = createExportWrapper("web_bomb", 1);
   Module["_web_trainer"] = _web_trainer = createExportWrapper("web_trainer", 1);
   Module["_web_variant"] = _web_variant = createExportWrapper("web_variant", 1);
   Module["_web_effects"] = _web_effects = createExportWrapper("web_effects", 0);

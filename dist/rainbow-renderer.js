@@ -1,7 +1,7 @@
 // Sopwith: Rainbow Patrol. Original pixel renderer, GPL-2.0-or-later.
 // The native C engine remains responsible for simulation and collision masks.
 (() => {
-  const W = 640, H = 400, HEADER = 28, STRIDE = 16, GROUND = 320;
+  const W = 640, H = 400, HUD = 68, DETAIL = 3, HEADER = 28, STRIDE = 18, GROUND = 320;
   const P = {
     outline:'#34365b', blue:'#458fcb', sky:'#54b8e1', pale:'#98e6ed',
     cloud:'#e5fff0', cloudShade:'#9ce3e5', cloudDeep:'#76cddc',
@@ -88,6 +88,7 @@
       for(let y=Math.floor(top/2)*2;y<=bottom;y+=2)rect(c,cx+x,base+y,2,2,colors[band]);
     }
   }
+  function mapPoint(x,y,width) {return {x:185+Math.max(0,Math.min(1,x/width))*259,y:H+6+39-Math.max(0,Math.min(199,y))/199*39};}
   const SINE=[0,98,181,237,256,237,181,98,0,-98,-181,-237,-256,-237,-181,-98];
   function predictBomb(plane,ground) {
     if(!plane||!ground?.length)return null;
@@ -104,7 +105,7 @@
       x=Math.max(0,Math.min(ground.length-10,x+dx));y+=dy;
       // The edition ejects a new bomb after its first native move.
       if(tick===1)dy-=4;
-      const cx=Math.max(0,Math.min(ground.length-1,x+4)),cy=y-4;
+      const cx=Math.max(0,Math.min(ground.length-1,Math.round(x+4))),cy=y-4;
       if(tick%3===0)path.push({x:cx,y:cy});
       if(cy<=ground[cx]+3)return {x:cx,y:ground[cx],ticks:tick,path};
     }
@@ -144,11 +145,12 @@
 
   class RainbowRenderer {
     constructor(canvas) {
-      this.canvas=canvas; canvas.width=W; canvas.height=H;
-      this.c=canvas.getContext('2d',{alpha:false}); this.c.imageSmoothingEnabled=false;
+      this.canvas=canvas; canvas.width=W*DETAIL; canvas.height=(H+HUD)*DETAIL;
+      this.c=canvas.getContext('2d',{alpha:false});this.c.setTransform(DETAIL,0,0,DETAIL,0,0);this.c.imageSmoothingEnabled=true;
       this.sprites=new Map(); this.trail=[]; this.lastTick=-1;
       this.effects=[];this.lastEffectId=0;this.aimEnabled=true;this.bombHeld=false;
       this.aimVisible=false;this.aimActivations=0;
+      this.cowDeaths=new Map();this.terrainCache=null;this.smokeBrush=null;
     }
     background(camera=0,tick=0) {
       const c=this.c;
@@ -193,7 +195,7 @@
     }
     terrain(ground,camera) {
       const c=this.c;
-      for(let x=0;x<320;x++) {
+      for(let x=0;x<ground.length;x++) {
         const y=Math.max(0,(199-ground[x])*2), wx=(camera+x)*2;
         rect(c,x*2,y,2,H-y,P.soil);
         for(let dy=13;dy<H-y;dy+=13) {
@@ -216,6 +218,40 @@
         if((camera+x)%13===0)rect(c,x*2,y+11,2,3,P.rock);
       }
     }
+    terrainWorld(ground,camera,tick) {
+      const anchor=Math.floor(camera/32)*32-32;
+      let hash=0;
+      for(let i=0;i<384;i++)hash=(hash*31+ground[Math.max(0,Math.min(ground.length-1,anchor+i))])|0;
+      if(!this.terrainCache||this.terrainCache.anchor!==anchor||this.terrainCache.hash!==hash) {
+        const layer=this.terrainCache?.canvas||document.createElement('canvas');layer.width=768*DETAIL;layer.height=H*DETAIL;
+        const c=layer.getContext('2d');c.setTransform(DETAIL,0,0,DETAIL,0,0);
+        const visible=Int32Array.from({length:384},(_,i)=>ground[Math.max(0,Math.min(ground.length-1,anchor+i))]);
+        const old=this.c;this.c=c;this.terrain(visible,anchor);this.c=old;
+        this.terrainCache={canvas:layer,anchor,hash};
+      }
+      this.c.drawImage(this.terrainCache.canvas,(anchor-camera)*2,0,768,H);
+    }
+    drawTrail(camera,time,scene) {
+      if(!this.smokeBrush) {
+        const brush=document.createElement('canvas');brush.width=brush.height=64;
+        const c=brush.getContext('2d'),g=c.createRadialGradient(32,32,0,32,32,32);
+        g.addColorStop(0,'rgba(245,255,250,.8)');g.addColorStop(.45,'rgba(224,247,244,.45)');g.addColorStop(1,'rgba(224,247,244,0)');
+        c.fillStyle=g;c.fillRect(0,0,64,64);this.smokeBrush=brush;
+      }
+      const points=this.trail.filter(p=>p.tick<=time);
+      if(!scene[17]&&[1,6,8,9].includes(scene[13]))points.push({x:scene[4]+8,y:scene[5]-8,tick:time});
+      const c=this.c;c.save();
+      for(let i=1;i<points.length;i++) {
+        const a=points[i-1],b=points[i],distance=Math.hypot(b.x-a.x,b.y-a.y)*2,steps=Math.max(1,Math.ceil(distance/2));
+        if(distance>70)continue;
+        for(let j=0;j<=steps;j++) {
+          const t=j/steps,age=Math.max(0,time-(a.tick+(b.tick-a.tick)*t)),r=1.25+age*.12;
+          const x=(a.x+(b.x-a.x)*t-camera)*2,y=(199-(a.y+(b.y-a.y)*t))*2-age*.15;
+          c.globalAlpha=Math.max(0,1-age/35)*.48;c.drawImage(this.smokeBrush,x-r,y-r,r*2,r*2);
+        }
+      }
+      c.restore();
+    }
     landmark(scene) {
       const left=(scene[21]-scene[2])*2,right=left+440;
       const visible=left<W && right>0;
@@ -229,10 +265,10 @@
         const at=4+i*6,id=data[at];
         if(id<=this.lastEffectId||id===0)continue;
         const age=tick-data[at+1];
-        if(age>=0&&age<16)this.effects.push({id,tick:data[at+1],type:data[at+2],x:data[at+3],y:data[at+4],size:data[at+5]});
+        if(age>=0&&age<(data[at+2]===6?28:16))this.effects.push({id,tick:data[at+1],type:data[at+2],x:data[at+3],y:data[at+4],size:data[at+5]});
       }
       this.lastEffectId=data[1];
-      this.effects=this.effects.filter(e=>tick-e.tick>=0&&tick-e.tick<16).slice(-32);
+      this.effects=this.effects.filter(e=>tick-e.tick>=0&&tick-e.tick<(e.type===6?28:16)).slice(-32);
     }
     drawEffects(camera,tick) {
       const c=this.c;
@@ -246,6 +282,11 @@
           }
           continue;
         }
+        if(e.type===5) {
+          if(age<2){const d=Math.sign(e.size)||1;polygon(c,[[x-d*5,y],[x+d*12,y-3],[x+d*5,y-10],[x+d*17,y-7],[x+d*8,y+3]],P.gold);rect(c,x+(d>0?3:-9),y-5,6,4,P.cream);}
+          continue;
+        }
+        if(e.type!==1)continue;
         if(age<7)ring(c,x,y,8+age*4+e.size*2,age<3?P.gold:P.smoke);
         const r=age<3?8+e.size*4+age*4:Math.max(0,18+e.size*4-(age-2)*6);
         if(r>0) {
@@ -335,9 +376,9 @@
       this.sprites.set(key,out); return out;
     }
     drawScene(scene,heap,trainer=false,effects=null,ground=null) {
-      if(scene[0]!==2||scene[3]===0)return false;
-      const c=this.c,tick=scene[1],camera=scene[2];
-      if(tick<this.lastTick){this.effects=[];this.lastEffectId=effects?.[1]||0;}
+      if(scene[0]!==3||scene[3]===0)return false;
+      const c=this.c,tick=scene[1],time=scene[26]||tick,camera=scene[2];
+      if(tick<this.lastTick){this.effects=[];this.lastEffectId=effects?.[1]||0;this.cowDeaths.clear();}
       this.readEffects(effects,tick);
       if(tick!==this.lastTick) {
         const last=this.trail.at(-1);
@@ -348,18 +389,26 @@
         this.trail=this.trail.filter(p=>tick-p.tick<35).slice(-35);
         this.lastTick=tick;
       }
-      this.background(camera,tick);
+      this.background(camera,time);
       this.landmark(scene);
-      for(const p of this.trail) {
-        const age=tick-p.tick,sz=age>22?1:2;
-        rect(c,(p.x-camera)*2,(199-p.y)*2,sz,sz,age>22?P.cloudShade:P.cloud);
-      }
+      this.drawTrail(camera,time,scene);
       const objects=[];
-      for(let i=0;i<scene[14];i++)objects.push(scene.subarray(HEADER+GROUND+i*STRIDE,HEADER+GROUND+(i+1)*STRIDE));
+      for(let i=0;i<scene[14];i++) {
+        const r=scene.subarray(HEADER+GROUND+i*STRIDE,HEADER+GROUND+(i+1)*STRIDE);objects.push(r);
+        if(r[0]===9&&r[1]!==5&&!this.cowDeaths.has(r[16]||r[2]))this.cowDeaths.set(r[16]||r[2],tick);
+      }
       for(const r of objects) {
         const [type,,x,y,,,,w,h]=r, sx=(x-camera)*2,sy=(199-y)*2;
         if(sx < -w*2-3||sx>W||sy>H||sy < -h*2-3)continue;
         if(type===3) {
+          if(r[17]>=100) {
+            const angle=Math.atan2(-r[13],r[12]),dx=Math.cos(angle),dy=Math.sin(angle);
+            c.save();c.translate(sx,sy);c.rotate(angle);
+            c.fillStyle='#344552';c.beginPath();c.ellipse(0,0,4,2.1,0,0,Math.PI*2);c.fill();
+            c.fillStyle='#c6d9da';c.fillRect(0,-1.5,2.5,1);c.fillStyle='#f9c46c';c.fillRect(-4,-1,1.5,2);c.restore();
+            c.globalAlpha=.35;for(let k=1;k<4;k++)c.drawImage(this.smokeBrush,sx-dx*k*4-2,sy-dy*k*4-2,4+k,4+k);c.globalAlpha=1;
+            continue;
+          }
           const speed=Math.hypot(r[12],r[13])||1,dx=r[12]/speed,dy=-r[13]/speed,len=8;
           polygon(c,[[sx-dx*len-dy,sy-dy*len+dx],[sx+dx*2-dy,sy+dy*2+dx],
             [sx+dx*2+dy,sy+dy*2-dx],[sx-dx*len+dy,sy-dy*len-dx]],P.yellow);
@@ -374,12 +423,28 @@
         }
         if(type===6) {ring(c,sx,sy,3+(r[11]%3),P.darkSmoke);rect(c,sx-1,sy-1,3,3,P.smoke);continue;}
         if(type===5) {rect(c,sx-2,sy,4,2,P.redShade);rect(c,sx,sy-1,2,3,P.yellow);rect(c,sx+1,sy,1,1,P.cream);continue;}
-        const sprite=this.sprite(r,heap);if(sprite)c.drawImage(sprite,sx-1,sy-1);
+        if(type===9&&r[1]!==5&&window.RainbowAssets?.loaded) {
+          const age=Math.max(0,time-this.cowDeaths.get(r[16]||r[2])),pose=window.RainbowAssets.cowPose(Math.min(3,Math.floor(age/2)));
+          const g=ground?.[Math.max(0,Math.min(ground.length-1,Math.floor(x+8)))]??199-(sy+h*2)/2;
+          if(pose)c.drawImage(pose,sx,(199-g)*2-pose.height/DETAIL,pose.width/DETAIL,pose.height/DETAIL);
+          continue;
+        }
+        const sprite=this.sprite(r,heap);if(sprite)c.drawImage(sprite,sx-1,sy-1,w*2+2,h*2+2);
+        if(type===4&&r[1]===5) {
+          const shot=this.effects.find(e=>e.type===5&&Math.abs(e.x-(x+w/2))<20&&tick-e.tick<3),recoil=shot?Math.max(0,3-(time-shot.tick)*2):0;
+          if(r[15]===3){const d=shot?Math.sign(shot.size):scene[4]<x?-1:1,bx=sx+w+d*(8-recoil);rect(c,Math.min(sx+w,bx),sy+h-5,Math.abs(bx-sx-w)+3,3,'#43574a');rect(c,bx,sy+h-5,2,3,'#152f37');}
+          else if([0,1,8,9,10,11,12].includes(r[15])) {
+            // Visible rooftop AA emplacement for buildings that can fire.
+            c.fillStyle='#354d4d';c.beginPath();c.ellipse(sx+w,sy+4,6,3,0,0,Math.PI*2);c.fill();
+            const d=shot?Math.sign(shot.size):scene[4]<x?-1:1;rect(c,sx+w-1,sy-1,3,6,'#9ba986');rect(c,sx+w+(d<0?-10+recoil:0),sy,12-recoil,2,'#364951');rect(c,sx+w-1,sy-3,3,3,'#e2c38d');
+          }
+        }
         if(type===1 && r[10]===0 && r[1]!==3) {
           rect(c,sx+w-1,sy-6,3,2,P.redShade);rect(c,sx+w,sy-7,1,4,P.redShade);
         }
       }
-      this.terrain(scene.subarray(HEADER,HEADER+GROUND),camera);
+      if(ground?.length)this.terrainWorld(ground,camera,tick);
+      else this.terrain(scene.subarray(HEADER,HEADER+GROUND),camera);
       this.aim(scene,objects,ground);
       const aimVisible=this.canvas.dataset.aimX!==undefined;
       if(aimVisible&&!this.aimVisible)this.aimActivations++;
@@ -387,44 +452,44 @@
       this.canvas.dataset.aimActivations=String(this.aimActivations);
       this.drawEffects(camera,tick);
       // Native low-altitude collision geometry is preserved all the way down
-      // to the original bottom edge; the information strip lives at the top.
-      this.hud(scene,objects,trainer);
+      // to the original bottom edge; the information strip lives below the world.
+      this.hud(scene,objects,trainer,ground);
       this.canvas.dataset.renderer='rainbow';
       this.canvas.dataset.artwork=window.RainbowAssets?.loaded?'amiga':'native';
       this.canvas.dataset.tick=String(tick);
       this.canvas.dataset.objects=String(objects.length);
       this.canvas.dataset.bombsInAir=String(objects.filter(r=>r[0]===2).length);
       this.canvas.dataset.effects=String(this.effects.length);
+      this.canvas.dataset.framebuffer=`${this.canvas.width}x${this.canvas.height}`;
       return true;
     }
-    hud(s,objects,trainer) {
-      const c=this.c;
-      rect(c,8,8,174,29,P.outline);rect(c,9,9,172,27,P.ink);
-      const score=s[10]<0?'-'+String(-s[10]).padStart(5,'0'):String(s[10]).padStart(6,'0');
-      text(c,'SCORE',15,14,P.pale);text(c,score,15,24,P.cream,2);
-      text(c,'LIVES',88,14,P.pale);text(c,trainer?'INF':s[9],88,24,P.gold,2);
-      text(c,'LV',137,14,P.pale);text(c,s[18]+1,137,24,P.cream,2);
-      rect(c,445,8,187,29,P.outline);rect(c,446,9,185,27,P.ink);
-      text(c,'FUEL',452,14,P.pale);
-      rect(c,476,13,65,7,P.outline);rect(c,477,14,Math.max(0,Math.min(63,Math.round(s[6]/9000*63))),5,P.mint);
-      text(c,'AMMO',452,25,P.pale);text(c,s[7],478,25,P.cream,2);
-      text(c,'BOMB',554,14,P.pale);text(c,s[8],587,13,P.gold,2);
-      text(c,'HOME',554,25,P.pale);
-      text(c,s[16]?'ON':s[4]<s[15]?'>':'<',587,25,P.cream,2);
-      // Navigation line is scaled to the real world width, with no fake
-      // collection/currency counters or unavailable controls.
-      rect(c,195,13,235,20,P.ink);rect(c,196,14,233,18,P.teal);
-      for(const r of objects)if(r[0]===1||r[0]===4) {
-        const x=197+Math.round(r[2]/s[3]*230);
-        rect(c,x,r[0]===1?18:26,r[10]?4:2,r[10]?4:2,r[10]?P.gold:r[6]===1?P.cream:P.red);
+    hud(s,objects,trainer,ground) {
+      const c=this.c;c.save();c.translate(0,H);
+      rect(c,0,0,W,HUD,P.ink);rect(c,0,0,W,2,P.teal);rect(c,0,50,W,18,'#1d3048');
+      text(c,'SCORE',10,9,P.pale);text(c,s[10]<0?'-'+String(-s[10]).padStart(5,'0'):String(s[10]).padStart(6,'0'),10,21,P.cream,2);
+      text(c,'LIVES',88,9,P.pale);text(c,trainer?'INF':s[9],88,21,P.gold,2);
+      text(c,'LV',140,9,P.pale);text(c,s[18]+1,140,21,P.cream,2);
+      rect(c,183,4,264,44,P.outline);rect(c,185,6,260,40,'#34718a');
+      if(ground?.length)for(let x=0;x<260;x++) {
+        const y=39-Math.round(ground[Math.min(ground.length-1,Math.floor(x/260*ground.length))]/200*39);
+        rect(c,185+x,6+y,1,40-y,'#75965d');
       }
-      if(s[16]) {rect(c,257,47,126,17,P.ink);text(c,'RETURNING TO BASE',269,53,P.cream);}
-      if(s[13]===3) {rect(c,242,175,156,34,P.ink);text(c,'PLANE LOST',270,184,P.gold,2);}
-      if(s[12]===1) {
-        rect(c,205,158,230,55,P.outline);rect(c,208,161,224,49,P.ink);
-        text(c,'MISSION COMPLETE',224,173,P.gold,3);
-        text(c,'NEXT FLIGHT',275,197,P.cream);
+      for(const r of objects)if([1,4,7,8,9,12].includes(r[0])) {
+        const point=mapPoint(r[2]+r[7]/2,r[3]-r[8]/2,s[3]);
+        const color=r[10]?P.gold:r[0]===1?P.red:r[0]===7||r[0]===8?P.white:r[0]===9?P.sand:r[6]===1?P.mint:P.red;
+        rect(c,point.x-(r[10]?2:1),point.y-H,r[10]?5:r[0]===4?3:2,r[0]===1?3:2,color);
       }
+      c.strokeStyle='#9ce3e5';c.lineWidth=.6;c.strokeRect(185+s[2]/s[3]*260,6,320/s[3]*260,40);
+      text(c,'FUEL',458,9,P.pale);rect(c,486,8,60,7,P.outline);rect(c,487,9,Math.max(0,Math.min(58,s[6]/9000*58)),5,P.mint);
+      text(c,'AMMO',458,24,P.pale);text(c,s[7],486,23,P.cream,2);
+      text(c,'BOMB',557,9,P.pale);text(c,s[8],598,8,P.gold,2);
+      text(c,'HOME',557,25,P.pale);text(c,s[16]?'ON':s[4]<s[15]?'>':'<',598,24,P.cream,2);
+      const target=this.effects.filter(e=>e.type===6&&s[1]-e.tick<28).at(-1);
+      if(target)text(c,target.size<0?'FRIENDLY TARGET HIT':'TARGET DESTROYED',242,56,target.size<0?P.red:P.gold,1);
+      else if(s[12]===1)text(c,'MISSION COMPLETE',244,56,P.gold);
+      else if(s[13]===3)text(c,'PLANE LOST',280,56,P.red);
+      else if(s[16])text(c,'RETURNING TO BASE',244,56,P.cream);
+      c.restore();
     }
     demo() {
       this.background(420,32);
@@ -451,6 +516,7 @@
       text(c,'RAINBOW PATROL',20,20,P.cream,2);
     }
   }
+  RainbowRenderer.mapPoint=mapPoint; RainbowRenderer.WIDTH=W; RainbowRenderer.HEIGHT=H+HUD; RainbowRenderer.DETAIL=DETAIL;
   RainbowRenderer.HEADER=HEADER; RainbowRenderer.STRIDE=STRIDE;
   RainbowRenderer.LENGTH=HEADER+GROUND+256*STRIDE;
   RainbowRenderer.text=text;
