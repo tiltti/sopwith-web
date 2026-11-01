@@ -4,8 +4,9 @@
   const params = new URLSearchParams(location.search);
   const held = new Set();
   const physicalHeld = new Map();
-  let game, paused = false, storage = false;
+  let game, paused = false, storage = false, visualRenderer, repaint = false;
   let trainerEnabled = params.get('trainer') === '1';
+  let trainerUsed = trainerEnabled, scoreSent = false;
   let lastInputMode = -1;
   const send = (type, extra = {}) => parent.postMessage({ sopwith: true, type, ...extra }, location.origin);
   const keyMap = {
@@ -47,6 +48,8 @@
   window.trainer = (enabled = true) => {
     if (typeof enabled !== 'boolean') throw new TypeError('Use trainer() or trainer(false).');
     trainerEnabled = enabled;
+    trainerUsed = trainerUsed || enabled;
+    repaint = true;
     game?._web_trainer(enabled ? 1 : 0);
     send('trainer-state', { enabled });
     return { enabled, unlimitedLives:enabled, unlimitedBombs:enabled, unlimitedAmmo:enabled, invincible:false };
@@ -94,6 +97,11 @@
     if (msg.type === 'pause') pause(msg.value);
     if (msg.type === 'mute') { params.set('muted', msg.value ? '1' : '0'); audio(); }
     if (msg.type === 'palette' && game) game._web_palette(msg.value);
+    if (msg.type === 'aim') {
+      params.set('aim',msg.enabled?'1':'0');
+      if(visualRenderer)visualRenderer.aimEnabled=msg.enabled;
+      repaint=true;
+    }
     if (msg.type === 'trainer') window.trainer(msg.enabled);
     if (msg.type === 'focus') { canvas.focus({preventScroll:true}); audio(); }
   });
@@ -104,7 +112,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261031-rainbow1',
+      locateFile: name => 'engine/' + name + '?v=20261101-scores1',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -124,22 +132,35 @@
     FS.writeFile(cfg, FS.readFile(cfg, { encoding:'utf8' }).trimEnd());
     if (storage) setInterval(() => FS.syncfs(false, () => {}), 1500);
     window.sopwith = game;
+    game._web_variant(params.get('edition') === 'rainbow' ? 1 : 0);
     game._web_trainer(trainerEnabled ? 1 : 0);
     if (params.get('edition') === 'rainbow' && window.RainbowRenderer) {
       const display = document.getElementById('rainbow');
       const renderer = new RainbowRenderer(display);
-      let renderedTick = -1, wasActive = false;
+      visualRenderer=renderer;
+      renderer.aimEnabled=params.get('aim')!=='0';
+      let renderedTick = -1, wasActive = false, endSent = false;
       const draw = () => {
-        const active = game._web_input_mode() === 1;
-        display.hidden = !active;
-        canvas.style.visibility = active ? 'hidden' : 'visible';
+        const inputMode=game._web_input_mode();
+        let active=inputMode===1 || inputMode===0 && game._web_read(9)>0;
         const tick = game._web_read(0);
-        if (active && (tick !== renderedTick || !wasActive)) {
+        if (active && (tick !== renderedTick || !wasActive || repaint)) {
           const ptr = game._web_scene() >>> 2;
           const scene = game.HEAP32.subarray(ptr,ptr+RainbowRenderer.LENGTH);
-          renderer.drawScene(scene,game.HEAPU8,trainerEnabled);
+          const effectPtr=game._web_effects()>>>2;
+          const effects=game.HEAP32.subarray(effectPtr,effectPtr+196);
+          const groundPtr=scene[24]>>>2;
+          const ground=game.HEAP32.subarray(groundPtr,groundPtr+scene[3]);
+          active=renderer.drawScene(scene,game.HEAPU8,trainerEnabled,effects,ground);
+          if(active && scene[12]===2 && !endSent) {
+            endSent=true;pause(true);
+            send('round-ended',{score:scene[10]});
+          }
           renderedTick = scene[1];
+          repaint=false;
         }
+        display.hidden = !active;
+        canvas.style.visibility = active ? 'hidden' : 'visible';
         wasActive = active;
         requestAnimationFrame(draw);
       };
@@ -152,6 +173,12 @@
       canvas.dataset.bombs = String(game._web_read(3));
       canvas.dataset.ammo = String(game._web_read(7));
       canvas.dataset.crashes = String(game._web_read(8));
+      canvas.dataset.planeState = String(game._web_read(5));
+      canvas.dataset.endStatus = String(game._web_read(9));
+      if(!scoreSent && game._web_read(9)===2 && game._web_read(1)>=0) {
+        scoreSent=true;
+        send('score-ready',{score:game._web_read(10),level:game._web_read(11)+1,ticks:game._web_read(0),trainerUsed});
+      }
       canvas.dataset.trainer = String(trainerEnabled);
       canvas.dataset.audio = game.SDL2?.audioContext?.state || 'unavailable';
       canvas.dataset.paused = String(paused);

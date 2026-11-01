@@ -27,7 +27,7 @@ def main():
                         "-c", str(SRC / "sdl/video.c"), "-o", str(video_object)], check=True)
         sources = sorted(SRC.glob("*.c"))
         sources += [SRC / "sdl" / name for name in ("pcsound.c", "timer.c", "controller.c")]
-        sources += [ROOT / "web/trainer.c", ROOT / "tests/trainer.c"]
+        sources += [ROOT / "web/trainer.c", ROOT / "web/variant.c", ROOT / "tests/trainer.c"]
         binary = temporary / "trainer-test"
         subprocess.run([compiler, *flags, *cflags, '-DWEB_TEST_PREF_PATH="' + str(prefs) + '/"',
                         *map(str, sources), str(video_object), *libs, "-lm", "-o", str(binary)], check=True)

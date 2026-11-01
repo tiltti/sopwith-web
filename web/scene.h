@@ -7,13 +7,15 @@
  * it synchronously between ticks, and must not retain heap views. */
 /* Header: version, tick, camera-x, world-width, player-x/y, fuel, ammo,
  * bombs, remaining-lives, score, speed, end-status, player-state, object-count,
- * home-x, returning-home, at-home, level, angle, orientation, 3 reserved.
+ * home-x, returning-home, at-home, level, angle, orientation,
+ * rainbow-left-x, rainbow-left-ground-y, rainbow-right-ground-y,
+ * ground-height-array-pointer, 3 reserved. Rainbow span is 220 native pixels.
  * Then 320 visible ground heights (native upward Y coordinates).
  * Object record: type, state, world-x/y, angle, orientation, faction, width,
  * height, sprite-byte-pointer, is-player, life, dx/dy, colour, original-orient.
  * Sprite bytes index the original 4-colour masks; zero is transparent. */
-#define WEB_SCENE_VERSION 1
-#define WEB_SCENE_HEADER 24
+#define WEB_SCENE_VERSION 2
+#define WEB_SCENE_HEADER 28
 #define WEB_SCENE_STRIDE 16
 #define WEB_SCENE_OBJECTS 256
 

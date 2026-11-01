@@ -42,6 +42,7 @@ jobs:
           fi
           node tests/browser-controls.mjs
           node tests/rainbow-renderer.mjs
+          node tests/leaderboard.mjs
           python scripts/test_trainer.py
           python scripts/test_scene.py
 
@@ -53,6 +54,7 @@ jobs:
           node --check dist/app.js
           node --check dist/runner.js
           node --check dist/rainbow-renderer.js
+          node --check dist/leaderboard.js
           python scripts/verify_release.py
 
       - name: Configure GitHub Pages

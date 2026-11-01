@@ -43,6 +43,10 @@ EMSCRIPTEN_KEEPALIVE const int *web_scene(void)
     scene[18] = gamenum;
     scene[19] = consoleplayer->ob_angle;
     scene[20] = consoleplayer->ob_orient;
+    scene[21] = clamp_range(0, scene[15] - 110, (int)currgame->gm_max_x - 221);
+    scene[22] = ground[scene[21]];
+    scene[23] = ground[scene[21] + clamp_max(220, (int)currgame->gm_max_x - 1)];
+    scene[24] = (int)(uintptr_t)ground;
     for (int x = 0; x < SCR_WDTH; ++x) {
         int wx = clamp_range(0, displx + x, (int)currgame->gm_max_x - 1);
         scene[WEB_SCENE_HEADER + x] = ground[wx];

@@ -1,6 +1,7 @@
 .tools/
 .openai/
 build/
+node_modules/
 .DS_Store
 *.tar
 *.tar.gz

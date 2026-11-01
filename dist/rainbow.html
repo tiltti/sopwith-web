@@ -8,7 +8,8 @@
   <title>Rainbow Patrol — Sopwith Tribute</title>
   <link rel="icon" href="assets/tribute-mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="tribute.css?v=20261031-rainbow1">
+  <link rel="stylesheet" href="leaderboard.css?v=20261101-scores1">
+  <link rel="stylesheet" href="tribute.css?v=20261101-scores1">
 </head>
 <body class="rainbow-page" data-edition="rainbow">
   <a class="skip" href="#start">Siirry peliin</a>
@@ -37,6 +38,7 @@
           </div>
           <div id="loading" class="message-layer" hidden><span class="loader" aria-hidden="true"></span><h2>Ladataan peliä</h2><p id="loading-text">Ladataan peliä…</p></div>
           <div id="paused" class="message-layer" hidden><span class="pause-symbol" aria-hidden="true">Ⅱ</span><h2>Tauko</h2><button id="resume" class="primary">Jatka peliä <span aria-hidden="true">→</span></button><p>P tai Esc jatkaa peliä.</p></div>
+          <div id="complete" class="message-layer complete-layer" hidden><img src="assets/tribute-mark.svg" width="54" height="54" alt=""><h2>Lento päättyi</h2><p id="complete-score">Pisteet: 0</p><button id="play-again" class="primary">Uusi yritys <span aria-hidden="true">↻</span></button><button id="result-score" class="result-score" hidden>Tallenna pisteet ↓</button></div>
           <div id="error" class="message-layer" hidden><span class="pause-symbol" aria-hidden="true">!</span><h2>Peli ei käynnistynyt.</h2><p id="error-text">Pelitiedostojen lataaminen epäonnistui.</p><button id="retry" class="primary">Yritä uudelleen <span aria-hidden="true">↻</span></button></div>
         </div>
         <div class="game-toolbar"><div class="toolbar-group"><button id="pause" disabled><span aria-hidden="true">Ⅱ</span> <span id="pause-label">Tauko</span><kbd>P</kbd></button><button id="restart" disabled><span aria-hidden="true">↻</span> Uusi peli</button></div><div class="toolbar-group"><button id="mute" aria-pressed="true"><span id="sound-icon" aria-hidden="true">◖×</span><span id="sound-label">Äänet pois</span></button><button id="fullscreen" aria-label="Koko näyttö"><span aria-hidden="true">⛶</span><span>Koko näyttö</span></button></div></div>
@@ -44,14 +46,22 @@
         <div class="under-screen"><p><span class="cyan" aria-hidden="true">↳</span> Vinkki ensimmäiseen lentoon: <kbd>X</kbd> lisää vauhtia, sitten <kbd>,</kbd> nostaa nokkaa.</p><button id="touch-toggle" aria-pressed="false">Näyttöohjaimet <span aria-hidden="true">＋</span></button></div>
       </div>
 
-      <aside class="flight-manual" id="ohjeet" aria-labelledby="manual-title"><div class="manual-heading"><span class="eyebrow">NÄPPÄIMISTÖ</span><span class="manual-mark" aria-hidden="true">✳</span></div><h2 id="manual-title">Ohjaus</h2><p class="edition-description">Sopwithin lentäminen ja taistelu uudella pikseligrafiikalla. Tuhoa vastapuolen rakennukset ja palaa tukikohtaan täydentämään varusteet.</p><dl class="controls-list"><div><dt>Kaasu + / −</dt><dd><kbd>X</kbd><kbd>Z</kbd></dd></div><div><dt>Nokka ylös / alas</dt><dd><kbd>,</kbd><kbd>/</kbd></dd></div><div><dt>Käännä kone</dt><dd><kbd>.</kbd></dd></div><div><dt>Konekivääri</dt><dd><kbd class="wide-key">Välilyönti</kbd></dd></div><div><dt>Pudota pommi</dt><dd><kbd>B</kbd></dd></div><div><dt>Palaa tukikohtaan</dt><dd><kbd>H</kbd></dd></div></dl><p class="arrow-note">Myös nuolinäppäimet toimivat: <span>↑ ↓</span> nokka, <span>← →</span> kaasu.<br><kbd>S</kbd> vaihtaa ääniä lennon aikana. Valikossa S valitsee single player -tilan.</p><div class="palette-strip" aria-label="Rainbow Patrolin väripaletti"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><details class="display-settings"><summary>Näytön asetukset <span aria-hidden="true">＋</span></summary><label for="palette">Väripaletti</label><select id="palette"><option value="0">Alkuperäinen CGA</option><option value="1">CGA: vihreä / punainen / keltainen</option></select></details></aside>
+      <aside class="flight-manual" id="ohjeet" aria-labelledby="manual-title"><div class="manual-heading"><span class="eyebrow">NÄPPÄIMISTÖ</span><span class="manual-mark" aria-hidden="true">✳</span></div><h2 id="manual-title">Ohjaus</h2><p class="edition-description">Sopwithin lentäminen ja taistelu uudella pikseligrafiikalla. Tuhoa vastapuolen rakennukset ja palaa tukikohtaan täydentämään varusteet.</p><dl class="controls-list"><div><dt>Kaasu + / −</dt><dd><kbd>X</kbd><kbd>Z</kbd></dd></div><div><dt>Nokka ylös / alas</dt><dd><kbd>,</kbd><kbd>/</kbd></dd></div><div><dt>Käännä kone</dt><dd><kbd>.</kbd></dd></div><div><dt>Konekivääri</dt><dd><kbd class="wide-key">Välilyönti</kbd></dd></div><div><dt>Pommit / sarja</dt><dd><kbd>B</kbd></dd></div><div><dt>Palaa tukikohtaan</dt><dd><kbd>H</kbd></dd></div></dl><p class="arrow-note">Myös nuolinäppäimet toimivat: <span>↑ ↓</span> nokka, <span>← →</span> kaasu.<br><kbd>S</kbd> vaihtaa ääniä lennon aikana. Valikossa S valitsee single player -tilan.</p><p class="bomb-note"><kbd>B</kbd> pidettynä pudottaa pommeja sarjana. Tähtäin arvioi osumapaikan maastoon; rakennukset ja muut kohteet voivat osua pommin tielle.</p><label class="aim-setting"><input type="checkbox" id="aim-toggle" checked> Pommitähtäin</label><div class="palette-strip" aria-label="Rainbow Patrolin väripaletti"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><details class="display-settings"><summary>Näytön asetukset <span aria-hidden="true">＋</span></summary><label for="palette">Väripaletti</label><select id="palette"><option value="0">Alkuperäinen CGA</option><option value="1">CGA: vihreä / punainen / keltainen</option></select></details></aside>
+    </section>
+
+    <section class="leaderboard" id="leaderboard" aria-labelledby="scores-title">
+      <div class="scores-heading"><div><h2 id="scores-title">High scores</h2><p id="scores-scope">Tulokset tässä selaimessa</p></div><div class="scores-actions"><label class="sr-only" for="scores-mode">Pistetilaston pelitila</label><select id="scores-mode"><option value="practice">Harjoittelu</option><option value="combat">Ilmataistelu</option></select><button id="scores-refresh" type="button">Päivitä ↻</button></div></div>
+      <table><thead><tr><th>#</th><th>Nimimerkki</th><th>Pisteet</th><th>Kenttä</th></tr></thead><tbody id="scores-rows"></tbody></table>
+      <p id="scores-status" class="scores-status" role="status" aria-live="polite"></p>
+      <form id="score-form" class="score-form" hidden><p id="score-result"></p><label for="score-name">Nimimerkki <input id="score-name" name="nickname" maxlength="18" required autocomplete="nickname"></label><button id="score-submit" class="primary" type="submit">Tallenna tulos</button><p id="score-consent" class="score-consent"></p></form>
     </section>
 
     <section id="tiedot" class="project-links" aria-label="Alkuperäiset projektit ja lähdekoodi"><p>Alkuperäinen peli: David L. Clark / BMB Compuscience.<br>Selainversion pohja: SDL Sopwith 2.9.0, Simon Howard ja muut tekijät.</p><div><a href="https://www.sopwith.org/" target="_blank" rel="noopener">sopwith.org ↗</a><a href="https://github.com/fragglet/sdl-sopwith" target="_blank" rel="noopener">SDL Sopwith ↗</a><a href="source/sopwith-web-source.tar.gz" download>Tämän version lähdekoodi ↓</a></div></section>
   </main>
-  <footer class="site-footer wrap"><p>RAINBOW PATROL <span>·</span> 0.1</p><div><a href="source/AUTHORS.txt">Tekijät</a><a href="source/COPYING.md">GPL v2+</a><span class="footer-colors" aria-hidden="true"><i></i><i></i><i></i></span></div></footer>
+  <footer class="site-footer wrap"><p>RAINBOW PATROL <span>·</span> 0.2</p><div><a href="source/AUTHORS.txt">Tekijät</a><a href="source/COPYING.md">GPL v2+</a><span class="footer-colors" aria-hidden="true"><i></i><i></i><i></i></span></div></footer>
   <noscript><p class="no-script">Pelaaminen vaatii JavaScriptin ja WebAssembly-tuen.</p></noscript>
-  <script src="rainbow-renderer.js?v=20261031-rainbow1"></script>
-  <script src="app.js?v=20261031-rainbow1"></script>
+  <script src="rainbow-renderer.js?v=20261101-scores1"></script>
+  <script src="app.js?v=20261101-scores1"></script>
+  <script src="leaderboard.js?v=20261101-scores1"></script>
 </body>
 </html>

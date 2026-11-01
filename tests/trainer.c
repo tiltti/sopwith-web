@@ -10,7 +10,9 @@
 #include "swmain.h"
 #include "swmove.h"
 #include "swobject.h"
+#include "swcollsn.h"
 #include "trainer.h"
+#include "variant.h"
 
 /* Isolate test preferences from the player's actual native SDL preferences. */
 char *Vid_GetPrefPath(void) { return strdup(WEB_TEST_PREF_PATH); }
@@ -18,6 +20,7 @@ char *Vid_GetPrefPath(void) { return strdup(WEB_TEST_PREF_PATH); }
 static void fresh_game(bool trainer)
 {
     playmode = PLAYMODE_SINGLE;
+    WebVariant_SetEnabled(false);
     WebTrainer_SetEnabled(trainer);
     swinitlevel();
     WebTrainer_Apply(consoleplayer);
@@ -125,5 +128,63 @@ int main(void)
     WebTrainer_Apply(consoleplayer);
     assert(consoleplayer->ob_endsts == WINNER && consoleplayer->ob_crashcnt == 3);
     puts("Fuel and mission outcomes are unchanged; disabling trainer restores normal resource use.");
+
+    fresh_game(false);
+    WebVariant_SetEnabled(true);
+    consoleplayer->ob_y = 170;
+    consoleplayer->ob_dx = 4;
+    consoleplayer->ob_dy = 0;
+    consoleplayer->ob_athome = false;
+    OBJECTS *enemy = planes[1];
+    enemy->ob_bdelay = 8;
+    int launched = 0;
+    for (i = 0; i < 10; ++i) {
+        OBJECTS *old = objbot;
+        initbomb(consoleplayer);
+        if (old != objbot) ++launched;
+        if (consoleplayer->ob_bdelay) --consoleplayer->ob_bdelay;
+        for (OBJECTS *ob = objtop; ob; ob = ob->ob_next) {
+            if (ob->ob_type == BOMB) movebomb(ob);
+        }
+        swcollsn();
+        ++countmove;
+        WebVariant_Apply(consoleplayer);
+    }
+    int in_air = 0;
+    for (OBJECTS *ob = objtop; ob; ob = ob->ob_next) if (ob->ob_type == BOMB) ++in_air;
+    assert(launched == 5 && in_air == 5 && consoleplayer->ob_bombs == 0);
+    assert(enemy->ob_bdelay == 8);
+    OBJECTS *old = objbot;
+    initbomb(consoleplayer);
+    assert(old == objbot);
+    puts("Rainbow: five bombs coexist in flight, ammo is consumed, empty stock blocks firing; enemies retain their delay.");
+
+    consoleplayer->ob_bdelay = 9;
+    WebVariant_SetEnabled(false);
+    WebVariant_Apply(consoleplayer);
+    assert(consoleplayer->ob_bdelay == 9);
+    puts("Classic: disabled variant leaves the original bomb interval untouched.");
+
+    fresh_game(false);
+    WebVariant_SetEnabled(true);
+    initexpl(consoleplayer, 1);
+    ++countmove;
+    WebVariant_Apply(consoleplayer);
+    const int *events = WebVariant_Effects();
+    assert(events[1] == 1 && events[2] == 1);
+    assert(events[WEB_EFFECT_HEADER+2] == 1);
+    assert(events[WEB_EFFECT_HEADER+5] == 2);
+    ++countmove; WebVariant_Apply(consoleplayer);
+    assert(events[1] == 1);
+    /* A bird killed by a normal native collision has life == -1 until its
+     * next move. The adapter adds only visual feedback to that state. */
+    OBJECTS *bird = allocobj();
+    bird->ob_type = BIRD;bird->ob_life = -1;bird->ob_symbol = &symbol_pixel;
+    bird->ob_x = 1100;bird->ob_y = 100;
+    ++countmove;WebVariant_Apply(consoleplayer);
+    assert(events[1] == 2 && events[WEB_EFFECT_HEADER+WEB_EFFECT_STRIDE+2] == 2);
+    ++countmove;WebVariant_Apply(consoleplayer);assert(events[1] == 2);
+    assert(consoleplayer->ob_endsts == PLAYING && bird->ob_life == -1);
+    puts("Rainbow effects: native explosion fragments group into one blast; bird hits produce one feather event without extra damage.");
     return 0;
 }

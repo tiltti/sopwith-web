@@ -17,7 +17,9 @@ The collection homepage links two separately playable editions:
 - **[Sopwith: Rainbow Patrol](https://tiltti.github.io/sopwith-web/rainbow.html)**:
   an Amiga-inspired 640×400 pixel renderer with shaded sprites, bright skies,
   parallax clouds, a rainbow, flight trails and new instruments. Its first
-  release retains the classic game's controls, physics, AI, terrain and combat.
+  release retains the classic flight model, AI and terrain. The new edition
+  adds a rapid bomb salvo with downward separation, a switchable ground-impact
+  estimate, original pixel explosion/feather effects and its own end/retry view.
 
 The common navigation links are normal pages, so changing editions stops the
 previous game. More editions can be added without changing either engine path.
@@ -27,18 +29,35 @@ enabled with the sound button or S. It never starts automatically.
 ## Rainbow Patrol renderer
 
 `web/scene.c` exports a read-only snapshot of the current C game state. Its
-versioned integer ABI is documented in `web/scene.h`: a 24-integer header,
+versioned integer ABI is documented in `web/scene.h`: a 28-integer header,
 320 ground heights and up to 256 object records of 16 integers. Sprite bytes
 remain owned by the original engine. `dist/rainbow-renderer.js` reads a fresh
 heap view when a native tick changes and draws at twice the native resolution.
 The terrain and sprite silhouettes use the same data as native collisions.
-Menus, text entry and end screens fall back to the original SDL display.
+Native menus/text entry retain SDL; the mission end and retry view stay in the
+Rainbow theme. A single rainbow landmark has world coordinates and feet masked
+by the actual terrain. It no longer repeats or stops above the ground.
 
 The scene adapter does not change game state or upstream sources. Artwork in
 `dist/assets/tribute-mark.svg` and the background renderer is original to this
 project. Amiga-era pixel games, Rainbow Islands and Rovio's RETRY are visual
 references; their assets and code are not included. A separate flight model or
-new obstacle courses are not implemented in this first visual edition.
+new obstacle courses are not implemented yet. `web/variant.c` is enabled only
+for Rainbow Patrol and preserves the classic edition's weapon timing.
+
+## High scores
+
+Both editions now have separate practice/combat boards. Without a shared
+endpoint, scores persist in this browser and the UI explicitly says so. The
+player saves a finished run with a nickname; runs that used the trainer are
+excluded, even if the trainer was subsequently disabled.
+
+The shared Worker/D1 service is implemented in `server/` and has been deployed
+owner-private through Sites. Public service access requires explicit approval;
+`dist/leaderboard-config.json` therefore currently has a null endpoint. After
+public access is authorised, point that file at the approved service URL.
+The service stores nicknames, scores, levels and submission dates, with no
+player account or email required. See `server/README.md` for the API and limits.
 
 ## Source and credits
 
@@ -110,6 +129,7 @@ C / SDL2 / Emscripten / WASM architecture and source provenance.
 ```sh
 node tests/browser-controls.mjs
 node tests/rainbow-renderer.mjs
+node tests/leaderboard.mjs
 python3 scripts/test_trainer.py
 python3 scripts/test_scene.py
 python3 scripts/verify_release.py

@@ -24,6 +24,11 @@ RETRY are visual references; no artwork, audio or code from those games is
 distributed here. Rainbow Patrol is an independent tribute and is not an
 official release from those games' creators.
 
+Additional references discussed during development include Triplane Turmoil
+and Super Sukkula. Their game files and artwork are not bundled. The new
+edition-specific bomb release rules, visual events and score service are
+original integration code in this repository, under the same GPL v2+ license.
+
 The game and new adaptation code are licensed under **GNU General Public
 License version 2 or, at your option, any later version**
 (`SPDX-License-Identifier: GPL-2.0-or-later`). See [LICENSE](LICENSE),

@@ -12,6 +12,7 @@
 #include "pcsound.h"
 #include "swsound.h"
 #include "trainer.h"
+#include "variant.h"
 
 static bool paused;
 static Uint32 paused_at, paused_duration;
@@ -32,6 +33,7 @@ int Timer_GetMS(void)
 void Timer_Sleep(int milliseconds)
 {
     WebTrainer_Apply(consoleplayer);
+    WebVariant_Apply(consoleplayer);
     emscripten_sleep(milliseconds);
     while (paused) emscripten_sleep(25);
 }
@@ -40,6 +42,16 @@ EMSCRIPTEN_KEEPALIVE void web_trainer(int enabled)
 {
     WebTrainer_SetEnabled(enabled != 0);
     WebTrainer_Apply(consoleplayer);
+}
+
+EMSCRIPTEN_KEEPALIVE void web_variant(int enabled)
+{
+    WebVariant_SetEnabled(enabled != 0);
+}
+
+EMSCRIPTEN_KEEPALIVE const int *web_effects(void)
+{
+    return WebVariant_Effects();
 }
 
 /* 0: native menus/end screens, 1: flight controls, 2: native text entry. */
@@ -99,6 +111,8 @@ EMSCRIPTEN_KEEPALIVE int web_read(int field)
         case 7: return consoleplayer->ob_rounds;
         case 8: return consoleplayer->ob_crashcnt;
         case 9: return consoleplayer->ob_endsts;
+        case 10: return consoleplayer->ob_score.score;
+        case 11: return gamenum;
         default: return -1;
     }
 }

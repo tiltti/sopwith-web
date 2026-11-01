@@ -1,5 +1,31 @@
 # Validation
 
+## 2026-11-01: Rainbow combat/visual fixes and score persistence
+
+- The rainbow is one world landmark, with feet extending underneath the true
+  ground mask. Both ends were inspected at the native starting location.
+- Coastal cliffs, shrubs, strata and stones replace the repeated triangle
+  skyline. Pixel blast rings, sparks and feather puffs use native event state.
+- Rainbow-only rules allow a 200 ms bomb interval. A downward release impulse
+  separates the salvo. Native integration tests keep five bombs simultaneously
+  airborne through actual collision checks, consume five bombs, reject an empty
+  stock and preserve enemy/classic cooldowns.
+- Bomb impact prediction uses native launch angles, integer velocity and falling
+  steps. It estimates terrain impact; buildings/other objects may intercept.
+- Browser QA saw multiple bombs in flight and a ground estimate at world
+  x=1387, y=64. The switch hides/shows it even while the native clock is paused.
+- Five real player crashes reach the Rainbow end screen without revealing CGA;
+  the native clock freezes once and the retry button starts a fresh game.
+- Browser QA saved a finished -250-point test run to the local board and
+  reloaded the page; the entry remained. The test data uses localhost only.
+- Leaderboard API tests use a real SQLite file, reopen the database, and check
+  persistent records, separate boards, invalid/expired tickets, trainer flags,
+  payload bounds and idempotent submissions.
+- The shared Sites Worker was deployed owner-private. Production D1 has the
+  migrated `runs` and `scores` tables. Public access was rejected by automatic
+  review pending explicit permission; the published client stays local-only
+  until that permission is granted. No test entries were added to production.
+
 ## 2026-10-31: Tribute collection and Rainbow Patrol
 
 - The homepage now links separate Rainbow Patrol, Sopwith II and Info pages.

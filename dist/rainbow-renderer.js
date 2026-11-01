@@ -1,7 +1,7 @@
 // Sopwith: Rainbow Patrol. Original pixel renderer, GPL-2.0-or-later.
 // The native C engine remains responsible for simulation and collision masks.
 (() => {
-  const W = 640, H = 400, HEADER = 24, STRIDE = 16, GROUND = 320;
+  const W = 640, H = 400, HEADER = 28, STRIDE = 16, GROUND = 320;
   const P = {
     outline:'#34365b', blue:'#458fcb', sky:'#54b8e1', pale:'#98e6ed',
     cloud:'#e5fff0', cloudShade:'#9ce3e5', cloudDeep:'#76cddc',
@@ -49,12 +49,12 @@
   function cloud(c,x,y,s=1) {
     const block=(a,b,w,h,color)=>rect(c,Math.round(x+a*s),Math.round(y+b*s),
       Math.round((a+w)*s)-Math.round(a*s),Math.round((b+h)*s)-Math.round(b*s),color);
-    const steps = [[0,18,12,8],[7,10,14,17],[15,3,17,24],[20,0,11,27],
-      [30,7,17,20],[44,13,16,14],[56,20,15,7],[65,24,12,3]];
+    const steps = [[0,19,13,8],[6,13,17,14],[17,6,22,21],[23,2,12,25],
+      [35,10,19,17],[48,7,17,20],[59,14,15,13],[69,20,13,7]];
     for (const [a,b,w,h] of steps) block(a,b,w,h,P.cloudShade);
     for (const [a,b,w] of steps) block(a,b,w,Math.max(2,26-b-5),P.cloud);
-    block(1,27,76,2,P.cloudDeep);
-    block(14,24,47,3,P.pale);
+    block(1,27,80,2,P.cloudDeep);
+    block(14,24,48,3,P.pale);
   }
   function polygon(c,points,color) {
     // Rasterise the distant hills by rows, keeping diagonals on whole pixels.
@@ -69,12 +69,46 @@
       for(let i=0;i<cuts.length;i+=2)rect(c,Math.round(cuts[i]),y,Math.round(cuts[i+1])-Math.round(cuts[i]),1,color);
     }
   }
-  function rainbow(c,cx,cy,r) {
+  function rainbow(c,xLeft,yLeft,xRight,yRight) {
     const colors=[P.red,P.yellow,P.grass,P.mint,P.blue,P.purple];
-    // Stepped annuli, with no antialiasing, on a two-pixel grid.
-    for(let y=-r;y<0;y+=2) for(let x=-r;x<=r;x+=2) {
-      const d=Math.sqrt(x*x+y*y), band=Math.floor((r-d)/4);
-      if(band>=0 && band<colors.length) rect(c,cx+x,cy+y,2,2,colors[band]);
+    const rx=(xRight-xLeft)/2,cx=xLeft+rx,ry=145;
+    // One world-anchored arch. Both feet extend under the true terrain;
+    // foreground ground masks them, including different endpoint heights.
+    for(let x=-rx;x<=rx;x+=2) for(let band=0;band<6;band++) {
+      const outerX=rx-band*5,innerX=outerX-5;
+      if(Math.abs(x)>outerX)continue;
+      const top=-(ry-band*5)*Math.sqrt(1-(x/outerX)**2);
+      const base=yLeft+(yRight-yLeft)*(x+rx)/(rx*2);
+      const bottom=Math.abs(x)>=innerX?H-base:-(ry-(band+1)*5)*Math.sqrt(1-(x/innerX)**2);
+      for(let y=Math.floor(top/2)*2;y<=bottom;y+=2)rect(c,cx+x,base+y,2,2,colors[band]);
+    }
+  }
+  const SINE=[0,98,181,237,256,237,181,98,0,-98,-181,-237,-256,-237,-181,-98];
+  function predictBomb(plane,ground) {
+    if(!plane||!ground?.length)return null;
+    const a=(plane[4]+(plane[5]?4:12))&15;
+    let x=plane[2]+((SINE[(a+4)&15]*10)>>8)+4;
+    let y=plane[3]+((SINE[a]*10)>>8)-4,dx=plane[12],dy=plane[13],life=5;
+    const path=[];
+    for(let tick=1;tick<=180;tick++) {
+      if(--life<=0) {
+        if(dy<0)dx-=Math.sign(dx);
+        if(dy>-10)dy--;
+        life=5;
+      }
+      x=Math.max(0,Math.min(ground.length-10,x+dx));y+=dy;
+      // The edition ejects a new bomb after its first native move.
+      if(tick===1)dy-=4;
+      const cx=Math.max(0,Math.min(ground.length-1,x+4)),cy=y-4;
+      if(tick%3===0)path.push({x:cx,y:cy});
+      if(cy<=ground[cx]+3)return {x:cx,y:ground[cx],ticks:tick,path};
+    }
+    return null;
+  }
+  function ring(c,x,y,r,color) {
+    for(let py=-r;py<=r;py+=2)for(let px=-r;px<=r;px+=2) {
+      const d=px*px+py*py;
+      if(d<=r*r && d>(r-2)*(r-2))rect(c,x+px,y+py,2,2,color);
     }
   }
   function demoPlane(c,x,y,scale=1,angle=-.28) {
@@ -108,34 +142,47 @@
       this.canvas=canvas; canvas.width=W; canvas.height=H;
       this.c=canvas.getContext('2d',{alpha:false}); this.c.imageSmoothingEnabled=false;
       this.sprites=new Map(); this.trail=[]; this.lastTick=-1;
+      this.effects=[];this.lastEffectId=0;this.aimEnabled=true;
     }
     background(camera=0,tick=0) {
       const c=this.c;
-      const bands=['#40a6e1','#4cb8e9','#63c9f0','#86daf4','#a4e8f1','#c9f5ef'];
-      bands.forEach((color,i) => rect(c,0,i*66,W,67,color));
-      // The sun and rainbow remain distant; all hard-edged scenery below is
-      // drawn from the actual collision terrain, not from this backdrop.
+      const bands=['#3b9bd6','#40a6e1','#49b2e7','#56bfed','#68cbef','#82d8ef','#a4e8ee','#c9f5ef'];
+      bands.forEach((color,i) => rect(c,0,i*50,W,51,color));
       const sunX=552-Math.round(camera*.035)%95;
       for(let y=-16;y<=16;y+=2) {
         const r=Math.floor(Math.sqrt(16*16-y*y)/2)*2;
         rect(c,sunX-r,63+y,r*2+2,2,P.gold);
       }
       rect(c,sunX-6,53,10,10,P.cream);
-      rainbow(c,440-Math.round(camera*.06)%160,249,95);
       for (let i=-1;i<5;i++) {
-        let x=i*190-((camera*.11+tick*.16)%190);
-        cloud(c,x,64+(i%3)*34,i%2===0?1.9:1.05);
+        let x=i*210-((camera*.11+tick*.12)%210);
+        cloud(c,x,62+((i+5)%3)*39,i%2===0?1.5:1.05);
       }
-      for(let i=-1;i<6;i++) cloud(c,i*140-(camera*.19%140),230+(i%2)*14,.9);
-      // Teal silhouettes read as distant scenery rather than solid platforms.
-      const shift=Math.floor(camera*.23)%240;
-      for(let i=-1;i<4;i++) {
-        const x=i*240-shift;
-        polygon(c,[[x,347],[x+25,313],[x+53,313],[x+85,265],[x+102,265],
-          [x+124,303],[x+145,303],[x+174,331],[x+203,331],[x+240,351],[x+240,400],[x,400]],'#65c4c6');
-        polygon(c,[[x+85,265],[x+102,265],[x+117,293],[x+97,289],[x+78,284]],'#a8e6c6');
+      for(let i=-1;i<6;i++)cloud(c,i*145-(camera*.19%145),225+(i%2)*14,.75);
+      // A coastal skyline of weathered columns, shrubs and an occasional
+      // lighthouse. Muted colours separate scenery from collidable terrain.
+      const far=camera*.27,chunk=Math.floor(far/150);
+      for(let i=chunk-1;i<chunk+6;i++) {
+        const x=i*150-far,seed=((i*73+919)%97+97)%97,top=282+seed%42;
+        polygon(c,[[x,400],[x,top+31],[x+12,top+31],[x+12,top+9],[x+35,top+9],
+          [x+35,top],[x+92,top],[x+92,top+11],[x+119,top+11],[x+119,top+35],
+          [x+150,top+35],[x+150,400]],'#7ab8ad');
+        rect(c,x+36,top,55,4,'#afd3a2');
+        rect(c,x+39,top+4,13,H-top,'#92c4b4');
+        rect(c,x+83,top+5,7,H-top,'#66aaac');
+        for(let y=top+22;y<H;y+=21)rect(c,x+36,y,55,2,'#6eadab');
+        for(let t=0;t<3;t++) {
+          const tx=x+43+t*16,ty=top-8-(t+seed)%3*3;
+          rect(c,tx+4,ty+3,2,8,'#6eadab');rect(c,tx,ty,10,6,'#78b59f');
+          rect(c,tx+2,ty-3,6,3,'#9bcea8');
+        }
+        if(seed%5===0) {
+          rect(c,x+66,top-36,9,36,'#d5e4c6');rect(c,x+66,top-22,9,5,'#96c1b2');
+          rect(c,x+64,top-39,13,4,'#719ca4');rect(c,x+67,top-43,7,5,'#f6e9b5');
+          rect(c,x+63,top-44,15,2,'#719ca4');
+        }
       }
-      rect(c,0,363,W,37,'#68c8c9');
+      rect(c,0,375,W,25,'#68c8c9');
       for(let i=0;i<15;i++) rect(c,(i*53-Math.floor(camera*.3)%53),371+(i%3)*8,18,1,'#a8e6cf');
     }
     terrain(ground,camera) {
@@ -147,12 +194,86 @@
           const hash=(Math.floor(wx/2)*17+Math.floor(dy/13)*31)%37;
           if(hash<3)rect(c,x*2,y+dy,2,2,hash===0?P.sand:P.soilShade);
         }
+        const stratum=(Math.floor(wx/42)*7)%18;
+        for(let sy=350+stratum;sy<H;sy+=29)if(sy>y+14)rect(c,x*2,sy,2,2,'#c39760');
+        for(let sy=319;sy<H;sy+=32) {
+          const tile=Math.floor(wx/34),lx=wx%34;
+          if(sy>y+17 && (tile+Math.floor(sy/32))%5===0 && lx>=9&&lx<20) {
+            rect(c,x*2,sy+(lx<12?2:0),2,4,P.rock);
+            if(lx>11&&lx<18)rect(c,x*2,sy,2,1,P.sand);
+          }
+        }
         rect(c,x*2,y,2,2,P.outline);
         rect(c,x*2,y+2,2,3,P.grass);
         rect(c,x*2,y+5,2,3,P.green);
         rect(c,x*2,y+8,2,2,P.grassShade);
         if((camera+x)%13===0)rect(c,x*2,y+11,2,3,P.rock);
       }
+    }
+    landmark(scene) {
+      const left=(scene[21]-scene[2])*2,right=left+440;
+      const visible=left<W && right>0;
+      if(visible)rainbow(this.c,left,(199-scene[22])*2+10,right,(199-scene[23])*2+10);
+      this.canvas.dataset.rainbow=String(visible);
+      return visible;
+    }
+    readEffects(data,tick) {
+      if(!data||data[0]!==1)return;
+      for(let i=0;i<32;i++) {
+        const at=4+i*6,id=data[at];
+        if(id<=this.lastEffectId||id===0)continue;
+        const age=tick-data[at+1];
+        if(age>=0&&age<16)this.effects.push({id,tick:data[at+1],type:data[at+2],x:data[at+3],y:data[at+4],size:data[at+5]});
+      }
+      this.lastEffectId=data[1];
+      this.effects=this.effects.filter(e=>tick-e.tick>=0&&tick-e.tick<16).slice(-32);
+    }
+    drawEffects(camera,tick) {
+      const c=this.c;
+      for(const e of this.effects) {
+        const age=tick-e.tick,x=(e.x-camera)*2,y=(199-e.y)*2;
+        if(x < -100 || x>W+100)continue;
+        if(e.type===2) {
+          for(let i=0;i<7;i++) {
+            const a=i*2.4+e.id,px=x+Math.cos(a)*(3+age*1.4),py=y+Math.sin(a)*(3+age)+age*age*.12;
+            rect(c,px,py,3,1,P.cream);rect(c,px+1,py+1,1,1,P.teal);
+          }
+          continue;
+        }
+        if(age<7)ring(c,x,y,8+age*4+e.size*2,age<3?P.gold:P.smoke);
+        const r=age<3?8+e.size*4+age*4:Math.max(0,18+e.size*4-(age-2)*6);
+        if(r>0) {
+          const points=[];
+          for(let i=0;i<16;i++) {
+            const a=i*Math.PI/8,rr=r*(i%2?.58:1);
+            points.push([x+Math.cos(a)*rr,y+Math.sin(a)*rr]);
+          }
+          polygon(c,points,P.red);ring(c,x,y,Math.max(2,r-5),P.yellow);
+          rect(c,x-3,y-3,7,7,P.cream);
+        }
+        for(let i=0;i<9;i++) {
+          const a=i*2.399+e.id,spread=(2+e.size)*age;
+          const px=x+Math.cos(a)*spread,py=y+Math.sin(a)*spread+age*age*.18;
+          rect(c,px,py,age<8?3:2,2,age<5?P.yellow:age<10?P.soilShade:P.darkSmoke);
+        }
+      }
+    }
+    aim(scene,objects,ground) {
+      delete this.canvas.dataset.aimX;delete this.canvas.dataset.aimY;
+      if(!this.aimEnabled||scene[17]||scene[8]<=0||![1,6,8,9].includes(scene[13]))return;
+      const player=objects.find(r=>r[10]===1),hit=predictBomb(player,ground);
+      if(!hit)return;
+      const c=this.c,camera=scene[2],x=(hit.x-camera)*2,y=(199-hit.y)*2;
+      if(x<7||x>W-7)return;
+      this.canvas.dataset.aimX=String(hit.x);this.canvas.dataset.aimY=String(hit.y);
+      for(let i=1;i<hit.path.length;i+=2) {
+        const p=hit.path[i],px=(p.x-camera)*2,py=(199-p.y)*2;
+        if(px>3&&px<W-3&&py>43&&py<y-9)rect(c,px,py,2,2,P.cloudDeep);
+      }
+      rect(c,x-6,y-7,4,1,P.cream);rect(c,x-6,y-7,1,4,P.cream);
+      rect(c,x+3,y-7,4,1,P.cream);rect(c,x+6,y-7,1,4,P.cream);
+      rect(c,x-2,y-5,5,1,P.ink);rect(c,x,y-7,1,5,P.ink);
+      rect(c,x-2,y-1,5,1,P.gold);
     }
     sprite(record,heap) {
       const [type,state,,,,,faction,w,h,ptr,,life,,,,orient]=record;
@@ -198,9 +319,11 @@
       if(this.sprites.size>600)this.sprites.clear();
       this.sprites.set(key,out); return out;
     }
-    drawScene(scene,heap,trainer=false) {
-      if(scene[0]!==1||scene[3]===0)return false;
+    drawScene(scene,heap,trainer=false,effects=null,ground=null) {
+      if(scene[0]!==2||scene[3]===0)return false;
       const c=this.c,tick=scene[1],camera=scene[2];
+      if(tick<this.lastTick){this.effects=[];this.lastEffectId=effects?.[1]||0;}
+      this.readEffects(effects,tick);
       if(tick!==this.lastTick) {
         const last=this.trail.at(-1);
         if(tick<this.lastTick || last&&Math.abs(last.x-scene[4])>32)this.trail=[];
@@ -211,6 +334,7 @@
         this.lastTick=tick;
       }
       this.background(camera,tick);
+      this.landmark(scene);
       for(const p of this.trail) {
         const age=tick-p.tick,sz=age>22?1:2;
         rect(c,(p.x-camera)*2,(199-p.y)*2,sz,sz,age>22?P.cloudShade:P.cloud);
@@ -222,18 +346,23 @@
         if(sx < -w*2-3||sx>W||sy>H||sy < -h*2-3)continue;
         if(type===3) {rect(c,sx-3,sy,5,2,P.gold);rect(c,sx,sy,2,2,P.cream);continue;}
         if(type===6) {rect(c,sx,sy,3,3,P.smoke);rect(c,sx+1,sy-1,2,2,P.cloud);continue;}
+        if(type===5) {rect(c,sx,sy,3,3,P.rock);rect(c,sx+1,sy-1,2,2,P.yellow);continue;}
         const sprite=this.sprite(r,heap);if(sprite)c.drawImage(sprite,sx-1,sy-1);
         if(type===1 && r[10]===0 && r[1]!==3) {
           rect(c,sx+w-1,sy-6,3,2,P.redShade);rect(c,sx+w,sy-7,1,4,P.redShade);
         }
       }
       this.terrain(scene.subarray(HEADER,HEADER+GROUND),camera);
+      this.aim(scene,objects,ground);
+      this.drawEffects(camera,tick);
       // Native low-altitude collision geometry is preserved all the way down
       // to the original bottom edge; the information strip lives at the top.
       this.hud(scene,objects,trainer);
       this.canvas.dataset.renderer='rainbow';
       this.canvas.dataset.tick=String(tick);
       this.canvas.dataset.objects=String(objects.length);
+      this.canvas.dataset.bombsInAir=String(objects.filter(r=>r[0]===2).length);
+      this.canvas.dataset.effects=String(this.effects.length);
       return true;
     }
     hud(s,objects,trainer) {
@@ -259,11 +388,17 @@
       }
       if(s[16]) {rect(c,257,47,126,17,P.ink);text(c,'RETURNING TO BASE',269,53,P.cream);}
       if(s[13]===3) {rect(c,242,175,156,34,P.ink);text(c,'PLANE LOST',270,184,P.gold,2);}
+      if(s[12]===1) {
+        rect(c,205,158,230,55,P.outline);rect(c,208,161,224,49,P.ink);
+        text(c,'MISSION COMPLETE',224,173,P.gold,3);
+        text(c,'NEXT FLIGHT',275,197,P.cream);
+      }
     }
     demo() {
       this.background(420,32);
       const g=new Int32Array(320);
       for(let x=0;x<320;x++) g[x]=Math.round(16+Math.max(0,48-Math.abs(x-250)*.65));
+      rainbow(this.c,80,(199-g[40])*2+10,520,(199-g[260])*2+10);
       this.terrain(g,420);
       const c=this.c;
       // Small, original biplane emblem, also used for the collection poster.
@@ -287,6 +422,7 @@
   RainbowRenderer.HEADER=HEADER; RainbowRenderer.STRIDE=STRIDE;
   RainbowRenderer.LENGTH=HEADER+GROUND+256*STRIDE;
   RainbowRenderer.text=text;
+  RainbowRenderer.predictBomb=predictBomb;
   window.RainbowRenderer=RainbowRenderer;
   document.querySelectorAll('canvas[data-rainbow-preview]').forEach(canvas=>new RainbowRenderer(canvas).demo());
 })();

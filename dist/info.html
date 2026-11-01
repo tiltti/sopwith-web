@@ -9,7 +9,7 @@
   <link rel="icon" href="plane.png" type="image/png">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="info.css">
-  <link rel="stylesheet" href="tribute.css?v=20261031-rainbow1">
+  <link rel="stylesheet" href="tribute.css?v=20261101-scores1">
 </head>
 <body>
   <a class="skip" href="#sisalto">Siirry sisältöön</a>
@@ -31,8 +31,8 @@
     <section aria-labelledby="versions-title">
       <h2 id="versions-title">Kaksi versiota, yhteinen pelimoottori</h2>
       <p><a href="classic.html">Sopwith II</a> säilyttää alkuperäisen CGA-piirtimen. <a href="rainbow.html">Sopwith: Rainbow Patrol</a> on oma visuaalinen tribuuttiversio: se käyttää samaa C/WASM-moottoria, mutta kuva piirretään uudelleen Canvas 2D:llä 640 × 400 pikselin koossa. Skaalaus säilyttää pikselien terävät reunat.</p>
-      <p>Uusi vain lukuun tarkoitettu C-rajapinta antaa piirtimelle maaston, koneiden, rakennusten ja ammusten tilan. Maaston muoto ja spritejen siluetit tulevat samasta datasta kuin törmäykset. Oma piirrin lisää varjostetut pikselit, kerroksittain liikkuvan taustan, pilvet, sateenkaaren, lentojäljen ja mittarit. Valikoissa ja lopputuloksissa käytetään alkuperäistä SDL-kuvaa.</p>
-      <p>Ensimmäinen Rainbow Patrol -versio säilyttää Sopwithin ohjauksen, fysiikan, tekoälyn, kentän ja taistelun. Oma pelituntuma ja uudet kentät ovat myöhempää kehitystä. Ulkoasun referensseinä ovat Amiga-kauden värikkäät pikselipelit, Rainbow Islands ja <a href="https://www.youtube.com/watch?v=vyeMUo8hMpE" target="_blank" rel="noopener">Rovion RETRY</a>. Niiden grafiikkaa tai muita pelitiedostoja ei ole käytetty.</p>
+      <p>Uusi vain lukuun tarkoitettu C-rajapinta antaa piirtimelle maaston, koneiden, rakennusten ja ammusten tilan. Maaston muoto ja spritejen siluetit tulevat samasta datasta kuin törmäykset. Oma piirrin lisää varjostetut pikselit, kerroksittain liikkuvan taustan, pilvet, sateenkaaren, lentojäljen ja mittarit. Valikot ja tekstinsyöttö käyttävät alkuperäistä SDL-kuvaa. Loppuruutu ja uusi yritys säilyttävät Rainbow-ilmeen.</p>
+      <p>Rainbow Patrol säilyttää Sopwithin lentomallin, tekoälyn ja kentän. Oma pommisarja pudottaa pommeja 0,2 sekunnin välein ja antaa niille pienen alaspäin suuntautuvan irrotusliikkeen. Vaihdettava tähtäin arvioi osumapaikkaa maastoon; se ei huomioi rakennusten tai muiden kohteiden väliin osumista. Räjähdyksillä ja lintuosumilla on omat pikseliefektit. Uudet kentät ovat myöhempää kehitystä. Ulkoasun referensseinä ovat Amiga-kauden värikkäät pikselipelit, Rainbow Islands ja <a href="https://www.youtube.com/watch?v=vyeMUo8hMpE" target="_blank" rel="noopener">Rovion RETRY</a>. Niiden grafiikkaa tai muita pelitiedostoja ei ole käytetty.</p>
       <p>Rainbow Patrolin tunnus ja maisemapiirrin ovat tämän projektin omaa grafiikkaa. Myös ne ja koko selainintegraatio ovat GPL v2+ -lisenssillä samassa repositoriossa.</p>
     </section>
 
@@ -59,16 +59,18 @@
 
     <section aria-labelledby="ohjaus"><h2 id="ohjaus">Valikot ja näppäimet</h2>
       <p>Alkuperäisissä valikoissa näppäimet menevät pelin omille valinnoille: esimerkiksi <kbd>S</kbd> valitsee single player -tilan ja <kbd>Esc</kbd> palaa takaisin. Käytä valikossa näkyviä kirjain- ja numerovalintoja. Nimen kirjoittamisen aikana kirjaimet ovat tavallista tekstinsyöttöä.</p>
-      <p>Lennon aikana <kbd>S</kbd> vaihtaa ääniä ja <kbd>P</kbd> tai <kbd>Esc</kbd> asettaa pelin tauolle. Muut ohjaimet ovat <a href="./#ohjeet">pelisivulla</a>.</p>
+      <p>Lennon aikana <kbd>S</kbd> vaihtaa ääniä ja <kbd>P</kbd> tai <kbd>Esc</kbd> asettaa pelin tauolle. Muut ohjaimet ovat <a href="rainbow.html#ohjeet">pelisivulla</a>.</p>
     </section>
 
     <section aria-labelledby="trainer"><h2 id="trainer">Trainer konsolista</h2>
       <p>Avaa kumman tahansa version pelisivulla selaimen kehittäjätyökalujen JavaScript-konsoli ja kirjoita:</p>
       <pre><code>trainer()</code></pre>
-      <p>Trainer antaa rajattomasti elämiä, pommeja ja konekiväärin ammuksia. Kone voi edelleen tuhoutua normaalisti ja palaa tukikohtaan tavallisen viiveen jälkeen. Polttoaine kuluu normaalisti, ja aseiden tulinopeus pysyy ennallaan.</p>
+      <p>Trainer antaa rajattomasti elämiä, pommeja ja konekiväärin ammuksia. Kone voi edelleen tuhoutua normaalisti ja palaa tukikohtaan tavallisen viiveen jälkeen. Polttoaine kuluu normaalisti, ja trainer ei muuta valitun version aseiden tulinopeutta.</p>
       <p>Trainer pois päältä:</p><pre><code>trainer(false)</code></pre>
       <p>Asetus säilyy uuden pelin käynnistyksessä samalla sivulla. Sivun uudelleenlataus palauttaa tavallisen pelin. Trainerin voi kytkeä myös ennen pelin käynnistämistä.</p>
     </section>
+
+    <section aria-labelledby="pisteet"><h2 id="pisteet">High scores</h2><p>Molemmilla versioilla on omat listansa harjoittelulle ja ilmataistelulle. Tämän julkaisun tulokset säilyvät tässä selaimessa. Yhteinen tietokantapalvelu on valmisteltu erikseen; sen julkinen käyttöönotto odottaa hyväksyntää.</p><p>Tuloksen tallennus kysyy nimimerkin. Traineria käyttäneitä lentoja ei lisätä listalle. Mahdollisella yhteislistalla nimimerkki, pistemäärä, kenttä ja tallennusaika näkyvät muille pelaajille; sähköpostia tai käyttäjätiliä ei tarvita.</p></section>
 
     <section aria-labelledby="lahteet"><h2 id="lahteet">Lähdekoodi, lisenssi ja lisätiedot</h2>
       <p>Peli ja tämän version sovitukset on julkaistu lisenssillä <strong>GNU GPL v2 tai uudempi</strong>. Alkuperäiset copyright-merkinnät sekä SDL2:n ja Emscriptenin lisenssitekstit sisältyvät julkaisuun.</p>

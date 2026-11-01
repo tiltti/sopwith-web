@@ -1,4 +1,7 @@
 /* Sopwith Tribute collection and shared edition navigation. GPL-2.0-or-later. */
+.bomb-note{font-size:10px;color:#94a5b5;line-height:1.8;margin:16px 0}.bomb-note kbd{font-size:9px;min-width:21px;min-height:20px}.aim-setting{display:flex;align-items:center;gap:9px;color:#c4d5df;font-size:11px;cursor:pointer}.aim-setting input{accent-color:#ffdb81;width:15px;height:15px}.aim-setting input:focus-visible{outline:2px solid #ffdb81;outline-offset:3px}
+.rainbow-page .complete-layer{background:#263b55cc}.complete-layer>img{image-rendering:pixelated}.rainbow-page .complete-layer h2{color:#fff2ce}.rainbow-page .complete-layer p{color:#ffdb81;font-family:var(--mono);font-size:17px}
+.result-score{background:transparent;color:#fff2ce;border-bottom:1px solid #96afb9;padding:4px 0;font-size:11px}
 :root{--collection-bg:#101a29;--collection-panel:#172536;--collection-line:#304052;--gold:#ffdb81}
 .collection-header{max-width:1344px;margin:auto;padding:0 48px;height:88px;display:flex;align-items:center;gap:48px;border-bottom:1px solid var(--line)}
 .collection-brand{display:flex;align-items:center;gap:12px;flex-shrink:0;color:#fff2ce!important}.collection-brand img{width:48px;height:48px;image-rendering:pixelated}.collection-brand strong{display:block;font-size:22px;letter-spacing:1px;line-height:1.1}.collection-brand small{display:block;font:9px/1.6 var(--mono);letter-spacing:4px;color:#a6b9c9;margin-top:4px}

@@ -16,7 +16,7 @@ async function runnerTests() {
       analyzePath() { return {exists:false}; }, writeFile() {}, readFile() { return 'conf_medals 0'; } },
     IDBFS:{}, _web_read:() => 0, _web_input_mode:() => inputMode,
     _web_key:(...args) => pressed.push(args), _web_sound() {}, _web_pause() {},
-    _web_palette() {}, _web_trainer:value => trainerChanges.push(value), callMain() {},
+    _web_palette() {}, _web_trainer:value => trainerChanges.push(value), _web_variant() {}, callMain() {},
   };
   const parent = { postMessage:message => sent.push(message) };
   const scope = { document:{getElementById:() => canvas}, location:{origin,search:''},
@@ -84,6 +84,9 @@ async function pageTests() {
   scope.trainer(); get('start').listeners.click();
   assert.match(get('game').src,/trainer=1/);
   assert.match(get('game').src,/edition=rainbow/, 'The tribute page must request the new renderer.');
+  assert.match(get('game').src,/aim=1/);
+  get('aim-toggle').checked=false;get('aim-toggle').listeners.change();
+  assert.equal(sent.at(-1).type,'aim');assert.equal(sent.at(-1).enabled,false);
   const message = data => windowHandlers.message({origin,source:child,data:{sopwith:true,...data}});
   message({type:'ready',inputMode:0});
   documentHandlers.keydown(event('KeyS','s'));
@@ -93,8 +96,49 @@ async function pageTests() {
   assert.equal(get('mute')['aria-pressed'], 'false');
   scope.trainer(false); get('restart').listeners.click(); get('start').listeners.click();
   assert.match(get('game').src,/trainer=0/);
+  message({type:'ready',inputMode:1});message({type:'round-ended',score:250});
+  assert.equal(get('complete').hidden,false);
+  assert.equal(get('complete-score').textContent,'Pisteet: 250');
+  get('play-again').listeners.click();assert.match(get('game').src,/edition=rainbow/);
   console.log('Page: quiet default, console trainer on/off/new-game propagation and native-menu shortcut guard verified.');
 }
 
 await runnerTests();
 await pageTests();
+
+// Regression: the native end screen has input mode zero, but must retain
+// the tribute renderer rather than exposing the underlying CGA canvas.
+{
+  const handlers={},frames=[],sent=[],pauseChanges=[];
+  let inputMode=1,end=0,tick=10;
+  const normal={dataset:{},style:{},focus(){}},display={dataset:{}};
+  const heap=new Int32Array(9000);heap[0]=2;heap[3]=2000;
+  const engine={HEAP32:heap,HEAPU8:new Uint8Array(heap.buffer),IDBFS:{},
+    FS:{mkdir(){},mount(){},syncfs(initial,cb){cb(null);},mkdirTree(){},
+      analyzePath(){return {exists:false};},writeFile(){},readFile(){return '';}}
+    ,_web_variant(){},_web_trainer(){},_web_palette(){},_web_key(){},_web_sound(){},
+    _web_input_mode:()=>inputMode,_web_read:n=>n===9?end:n===0?tick:160,
+    _web_scene:()=>0,_web_effects:()=>20000,_web_pause:x=>pauseChanges.push(x),callMain(){}};
+  const parent={postMessage:msg=>sent.push(msg)};
+  class Renderer{static LENGTH=4444;drawScene(s){return s[3]>0;}}
+  const scope={document:{getElementById:id=>id==='canvas'?normal:display},
+    location:{origin,search:'?edition=rainbow&muted=1'},parent,URLSearchParams,
+    createSopwith:async()=>engine,RainbowRenderer:Renderer,console,
+    setInterval(){},setTimeout(){},requestAnimationFrame:fn=>frames.push(fn),
+    addEventListener:(name,fn)=>{handlers[name]=fn;}};
+  scope.window=scope;
+  vm.runInNewContext(await readFile(new URL('../dist/runner.js',import.meta.url),'utf8'),scope);
+  await new Promise(resolve=>setImmediate(resolve));
+  frames.shift()();assert.equal(display.hidden,false);
+  inputMode=0;end=1;heap[12]=1;tick++;
+  frames.shift()();assert.equal(display.hidden,false,'Mission complete retains Rainbow.');
+  assert.equal(sent.some(x=>x.type==='round-ended'),false);
+  end=2;heap[12]=2;heap[10]=750;tick++;
+  frames.shift()();
+  assert.equal(display.hidden,false,'THE END must not switch back to CGA.');
+  assert.equal(normal.style.visibility,'hidden');
+  assert.equal(sent.filter(x=>x.type==='round-ended').length,1);
+  assert.equal(sent.at(-1).score,750);assert.equal(pauseChanges.at(-1),1);
+  frames.shift()();assert.equal(sent.filter(x=>x.type==='round-ended').length,1);
+  console.log('End screen: winner/loser retain Rainbow, native game freezes once, and the score reaches the retry page.');
+}
