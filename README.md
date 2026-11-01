@@ -19,7 +19,9 @@ The collection homepage links two separately playable editions:
   parallax clouds, a rainbow, flight trails and new instruments. Its first
   release retains the classic flight model, AI and terrain. The new edition
   adds a rapid bomb salvo with downward separation, a switchable ground-impact
-  estimate, original pixel explosion/feather effects and its own end/retry view.
+  estimate while B is held, original pixel explosion/feather effects and its
+  own end/retry view. A painted splash, detailed aircraft/animal/target atlases,
+  rounded clouds, tracers and muzzle flashes replace the first art pass.
 
 The common navigation links are normal pages, so changing editions stops the
 previous game. More editions can be added without changing either engine path.
@@ -33,10 +35,28 @@ versioned integer ABI is documented in `web/scene.h`: a 28-integer header,
 320 ground heights and up to 256 object records of 16 integers. Sprite bytes
 remain owned by the original engine. `dist/rainbow-renderer.js` reads a fresh
 heap view when a native tick changes and draws at twice the native resolution.
-The terrain and sprite silhouettes use the same data as native collisions.
+Terrain geometry and all collision masks remain native. New visual sprites
+fit the occupied bounds of the native frames, with their own illustrated
+contours; they do not replace or modify the engine's collision pixels.
 Native menus/text entry retain SDL; the mission end and retry view stay in the
 Rainbow theme. A single rainbow landmark has world coordinates and feet masked
 by the actual terrain. It no longer repeats or stops above the ground.
+
+`dist/rainbow-assets.js` extracts explicitly bounded atlas frames, preserves
+their aspect ratios and rotates aircraft within the native frame bounds.
+Artwork and final imagegen prompts are recorded in `dist/assets/ARTWORK.md`.
+The splash starts with a click, touch or Space. The optional impact guide
+appears only while the bomb key/screen button is held and clears on release,
+blur or pause. The ordinary supply remains five bombs; returning to base
+replenishes it normally.
+
+Rainbow uses `dist/rainbow-audio.js`, a four-voice Web Audio sample mixer.
+Five Kenney CC0 originals and their 22050 Hz 8-bit mono WAV conversions are
+bundled locally. Engine pitch follows native speed; gunfire, release and
+explosion cues follow actual game state. Mute/pause/end stop all voices.
+No AudioContext or sample request is created until the player enables sound.
+Classic retains its SDL PC-speaker audio. Provenance, conversions and hashes
+are in `dist/assets/audio/`; `web/ASSET-LOCK.json` locks the full asset roster.
 
 The scene adapter does not change game state or upstream sources. Artwork in
 `dist/assets/tribute-mark.svg` and the background renderer is original to this

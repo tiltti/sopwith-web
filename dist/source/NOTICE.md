@@ -17,12 +17,26 @@ author or the SDL Sopwith maintainers.
   input bridge, pause, browser timer adaptation, read-only scene adapter,
   Rainbow Patrol pixel renderer and the Sopwith Tribute insignia.
 
-Rainbow Patrol uses the original engine's sprite silhouettes and terrain data
-with new colours and pixel shading. Its background scenery, UI and insignia
-were created for this project. Amiga-era games, Rainbow Islands and Rovio's
+Rainbow Patrol keeps the original engine's collision masks and terrain data.
+New illustrated sprites are fitted to the occupied native frame bounds;
+their visual contours are separate from the unchanged collision pixels.
+Its background scenery, UI and insignia were created for this project.
+The new sprite atlases and splash were created with the built-in OpenAI
+imagegen tool. The full selected PNGs and final prompts are distributed in
+`dist/assets/`, documented by `dist/assets/ARTWORK.md`.
+Amiga-era games, Rainbow Islands and Rovio's
 RETRY are visual references; no artwork, audio or code from those games is
 distributed here. Rainbow Patrol is an independent tribute and is not an
 official release from those games' creators.
+
+Rainbow's sample audio uses five **Kenney** sounds from Sci-fi Sounds and
+Impact Sounds, both **CC0-1.0**. The unmodified OGG originals, converted
+8-bit PCM WAVs, full CC0 text and exact source/hash roster are distributed in
+`dist/assets/audio/`. They were obtained from the pinned independent Open
+Game SFX Index mirror after the official download returned HTTP 403. Official
+license listings, mirror commit, verification scope and runtime changes are
+recorded in its README and SOURCES.json. The classic edition's original
+PC-speaker sound is unchanged.
 
 Additional references discussed during development include Triplane Turmoil
 and Super Sukkula. Their game files and artwork are not bundled. The new

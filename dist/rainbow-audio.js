@@ -1,0 +1,102 @@
+// Rainbow Patrol four-voice sample mixer. GPL-2.0-or-later.
+// Kenney CC0 samples: assets/audio/SOURCES.json and LICENSE.txt.
+(() => {
+  const SAMPLE={engine:'engineCircular_000',gun:'impactPunch_heavy_000',
+    metal:'impactMetal_light_000',blast:'explosionCrunch_000',boom:'lowFrequency_explosion_000'};
+  class RainbowAudio {
+    constructor(options={}) {
+      this.Context=options.AudioContext||window.AudioContext||window.webkitAudioContext;
+      this.fetch=options.fetch||window.fetch.bind(window);
+      this.requested=false;this.enabled=false;this.voices=new Map();this.buffers={};
+      this.lastTick=-1;this.lastEffect=0;this.lastBombs=null;this.status='off';
+    }
+    async setEnabled(enabled) {
+      this.requested=enabled;
+      if(!enabled) {
+        this.enabled=false;this.stopAll();this.status='off';
+        if(this.context)await this.context.suspend();return;
+      }
+      try {
+        if(!this.Context)throw new Error('Web Audio unavailable');
+        if(!this.context) {
+          this.context=new this.Context();
+          this.master=this.context.createGain();this.master.gain.value=.55;
+          this.filter=this.context.createBiquadFilter();this.filter.type='lowpass';this.filter.frequency.value=6500;
+          this.master.connect(this.filter);this.filter.connect(this.context.destination);
+          this.loading=Promise.all(Object.entries(SAMPLE).map(async([name,file])=>{
+            const response=await this.fetch(`assets/audio/${file}.wav`);
+            if(!response.ok)throw new Error(`Sample unavailable: ${file}`);
+            this.buffers[name]=await this.context.decodeAudioData(await response.arrayBuffer());
+          }));
+        }
+        await this.context.resume();await this.loading;
+        if(!this.requested)return;
+        this.enabled=this.context.state==='running';this.status=this.enabled?'samples':'blocked';
+      } catch(error) {this.enabled=false;this.status='unavailable';console.warn('[Rainbow audio]',error);}
+    }
+    stop(channel) {
+      const voice=this.voices.get(channel);if(!voice)return;
+      this.voices.delete(channel);try{voice.source.stop();}catch{}
+      voice.source.disconnect();voice.gain.disconnect();voice.pan?.disconnect();
+    }
+    stopAll() {for(const channel of [...this.voices.keys()])this.stop(channel);}
+    play(channel,name,{gain=.2,rate=1,pan=0,duration,loop=false}={}) {
+      if(!this.enabled||!this.buffers[name])return null;
+      this.stop(channel);
+      const source=this.context.createBufferSource(),level=this.context.createGain();
+      source.buffer=this.buffers[name];source.playbackRate.value=rate;source.loop=loop;
+      level.gain.value=gain;source.connect(level);
+      const stereo=this.context.createStereoPanner?.();
+      if(stereo){stereo.pan.value=Math.max(-1,Math.min(1,pan));level.connect(stereo);stereo.connect(this.master);}
+      else level.connect(this.master);
+      const voice={source,gain:level,pan:stereo};this.voices.set(channel,voice);
+      source.onended=()=>{if(this.voices.get(channel)===voice)this.stop(channel);};
+      const now=this.context.currentTime;source.start(now);
+      if(duration){level.gain.setValueAtTime(gain,now);level.gain.exponentialRampToValueAtTime(.001,now+duration);source.stop(now+duration+.01);}
+      return voice;
+    }
+    step(scene,effects) {
+      const tick=scene[1];if(tick===this.lastTick)return;
+      const reset=tick<this.lastTick;this.lastTick=tick;
+      if(reset){this.stopAll();this.lastEffect=effects?.[1]||0;this.lastBombs=null;}
+      const camera=scene[2],audible=this.enabled&&scene[12]===0;
+      if(!audible)this.stopAll();
+      if(audible&&[1,6,8,9].includes(scene[13])) {
+        let engine=this.voices.get('engine');
+        if(!engine)engine=this.play('engine','engine',{loop:true,gain:.08});
+        engine?.source.playbackRate.setTargetAtTime(.6+scene[11]*.055,this.context.currentTime,.12);
+        engine?.gain.gain.setTargetAtTime(scene[17] ? .035 : .09,this.context.currentTime,.12);
+      } else this.stop('engine');
+      if(audible) {
+        let shot=null;
+        for(let i=0;i<scene[14];i++) {
+          const r=scene.subarray(348+i*16,348+(i+1)*16);
+          if(r[0]===3&&r[11]>=9&&r[2]>=camera-40&&r[2]<=camera+360){shot=r;break;}
+        }
+        if(shot) {
+          const pan=(shot[2]-camera-160)/180;
+          this.play('gun','gun',{gain:.28,rate:1.8,pan,duration:.075});
+          this.play('mechanical','metal',{gain:.055,rate:2.1,pan,duration:.045});
+        }
+        if(this.lastBombs!==null&&scene[8]<this.lastBombs)
+          this.play('mechanical','metal',{gain:.1,rate:.65,duration:.14});
+      }
+      this.lastBombs=scene[8];
+      if(effects?.[0]===1) {
+        let latest=null;
+        for(let i=0;i<32;i++) {
+          const at=4+i*6,id=effects[at],age=tick-effects[at+1];
+          if(id>this.lastEffect&&age>=0&&age<3&&effects[at+2]===1&&Math.abs(effects[at+3]-camera-160)<360)
+            if(!latest||id>latest.id)latest={id,x:effects[at+3],size:effects[at+5]};
+        }
+        this.lastEffect=effects[1];
+        if(audible&&latest) {
+          const pan=(latest.x-camera-160)/180;
+          this.play('fx','blast',{gain:.35,rate:1.05-latest.size*.08,pan});
+          this.play('mechanical','boom',{gain:.22,rate:.9,pan});
+        }
+      }
+    }
+  }
+  window.RainbowAudio=RainbowAudio;
+})();

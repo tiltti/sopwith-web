@@ -1,0 +1,113 @@
+{
+  "author": "Kenney",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "mirror": "https://github.com/Mcamento8/open-game-sfx-index",
+  "commit": "34bbe8b525b5ceff3804915ea745532af11f6055",
+  "acquired": "2026-11-01",
+  "sources": [
+    {
+      "path": "audio/sci-fi-sounds/engineCircular_000.ogg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5e611b11f8971b04d41c0329b2717b7b4bad2c2",
+      "size": 177470,
+      "url": "https://api.github.com/repos/Mcamento8/open-game-sfx-index/git/blobs/c5e611b11f8971b04d41c0329b2717b7b4bad2c2",
+      "sourceUrl": "https://kenney.nl/assets/sci-fi-sounds",
+      "downloadUrl": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/34bbe8b525b5ceff3804915ea745532af11f6055/audio/sci-fi-sounds/engineCircular_000.ogg"
+    },
+    {
+      "path": "audio/sci-fi-sounds/explosionCrunch_000.ogg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "019e53664abf859fc5529f95d0db23fa3ac1e42d",
+      "size": 28274,
+      "url": "https://api.github.com/repos/Mcamento8/open-game-sfx-index/git/blobs/019e53664abf859fc5529f95d0db23fa3ac1e42d",
+      "sourceUrl": "https://kenney.nl/assets/sci-fi-sounds",
+      "downloadUrl": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/34bbe8b525b5ceff3804915ea745532af11f6055/audio/sci-fi-sounds/explosionCrunch_000.ogg"
+    },
+    {
+      "path": "audio/sci-fi-sounds/lowFrequency_explosion_000.ogg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "510ac8421211682e4e3edb3df1769e8f71ee9b1d",
+      "size": 14317,
+      "url": "https://api.github.com/repos/Mcamento8/open-game-sfx-index/git/blobs/510ac8421211682e4e3edb3df1769e8f71ee9b1d",
+      "sourceUrl": "https://kenney.nl/assets/sci-fi-sounds",
+      "downloadUrl": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/34bbe8b525b5ceff3804915ea745532af11f6055/audio/sci-fi-sounds/lowFrequency_explosion_000.ogg"
+    },
+    {
+      "path": "audio/impact-sounds/impactPunch_heavy_000.ogg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "55e70b52ca082c89326bac62a02505c0ba750260",
+      "size": 11617,
+      "url": "https://api.github.com/repos/Mcamento8/open-game-sfx-index/git/blobs/55e70b52ca082c89326bac62a02505c0ba750260",
+      "sourceUrl": "https://kenney.nl/assets/impact-sounds",
+      "downloadUrl": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/34bbe8b525b5ceff3804915ea745532af11f6055/audio/impact-sounds/impactPunch_heavy_000.ogg"
+    },
+    {
+      "path": "audio/impact-sounds/impactMetal_light_000.ogg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7d49262cc9f69eb517cf644f61940ace16714f22",
+      "size": 7651,
+      "url": "https://api.github.com/repos/Mcamento8/open-game-sfx-index/git/blobs/7d49262cc9f69eb517cf644f61940ace16714f22",
+      "sourceUrl": "https://kenney.nl/assets/impact-sounds",
+      "downloadUrl": "https://raw.githubusercontent.com/Mcamento8/open-game-sfx-index/34bbe8b525b5ceff3804915ea745532af11f6055/audio/impact-sounds/impactMetal_light_000.ogg"
+    }
+  ],
+  "conversion": "ffmpeg: mono, 22050 Hz unsigned 8-bit PCM WAV; originals retained",
+  "files": [
+    {
+      "path": "original/engineCircular_000.ogg",
+      "bytes": 177470,
+      "sha256": "8ab85f9fa85e9e692287f98acb36b9ac3ba15313b007c039055e286b736f4e3a"
+    },
+    {
+      "path": "engineCircular_000.wav",
+      "bytes": 110328,
+      "sha256": "61468accd5d87b54f2663e4c3d1ce4e94d2bbd8ff237317ed5285f96aaedda97"
+    },
+    {
+      "path": "original/explosionCrunch_000.ogg",
+      "bytes": 28274,
+      "sha256": "4b597d658d0ae101f0a030fbeea5fc3a4292ab85f017470a8254a8e7959cbd69"
+    },
+    {
+      "path": "explosionCrunch_000.wav",
+      "bytes": 17222,
+      "sha256": "c67d32a0c965114963f7a35a1f837df1de2dac8923bffdebffbc1a9c5eae842f"
+    },
+    {
+      "path": "original/lowFrequency_explosion_000.ogg",
+      "bytes": 14317,
+      "sha256": "3cb48d86dab63140cfb9aaeea4d4a6846abaca5831d157d8adbec0490da26343"
+    },
+    {
+      "path": "lowFrequency_explosion_000.wav",
+      "bytes": 44180,
+      "sha256": "933493b7d673f726c1133160eb9b2bd1acf9e006be646d9ea089b7fbf68c9c45"
+    },
+    {
+      "path": "original/impactPunch_heavy_000.ogg",
+      "bytes": 11617,
+      "sha256": "b33a8f14068aec24ec69ba85e5e87fdc41228975f6a1a3e44a6e7d6fc3d9f8d8"
+    },
+    {
+      "path": "impactPunch_heavy_000.wav",
+      "bytes": 14390,
+      "sha256": "eb3defe762cce9a7451772965eb07cafc4f8320101f1334036b6a8dfe7aba536"
+    },
+    {
+      "path": "original/impactMetal_light_000.ogg",
+      "bytes": 7651,
+      "sha256": "33b5e6e37c6e9d54e07bf5a89b12c76e879f40c1ea83cdd82714df1d6f9fec6d"
+    },
+    {
+      "path": "impactMetal_light_000.wav",
+      "bytes": 8302,
+      "sha256": "8c080b1bb3ea8cebb32dd3afeecc4f0af373cfcb45a743a9f6ca5e3f90bfe3cd"
+    }
+  ]
+}

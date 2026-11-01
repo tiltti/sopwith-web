@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "date": "2026-11-01",
+  "files": [
+    {
+      "path": "dist/assets/ARTWORK.md",
+      "bytes": 6090,
+      "sha256": "785821a06d37e38e86e2834131a61d3f6e46e73f287e14331277e8e699700df7"
+    },
+    {
+      "path": "dist/assets/audio/LICENSE.txt",
+      "bytes": 7048,
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+    },
+    {
+      "path": "dist/assets/audio/README.md",
+      "bytes": 1676,
+      "sha256": "661500a3a988a95fb6c0bbab3ab77b9852b786c998b5439c43545058248275b6"
+    },
+    {
+      "path": "dist/assets/audio/SOURCES.json",
+      "bytes": 4848,
+      "sha256": "6c93dc30deaca3d394f2875820fa4b829367e01f0a65f1b546fa07873377f12d"
+    },
+    {
+      "path": "dist/assets/audio/engineCircular_000.wav",
+      "bytes": 110328,
+      "sha256": "61468accd5d87b54f2663e4c3d1ce4e94d2bbd8ff237317ed5285f96aaedda97"
+    },
+    {
+      "path": "dist/assets/audio/explosionCrunch_000.wav",
+      "bytes": 17222,
+      "sha256": "c67d32a0c965114963f7a35a1f837df1de2dac8923bffdebffbc1a9c5eae842f"
+    },
+    {
+      "path": "dist/assets/audio/impactMetal_light_000.wav",
+      "bytes": 8302,
+      "sha256": "8c080b1bb3ea8cebb32dd3afeecc4f0af373cfcb45a743a9f6ca5e3f90bfe3cd"
+    },
+    {
+      "path": "dist/assets/audio/impactPunch_heavy_000.wav",
+      "bytes": 14390,
+      "sha256": "eb3defe762cce9a7451772965eb07cafc4f8320101f1334036b6a8dfe7aba536"
+    },
+    {
+      "path": "dist/assets/audio/lowFrequency_explosion_000.wav",
+      "bytes": 44180,
+      "sha256": "933493b7d673f726c1133160eb9b2bd1acf9e006be646d9ea089b7fbf68c9c45"
+    },
+    {
+      "path": "dist/assets/audio/original/engineCircular_000.ogg",
+      "bytes": 177470,
+      "sha256": "8ab85f9fa85e9e692287f98acb36b9ac3ba15313b007c039055e286b736f4e3a"
+    },
+    {
+      "path": "dist/assets/audio/original/explosionCrunch_000.ogg",
+      "bytes": 28274,
+      "sha256": "4b597d658d0ae101f0a030fbeea5fc3a4292ab85f017470a8254a8e7959cbd69"
+    },
+    {
+      "path": "dist/assets/audio/original/impactMetal_light_000.ogg",
+      "bytes": 7651,
+      "sha256": "33b5e6e37c6e9d54e07bf5a89b12c76e879f40c1ea83cdd82714df1d6f9fec6d"
+    },
+    {
+      "path": "dist/assets/audio/original/impactPunch_heavy_000.ogg",
+      "bytes": 11617,
+      "sha256": "b33a8f14068aec24ec69ba85e5e87fdc41228975f6a1a3e44a6e7d6fc3d9f8d8"
+    },
+    {
+      "path": "dist/assets/audio/original/lowFrequency_explosion_000.ogg",
+      "bytes": 14317,
+      "sha256": "3cb48d86dab63140cfb9aaeea4d4a6846abaca5831d157d8adbec0490da26343"
+    },
+    {
+      "path": "dist/assets/classic-cover.svg",
+      "bytes": 989,
+      "sha256": "a34ae60becb77d00574e92a01ac4eba0a7e17b35dafe002a60cfc8c7379be43e"
+    },
+    {
+      "path": "dist/assets/rainbow-extras-v1.png",
+      "bytes": 1160011,
+      "sha256": "6c2a384d1995221b2427026a42e800d2b94c2fd00d8347a1f6df339da55e1bb1"
+    },
+    {
+      "path": "dist/assets/rainbow-splash-v1.png",
+      "bytes": 2177503,
+      "sha256": "7e75359e9a7e948beef66cc6acac3c2a7de660cfc3258b4c803f89979853e147"
+    },
+    {
+      "path": "dist/assets/rainbow-sprites-v1.png",
+      "bytes": 1668380,
+      "sha256": "0d633559780c12cdeff6ec735962627cfcd3c6862fc23d7463570e882df7bfd2"
+    },
+    {
+      "path": "dist/assets/tribute-mark.svg",
+      "bytes": 1096,
+      "sha256": "829f9886ab8f2bd3ac8415012c25c9c408489079447bbc82e9caf6d4863214bb"
+    }
+  ]
+}

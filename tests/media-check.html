@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fi"><meta charset="utf-8"><base href="../dist/"><title>Rainbow media check (silent)</title>
+<style>body{background:#243b55;color:#fff2ce;font:16px monospace;padding:24px}canvas{display:block;max-width:100%;image-rendering:pixelated;background:#79cce5}button{padding:12px;margin:16px 0}pre{white-space:pre-wrap}</style>
+<h1>Rainbow Patrol — media check</h1><p>This development-only page renders sprite frames and audio offline. It never connects sound to a speaker.</p>
+<canvas id="gallery" width="800" height="560"></canvas><button id="check">Check samples silently</button><pre id="result">Ready</pre>
+<details><summary>390 px splash layout</summary><iframe title="Phone splash preview" src="../dist/rainbow.html" width="390" height="844" loading="lazy" style="border:1px solid #98e6ed;display:block"></iframe></details>
+<script src="../dist/rainbow-assets.js"></script>
+<script src="../dist/rainbow-audio.js"></script>
+<script type="module">
+const output=document.getElementById('result'),canvas=document.getElementById('gallery'),c=canvas.getContext('2d');
+// The assets adapter uses production-relative URLs; serve this page through
+// the same /dist/ base so they resolve identically to the actual runner.
+await RainbowAssets.ready;
+const heap=new Uint8Array(4096).fill(1),types=[['Player',1,0],['Enemy',1,0],['Cow',9,0],['Hangar',4,0],['Factory',4,1],['Tank',4,3],['Fuel',4,2],['Truck',4,4],['Tanker',4,5],['Tent',4,7],['Tower',4,18],['Balloon',12,0],['Bomb',2,0],['Bird',8,0],['Flag',4,6],['Water tower',4,19],['Factory ruin',4,1,3],['Hangar ruin',4,0,3],['Tank wreck',4,3,3],['Missile',10,0]];
+c.imageSmoothingEnabled=false;
+types.forEach(([name,type,kind,state=type===4||type===9?5:1],i)=>{
+  const r=new Int32Array([type,state,0,0,0,0,i===1?2:1,32,20,0,0,100,0,0,1,kind]);
+  const sprite=RainbowAssets.sprite(r,heap),x=18+(i%5)*158,y=12+Math.floor(i/5)*132;
+  if(sprite)c.drawImage(sprite,x,y,128,84);c.fillStyle='#263b55';c.font='13px monospace';c.fillText(name,x,y+105);
+});
+document.getElementById('check').onclick=async()=>{
+ try {
+  const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+  const context=new Offline(2,22050*2,22050);
+  class SilentContext {
+    state='running';destination=context.destination;
+    get currentTime(){return context.currentTime;}
+    createGain(){return context.createGain();}createBiquadFilter(){return context.createBiquadFilter();}
+    createStereoPanner(){return context.createStereoPanner();}createBufferSource(){return context.createBufferSource();}
+    decodeAudioData(data){return context.decodeAudioData(data);}
+    async resume(){this.state='running';}async suspend(){this.state='suspended';}
+  }
+  const mixer=new RainbowAudio({AudioContext:SilentContext});await mixer.setEnabled(true);
+  const scene=new Int32Array(4600);scene[1]=10;scene[3]=2000;scene[8]=5;scene[11]=5;scene[13]=1;scene[14]=1;
+  scene.set([3,0,170,100,0,0,1,1,1,0,0,9,12,0],348);
+  const effects=new Int32Array(196);effects.set([1,1,1,6,1,10,1,190,80,2]);
+  mixer.step(scene,effects);const voices=mixer.voices.size;
+  const rendered=await context.startRendering(),data=rendered.getChannelData(0);
+  const peak=data.reduce((max,x)=>Math.max(max,Math.abs(x)),0),rms=Math.sqrt(data.reduce((sum,x)=>sum+x*x,0)/data.length);
+  if(!(peak>0&&peak<1&&rms>0))throw new Error('Invalid audio signal');
+  output.textContent=`PASS: ${Object.keys(mixer.buffers).length} real WAVs, ${voices} production mixer voices rendered offline. Peak=${peak.toFixed(4)} RMS=${rms.toFixed(4)}. No speaker output.`;
+  output.dataset.pass='true';
+ } catch(error){output.textContent='FAIL: '+error;output.dataset.pass='false';}
+};
+</script></html>

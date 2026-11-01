@@ -131,6 +131,9 @@
   }
   document.addEventListener('keydown', event => {
     if (['SELECT','INPUT','TEXTAREA'].includes(event.target.tagName) || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (edition === 'rainbow' && state === 'idle' && event.code === 'Space' && event.target.tagName !== 'BUTTON') {
+      event.preventDefault(); if (!event.repeat) start(); return;
+    }
     if ((event.code === 'KeyP' || event.code === 'Escape') && (state === 'paused' || state === 'playing' && inputMode === 1)) {
       event.preventDefault(); if (!event.repeat) pause(); return;
     }

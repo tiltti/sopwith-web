@@ -4,7 +4,7 @@
   const params = new URLSearchParams(location.search);
   const held = new Set();
   const physicalHeld = new Map();
-  let game, paused = false, storage = false, visualRenderer, repaint = false;
+  let game, paused = false, storage = false, visualRenderer, sampleMixer, repaint = false;
   let trainerEnabled = params.get('trainer') === '1';
   let trainerUsed = trainerEnabled, scoreSent = false;
   let lastInputMode = -1;
@@ -22,18 +22,30 @@
     if (event.code === 'Digit0') return 39;
     return menuKeys[event.code];
   }
+  function updateAim() {
+    if (!visualRenderer || visualRenderer.bombHeld === held.has(5)) return;
+    visualRenderer.bombHeld = held.has(5);
+    repaint = true;
+  }
   function key(scancode, down) {
     if (!game || paused || !scancode) return;
     if (down) held.add(scancode); else held.delete(scancode);
+    updateAim();
     game._web_key(scancode, down ? 1 : 0);
   }
   function release() {
     if (game) for (const scan of held) game._web_key(scan, 0);
     held.clear();
     physicalHeld.clear();
+    updateAim();
   }
   function audio() {
     const silent = params.get('muted') !== '0' || paused;
+    if(params.get('edition')==='rainbow') {
+      game?._web_sound(0);
+      sampleMixer?.setEnabled(!silent);
+      return;
+    }
     game?._web_sound(silent ? 0 : 1);
     const ctx = game?.SDL2?.audioContext;
     if (!ctx) return;
@@ -112,7 +124,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261101-scores1',
+      locateFile: name => 'engine/' + name + '?v=20261101-amiga1',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -134,11 +146,14 @@
     window.sopwith = game;
     game._web_variant(params.get('edition') === 'rainbow' ? 1 : 0);
     game._web_trainer(trainerEnabled ? 1 : 0);
+    if(params.get('edition')==='rainbow'&&window.RainbowAudio)sampleMixer=new RainbowAudio();
     if (params.get('edition') === 'rainbow' && window.RainbowRenderer) {
       const display = document.getElementById('rainbow');
       const renderer = new RainbowRenderer(display);
       visualRenderer=renderer;
       renderer.aimEnabled=params.get('aim')!=='0';
+      updateAim();
+      window.RainbowAssets?.ready.then(()=>{repaint=true;});
       let renderedTick = -1, wasActive = false, endSent = false;
       const draw = () => {
         const inputMode=game._web_input_mode();
@@ -151,6 +166,7 @@
           const effects=game.HEAP32.subarray(effectPtr,effectPtr+196);
           const groundPtr=scene[24]>>>2;
           const ground=game.HEAP32.subarray(groundPtr,groundPtr+scene[3]);
+          sampleMixer?.step(scene,effects);
           active=renderer.drawScene(scene,game.HEAPU8,trainerEnabled,effects,ground);
           if(active && scene[12]===2 && !endSent) {
             endSent=true;pause(true);
@@ -180,7 +196,8 @@
         send('score-ready',{score:game._web_read(10),level:game._web_read(11)+1,ticks:game._web_read(0),trainerUsed});
       }
       canvas.dataset.trainer = String(trainerEnabled);
-      canvas.dataset.audio = game.SDL2?.audioContext?.state || 'unavailable';
+      canvas.dataset.audio = sampleMixer?.status || game.SDL2?.audioContext?.state || 'unavailable';
+      canvas.dataset.audioVoices = String(sampleMixer?.voices.size || 0);
       canvas.dataset.paused = String(paused);
       const inputMode = game._web_input_mode();
       canvas.dataset.inputMode = String(inputMode);

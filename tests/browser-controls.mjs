@@ -109,7 +109,7 @@ await pageTests();
 // Regression: the native end screen has input mode zero, but must retain
 // the tribute renderer rather than exposing the underlying CGA canvas.
 {
-  const handlers={},frames=[],sent=[],pauseChanges=[];
+  const handlers={},frames=[],sent=[],pauseChanges=[],aimFrames=[];
   let inputMode=1,end=0,tick=10;
   const normal={dataset:{},style:{},focus(){}},display={dataset:{}};
   const heap=new Int32Array(9000);heap[0]=2;heap[3]=2000;
@@ -120,7 +120,7 @@ await pageTests();
     _web_input_mode:()=>inputMode,_web_read:n=>n===9?end:n===0?tick:160,
     _web_scene:()=>0,_web_effects:()=>20000,_web_pause:x=>pauseChanges.push(x),callMain(){}};
   const parent={postMessage:msg=>sent.push(msg)};
-  class Renderer{static LENGTH=4444;drawScene(s){return s[3]>0;}}
+  class Renderer{static LENGTH=4444;drawScene(s){aimFrames.push(this.bombHeld);return s[3]>0;}}
   const scope={document:{getElementById:id=>id==='canvas'?normal:display},
     location:{origin,search:'?edition=rainbow&muted=1'},parent,URLSearchParams,
     createSopwith:async()=>engine,RainbowRenderer:Renderer,console,
@@ -130,6 +130,20 @@ await pageTests();
   vm.runInNewContext(await readFile(new URL('../dist/runner.js',import.meta.url),'utf8'),scope);
   await new Promise(resolve=>setImmediate(resolve));
   frames.shift()();assert.equal(display.hidden,false);
+  assert.equal(aimFrames.at(-1),false,'Aim starts hidden.');
+  handlers.keydown(event('KeyB','b'));frames.shift()();
+  assert.equal(aimFrames.at(-1),true,'Holding physical B repaints aim without waiting for a game tick.');
+  handlers.keyup(event('KeyB','b'));frames.shift()();
+  assert.equal(aimFrames.at(-1),false,'Releasing B immediately hides aim.');
+  const touch=down=>handlers.message({origin,source:parent,data:{sopwith:true,type:'key',scan:5,down}});
+  touch(true);frames.shift()();assert.equal(aimFrames.at(-1),true,'The screen bomb button also shows aim.');
+  touch(false);frames.shift()();assert.equal(aimFrames.at(-1),false);
+  touch(true);frames.shift()();handlers.blur();frames.shift()();
+  assert.equal(aimFrames.at(-1),false,'Losing focus cannot leave aim or the bomb key stuck.');
+  touch(true);frames.shift()();
+  handlers.message({origin,source:parent,data:{sopwith:true,type:'pause',value:true}});frames.shift()();
+  assert.equal(aimFrames.at(-1),false,'Pausing releases the aim control.');
+  handlers.message({origin,source:parent,data:{sopwith:true,type:'pause',value:false}});
   inputMode=0;end=1;heap[12]=1;tick++;
   frames.shift()();assert.equal(display.hidden,false,'Mission complete retains Rainbow.');
   assert.equal(sent.some(x=>x.type==='round-ended'),false);

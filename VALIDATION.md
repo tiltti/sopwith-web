@@ -1,5 +1,34 @@
 # Validation
 
+## 2026-11-01: Amiga artwork, splash and sample audio
+
+- Three imagegen PNGs are retained with their final prompts. Explicit atlas
+  rectangles eliminate neighbouring-frame bleed. New aircraft, cow, targets,
+  vehicles, birds, bombs, missiles and ruin art fit occupied native bounds.
+  Tests verify identities, lazy loading, aspect fitting and unchanged masks.
+- Native C sources and gameplay rules were not changed in this revision.
+  Browser QA started with five bombs and 200 rounds, flew, fired four rounds
+  and dropped two bombs. Two bombs were visible in flight; the HUD read 3/196.
+- Aim starts hidden. Holding B rendered it once; releasing removed its impact
+  coordinates immediately. Synthetic integration tests cover physical keys,
+  screen-button press/release, blur and pause at a frozen native tick.
+- Space starts from the new splash. The 390 px iframe preview has no horizontal
+  overflow and displays the title and start controls without resizing the
+  user's browser. Rounded cloud contours and native shot tracers were inspected.
+- Five Kenney CC0 originals were checked against a pinned mirror's Git blob
+  hashes, converted to 22050 Hz 8-bit mono WAV, and entered in a closed SHA-256
+  roster. Official CC0 listings, license text and original bytes are included.
+  The optional `game-dev` executable was unavailable; local hashing and browser
+  checks were used instead. No CLI admission or engine-import receipt is claimed.
+- Mixer tests cover lazy opt-in, four bounded voice slots, event deduplication,
+  mute/resume and round-end cleanup. The actual production mixer rendered all
+  five real WAVs through four Web Audio voices into an OfflineAudioContext:
+  peak 0.1098, RMS 0.0197. No speaker was connected and no audible test was run.
+- Actual gameplay remained at audio=off with zero active voices. Sample loading
+  only starts after explicit sound enable. No fullscreen tests were performed.
+- Browser QA also started the classic edition: its original black/CGA canvas
+  remains active, Rainbow is hidden, and the initial supplies remain 5/200.
+
 ## 2026-11-01: Level rainbow and clearer bomb marker
 
 - The rainbow uses one horizontal baseline below both endpoint ground heights.

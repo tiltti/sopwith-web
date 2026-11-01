@@ -9,7 +9,7 @@
   <link rel="icon" href="plane.png" type="image/png">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="info.css">
-  <link rel="stylesheet" href="tribute.css?v=20261101-scores1">
+  <link rel="stylesheet" href="tribute.css?v=20261101-amiga1">
 </head>
 <body>
   <a class="skip" href="#sisalto">Siirry sisältöön</a>
@@ -32,7 +32,7 @@
       <h2 id="versions-title">Kaksi versiota, yhteinen pelimoottori</h2>
       <p><a href="classic.html">Sopwith II</a> säilyttää alkuperäisen CGA-piirtimen. <a href="rainbow.html">Sopwith: Rainbow Patrol</a> on oma visuaalinen tribuuttiversio: se käyttää samaa C/WASM-moottoria, mutta kuva piirretään uudelleen Canvas 2D:llä 640 × 400 pikselin koossa. Skaalaus säilyttää pikselien terävät reunat.</p>
       <p>Uusi vain lukuun tarkoitettu C-rajapinta antaa piirtimelle maaston, koneiden, rakennusten ja ammusten tilan. Maaston muoto ja spritejen siluetit tulevat samasta datasta kuin törmäykset. Oma piirrin lisää varjostetut pikselit, kerroksittain liikkuvan taustan, pilvet, sateenkaaren, lentojäljen ja mittarit. Valikot ja tekstinsyöttö käyttävät alkuperäistä SDL-kuvaa. Loppuruutu ja uusi yritys säilyttävät Rainbow-ilmeen.</p>
-      <p>Rainbow Patrol säilyttää Sopwithin lentomallin, tekoälyn ja kentän. Oma pommisarja pudottaa pommeja 0,2 sekunnin välein ja antaa niille pienen alaspäin suuntautuvan irrotusliikkeen. Vaihdettava tähtäin arvioi osumapaikkaa maastoon; se ei huomioi rakennusten tai muiden kohteiden väliin osumista. Räjähdyksillä ja lintuosumilla on omat pikseliefektit. Uudet kentät ovat myöhempää kehitystä. Ulkoasun referensseinä ovat Amiga-kauden värikkäät pikselipelit, Rainbow Islands ja <a href="https://www.youtube.com/watch?v=vyeMUo8hMpE" target="_blank" rel="noopener">Rovion RETRY</a>. Niiden grafiikkaa tai muita pelitiedostoja ei ole käytetty.</p>
+      <p>Rainbow Patrol säilyttää Sopwithin lentomallin, tekoälyn ja kentän. Oma pommisarja pudottaa pommeja 0,2 sekunnin välein ja antaa niille pienen alaspäin suuntautuvan irrotusliikkeen. B:n tai näytön pomminapin ollessa pohjassa näkyvä tähtäin arvioi osumapaikkaa maastoon; se ei huomioi rakennusten tai muiden kohteiden väliin osumista. Räjähdyksillä ja lintuosumilla on omat pikseliefektit. Koneilla, lehmillä, tankeilla ja muilla kohteilla on uudet spritekuvat, pilvillä pyöreämmät muodot ja aseilla valojuovat sekä suuliekit. Pelimoottorin törmäysmaskit säilyvät ennallaan. Splash-ruudusta aloitetaan painikkeella tai välilyönnillä. Uudet kentät ovat myöhempää kehitystä. Ulkoasun referensseinä ovat Amiga-kauden värikkäät pikselipelit, Rainbow Islands ja <a href="https://www.youtube.com/watch?v=vyeMUo8hMpE" target="_blank" rel="noopener">Rovion RETRY</a>. Niiden grafiikkaa tai muita pelitiedostoja ei ole käytetty.</p>
       <p>Rainbow Patrolin tunnus ja maisemapiirrin ovat tämän projektin omaa grafiikkaa. Myös ne ja koko selainintegraatio ovat GPL v2+ -lisenssillä samassa repositoriossa.</p>
     </section>
 
@@ -54,7 +54,7 @@
       <p>Emscripten kääntää ylläpidetyn C-pelin WebAssemblyksi. Selain lataa WASM-tiedoston ja sitä tukevan JavaScriptin. Pelin laskenta tapahtuu omalla laitteellasi, ja SDL2 piirtää kuvan sivun canvas-elementtiin. Alkuperäinen EXE kuuluu vertailuaineistoon; julkaistu peli suorittaa lähdekoodista tehtyä WASM-käännöstä.</p>
       <p>Pelilogiikka etenee alkuperäisen porttauksen mukaisesti kymmenen askelta sekunnissa. Asyncify mahdollistaa vanhan pelisilmukan tauottamisen niin, että selain ehtii käsitellä sivua ja näppäimistöä. Taukopainike pysäyttää pelin ajan kulumisen.</p>
       <p>Pelin oma kuva on <strong>320 × 200 pikseliä</strong>. Se skaalataan pelialueelle. Alkuperäinen CGA-paletti käyttää mustaa, syaania, magentaa ja valkoista; toinen valittava paletti käyttää mustaa, vihreää, punaista ja keltaista.</p>
-      <p>Äänet syntyvät alkuperäisen PC-kaiuttimen äänenmuodostuksen pohjalta selaimen äänirajapintaan. Peli käynnistyy hiljaisena. Äänet saa päälle pelisivun painikkeesta tai lennon aikana S-näppäimellä.</p>
+      <p>Sopwith II käyttää alkuperäiseen PC-kaiuttimeen perustuvaa äänenmuodostusta. Rainbow Patrol käyttää omaa nelikanavaista Web Audio -näytemikseriä: moottori, konekivääri, mekaaniset napsahdukset ja räjähdykset. Kenneyn CC0-äänistä on tehty Amiga-henkiset 8-bittiset, 22 050 Hz:n mononäytteet. Pelin lataus on hiljainen, ja näytteet ladataan vasta äänten kytkemisen jälkeen. Äänet saa päälle pelisivun painikkeesta tai lennon aikana S-näppäimellä.</p>
     </section>
 
     <section aria-labelledby="ohjaus"><h2 id="ohjaus">Valikot ja näppäimet</h2>
@@ -70,6 +70,7 @@
       <p>Asetus säilyy uuden pelin käynnistyksessä samalla sivulla. Sivun uudelleenlataus palauttaa tavallisen pelin. Trainerin voi kytkeä myös ennen pelin käynnistämistä.</p>
     </section>
 
+    <section aria-labelledby="aineistot"><h2 id="aineistot">Kuvat ja äänet</h2><p>Uudet spritearkit ja Rainbow Patrolin splash-kuva on luotu tähän projektiin OpenAI imagegenillä. <a href="assets/ARTWORK.md">Kuvat ja käytetyt promptit</a> ovat lähdepaketissa. RETRYn grafiikkaa tai ääniä ei jaella pelin mukana.</p><p>Ääninäytteet: Kenney, <a href="https://kenney.nl/assets/sci-fi-sounds" target="_blank" rel="noopener">Sci-fi Sounds</a> ja <a href="https://kenney.nl/assets/impact-sounds" target="_blank" rel="noopener">Impact Sounds</a>, CC0 1.0. <a href="assets/audio/README.md">Tiedostot, alkuperä ja muunnokset</a> sekä <a href="assets/audio/LICENSE.txt">lisenssiteksti</a> jaetaan mukana.</p></section>
     <section aria-labelledby="pisteet"><h2 id="pisteet">High scores</h2><p>Molemmilla versioilla on omat listansa harjoittelulle ja ilmataistelulle. Tämän julkaisun tulokset säilyvät tässä selaimessa. Yhteinen tietokantapalvelu on valmisteltu erikseen; sen julkinen käyttöönotto odottaa hyväksyntää.</p><p>Tuloksen tallennus kysyy nimimerkin. Traineria käyttäneitä lentoja ei lisätä listalle. Mahdollisella yhteislistalla nimimerkki, pistemäärä, kenttä ja tallennusaika näkyvät muille pelaajille; sähköpostia tai käyttäjätiliä ei tarvita.</p></section>
 
     <section aria-labelledby="lahteet"><h2 id="lahteet">Lähdekoodi, lisenssi ja lisätiedot</h2>

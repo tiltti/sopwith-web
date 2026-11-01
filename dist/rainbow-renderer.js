@@ -47,14 +47,20 @@
     return x;
   }
   function cloud(c,x,y,s=1) {
-    const block=(a,b,w,h,color)=>rect(c,Math.round(x+a*s),Math.round(y+b*s),
-      Math.round((a+w)*s)-Math.round(a*s),Math.round((b+h)*s)-Math.round(b*s),color);
-    const steps = [[0,19,13,8],[6,13,17,14],[17,6,22,21],[23,2,12,25],
-      [35,10,19,17],[48,7,17,20],[59,14,15,13],[69,20,13,7]];
-    for (const [a,b,w,h] of steps) block(a,b,w,h,P.cloudShade);
-    for (const [a,b,w] of steps) block(a,b,w,Math.max(2,26-b-5),P.cloud);
-    block(1,27,80,2,P.cloudDeep);
-    block(14,24,48,3,P.pale);
+    // One-pixel rounded contours and a short shade ramp, like a painted
+    // Amiga background, rather than the old stair-step cloud blocks.
+    const lobes=[[15,25,15,10],[32,17,17,16],[51,21,18,13],[69,25,18,9],[82,28,13,6]];
+    const ramp=['#fffce5','#f1fff0','#e5fff2','#d2f7ef','#b9ede9','#9edfe3','#88d1db'];
+    for(let row=1;row<35;row++) {
+      let left=Infinity,right=-Infinity;
+      for(const [cx,cy,rx,ry] of lobes) {
+        const dy=(row-cy)/ry;if(Math.abs(dy)>1)continue;
+        const dx=rx*Math.sqrt(1-dy*dy);left=Math.min(left,cx-dx);right=Math.max(right,cx+dx);
+      }
+      if(right<left)continue;
+      const l=Math.round(left*s),r=Math.round(right*s),top=Math.round(row*s),bottom=Math.round((row+1)*s);
+      rect(c,x+l,y+top,r-l,Math.max(1,bottom-top),ramp[Math.min(6,Math.floor(row/5))]);
+    }
   }
   function polygon(c,points,color) {
     // Rasterise the distant hills by rows, keeping diagonals on whole pixels.
@@ -141,7 +147,8 @@
       this.canvas=canvas; canvas.width=W; canvas.height=H;
       this.c=canvas.getContext('2d',{alpha:false}); this.c.imageSmoothingEnabled=false;
       this.sprites=new Map(); this.trail=[]; this.lastTick=-1;
-      this.effects=[];this.lastEffectId=0;this.aimEnabled=true;
+      this.effects=[];this.lastEffectId=0;this.aimEnabled=true;this.bombHeld=false;
+      this.aimVisible=false;this.aimActivations=0;
     }
     background(camera=0,tick=0) {
       const c=this.c;
@@ -259,7 +266,7 @@
     }
     aim(scene,objects,ground) {
       delete this.canvas.dataset.aimX;delete this.canvas.dataset.aimY;
-      if(!this.aimEnabled||scene[17]||scene[8]<=0||![1,6,8,9].includes(scene[13]))return;
+      if(!this.aimEnabled||!this.bombHeld||scene[17]||scene[8]<=0||![1,6,8,9].includes(scene[13]))return;
       const player=objects.find(r=>r[10]===1),hit=predictBomb(player,ground);
       if(!hit)return;
       const c=this.c,camera=scene[2],x=(hit.x-camera)*2,y=(199-hit.y)*2;
@@ -282,6 +289,8 @@
       rect(c,x-2,y-1,5,2,P.ink);rect(c,x-1,y-1,3,1,P.gold);
     }
     sprite(record,heap) {
+      const artwork=window.RainbowAssets?.sprite(record,heap);
+      if(artwork)return artwork;
       const [type,state,,,,,faction,w,h,ptr,,life,,,,orient]=record;
       const key=`${ptr}:${type}:${faction}:${w}:${h}:${state===3}:${orient}`;
       if(this.sprites.has(key))return this.sprites.get(key);
@@ -350,9 +359,21 @@
       for(const r of objects) {
         const [type,,x,y,,,,w,h]=r, sx=(x-camera)*2,sy=(199-y)*2;
         if(sx < -w*2-3||sx>W||sy>H||sy < -h*2-3)continue;
-        if(type===3) {rect(c,sx-3,sy,5,2,P.gold);rect(c,sx,sy,2,2,P.cream);continue;}
-        if(type===6) {rect(c,sx,sy,3,3,P.smoke);rect(c,sx+1,sy-1,2,2,P.cloud);continue;}
-        if(type===5) {rect(c,sx,sy,3,3,P.rock);rect(c,sx+1,sy-1,2,2,P.yellow);continue;}
+        if(type===3) {
+          const speed=Math.hypot(r[12],r[13])||1,dx=r[12]/speed,dy=-r[13]/speed,len=8;
+          polygon(c,[[sx-dx*len-dy,sy-dy*len+dx],[sx+dx*2-dy,sy+dy*2+dx],
+            [sx+dx*2+dy,sy+dy*2-dx],[sx-dx*len+dy,sy-dy*len-dx]],P.yellow);
+          rect(c,sx-1,sy-1,3,2,P.cream);
+          if(r[11]>=9) {
+            const mx=sx-r[12]*2,my=sy+r[13]*2;
+            polygon(c,[[mx-dx*2,my-dy*2],[mx+dy*3,my-dx*3],[mx+dx*8,my+dy*8],
+              [mx-dy*3,my+dx*3]],P.red);
+            rect(c,mx-1,my-1,4,3,P.gold);rect(c,mx,my,2,1,P.white);
+          }
+          continue;
+        }
+        if(type===6) {ring(c,sx,sy,3+(r[11]%3),P.darkSmoke);rect(c,sx-1,sy-1,3,3,P.smoke);continue;}
+        if(type===5) {rect(c,sx-2,sy,4,2,P.redShade);rect(c,sx,sy-1,2,3,P.yellow);rect(c,sx+1,sy,1,1,P.cream);continue;}
         const sprite=this.sprite(r,heap);if(sprite)c.drawImage(sprite,sx-1,sy-1);
         if(type===1 && r[10]===0 && r[1]!==3) {
           rect(c,sx+w-1,sy-6,3,2,P.redShade);rect(c,sx+w,sy-7,1,4,P.redShade);
@@ -360,11 +381,16 @@
       }
       this.terrain(scene.subarray(HEADER,HEADER+GROUND),camera);
       this.aim(scene,objects,ground);
+      const aimVisible=this.canvas.dataset.aimX!==undefined;
+      if(aimVisible&&!this.aimVisible)this.aimActivations++;
+      this.aimVisible=aimVisible;
+      this.canvas.dataset.aimActivations=String(this.aimActivations);
       this.drawEffects(camera,tick);
       // Native low-altitude collision geometry is preserved all the way down
       // to the original bottom edge; the information strip lives at the top.
       this.hud(scene,objects,trainer);
       this.canvas.dataset.renderer='rainbow';
+      this.canvas.dataset.artwork=window.RainbowAssets?.loaded?'amiga':'native';
       this.canvas.dataset.tick=String(tick);
       this.canvas.dataset.objects=String(objects.length);
       this.canvas.dataset.bombsInAir=String(objects.filter(r=>r[0]===2).length);

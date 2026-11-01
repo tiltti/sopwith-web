@@ -59,6 +59,8 @@ assert.ok(Renderer.predictBomb(plane,ground).x<plane[2],'The impact estimate fol
 plane[12]=4;plane[3]=180;
 assert.ok(Renderer.predictBomb(plane,ground).ticks>hit.ticks,'A higher release takes longer to reach the ground.');
 calls.length=0;renderer.aim(scene,[plane],ground);
+assert.equal(calls.length,0,'The guide stays hidden until the bomb control is held.');
+renderer.bombHeld=true;renderer.aim(scene,[plane],ground);
 assert.ok(display.dataset.aimX,'An airborne plane with bombs has an impact marker.');
 const marker=calls.filter(c=>['#fff2ce','#ffdb81','#263b55'].includes(c[5]));
 const markerWidth=Math.max(...marker.map(c=>c[1]+c[3]))-Math.min(...marker.map(c=>c[1]));
@@ -68,6 +70,9 @@ assert.ok(marker.some(c=>c[5]==='#fff2ce')&&marker.some(c=>c[5]==='#263b55'),
 renderer.aimEnabled=false;calls.length=0;renderer.aim(scene,[plane],ground);
 assert.equal(calls.length,0,'The optional aim switch still hides the entire guide.');
 renderer.aimEnabled=true;
+renderer.bombHeld=false;calls.length=0;renderer.aim(scene,[plane],ground);
+assert.equal(calls.length,0,'Releasing the bomb control hides the guide.');
+assert.equal(display.dataset.aimX,undefined,'Releasing also clears the impact diagnostic.');
 scene[2]=100;scene[1]=12;
 const effects=new Int32Array(196);effects.set([1,1,1,6,1,12,1,200,80,2]);
 renderer.drawScene(scene,heap,false,effects,ground);assert.equal(renderer.effects.length,1);
