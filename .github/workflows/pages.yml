@@ -47,6 +47,7 @@ jobs:
           node tests/rainbow-timeline.mjs
           node tests/title-audio.mjs
           node tests/leaderboard.mjs
+          node tests/leaderboard-ui.mjs
           python scripts/test_trainer.py
           python scripts/test_scene.py
           python scripts/test_home.py

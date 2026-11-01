@@ -1,0 +1,24 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Exercise production score rendering with a full board and a nonqualifying run.
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+const elements=new Map(),events={},storage=new Map(),dispatched=[];
+const element=()=>({children:[],value:'',listeners:{},append(...nodes){this.children.push(...nodes);},replaceChildren(){this.children=[];},addEventListener(name,fn){this.listeners[name]=fn;}});
+const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
+const rows=Array.from({length:20},(_,i)=>({nickname:'T'+String(i+1).padStart(2,'0'),score:(20-i)*1000,level:2,runId:'old-'+i,finished_at:i}));
+storage.set('sopwith.scores.rainbow.practice',JSON.stringify(rows));get('scores-mode').value='practice';get('game').src='runner.html?mode=practice&run=new-run';get('game').contentWindow={};
+const scope={document:{body:{dataset:{edition:'rainbow',layout:'arcade'}},getElementById:get,createElement:element},location:{origin:'https://test.invalid',href:'https://test.invalid/rainbow.html'},URL,console,
+ localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,value)},fetch:async()=>({json:async()=>({endpoint:null})}),setInterval(){},CustomEvent:class{constructor(type){this.type=type;}},window:{addEventListener:(name,fn)=>events[name]=fn,dispatchEvent:event=>dispatched.push(event.type)}};
+vm.runInNewContext(await readFile(new URL('../dist/leaderboard.js',import.meta.url),'utf8'),scope);
+const settle=()=>new Promise(resolve=>setImmediate(resolve));await settle();
+assert.equal(get('scores-rows').children.length,10,'A full stored board displays only the top ten.');
+assert.equal(get('scores-rows').children.at(-1).children[1].textContent,'T10');
+const message=data=>events.message({origin:scope.location.origin,source:get('game').contentWindow,data:{sopwith:true,...data}});
+message({type:'ready'});await settle();get('score-name').value='NEW';
+message({type:'score-ready',score:500,level:2,ticks:1000,trainerUsed:false});await settle();
+assert.equal(get('entry-scores-rows').children.length,10,'The initials background also has only ten rows.');
+assert.equal(get('entry-rank').textContent,'SIJOITUS: 21','A lower score retains its actual rank without adding an eleventh row.');
+await get('score-form').listeners.submit({preventDefault(){}});
+assert.equal(get('scores-rows').children.length,10);assert.ok(dispatched.includes('sopwith-score-saved'));
+console.log('Arcade board: top ten in both views, provisional rank 21 and safe lower-rank save verified.');

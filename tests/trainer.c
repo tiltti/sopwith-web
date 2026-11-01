@@ -235,7 +235,7 @@ int main(void)
         }else if(ob->ob_type==TARGET&&ob->ob_orient==TARGET_FACTORY)building=ob;
         if(ob->ob_type==OX){int left=16,right=0,top=16,bottom=0;
             for(int y=0;y<16;y++)for(int x=0;x<16;x++)if(ob->ob_symbol->data[y*16+x]){left=imin(left,x);right=imax(right,x+1);top=imin(top,y);bottom=imax(bottom,y+1);}
-            assert(right-left<=7&&bottom-top<=5);
+            assert(right-left<=8&&bottom-top<=6);
         }
     }
     assert(guns>0&&slopes>0&&gun&&building);
@@ -249,5 +249,11 @@ int main(void)
     ++countmove;WebVariant_Apply(consoleplayer);events=WebVariant_Effects();int newest=4+((events[1]-1)%32)*6;
     assert(events[newest+2]==2&&events[newest+5]==6);
     puts("Bird flock collision: one grouped feather/squawk event with flock intensity.");
+    gun->ob_faction=FACTION_PLAYER2;consoleplayer->ob_faction=FACTION_PLAYER1;
+    consoleplayer->ob_state=FLYING;consoleplayer->ob_x=gun->ob_x+30;consoleplayer->ob_y=gun->ob_y+25;
+    gamenum=0;countmove=1;before_shot=objbot;movetarg(gun);assert(objbot==before_shot);
+    gamenum=1;targrnge=75*75;movetarg(gun);
+    assert(playmode==PLAYMODE_SINGLE&&objbot!=before_shot&&objbot->ob_owner==gun);
+    puts("Single player: ground AA stays quiet at level 1 and fires back at level 2 without air-combat mode.");
     return 0;
 }

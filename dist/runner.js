@@ -132,7 +132,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261101-v05b',
+      locateFile: name => 'engine/' + name + '?v=20261101-v05c',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -210,6 +210,7 @@
       canvas.dataset.trainer = String(trainerEnabled);
       canvas.dataset.audio = sampleMixer?.status || game.SDL2?.audioContext?.state || 'unavailable';
       canvas.dataset.audioVoices = String(sampleMixer?.voices.size || 0);
+      canvas.dataset.startups = String(sampleMixer?.startupCount || 0);
       canvas.dataset.paused = String(paused);
       const inputMode = game._web_input_mode();
       canvas.dataset.inputMode = String(inputMode);
@@ -229,6 +230,7 @@
     const args = ['-q'];
     if (params.get('mode') === 'combat') args.push('-c');
     else if (params.get('mode') === 'practice') args.push('-s');
+    if(params.get('edition')==='rainbow'&&['1','2','3'].includes(params.get('level')))args.push('-g'+(Number(params.get('level'))-1));
     // Opening the runner directly preserves the original game's native menu.
     game.callMain(args);
   }

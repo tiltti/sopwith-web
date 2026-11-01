@@ -40,7 +40,7 @@ from 0.15 seconds for 1.95 seconds, amplified 1.7×, and converted to mono 22050
 The bomb's falling whistle and release clunk and cannon report are synthesized
 by original GPL code in `rainbow-audio.js`. They use 22050 Hz and 8-bit
 quantization. Cannon bursts and machine guns cannot cut off a cow reaction;
-recorded fanfares use a separate jingle slot. Muted events
+the friendly-target trombone uses a separate jingle slot. Muted events
 are consumed silently and never replayed when sound is enabled later.
 
 
@@ -50,11 +50,13 @@ The currently used new cues are in `audition-v05/`, with retained provider sourc
 files, exact source URLs, licenses, conversion details and SHA-256 in
 `audition-v05/SOURCES.json`. The older cow source above remains for provenance.
 
-- Fanfare: **Graciano Choc / gchoc**, “Trumpet Fanfare”, OpenGameArt, CC0.
+- Fanfare (retained for provenance/audition; removed from target destruction):
+  **Graciano Choc / gchoc**, “Trumpet Fanfare”, OpenGameArt, CC0.
 - Friendly-target disappointment: **kirbydx**, “wah wah sad trombone.wav”,
   Freesound, CC0. The downloaded public HQ MP3 rendition is retained.
-- Cow: **spurioustransients**, “Cow moo #8”, Freesound, CC0. A 1.75-second
-  excerpt at original pitch replaces the previous slowed-down cow.
+- Cow: **spurioustransients**, “Cow moo #8”, Freesound, CC0. A 2.5-second
+  excerpt at original pitch, with rumble filtering, loudness normalization and
+  stronger mix gain, replaces the previous quiet excerpt.
 - Bird impact: **Joseph SARDIN**, “Crow #1 / 2764”, BigSoundBank, CC0.
 - Startup/idle: **Torsten Nilsson**, “Flywheel starting radial engine”,
   [Sounds of Changes](https://www.soundsofchanges.eu/sound/flywheel-starting-radial-engine/),
@@ -69,10 +71,11 @@ files, exact source URLs, licenses, conversion details and SHA-256 in
   WWII recording. Full piece converted to 22050 Hz stereo AAC at 64 kbps,
   low-passed at 7 kHz. Original OGG retained.
 
-The game mixer now has five bounded slots, allowing recorded fanfares to play
-alongside gunfire. Splash music uses a separate opt-in HTML audio player and
-stops before play. Startup plays once for a new sound-enabled run; pause/unmute
-cannot replay it. The game still creates no audio requests or contexts on a
+The game mixer has five bounded slots, with the friendly-target warning separate
+from gunfire. It loads nine WAVs and synthesizes two cues. Splash music uses a
+separate opt-in HTML audio player and stops before play. Startup plays once for
+each sound-enabled player spawn, including respawns and new levels; refueling,
+pause and unmute cannot replay it. The game still creates no audio requests or contexts on a
 muted launch. The look study page has explicit audition buttons only.
 
 Regenerate from retained sources with `python scripts/prepare_audio_v05.py`

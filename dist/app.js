@@ -4,6 +4,7 @@
   const frame = $('game');
   const edition = document.body?.dataset.edition === 'rainbow' ? 'rainbow' : 'classic';
   const aimToggle = edition === 'rainbow' ? $('aim-toggle') : null;
+  const startLevel = edition === 'rainbow' ? $('start-level') : null;
   const keys = { ArrowUp:54, Comma:54, ArrowDown:56, Slash:56, ArrowRight:27, KeyX:27, ArrowLeft:29, KeyZ:29, Period:55, KeyB:5, Space:44, KeyH:11, KeyS:22 };
   let state = 'idle', muted = true, bootTimer, mode = 'practice';
   let inputMode = 0, trainerEnabled = false;
@@ -43,9 +44,10 @@
     $('pause').disabled = true; $('restart').disabled = false;
     $('pause-label').textContent='Tauko';$('pause').setAttribute('aria-label','Aseta peli tauolle');
     $('loading-text').textContent = 'Ladataan peliä…';
-    $('mode-label').textContent = mode === 'combat' ? '/ ILMATAISTELU' : '/ HARJOITTELU';
+    $('mode-label').textContent = mode === 'combat' ? '/ ILMATAISTELU' : edition==='rainbow'?'/ YKSINPELI':'/ HARJOITTELU';
     frame.hidden = false;
-    frame.src = `runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&trainer=${trainerEnabled ? 1 : 0}&edition=${edition}&aim=${aimToggle?.checked === false ? 0 : 1}&run=${Date.now()}`;
+    const levelQuery=startLevel?'&level='+(['1','2','3'].includes(startLevel.value)?startLevel.value:'1'):'';
+    frame.src = `runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&trainer=${trainerEnabled ? 1 : 0}&edition=${edition}&aim=${aimToggle?.checked === false ? 0 : 1}&run=${Date.now()}${levelQuery}`;
     clearTimeout(bootTimer);
     bootTimer = setTimeout(() => fail('Pelin lataaminen kesti liian kauan. Tarkista yhteys ja yritä uudelleen.'), 45000);
   }
@@ -105,6 +107,10 @@
   $('palette').value = loadPref('palette', '0');
   if (!$('palette').value) $('palette').value = '0';
   $('palette').addEventListener('change', () => { savePref('palette', $('palette').value); post('palette', { value:Number($('palette').value) }); });
+  if(startLevel){
+    const saved=loadPref('rainbow.start-level','1');startLevel.value=['1','2','3'].includes(saved)?saved:'1';
+    startLevel.addEventListener('change',()=>savePref('rainbow.start-level',startLevel.value));
+  }
   if(aimToggle) {
     aimToggle.checked=loadPref('rainbow.aim','1')!=='0';
     aimToggle.addEventListener('change',()=>{

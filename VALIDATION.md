@@ -1,5 +1,29 @@
 # Validation
 
+## 2026-11-01: Respawn startup, ground-fire selection and top ten
+
+- Startup follows the native player's killed-to-live transition and level changes,
+  including trainer runs that preserve the life counter. Tests cover repeated
+  respawns, tick resets, silent spawns, refueling and pause/unmute deduplication.
+- Rainbow settings launch native single-player at levels 1–3. Integration tests
+  verify CLI arguments and classic isolation. A native test verifies that AA
+  stays quiet at level 1 and fires at level 2 in PLAYMODE_SINGLE.
+- Cows are 16 logical pixels wide instead of 14; masks grow from 7×5 to 8×6
+  occupied pixels. Their natural-pitch moo is now a 2.5-second filtered and
+  normalized excerpt with stronger gain. Source bytes and license are retained.
+- Enemy/friendly ground vehicles have different cached painted panels and
+  matching red/mint flags, with a HUD legend. Tests preserve native collision data.
+- Ordinary target destruction no longer triggers or loads a victory fanfare.
+  The visual announcement and explosions remain, as does the friendly warning.
+- Both score displays render at most ten entries; an outside-top-ten provisional
+  rank is still visible. Final actions stay below the compact list. Saving a
+  lower-ranked run cannot index a nonexistent highlighted table row.
+- Browser fixture seeded 20 local runs: only ten rows were displayed, the panel
+  had equal 521px client/scroll height and its Back button was inside the panel.
+  A new rank-20 result showed ten background rows and saved to the final top-ten
+  screen with New flight/Main menu visible. A real muted level-2 single-player
+  boot showed the new flags, larger cow and LV 2, with audio=off and zero voices.
+
 ## 2026-11-01: Rainbow 0.5 bug fixes and A/B/C art studies
 
 - Aircraft art uses invariant world dimensions in a padded rotation canvas.

@@ -2,10 +2,10 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
-const sources=[],draws=[],rotations=[];
+const sources=[],draws=[],rotations=[],panels=[];
 class Image {width=1254;height=1254;set src(value){if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
 const scope={window:{},Image,document:{createElement:()=>({getContext:()=>({
-  drawImage(...args){draws.push(args);},translate(){},rotate(a){rotations.push(a);},scale(){}})})}};
+  drawImage(...args){draws.push(args);},fillRect(...args){panels.push([...args,this.fillStyle]);},translate(){},rotate(a){rotations.push(a);},scale(){}})})}};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-assets.js',import.meta.url),'utf8'),scope);
 const assets=scope.window.RainbowAssets;
 assert.equal(sources.length,0,'The classic edition must not fetch the Rainbow atlas.');
@@ -23,7 +23,7 @@ assert.ok(dx>=3&&dx+dw<=31&&dy>=13&&dy+dh<=31,
 assert.deepEqual(heap,original,'Sampling art must never modify collision pixels.');
 assert.equal(assets.sprite(record,heap),sprite,'Identical native frames reuse the prepared canvas.');
 const poses=[0,1,2,3].map(i=>assets.cowPose(i));
-assert.ok(poses.every(p=>p.width===42),'Falling cows retain the same visual width.');
+assert.ok(poses.every(p=>p.width===48),'Falling cows retain the same visual width.');
 assert.ok(poses[3].height<poses[0].height,'The last cow pose lies down.');
 console.log('Rainbow assets: lazy loading, target identities, crop bounds, cache and unchanged collision pixels verified.');
 
@@ -36,3 +36,8 @@ for(let angle=0;angle<16;angle++){
 assert.ok(sizes.every(([w,h])=>w===sizes[0][0]&&h===sizes[0][1]),'Every flight angle retains the same artwork size.');
 record[1]=4;record[4]=13;assets.sprite(record,heap);assert.notEqual(rotations.at(-1),0,'Falling wrecks rotate with their descent.');
 console.log('Aircraft rotation: invariant world dimensions, padded canvas and falling-wreck rotation verified.');
+record[0]=4;record[1]=5;record[15]=3;record[6]=1;const friendlyTank=assets.sprite(record,heap);
+assert.ok(panels.some(p=>p.at(-1)==='#71cebb'));panels.length=0;
+record[6]=2;const enemyTank=assets.sprite(record,heap);assert.notEqual(enemyTank,friendlyTank,'Opposing tanks cannot share an unmarked cached sprite.');
+assert.ok(panels.some(p=>p.at(-1)==='#ed786b'));assert.deepEqual(heap,original);
+console.log('Ground teams: faction-specific painted panels and distinct sprite caches preserve collision masks.');

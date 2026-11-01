@@ -2,19 +2,19 @@
 // Sources/licenses: assets/audio/README.md and audition-v05/SOURCES.json.
 (() => {
   const SAMPLE={engine:'audition-v05/radial-idle',gun:'impactPunch_heavy_000',
-    metal:'impactMetal_light_000',blast:'explosionCrunch_000',boom:'lowFrequency_explosion_000',moo:'audition-v05/moo',fanfare:'audition-v05/fanfare',wah:'audition-v05/wah-wah',bird:'audition-v05/bird',startup:'audition-v05/startup'};
+    metal:'impactMetal_light_000',blast:'explosionCrunch_000',boom:'lowFrequency_explosion_000',moo:'audition-v05/moo',wah:'audition-v05/wah-wah',bird:'audition-v05/bird',startup:'audition-v05/startup'};
   class RainbowAudio {
     constructor(options={}) {
       this.Context=options.AudioContext||window.AudioContext||window.webkitAudioContext;
       this.fetch=options.fetch||window.fetch.bind(window);
       this.requested=false;this.enabled=false;this.voices=new Map();this.buffers={};
-      this.startupWanted=!!options.startup;this.startupDone=false;this.startTick=null;this.lastBirdTick=-100;
+      this.initialStartupWanted=!!options.startup;this.player=null;this.pendingStartup=null;this.startupCount=0;this.lastBirdTick=-100;
       this.airplanes=new Map();this.lastTick=-1;this.lastEffect=0;this.lastBombs=null;this.status='off';
     }
     async setEnabled(enabled) {
       this.requested=enabled;
       if(!enabled) {
-        this.enabled=false;this.stopAll();this.status='off';
+        this.enabled=false;this.initialStartupWanted=false;this.pendingStartup=null;this.stopAll();this.status='off';
         if(this.context)await this.context.suspend();return;
       }
       try {
@@ -25,7 +25,7 @@
           this.filter=this.context.createBiquadFilter();this.filter.type='lowpass';this.filter.frequency.value=6500;
           this.master.connect(this.filter);this.filter.connect(this.context.destination);
           this.loading=Promise.all(Object.entries(SAMPLE).map(async([name,file])=>{
-            const response=await this.fetch(`assets/audio/${file}.wav`);
+            const response=await this.fetch(`assets/audio/${file}.wav?v=20261101-spawn1`);
             if(!response.ok)throw new Error(`Sample unavailable: ${file}`);
             this.buffers[name]=await this.context.decodeAudioData(await response.arrayBuffer());
           }));
@@ -80,13 +80,25 @@
     step(scene,effects) {
       const tick=scene[1];if(tick===this.lastTick)return;
       const reset=tick<this.lastTick;this.lastTick=tick;
-      if(reset){this.airplanes.clear();this.stopAll();this.lastEffect=effects?.[1]||0;this.lastBombs=null;}
+      if(reset){this.airplanes.clear();this.player=null;this.pendingStartup=null;this.stopAll();this.lastEffect=effects?.[1]||0;this.lastBombs=null;}
       const camera=scene[2],audible=this.enabled&&scene[12]!==2;
       if(!audible)this.stopAll();
-      this.startTick??=tick;
-      if(!this.startupDone){
-        if(!this.startupWanted||tick-this.startTick>20||!scene[17])this.startupDone=true;
-        else if(audible){this.startupDone=true;this.play('engine','startup',{gain:.32,rate:1});}
+      if(scene[3]>0){
+        const alive=[1,6,8,9].includes(scene[13]);
+        const spawn=alive&&scene[12]===0&&(!this.player||!this.player.alive||this.player.level!==scene[18]);
+        // Native respawns reuse the same object pointer, and the trainer can
+        // restore the life counter. Track the killed-to-live state transition.
+        // Consume silent spawns too, so unmute/refuel cannot replay a startup.
+        if(spawn){
+          this.stop('engine');
+          this.pendingStartup=this.requested||(!this.player&&this.initialStartupWanted)?tick:null;
+        }
+        this.player={alive,level:scene[18]};this.initialStartupWanted=false;
+        if(!alive||scene[12]!==0||this.pendingStartup!==null&&tick-this.pendingStartup>20)this.pendingStartup=null;
+        if(this.pendingStartup!==null&&audible){
+          if(this.play('engine','startup',{gain:.32,rate:1}))this.startupCount++;
+          this.pendingStartup=null;
+        }
       }
       if(audible&&scene[12]===0&&[1,6,8,9].includes(scene[13])) {
         let engine=this.voices.get('engine');
@@ -134,8 +146,8 @@
             this.play('fx','boom',{gain:.24,rate:.9,pan,priority:1});
           }
           if(event.type===2&&tick-this.lastBirdTick>=3){this.lastBirdTick=tick;this.play('fx','bird',{gain:event.size>1?.4:.3,rate:1,pan,priority:4});}
-          if(event.type===3)this.play('fx','moo',{gain:.35,rate:1,pan,priority:4});
-          if(event.type===6)this.play('jingle',event.size<0?'wah':'fanfare',{gain:.32,priority:3});
+          if(event.type===3)this.play('fx','moo',{gain:.65,rate:1,pan,priority:4});
+          if(event.type===6&&event.size<0)this.play('jingle','wah',{gain:.32,priority:3});
         }
       }
     }

@@ -49,7 +49,7 @@ document.getElementById('check').onclick=async()=>{
   const rendered=await context.startRendering(),data=rendered.getChannelData(0);
   const peak=data.reduce((max,x)=>Math.max(max,Math.abs(x)),0),rms=Math.sqrt(data.reduce((sum,x)=>sum+x*x,0)/data.length);
   if(!(peak>0&&peak<1&&rms>0))throw new Error('Invalid audio signal');
-  output.textContent=`PASS: ${Object.keys(mixer.buffers).length} buffers (10 WAV + 2 synth), ${voices} production mixer voices rendered offline. Peak=${peak.toFixed(4)} RMS=${rms.toFixed(4)}. Title AAC=${music.duration.toFixed(1)} s. No speaker output.`;
+  output.textContent=`PASS: ${Object.keys(mixer.buffers).length} buffers (9 WAV + 2 synth), ${voices} production mixer voices rendered offline. Peak=${peak.toFixed(4)} RMS=${rms.toFixed(4)}. Title AAC=${music.duration.toFixed(1)} s. No speaker output.`;
   output.dataset.pass='true';
  } catch(error){output.textContent='FAIL: '+error;output.dataset.pass='false';}
 };

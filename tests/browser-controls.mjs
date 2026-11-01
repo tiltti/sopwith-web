@@ -7,24 +7,25 @@ const origin = 'https://example.test';
 const event = (code, key = code) => ({ code, key, target:{tagName:'BODY'},
   preventDefault() { this.prevented = true; }, stopImmediatePropagation() { this.stopped = true; } });
 
-async function runnerTests() {
+async function runnerTests(search='',expectedArgs=['-q'],onlyLaunch=false) {
   const handlers = {}, sent = [], pressed = [], trainerChanges = [];
-  let inputMode = 0;
+  let inputMode = 0;const mainArgs=[];
   const canvas = { dataset:{}, focus() {} };
   const engine = {
     FS:{ mkdir() {}, mount() {}, syncfs(initial, cb) { cb(null); }, mkdirTree() {},
       analyzePath() { return {exists:false}; }, writeFile() {}, readFile() { return 'conf_medals 0'; } },
     IDBFS:{}, _web_read:() => 0, _web_input_mode:() => inputMode,
     _web_key:(...args) => pressed.push(args), _web_sound() {}, _web_pause() {},
-    _web_palette() {}, _web_trainer:value => trainerChanges.push(value), _web_variant() {}, callMain() {},
+    _web_palette() {}, _web_trainer:value => trainerChanges.push(value), _web_variant() {}, callMain(args) {mainArgs.push(...args);},
   };
   const parent = { postMessage:message => sent.push(message) };
-  const scope = { document:{getElementById:() => canvas}, location:{origin,search:''},
+  const scope = { document:{getElementById:() => canvas}, location:{origin,search},
     parent, URLSearchParams, createSopwith:async () => engine, console,
     setInterval() {}, setTimeout() {}, addEventListener:(name, fn) => { handlers[name] = fn; } };
   scope.window = scope;
   vm.runInNewContext(await readFile(new URL('../dist/runner.js', import.meta.url), 'utf8'), scope);
   await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(mainArgs,expectedArgs);if(onlyLaunch)return;
 
   inputMode = 2;
   for (const code of ['KeyS','KeyP','Escape','ArrowUp','ArrowDown','KeyX','Space']) {
@@ -86,6 +87,9 @@ async function pageTests() {
   assert.match(get('game').src,/trainer=1/);
   assert.match(get('game').src,/edition=rainbow/, 'The tribute page must request the new renderer.');
   assert.match(get('game').src,/aim=1/);
+  assert.match(get('game').src,/level=1/);
+  get('start-level').value='2';get('start-level').listeners.change();get('start').listeners.click();
+  assert.match(get('game').src,/level=2/,'The selected level reaches the next game launch.');
   get('aim-toggle').checked=false;get('aim-toggle').listeners.change();
   assert.equal(sent.at(-1).type,'aim');assert.equal(sent.at(-1).enabled,false);
   const message = data => windowHandlers.message({origin,source:child,data:{sopwith:true,...data}});
@@ -113,6 +117,11 @@ async function pageTests() {
 }
 
 await runnerTests();
+await runnerTests('?edition=rainbow&mode=practice&level=2',['-q','-s','-g1'],true);
+await runnerTests('?edition=rainbow&mode=combat&level=3',['-q','-c','-g2'],true);
+await runnerTests('?edition=rainbow&mode=practice&level=99',['-q','-s'],true);
+await runnerTests('?edition=classic&mode=practice&level=2',['-q','-s'],true);
+console.log('Starting level: single-player ground fire, combat difficulty, invalid input and unchanged classic launches verified.');
 await pageTests();
 
 // Regression: the native end screen has input mode zero, but must retain

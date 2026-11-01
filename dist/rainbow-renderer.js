@@ -391,6 +391,14 @@
       }
       rect(c,sx,top,width,1,'#ddd3a5');
     }
+    teamMark(r,camera){
+      if(r[0]!==4||r[1]!==5||!r[6]||r[15]===6)return;
+      const c=this.c,x=(r[2]-camera)*2-4,base=(199-r[3]+r[8])*2;
+      rect(c,x,base-16,1.5,16,P.ink);rect(c,x+1,base-16,11,8,P.ink);
+      rect(c,x+2,base-15,9,6,r[6]===1?P.mint:P.red);
+      rect(c,x+5.5,base-14,1,4,P.cream);
+      if(r[6]===1)rect(c,x+4,base-12.5,4,1,P.cream);
+    }
     observeAircraft(objects,time,tick,ground) {
       const active=new Set();
       for(const r of objects)if(r[0]===1){
@@ -512,6 +520,7 @@
             c.drawImage(sprite,-dw/2-kick,-dh+1,dw,dh);c.restore();
           }else c.drawImage(sprite,sx+w-dw/2,sy+h-dh/2+groundBlend*3.2,dw,dh);
         }
+        if(type===4)this.teamMark(r,camera);
         if(type===1)this.drawPlaneFire(r,camera,time);
         if(type===1 && r[10]===0 && r[1]!==3) {
           rect(c,sx+w-1,sy-6,3,2,P.redShade);rect(c,sx+w,sy-7,1,4,P.redShade);
@@ -564,6 +573,8 @@
       text(c,'AMMO',458,24,P.pale);text(c,s[7],486,23,P.cream,2);
       text(c,'BOMB',557,9,P.pale);text(c,s[8],598,8,P.gold,2);
       text(c,'HOME',557,25,P.pale);text(c,s[16]?'ON':s[4]<s[15]?'>':'<',598,24,P.cream,2);
+      rect(c,10,56,5,4,P.mint);text(c,'OMA',19,56,P.cream);
+      rect(c,49,56,5,4,P.red);text(c,'VIHOLLINEN',58,56,P.cream);
       const target=this.effects.filter(e=>e.type===6&&s[1]-e.tick<28).at(-1);
       if(target){
         const label=target.size<0?'FRIENDLY TARGET HIT':'TARGET DESTROYED';

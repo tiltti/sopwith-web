@@ -45,7 +45,7 @@
     if(!loaded){load();return null;}
     const index=frameFor(r),[type,state,,,,orient,,w,h,ptr]=r,angle=Math.round(r[4]*8)/8;
     if(index<0||w<1||h<1||w>256||h>256||ptr<0||ptr+w*h>heap.length)return null;
-    const key=[index,type,state,angle,orient,w,h,ptr,r[12]<0].join(':');
+    const key=[index,type,state,angle,orient,r[6],w,h,ptr,r[12]<0].join(':');
     if(cache.has(key))return cache.get(key);
     const out=document.createElement('canvas');
     const rotating=type===1||type===10,worldSize=type===1?46:type===10?30:0;
@@ -73,6 +73,16 @@
       if(type===8&&r[12]<0){c.translate(w*2+2,0);c.scale(-1,1);}
       const scale=Math.min(bw/crop[2],bh/crop[3]),dw=crop[2]*scale,dh=crop[3]*scale;
       c.drawImage(sheet,...crop,Math.round(bx+(bw-dw)/2),Math.round(by+bh-dh),Math.round(dw),Math.round(dh));
+      if(type===4&&state===5&&r[6]&&[3,4,5,20].includes(r[15])){
+        // Painted hull/shield panels belong to the unit, with the same
+        // mint/red team colours used by the map and its ground pennant.
+        const px=bx+(bw-dw)/2+dw*.28,py=by+bh-dh*.38,pw=dw*.43,ph=Math.max(2.4,dh*.16);
+        c.globalCompositeOperation='source-atop';c.fillStyle='#263b55';c.fillRect(px-.7,py-.7,pw+1.4,ph+1.4);
+        c.fillStyle=r[6]===1?'#71cebb':'#ed786b';c.fillRect(px,py,pw,ph);
+        c.fillStyle='#fff2ce';c.fillRect(px+pw*.46,py+.3,.8,ph-.6);
+        if(r[6]===1)c.fillRect(px+pw*.25,py+ph*.45,pw*.5,.8);
+        c.globalCompositeOperation='source-over';
+      }
     }
     if(cache.size>700)cache.clear();cache.set(key,out);return out;
   }
@@ -81,7 +91,7 @@
     frame=Math.max(0,Math.min(3,frame));const key='cow:'+frame;
     if(cache.has(key))return cache.get(key);
     const crop=cowFrames[frame],out=document.createElement('canvas');
-    out.width=14*DETAIL;out.height=Math.ceil(14*crop[3]/crop[2]*DETAIL);
+    out.width=16*DETAIL;out.height=Math.ceil(16*crop[3]/crop[2]*DETAIL);
     out.getContext('2d').drawImage(cows,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
   }
   function pilotPose(frame) {

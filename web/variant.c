@@ -171,9 +171,9 @@ void WebVariant_CowMask(OBJECTS *cow)
             left=imin(left,x);right=imax(right,x+1);top=imin(top,y);bottom=imax(bottom,y+1);
         }
         if(right<=left||bottom<=top)return;
-        for(int y=0;y<5;y++)for(int x=0;x<7;x++){
-            int sx=left+(2*x+1)*(right-left)/14,sy=top+(2*y+1)*(bottom-top)/10;
-            pixels[state][transform][(11+y)*16+4+x]=source->data[sy*source->w+sx];
+        for(int y=0;y<6;y++)for(int x=0;x<8;x++){
+            int sx=left+(2*x+1)*(right-left)/16,sy=top+(2*y+1)*(bottom-top)/12;
+            pixels[state][transform][(10+y)*16+4+x]=source->data[sy*source->w+sx];
         }
         masks[state][transform].w=masks[state][transform].h=16;
         masks[state][transform].data=pixels[state][transform];ready[state][transform]=true;

@@ -23,3 +23,6 @@ body[data-game-state=idle] .touch-controls,body[data-game-state=loading] .touch-
 
 .title-sound{position:absolute;right:3%;top:3%;border:0;background:#183449a0;color:#fff8db;padding:.9cqw;font-size:1cqw;text-shadow:2px 2px #17384b}.title-sound:hover{color:#ffe16a}.title-sound:focus-visible{outline:2px solid #ffe16a}@media(max-width:700px) and (orientation:portrait){.title-sound{font-size:1.8cqw}}
 .entry-board th,.entry-board td{padding:.2cqw .65cqw}.entry-board th:first-child,.entry-board td:first-child{width:23%;text-align:left;white-space:nowrap}.entry-board th:nth-child(2),.entry-board td:nth-child(2){width:32%}
+.level-setting{display:flex;flex-direction:column;gap:.7cqw;text-align:left;font-size:1.1cqw;color:var(--gold)}.level-setting select{width:100%;font:inherit;font-size:1cqw;color:var(--cream);background:#28649b;border:2px solid #9ddbf4;padding:1cqw}.level-setting select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}@media(max-width:700px){.level-setting{font-size:1.7cqw}.level-setting select{font-size:1.6cqw}}
+.score-panel table{line-height:1.4;margin:1cqw 0}.score-panel th,.score-panel td{padding:.3cqw .45cqw}.score-end-actions{position:sticky;bottom:-2cqw;background:#4b96d9;padding:.7cqw 0}
+.entry-board table{line-height:1.65}

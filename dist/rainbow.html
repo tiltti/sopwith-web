@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#183449"><title>Rainbow Patrol — Sopwith Tribute</title>
 <meta name="description" content="Rainbow Patrol: oma arcade-versio Sopwithin pohjalta.">
-<link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261101-v05b">
+<link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261101-v05c">
 </head>
 <body data-edition="rainbow" data-layout="arcade" data-game-state="idle">
 <main class="game-column arcade-root" aria-label="Rainbow Patrol">
@@ -21,7 +21,7 @@
     <section id="launch" class="game-layer title-screen" aria-label="Päävalikko">
       <img class="splash-art" src="assets/rainbow-splash-v1.png" width="1586" height="992" alt="Rainbow Patrol">
       <div class="title-menu pixel-menu" aria-label="Pelivalinnat">
-        <button id="start" class="menu-link selected" aria-label="Aloita harjoittelu">Harjoittelu</button>
+        <button id="start" class="menu-link selected" aria-label="Aloita yksinpeli">Yksinpeli</button>
         <button id="combat-start" class="menu-link">Ilmataistelu</button>
         <button class="menu-link" data-open-panel="help">Ohjaus</button>
         <button class="menu-link" data-open-panel="scores">Ennätykset</button>
@@ -61,6 +61,8 @@
       </dl><p class="tiny-text">MYÖS NUOLINÄPPÄIMET TOIMIVAT.<br>TUKIKOHTA TÄYDENTÄÄ VARUSTEET.</p></div><button data-close-panel class="pixel-button">TAKAISIN</button></div></section>
     <section id="panel-settings" class="game-layer menu-backdrop auxiliary-panel" hidden><div class="pixel-panel"><h2>ASETUKSET</h2><div class="pixel-menu">
       <button id="settings-sound" class="pixel-button">ÄÄNET: POIS</button>
+      <label class="level-setting" for="start-level">ALOITUSKENTTÄ<select id="start-level"><option value="1">1 · EI VASTATULTA</option><option value="2">2 · MAAKOHTEET AMPUVAT</option><option value="3">3 · VOIMAKAS VASTATULI</option></select></label>
+      <p class="tiny-text">VALINTA VAIKUTTAA SEURAAVAAN LENTOON.<br>YKSINPELISSÄ EI OLE VIHOLLISKONEITA.</p>
       <label class="pixel-toggle"><input type="checkbox" id="aim-toggle" checked><span>POMMITÄHTÄIN</span></label>
       <button id="touch-toggle" class="pixel-button" aria-pressed="false">NÄYTTÖOHJAIMET</button>
       <button id="settings-fullscreen" class="pixel-button">KOKO NÄYTTÖ</button>
@@ -68,15 +70,15 @@
     </div><select id="palette" hidden aria-label="Klassisen version paletti"><option value="0">CGA</option></select></div></section>
     <section id="panel-scores" class="game-layer menu-backdrop auxiliary-panel" hidden><div id="leaderboard" class="pixel-panel score-panel">
       <h2>HIGH SCORES</h2><p id="scores-scope" class="tiny-text">TULOKSET TÄSSÄ SELAIMESSA</p>
-      <div class="score-modes"><label for="scores-mode" class="sr-only">Pistetilaston pelitila</label><select id="scores-mode"><option value="practice">HARJOITTELU</option><option value="combat">ILMATAISTELU</option></select><button id="scores-refresh" class="pixel-icon" aria-label="Päivitä pisteet">↻</button></div>
+      <div class="score-modes"><label for="scores-mode" class="sr-only">Pistetilaston pelitila</label><select id="scores-mode"><option value="practice">YKSINPELI</option><option value="combat">ILMATAISTELU</option></select><button id="scores-refresh" class="pixel-icon" aria-label="Päivitä pisteet">↻</button></div>
       <table><thead><tr><th>#</th><th>NIMI</th><th>PISTEET</th><th>KENTTÄ</th></tr></thead><tbody id="scores-rows"></tbody></table><p id="scores-status" class="tiny-text" role="status"></p>
       <div class="score-end-actions"><button id="scores-new-flight" class="pixel-button green" hidden>UUSI LENTO</button><button id="scores-main-menu" class="pixel-button" hidden>PÄÄVALIKKO</button><button id="scores-back" data-close-panel class="pixel-button green">TAKAISIN</button></div>
     </div></section>
   </div>
   <div id="touch-controls" class="touch-controls" hidden aria-label="Näytön peliohjaimet"><div class="touch-group"><button data-scan="54" aria-label="Nokka ylös">↑</button><button data-scan="56" aria-label="Nokka alas">↓</button><button data-scan="27" aria-label="Lisää kaasua">＋</button><button data-scan="29" aria-label="Vähennä kaasua">−</button></div><div class="touch-group"><button data-scan="11" aria-label="Palaa tukikohtaan">H</button><button data-scan="55" aria-label="Käännä kone ympäri">↻</button><button data-scan="5" aria-label="Pommitähtäin ja pudotus">B</button><button data-scan="44" aria-label="Ammu">●</button></div></div>
   </div>
-  <div class="sr-only" aria-live="polite"><span id="status-text">PÄÄVALIKKO</span><span id="mode-label">HARJOITTELU</span></div>
+  <div class="sr-only" aria-live="polite"><span id="status-text">PÄÄVALIKKO</span><span id="mode-label">YKSINPELI</span></div>
 </main>
 <noscript>PELAAMINEN VAATII JAVASCRIPTIN JA WEBASSEMBLY-TUEN.</noscript>
-<script src="app.js?v=20261101-v05b"></script><script src="title-audio.js?v=20261101-v05b"></script><script src="rainbow-ui.js?v=20261101-v05b"></script><script src="leaderboard.js?v=20261101-v05b"></script>
+<script src="app.js?v=20261101-v05c"></script><script src="title-audio.js?v=20261101-v05c"></script><script src="rainbow-ui.js?v=20261101-v05c"></script><script src="leaderboard.js?v=20261101-v05c"></script>
 </body></html>

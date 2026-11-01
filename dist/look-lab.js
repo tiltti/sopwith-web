@@ -134,11 +134,11 @@
     if(!loaded)return;c.setTransform(D,0,0,D,0,0);c.imageSmoothingEnabled=true;c.save();c.beginPath();c.rect(0,0,W,H);c.clip();
     sky();terrain();
     if(scene==='slope'){
-      building('factory',301,39);building('fuel',526,29);tank(401);emplacement(255);emplacement(462,true);emplacement(118);sprite('cow',571,ground(571)-1,14,{rotation:groundAngle(571,12)*.15});
+      building('factory',301,39);building('fuel',526,29);tank(401);emplacement(255);emplacement(462,true);emplacement(118);sprite('cow',571,ground(571)-1,16,{rotation:groundAngle(571,12)*.15});
       plane(220,152,angle*Math.PI/180);cloud(340,89,.55);
     } else {
       building('hangar',132,46);building('fuel',82,25);building('factory',490,38);emplacement(235);emplacement(548,true);tank(409);
-      sprite('cow',351,ground(351)-1,14,{rotation:groundAngle(351,12)*.15});sprite('cow',369,ground(369)-1,12,{rotation:groundAngle(369,12)*.15});
+      sprite('cow',351,ground(351)-1,16,{rotation:groundAngle(351,12)*.15});sprite('cow',369,ground(369)-1,14,{rotation:groundAngle(369,12)*.15});
       const roll=moving?Math.max(0,Math.min(1,(time%10-1)/2)):0;
       plane(176+roll*26,ground(176+roll*26)+1,-Math.PI/12*(1-roll),{parked:true});
       if(scene==='crash'){
@@ -162,7 +162,7 @@
   $('export').addEventListener('click',()=>canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=`rainbow-look-${selected}-${scene}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);},'image/png'));
   let audio;
   function stopAudio(){if(audio){audio.pause();audio.currentTime=0;}}
-  document.querySelectorAll('[data-sound]').forEach(button=>button.addEventListener('click',()=>{stopAudio();audio=new Audio(`assets/audio/audition-v05/${button.dataset.sound}.${button.dataset.sound==='title-theme'?'m4a':'wav'}`);audio.volume=.5;audio.play().catch(()=>{});}));
+  document.querySelectorAll('[data-sound]').forEach(button=>button.addEventListener('click',()=>{stopAudio();audio=new Audio(`assets/audio/audition-v05/${button.dataset.sound}.${button.dataset.sound==='title-theme'?'m4a':'wav'}?v=20261101-moo2`);audio.volume=.5;audio.play().catch(()=>{});}));
   $('stop-audio').addEventListener('click',stopAudio);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio();});
   Promise.all(Object.entries({main:'rainbow-sprites-v1.png',defense:'rainbow-defense-pilots-v1.png'}).map(([name,file])=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{images[name]=img;resolve();};img.onerror=reject;img.src='assets/'+file;}))).then(()=>{loaded=true;select(selected);}).catch(()=>{descriptions.textContent='Kuvien lataaminen epäonnistui. Lataa sivu uudelleen.';});
 })();

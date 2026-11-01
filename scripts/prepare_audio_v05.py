@@ -21,7 +21,7 @@ def convert(source,out,filters=None,start=None,duration=None,stereo=False,music=
     subprocess.run([*args,str(BASE/out)],check=True)
 convert('castlefanfare.ogg','fanfare.wav')
 convert('sad-trombone.mp3','wah-wah.wav','afade=t=in:d=0.015,afade=t=out:st=4.9:d=0.3,volume=0.7')
-convert('cow-moo-8.mp3','moo.wav','afade=t=in:d=0.035,afade=t=out:st=1.6:d=0.15,volume=1.8',2.8,1.75)
+convert('cow-moo-8.mp3','moo.wav','highpass=f=65,lowpass=f=4500,loudnorm=I=-16:TP=-1.5:LRA=7,volume=1.5,afade=t=in:d=0.025,afade=t=out:st=2.3:d=0.2',2.4,2.5)
 convert('crow-2764.wav','bird.wav','afade=t=in:d=0.008,afade=t=out:st=0.25:d=0.07')
 convert('radial-j22.mp3','startup.wav','acompressor=threshold=0.03:ratio=3:makeup=1.5,afade=t=in:d=0.015,afade=t=out:st=2.3:d=0.1',39.1,2.4)
 convert('radial-j22.mp3','radial-idle.wav','[0:a]asetpts=PTS-STARTPTS,asplit[a][b];[a][b]acrossfade=d=0.12:c1=tri:c2=tri,atrim=start=1.5:end=4.38',60,3)

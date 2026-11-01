@@ -14,8 +14,8 @@
     },
     {
       "path": "dist/assets/audio/README.md",
-      "bytes": 4620,
-      "sha256": "ad18e47de74dac2ccdbce6123c458d421ac05aa8b34902afe08706137d1d4b27"
+      "bytes": 4872,
+      "sha256": "1df2c2dfac5d689ff461694012c83c40994878b49c5c3d01c4f56879fceb252c"
     },
     {
       "path": "dist/assets/audio/SOURCES.json",
@@ -24,8 +24,8 @@
     },
     {
       "path": "dist/assets/audio/audition-v05/SOURCES.json",
-      "bytes": 5602,
-      "sha256": "d8c4bfbbe4c860056925769f75f8bae21839d77f336dccdae8864f1c331a0c6c"
+      "bytes": 5679,
+      "sha256": "a3b43ff61d25310145028099e82f8d5dd462a37e944cc3ae8a82482baf8a1460"
     },
     {
       "path": "dist/assets/audio/audition-v05/bird.wav",
@@ -39,8 +39,8 @@
     },
     {
       "path": "dist/assets/audio/audition-v05/moo.wav",
-      "bytes": 77254,
-      "sha256": "bc3eb893f951b5e3a08c572a5426877469a819f80b093bf5bb53f49353d564ba"
+      "bytes": 110328,
+      "sha256": "f9b8ce45e7d36afdb92ad7cec6f7fe07e381a54f0a3160fc7ec616204d1cb7e8"
     },
     {
       "path": "dist/assets/audio/audition-v05/original/castlefanfare.ogg",

@@ -34,7 +34,7 @@
       "original": "original/cow-moo-8.mp3",
       "output": "moo.wav",
       "acquisition": "Freesound public HQ MP3 preview; not the login-only WAV master",
-      "conversion": "Trim 2.8 seconds for 1.75 seconds; original pitch; mono 22050 Hz PCM16; gain 1.8; 35ms attack and 150ms tail fades"
+      "conversion": "Trim 2.4 seconds for 2.5 seconds; original pitch; 65 Hz high-pass, 4500 Hz low-pass, loudnorm -16 LUFS / -1.5 dBTP then 1.5x gain; 25ms attack and final 200ms tail fades; mono 22050 Hz PCM16"
     },
     {
       "name": "bird",
@@ -89,8 +89,8 @@
     },
     {
       "path": "moo.wav",
-      "bytes": 77254,
-      "sha256": "bc3eb893f951b5e3a08c572a5426877469a819f80b093bf5bb53f49353d564ba"
+      "bytes": 110328,
+      "sha256": "f9b8ce45e7d36afdb92ad7cec6f7fe07e381a54f0a3160fc7ec616204d1cb7e8"
     },
     {
       "path": "original/castlefanfare.ogg",

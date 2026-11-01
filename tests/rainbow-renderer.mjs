@@ -83,10 +83,15 @@ console.log('Rainbow renderer: alignment, level grounded arch, visible optional 
 
 const activeTarget=new Int32Array([4,5,500,80,0,0,2,16,16]);
 calls.length=0;renderer.hud(scene,[activeTarget],false,ground);
-assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#ed786b'),'Active enemy ground targets are red.');
+assert.ok(calls.some(r=>r[0]==='rect'&&r[1]>180&&r[1]<450&&r.at(-1)==='#ed786b'),'Active enemy ground targets are red.');
 activeTarget[1]=3;calls.length=0;renderer.hud(scene,[activeTarget],false,ground);
-assert.ok(!calls.some(r=>r[0]==='rect'&&r.at(-1)==='#ed786b'),'Destroyed targets cannot keep a red active marker.');
+assert.ok(!calls.some(r=>r[0]==='rect'&&r[1]>180&&r[1]<450&&r.at(-1)==='#ed786b'),'Destroyed targets cannot keep a red active marker.');
 assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#526d78'),'Destroyed locations retain a subdued cross marker.');
+activeTarget[1]=5;activeTarget[6]=1;calls.length=0;renderer.teamMark(activeTarget,100);
+assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#71cebb'),'Friendly ground flags match the map.');
+activeTarget[6]=2;calls.length=0;renderer.teamMark(activeTarget,100);
+assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#ed786b'),'Enemy ground flags match the map.');
+activeTarget[1]=3;calls.length=0;renderer.teamMark(activeTarget,100);assert.equal(calls.length,0,'Destroyed sites lose their active flag.');
 
 // The same killed aircraft emits one bailout, then keeps a burning wreck.
 scope.window.RainbowAssets={loaded:true,sprite:()=>null,pilotPose:()=>({width:54,height:70})};

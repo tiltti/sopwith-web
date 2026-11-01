@@ -20,7 +20,7 @@
     .catch(()=>{}).finally(()=>{$('scores-scope').textContent=endpoint?'Kaikkien pelaajien yhteinen lista':'Tulokset tässä selaimessa';});
   function draw(rows) {
     const body=$('scores-rows');body.replaceChildren();
-    rows.slice(0,20).forEach((row,i)=>{
+    rows.slice(0,10).forEach((row,i)=>{
       const tr=document.createElement('tr');
       for(const value of [i+1,row.nickname,row.score,row.level]){const td=document.createElement('td');td.textContent=String(value);tr.append(td);}
       body.append(tr);
@@ -33,8 +33,8 @@
     const rows=[...boardRows,{...pending,nickname:$('score-name').value.toUpperCase().padEnd(3,'A').slice(0,3),runId:runKey,provisional:true}];
     rows.sort((a,b)=>b.score-a.score||Number(a.provisional)-Number(b.provisional));
     const rank=rows.findIndex(r=>r.provisional)+1;$('entry-rank').textContent='SIJOITUS: '+rank;
-    rows.forEach((row,i)=>{
-      if(i>7&&!row.provisional)return;const tr=document.createElement('tr');
+    rows.slice(0,10).forEach((row,i)=>{
+      const tr=document.createElement('tr');
       if(row.provisional)tr.className='current';
       for(const value of [i+1,row.nickname,row.score]){const td=document.createElement('td');td.textContent=String(value);tr.append(td);}
       body.append(tr);
@@ -46,7 +46,7 @@
     try {
       const rows=endpoint?(await api(`/api/scores?edition=${edition}&mode=${selected}`)).scores:read(localKey(),[]);
       if(id!==loading)return;boardRows=rows;draw(rows);drawEntryBoard();status('');
-      if(arcade&&savedRun){const index=rows.findIndex(row=>row.runId===savedRun);if(index>=0)$('scores-rows').children[index].className='current';}
+      if(arcade&&savedRun){const index=rows.findIndex(row=>row.runId===savedRun);if(index>=0&&index<10)$('scores-rows').children[index].className='current';}
     }catch{if(id===loading)status('Listan lataaminen epäonnistui. Voit yrittää uudelleen.');}
   }
   async function begin() {
