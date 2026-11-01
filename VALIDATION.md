@@ -23,6 +23,9 @@
   A new rank-20 result showed ten background rows and saved to the final top-ten
   screen with New flight/Main menu visible. A real muted level-2 single-player
   boot showed the new flags, larger cow and LV 2, with audio=off and zero voices.
+- The additional level selector initially made Settings too tall. Its spacing
+  was reduced; browser measurement then showed equal 514px client/scroll height,
+  with Back fully inside the panel and no page/fullscreen resize.
 
 ## 2026-11-01: Rainbow 0.5 bug fixes and A/B/C art studies
 
