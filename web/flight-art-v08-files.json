@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-02",
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-wing-badge-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "bytes": 1937475,
+      "sha256": "4b338ab5467b1320c45715f619f9fc7ee072430dd3ff1c365a0ae465d3abb7b8"
+    },
+    {
+      "path": "dist/assets/rainbow-departure-v2.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "bytes": 1950948,
+      "sha256": "6e59ada24db0e61063b58d22385fe0c003d049b62d57fde0ba383811f90459d9"
+    },
+    {
+      "path": "dist/assets/rainbow-cockpit-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "bytes": 2926858,
+      "sha256": "c03a19a9280d9b80247371d5f04807022a48fc73b02e1015b2686d6e3807559d"
+    },
+    {
+      "path": "dist/assets/rainbow-debrief-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 3552637,
+      "sha256": "be345828d8db307993835a1ad88978ce555c7d3d450b836d85bd8f42aace42d0"
+    },
+    {
+      "path": "dist/assets/rainbow-parachute-sway-v4.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "bytes": 2436849,
+      "sha256": "5d06244fb0de3d613055fd31b6b0f55e9541db4aeace9a950878acf19edadb2f"
+    },
+    {
+      "path": "dist/assets/rainbow-scenery-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 1623849,
+      "sha256": "de416de60273dce2ec119a98d289b5568d0b18f8bb6d8a8135e7c64c65c8101f"
+    },
+    {
+      "path": "dist/assets/rainbow-clouds-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "bytes": 1540760,
+      "sha256": "14a639a5436764f9c8d41ed2eb01c75dc5d2aa087d47a862d79ed84750bc89f3"
+    },
+    {
+      "path": "dist/assets/rainbow-soil-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 3405588,
+      "sha256": "1df20743e831f013e0930512d095547047adf41d4d0c262400429e4f397b72cd"
+    },
+    {
+      "path": "dist/assets/rainbow-aircraft-roll-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "bytes": 2017945,
+      "sha256": "8ae6631214960c0182c981048aff1e97d588197f9c424c3695e5feaea99017fe"
+    }
+  ]
+}

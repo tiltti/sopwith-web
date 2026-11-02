@@ -1,3 +1,35 @@
+## Painted flight / cockpit update — 2026-11-02
+
+- Ten JavaScript suites pass: browser controls, renderer, atlas crops, audio,
+  timeline, READY staging, title music, language, leaderboard and leaderboard UI.
+  New assertions cover canopy frames, constant-scale faction roll frames,
+  calibrated instrument values, texture clipping without ground mutation,
+  boarding progress and bomb heading easing from airframe to ballistic velocity.
+- Native patrol tests pass, including a friendly ground pilot beside parked /
+  taxiing home aircraft, active airborne and hostile contacts, and untouched
+  Classic filtering. Existing real rapid-salvo and pilot-collision tests pass.
+- Native trainer and scene tests pass. Return-to-base audit remains Rainbow
+  30/30 successes, Classic baseline 28/30 (the two existing failures retained).
+- Fresh local WASM build passed. The existing upstream signed-char warning is
+  unchanged. All media remain local; no actual speaker output or fullscreen
+  transitions were used during this round of QA.
+- In-app browser: painted-coast environment, 1920×1464 canvas, moving instruments,
+  quiet default, takeoff and B hold/release verified. One release spent exactly
+  one bomb (5→4), left one bomb in flight and reported a changing heading.
+- OfflineAudioContext fixture decoded all 13 samples plus 2 cues without a
+  speaker context. The embedded dive decoded as 4 seconds, mono / 22050 Hz;
+  one-shot completion and crash handoff passed. This is decode/state validation,
+  not an audible listening test.
+- Browser UI fixture: 20 seeded local scores, 3-character initials entry and
+  save-to-top-ten end flow passed. The final table had 10 rows and equal
+  scroll/client height (377 px), with New flight / Main menu visible.
+- Browser visual fixture covers victory wings, rear aircraft, canopy sway,
+  grounded walk, READY boarding and axial fall frames. It renders copies of
+  native snapshots; actual collision rules are covered by the C tests above.
+- Captures in the parent workspace research directory: `painted-flight-local.png`,
+  `painted-pause-local.png`, `painted-scores-local.png`. These are actual browser
+  captures, not the environment concept images.
+
 # Validation
 
 ## 2026-11-02: Restore pilot artwork, ground contact and compact READY

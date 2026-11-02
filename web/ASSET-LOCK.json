@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 11888,
-      "sha256": "5abd28e2e38d230e37e1d3234788b4dc5f80cb62cf834bf48b5d01cf32e41220"
+      "bytes": 13811,
+      "sha256": "bc2ac8b59e02876ca6063d22052bba5d4dc416e79c91f25db9efa646ec06fcbd"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -14,8 +14,8 @@
     },
     {
       "path": "dist/assets/audio/README.md",
-      "bytes": 5728,
-      "sha256": "04589a46248e1922d9aad526270639e94ed8a61b92a789d8be0056ee865527f6"
+      "bytes": 7013,
+      "sha256": "2189813c9750066b44106fd2349b25a6367556a105d9adf71df9ae323761d7ba"
     },
     {
       "path": "dist/assets/audio/SOURCES.json",
@@ -228,9 +228,29 @@
       "sha256": "244ca40a94aa4bf080eaa4414f908dc42b7fca2b0a8856ab6ce8db06439470c6"
     },
     {
+      "path": "dist/assets/rainbow-aircraft-roll-v1.png",
+      "bytes": 2017945,
+      "sha256": "8ae6631214960c0182c981048aff1e97d588197f9c424c3695e5feaea99017fe"
+    },
+    {
+      "path": "dist/assets/rainbow-clouds-v1.png",
+      "bytes": 1540760,
+      "sha256": "14a639a5436764f9c8d41ed2eb01c75dc5d2aa087d47a862d79ed84750bc89f3"
+    },
+    {
+      "path": "dist/assets/rainbow-cockpit-v1.png",
+      "bytes": 2926858,
+      "sha256": "c03a19a9280d9b80247371d5f04807022a48fc73b02e1015b2686d6e3807559d"
+    },
+    {
       "path": "dist/assets/rainbow-cow-reaction-v1.png",
       "bytes": 992391,
       "sha256": "2fc524280abba50756f327e151364d494daad36cfa077a3dd5c0308925eafff7"
+    },
+    {
+      "path": "dist/assets/rainbow-debrief-v1.png",
+      "bytes": 3552637,
+      "sha256": "be345828d8db307993835a1ad88978ce555c7d3d450b836d85bd8f42aace42d0"
     },
     {
       "path": "dist/assets/rainbow-defense-pilots-v1.png",
@@ -238,14 +258,34 @@
       "sha256": "1c0b27472e3d98fcca86cb569329c548485919304dcedc047e44aa50d518f12c"
     },
     {
+      "path": "dist/assets/rainbow-departure-v2.png",
+      "bytes": 1950948,
+      "sha256": "6e59ada24db0e61063b58d22385fe0c003d049b62d57fde0ba383811f90459d9"
+    },
+    {
       "path": "dist/assets/rainbow-extras-v1.png",
       "bytes": 1160011,
       "sha256": "6c2a384d1995221b2427026a42e800d2b94c2fd00d8347a1f6df339da55e1bb1"
     },
     {
+      "path": "dist/assets/rainbow-parachute-sway-v4.png",
+      "bytes": 2436849,
+      "sha256": "5d06244fb0de3d613055fd31b6b0f55e9541db4aeace9a950878acf19edadb2f"
+    },
+    {
       "path": "dist/assets/rainbow-pilot-walk-v3.png",
       "bytes": 1994471,
       "sha256": "291a84e6142cb0bf68d02e5f3c9c1d567b28c5811fa56908f6cab86998b2a955"
+    },
+    {
+      "path": "dist/assets/rainbow-scenery-v1.png",
+      "bytes": 1623849,
+      "sha256": "de416de60273dce2ec119a98d289b5568d0b18f8bb6d8a8135e7c64c65c8101f"
+    },
+    {
+      "path": "dist/assets/rainbow-soil-v1.png",
+      "bytes": 3405588,
+      "sha256": "1df20743e831f013e0930512d095547047adf41d4d0c262400429e4f397b72cd"
     },
     {
       "path": "dist/assets/rainbow-splash-v1.png",
@@ -256,6 +296,11 @@
       "path": "dist/assets/rainbow-sprites-v1.png",
       "bytes": 1668380,
       "sha256": "0d633559780c12cdeff6ec735962627cfcd3c6862fc23d7463570e882df7bfd2"
+    },
+    {
+      "path": "dist/assets/rainbow-wing-badge-v1.png",
+      "bytes": 1937475,
+      "sha256": "4b338ab5467b1320c45715f619f9fc7ee072430dd3ff1c365a0ae465d3abb7b8"
     },
     {
       "path": "dist/assets/sound-off.svg",

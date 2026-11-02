@@ -18,8 +18,8 @@ vm.runInNewContext(await readFile(new URL('../dist/rainbow-audio.js',import.meta
 const mixer=new scope.window.RainbowAudio();
 assert.equal(created,0,'No audio context exists before explicit sound enable.');
 await mixer.setEnabled(false);assert.equal(fetched,0);
-await mixer.setEnabled(true);assert.equal(created,1);assert.equal(fetched,12);assert.equal(mixer.status,'samples');
-assert.equal(Object.keys(mixer.buffers).length,15,'Twelve licensed samples and three original synthesized cues load.');
+await mixer.setEnabled(true);assert.equal(created,1);assert.equal(fetched,13);assert.equal(mixer.status,'samples');
+assert.equal(Object.keys(mixer.buffers).length,15,'Thirteen samples and two original synthesized cues load.');
 const scene=new Int32Array(5000);scene[1]=10;scene[3]=2000;scene[8]=5;scene[11]=5;scene[13]=1;scene[14]=1;
 scene.set([3,0,170,100,0,0,1,1,1,0,0,9,12,0,1,0,123,1],348);
 const effects=new Int32Array(196);effects.set([1,0,0,6]);let id=0;
@@ -39,7 +39,7 @@ assert.ok(mixer.voices.size<=5);
 await mixer.setEnabled(false);assert.equal(mixer.voices.size,0);assert.ok(stopped>=4);
 scene[14]=0;emit(1);await mixer.setEnabled(true);scene[1]++;mixer.step(scene,effects);
 assert.equal(mixer.voices.size,1,'Unmuting cannot replay events that happened while muted.');
-assert.equal(fetched,12,'Resume reuses decoded samples.');
+assert.equal(fetched,13,'Resume reuses decoded samples.');
 scene[1]++;scene[12]=2;mixer.step(scene,effects);assert.equal(mixer.voices.size,0);
 console.log('Audio: silent/lazy default, bomb whistle/impact, cow moo, cannon/warning priority and no repeated victory fanfare, five-voice bound, dedup and mute/end cleanup verified.');
 
@@ -69,6 +69,11 @@ console.log('Radial startup: initial spawn, repeated/trainer respawns and new le
 await mixer.setEnabled(true);scene[12]=0;scene[14]=1;scene[13]=4;scene[1]++;
 scene.set([1,4,170,120,12,0,1,16,16,0,1,20,0,-8,1,0,567,1],348);
 mixer.step(scene,effects);assert.equal(mixer.voices.get('mechanical').name,'dive');
+const diveVoice=mixer.voices.get('mechanical');assert.equal(diveVoice.source.loop,false);
+diveVoice.source.onended();scene[1]++;mixer.step(scene,effects);
+assert.equal(mixer.voices.has('mechanical'),false,'A completed falling sample never loops or restarts during the same fall.');
+scene[1]++;scene[349]=1;mixer.step(scene,effects);scene[1]++;scene[349]=4;mixer.step(scene,effects);
+assert.equal(mixer.voices.get('mechanical').name,'dive','A new fall can play its own sample.');
 scene[1]++;scene[349]=3;mixer.step(scene,effects);assert.equal(mixer.voices.get('mechanical').name,'blast');
 emit(7,-1000);assert.equal(mixer.voices.get('fx').name,'argh');
 mixer.stop('fx');emit(8,-1000);assert.equal(mixer.voices.get('fx').name,'himmel');
@@ -76,4 +81,4 @@ scene[1]++;scene[12]=1;const beforeVictory=started;mixer.step(scene,effects);
 assert.equal(mixer.voices.size,1);assert.equal(mixer.voices.get('jingle').name,'victory');
 scene[1]++;mixer.step(scene,effects);assert.equal(started,beforeVictory+1,'The level fanfare/march starts only once.');
 await mixer.setEnabled(false);await mixer.setEnabled(true);scene[1]++;mixer.step(scene,effects);assert.equal(mixer.voices.size,0,'Unmuting does not replay a consumed victory.');
-console.log('Dive loop/crash handoff, separate human/German pilot reactions, once-per-level victory music and silent-win dedup verified.');
+console.log('One-shot dive/crash handoff, separate human/German pilot reactions, once-per-level victory music and silent-win dedup verified.');

@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 
 const calls=[];
-function context() { return {setTransform(){},scale(){},translate(...a){calls.push(['translate',...a]);},rotate(){},save(){},restore(){},beginPath(){},moveTo(...a){calls.push(['move',...a]);},lineTo(...a){calls.push(['line',...a]);},closePath(){},ellipse(){},fill(){},strokeRect(){},createRadialGradient(){return {addColorStop(){}};},fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
+function context() { return {setTransform(){},scale(){},translate(...a){calls.push(['translate',...a]);},rotate(){},save(){},restore(){},beginPath(){},clip(){calls.push(['clip']);},moveTo(...a){calls.push(['move',...a]);},lineTo(...a){calls.push(['line',...a]);},closePath(){},ellipse(){},fill(){},strokeRect(){},createRadialGradient(){return {addColorStop(){}};},fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
 function canvas() { const c=context();return {dataset:{},getContext:()=>c}; }
 const scope={window:{},document:{querySelectorAll:()=>[],createElement:()=>canvas()},Int32Array,Math};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-renderer.js',import.meta.url),'utf8'),scope);
@@ -21,7 +21,7 @@ heap.set([0,1,2,3],16);
 const beforeScene=scene.slice(),beforeHeap=heap.slice();
 assert.equal(renderer.drawScene(scene,heap),true);
 assert.equal(display.dataset.renderer,'rainbow');
-assert.equal(display.width,1920);assert.equal(display.height,1404);
+assert.equal(display.width,1920);assert.equal(display.height,1464);
 assert.ok(Renderer.mapPoint(100,199,2000).y>=400,'The entire minimap is outside the flight area.');
 assert.ok(Renderer.mapPoint(100,199,2000).y<Renderer.mapPoint(100,0,2000).y,'Real altitude determines map height.');
 assert.equal(display.dataset.tick,'10');
@@ -94,7 +94,7 @@ assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#ed786b'),'Enemy ground flags
 activeTarget[1]=3;calls.length=0;renderer.teamMark(activeTarget,100);assert.equal(calls.length,0,'Destroyed sites lose their active flag.');
 
 // Pilots come from native objects; repaint never creates a duplicate actor.
-scope.window.RainbowAssets={loaded:true,sprite:()=>null,pilotPose:()=>({worldWidth:24,worldHeight:31}),pilotFrame:()=>({worldWidth:24,worldHeight:48}),departurePose:()=>({width:288,height:192})};
+scope.window.RainbowAssets={loaded:true,sprite:()=>null,interfaceArt:()=>null,parachutePose:()=>({worldWidth:24,worldHeight:30}),pilotPose:()=>({worldWidth:24,worldHeight:31}),pilotFrame:()=>({worldWidth:24,worldHeight:48}),departurePose:()=>({width:288,height:192})};
 scene[14]=1;scene[1]=60;scene[26]=0;plane[0]=99;plane[1]=4;plane[5]=1;plane[15]=21;plane[16]=128;plane[3]=180;
 renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.parachutes,'1');
 renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.pilots,'1');
@@ -116,3 +116,30 @@ assert.equal(calls.length,0);
 renderer.readyLevel=1;calls.length=0;renderer.drawReady();
 assert.ok(!calls.some(c=>c[0]==='rect'&&c[3]>20&&c[4]>20),'READY never creates a box or full-world dimmer.');
 console.log('Ground contact on hills, audio-only reactions and compact READY text verified.');
+
+scene[11]=8;scene[4]=152;scene[5]=100;renderer.hud(scene,[],false,ground);
+assert.equal(display.dataset.airspeed,'144');assert.equal(display.dataset.altitude,'440');
+console.log('Cockpit instruments use native speed and height above the current terrain.');
+
+const bomb=new Int32Array([2,1,160,120,0,0,1,4,8,16,0,5,4,-2,0,0,4321,1]);
+const releasePlane=new Int32Array([1,1,154,126,0,0,1,16,16,16,1,9000,4,0,0,0,1234,0]);
+scope.window.RainbowAssets.sprite=()=>({worldWidth:10,worldHeight:18});
+renderer.drawBomb(bomb,[bomb,releasePlane],100,10,heap);assert.equal(Number(display.dataset.bombHeading),0);
+bomb[13]=-8;renderer.drawBomb(bomb,[bomb,releasePlane],100,12,heap);const midway=Number(display.dataset.bombHeading);
+assert.ok(midway>0&&midway<Math.atan2(8,4));renderer.drawBomb(bomb,[bomb,releasePlane],100,15,heap);
+assert.ok(Math.abs(Number(display.dataset.bombHeading)-Math.atan2(8,4))<1e-9);
+console.log('Bombs release along the airframe and smoothly align with actual ballistic velocity.');
+renderer.readyLevel=1;renderer.readyProgress=.2;renderer.drawBoarding(scene,[releasePlane],100,ground);assert.equal(display.dataset.boarding,'20');
+renderer.readyLevel=null;renderer.drawBoarding(scene,[releasePlane],100,ground);assert.equal(display.dataset.boarding,undefined);
+console.log('Boarding crew follows READY progress only; it creates no physics objects or extra delay.');
+
+scope.window.RainbowAssets.sceneryArt=()=>({width:1536,height:1024});
+const terrainCopy=ground.slice();calls.length=0;renderer.terrain(ground.subarray(0,320),12);
+assert.ok(calls.some(c=>c[0]==='clip'));assert.ok(calls.some(c=>c[0]==='image'));
+assert.deepEqual(ground,terrainCopy,'Painted terrain never changes native crater geometry.');
+scope.window.RainbowAssets.wreckPose=()=>({worldWidth:36,worldHeight:48});
+plane[0]=1;plane[1]=4;plane[15]=0;plane[2]=152;plane[3]=160;scene[14]=1;scene[12]=0;renderer.readyLevel=null;
+const rolls=new Set();for(let t=90;t<98;t+=2){scene[1]=t;renderer.drawScene(scene,heap,false,null,ground);rolls.add(display.dataset.wreckRoll);}
+assert.ok(rolls.size>=3,'Falling aircraft advance through axial roll views.');
+assert.equal(display.dataset.environment,'painted-coast');
+console.log('Painted terrain follows native geometry; fractional scenery layers and falling axial frames render together.');

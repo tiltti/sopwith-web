@@ -32,8 +32,8 @@ object identity and projectile-owner kind. The C simulation remains at 10 Hz.
 requestAnimationFrame, without changing collision masks or native state. It
 snaps across respawns and holds its clock while paused.
 
-The Canvas 2D framebuffer is **1920 × 1404**: a logical 640 × 400 flight area,
-plus a separate 68-pixel instrument strip, rendered at 3× detail. Higher-detail
+The Canvas 2D framebuffer is **1920 × 1464**: a logical 640 × 400 flight area,
+plus a separate 88-pixel instrument strip, rendered at 3× detail. Higher-detail
 atlas crops remain intact instead of first reducing them to a 34-pixel sprite.
 Terrain strips are cached and slide smoothly. The original source landscape is
 restored under buildings; foundations bridge slopes instead of cutting abrupt
@@ -79,7 +79,7 @@ changes to IKKUNATILA while fullscreen is active.
 Rainbow menus offer English/Finnish and browser-language selection, remembered
 locally. Finnish browsers start in Finnish; other languages fall back to English.
 Sound controls use matching speaker-on/muted SVG images on the splash, rail and
-settings screen, with a visible on/off label and a green enabled state.
+settings screen, with a visible on/off label and a gold enabled state.
 
 Normal difficulty retains the existing combat tempo. Optional Easy difficulty
 limits hostile aircraft shots to one per 0.4 seconds within 96 native pixels and
@@ -273,3 +273,27 @@ license and credits together with the game.
 
 GitHub Pages hosts the public version. No external account or login is needed
 to play it. Any local `.openai/` metadata is unrelated to this public release.
+
+### Painted flight update — 2026-11-02
+
+The selected detailed coastal concept now supplies real scrolling scenery,
+painted cloud sprites, soil material and meadow details at the aircraft art's
+raster density. Soil remains clipped to the mutable native ground, including
+craters. The 88-pixel wood/leather/brass cockpit holds live analogue airspeed
+and altitude needles, score/resources and a map below the unobstructed flight
+area. Readouts are arcade calibrations: native speed × 18 km/h and native
+height above current terrain × 10 m; they are not a physical flight simulator.
+
+Pause and score screens share the painted airfield; top-ten scores retain their
+visible navigation. Victory has an original winged badge and dedicated rear
+biplane frames. Descending canopies sway through four raster poses; falling
+planes roll around the fuselage with separate faction sprites. A quick pilot
+run/boarding animation fits inside the existing 0.7-second READY hold. Friendly
+walking pilots cannot destroy parked/taxiing aircraft at their home runway;
+hostile and airborne contacts keep their rules. Bomb artwork leaves parallel
+to its aircraft and eases toward actual ballistic velocity over four ticks,
+without modifying its path.
+
+The contributor's own ElevenLabs falling-aircraft sample replaces the procedural
+dive. Its four-second adaptation plays once per fall; separate media terms and
+reproduction metadata are recorded in the audio README and NOTICE.

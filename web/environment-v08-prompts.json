@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-02",
+  "tool": "image_gen.imagegen (built-in)",
+  "selectedReference": "User-selected painted coastal concept, confirmed by attachment 44492441 on 2026-11-02",
+  "rawOutputsPreserved": true,
+  "prompts": [
+    {
+      "key": "scenery",
+      "prompt": "Use case: stylized-concept. Asset type: original scrolling 2D game distant landscape background, 1536x1024 landscape. Use the supplied selected game concept as STYLE reference only: warm detailed hand-painted Amiga adventure raster art with fine visible pixel texture, rich clean blue sky, green coastal hills and blue sea, small distant cream village and lighthouse. This is a production background layer, NOT a gameplay screenshot. Top 72 percent of image is EMPTY unclouded clean blue sky with almost uniform gentle atmospheric colour; no sun, no cloud, no planes. Bottom 28 percent is far-away quiet green coastal hills, a low sea inlet and distant small buildings, atmospheric teal/blue perspective. Keep the horizon very low and nearly level at both left and right edges so the image can scroll horizontally. No foreground grass, terrain cross-section, trees in foreground, vehicles, people, cockpit, UI, text, or rainbow. Match the supplied image’s fine painted pixel detail rather than big block pixels. Calm readable negative space for aircraft combat. Bright daylight, not photorealistic or vector."
+    },
+    {
+      "key": "clouds",
+      "prompt": "Use case: stylized-concept. Asset type: original transparent 2D game scenery sprite atlas 1536x1024, exactly 3 columns by 2 rows, each cell 512x512. Use supplied selected game concept only as a STYLE reference. Warm hand-painted Amiga adventure raster detail with tiny crafted pixels, rich natural shading; never crude blocks, never vector. TOP ROW has three separate wide fluffy clouds, one per cell: small irregular cream cumulus with warm pale-gold lit edges and cool lavender shadow, wider layered cumulus, tall soft sunlit cumulus. Each cloud isolated, entirely inside its cell with transparent gutters, natural wispy lower edge, no rectangular gradient or blue sky. BOTTOM ROW has three separate ground decoration clusters, one per cell: LEFT a low clump of daisies and pink wildflowers with a little bright green grass; MIDDLE a low leafy golden-green meadow shrub; RIGHT a small cluster of warm grey pebbles with sparse grass. All three ground clusters stand on a consistent invisible horizontal baseline at 85 percent of their cell height, no soil block or shadow floor. Full genuine transparency around all six sprites. No aircraft, people, cows, tanks, text, borders or UI. Small-scale detailed scenery matching the selected concept, original art."
+    },
+    {
+      "key": "soil",
+      "prompt": "Use case: stylized-concept. Asset type: seamless horizontally and vertically tiling soil texture for the cross-section under a 2D flight game meadow, 1536x1024. Use supplied selected game concept as STYLE and PALETTE reference: warm golden ochre dry earth, tiny embedded irregular pale stones, fine subtle layered earth grain, a few darker compacted clay patches. Detailed hand-painted Amiga adventure raster texture with finely crafted visible pixel texture, not crude repeated big squares, not photorealistic. View straight-on of an earth cross-section, no perspective. Uniform medium scale everywhere with calm readable detail. All image is continuous soil material, full bleed, absolutely no grass surface, no sky, no objects, no large boulders, no cracks dividing into giant tiles, no UI or text. Seamless repeat at opposite edges; avoid obvious stripes. Rich warm variation matching the supplied image, natural irregular distribution."
+    }
+  ]
+}

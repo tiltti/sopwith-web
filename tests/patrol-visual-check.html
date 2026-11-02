@@ -1,8 +1,8 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><base href="../dist/"><title>Rainbow mission and pilot checks</title>
 <style>body{margin:0;padding:16px;background:#19374b;color:#fff2ce;font:14px monospace}h1{font-size:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}figure{margin:0}canvas{display:block;width:100%;height:auto}figcaption{padding:8px 0}button{padding:8px;margin:4px;background:#f1ba43;color:#263b55;border:2px solid #ffed9b;font:inherit}#native{display:none}pre{white-space:pre-wrap}</style></head><body>
 <h1>Development check — native scene, new mission art and pilot poses, audio off</h1>
-<button id="ready-two">READY LEVEL 2</button><button id="departure-next">DEPARTURE +2 SECONDS</button><button id="walk-next">WALK NEXT FRAME</button>
-<div class="grid"><figure><canvas id="ready"></canvas><figcaption>READY: the native clock is held before flight</figcaption></figure><figure><canvas id="departure"></canvas><figcaption>Mission complete: dedicated rear airframe recedes into the horizon</figcaption></figure><figure><canvas id="pilots"></canvas><figcaption>Open canopy, standing/armed and walking pilot — native object records</figcaption></figure><figure><img src="assets/rainbow-pilot-walk-v3.png" width="640" style="width:100%;image-rendering:pixelated;background:#64bce0"><figcaption>Detailed raster walking poses of the original aviator</figcaption></figure></div>
+<button id="ready-two">READY LEVEL 2</button><button id="departure-next">DEPARTURE +2 SECONDS</button><button id="walk-next">WALK NEXT FRAME</button><button id="ready-next">BOARDING NEXT FRAME</button><button id="roll-next">FALL / BOMB NEXT FRAME</button>
+<div class="grid"><figure><canvas id="ready"></canvas><figcaption>READY: the native clock is held before flight</figcaption></figure><figure><canvas id="departure"></canvas><figcaption>Mission complete: dedicated rear airframe recedes into the horizon</figcaption></figure><figure><canvas id="pilots"></canvas><figcaption>Open canopy, standing/armed and walking pilot — native object records</figcaption></figure><figure><canvas id="falling"></canvas><figcaption>Faction roll frames and bomb orientation, native motion samples copied for visual review</figcaption></figure></div>
 <pre id="status">Loading native game…</pre><canvas id="native"></canvas>
 <script src="engine/sopwith.js?v=20261102-patrol7"></script><script src="rainbow-assets.js?v=20261102-patrol7"></script><script src="rainbow-renderer.js?v=20261102-patrol7"></script>
 <script type="module">
@@ -27,6 +27,12 @@ try{
   document.getElementById('ready-two').onclick=()=>{ready.readyLevel=2;ready.drawScene(source,game.HEAPU8,false,null,terrain);};
   document.getElementById('departure-next').onclick=()=>{departureAge=(departureAge+20)%70;fly();};
   document.getElementById('walk-next').onclick=()=>{scene[1]+=2;people.drawScene(scene,game.HEAPU8,false,null,terrain);};
+  const fallingScene=source.slice();fallingScene[1]=30;
+  const planeAt=348;fallingScene[planeAt]=1;fallingScene[planeAt+1]=4;fallingScene[planeAt+2]=source[4];fallingScene[planeAt+3]=160;fallingScene[planeAt+12]=2;fallingScene[planeAt+13]=-7;
+  let count=fallingScene[14];fallingScene.set([2,1,source[4]+45,145,0,0,1,4,8,source[planeAt+9],0,5,4,-7,0,0,777777,1],348+count*18);fallingScene[14]=count+1;
+  const falling=new RainbowRenderer(document.getElementById('falling'));falling.drawScene(fallingScene,game.HEAPU8,false,null,terrain);
+  document.getElementById('roll-next').onclick=()=>{fallingScene[1]+=2;falling.drawScene(fallingScene,game.HEAPU8,false,null,terrain);};
+  document.getElementById('ready-next').onclick=()=>{ready.readyProgress=((ready.readyProgress||0)+.15)%1;ready.drawScene(source,game.HEAPU8,false,null,terrain);};
   document.getElementById('status').textContent='PASS: native scene paused, art loaded, audio off. UI previews change scene copies only.';
  },50);
 }catch(e){document.getElementById('status').textContent='FAIL: '+e;}

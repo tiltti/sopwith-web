@@ -3,6 +3,10 @@
 """Verify that the deployed game includes usable files and matching source."""
 from html.parser import HTMLParser
 from pathlib import Path
+import base64
+import io
+import wave
+import re
 import hashlib
 import json
 import tarfile
@@ -44,9 +48,19 @@ def main():
     for name in ("COPYING.md", "AUTHORS.txt", "NOTICE.md", "SDL2-LICENSE.txt", "Emscripten-LICENSE.txt", "CC-BY-4.0.txt", "CC-BY-SA-4.0.txt"):
         assert (DIST / "source" / name).stat().st_size > 0, f"Missing notice: {name}"
 
+    audio_source = (DIST / "rainbow-audio.js").read_text()
+    encoded = re.search(r'const USER_DIVE_SAMPLE = "data:audio/wav;base64,([A-Za-z0-9+/=]+)"', audio_source).group(1)
+    sample = base64.b64decode(encoded, validate=True)
+    metadata = json.loads((ROOT / "web/user-dive-source.json").read_text())
+    assert len(sample) == metadata["sampleBytes"]
+    assert hashlib.sha256(sample).hexdigest() == metadata["sampleSha256"]
+    with wave.open(io.BytesIO(sample), "rb") as sound:
+        assert (sound.getnchannels(), sound.getframerate(), sound.getsampwidth()) == (1,22050,2)
+        assert sound.getnframes()/sound.getframerate() == metadata["sampleDurationSeconds"]
+    assert not any("sound_of_a_falling" in name or "dive-game-preview" in name for name in actual)
     archive = DIST / "source/sopwith-web-source.tar.gz"
     with tarfile.open(archive, "r:gz") as bundle:
-        for relative in ("web/bridge.c", "web/trainer.c", "web/collisions.c", "web/pilot-walk-v3-generation.json", "dist/rainbow-stages.js", "tests/patrol.c", "tests/rainbow-stages.mjs", "scripts/prepare_patrol_art.py", "scripts/prepare_audio_v06.py", "scripts/test_patrol.py", "web/RELEASE-CHECKLIST.md", "dist/i18n.js", "tests/i18n.mjs", "server/drizzle/0001_combat_difficulty.sql", "server/db/schema.ts", "scripts/build.py", "LICENSE", "NOTICE.md",
+        for relative in ("scripts/prepare_user_dive.py", "web/user-dive-source.json", "web/flight-art-v08-prompts.json", "web/flight-art-v08-files.json", "web/environment-v08-prompts.json", "web/aircraft-roll-v08-prompt.json", "tests/audio-offline-check.html", "web/bridge.c", "web/trainer.c", "web/collisions.c", "web/pilot-walk-v3-generation.json", "dist/rainbow-stages.js", "tests/patrol.c", "tests/rainbow-stages.mjs", "scripts/prepare_patrol_art.py", "scripts/prepare_audio_v06.py", "scripts/test_patrol.py", "web/RELEASE-CHECKLIST.md", "dist/i18n.js", "tests/i18n.mjs", "server/drizzle/0001_combat_difficulty.sql", "server/db/schema.ts", "scripts/build.py", "LICENSE", "NOTICE.md",
                          "dist/look-lab.html", "dist/look-lab.js", "dist/look-lab.css", "dist/title-audio.js", "tests/title-audio.mjs", "tests/leaderboard-ui.mjs", "scripts/prepare_audio_v05.py", "web/move.c", "tests/home.c", "scripts/test_home.py", "dist/rainbow-ui.css", "dist/rainbow-ui.js", "dist/rainbow-timeline.js", "tests/rainbow-timeline.mjs",
                          "web/scene.c", "web/scene.h", "web/variant.c", "web/variant.h", "tests/scene.c", "tests/rainbow-renderer.mjs", "scripts/test_scene.py",
                          "third_party/sdl-sopwith/src/swmain.c", "dist/app.js", "dist/runner.js", "dist/info.html",

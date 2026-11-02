@@ -72,7 +72,7 @@ files, exact source URLs, licenses, conversion details and SHA-256 in
   low-passed at 7 kHz. Original OGG retained.
 
 The game mixer has five bounded slots, with the friendly-target warning separate
-from gunfire. It loads nine WAVs and synthesizes two cues. Splash music uses a
+from gunfire. The current version loads thirteen samples and synthesizes two cues. Splash music uses a
 separate opt-in HTML audio player and stops before play. Startup plays once for
 each sound-enabled player spawn, including respawns and new levels; refueling,
 pause and unmute cannot replay it. The game still creates no audio requests or contexts on a
@@ -93,5 +93,24 @@ Himmel sample retains that license. EQ/dynamics, silence trimming, mono
 conversion and 22050 Hz resampling are recorded in `patrol-v06/SOURCES.json`;
 original pitch is preserved. The victory fanfare/march is a 7.8-second mix of
 the existing gchoc and Spring Spring CC0 recordings. Rebuild using
-`scripts/prepare_audio_v06.py`. The film-style dive is synthesized by the mixer;
-it is not a recording of a specific aircraft. All playback remains opt-in.
+`scripts/prepare_audio_v06.py`. The earlier synthesized dive has been replaced by the user-created sample
+documented below; it is not a recording of a specific aircraft. All playback remains opt-in.
+
+## User-created falling aircraft sample (2026-11-02)
+
+**Falling aircraft — generated with elevenlabs.io** by the project owner, supplied
+for this game. Provider [Sound Effects terms](https://elevenlabs.io/creative-terms)
+apply to this audio, separately from the GPL code; it is not designated CC0.
+Only the integrated functional runtime in `rainbow-audio.js` is distributed,
+not a standalone sound library or source WAV. The local contributor original
+and preview remain development files outside the public repository.
+
+Adaptation: first 4 seconds, mono PCM16 / 22050 Hz, 90 Hz high-pass / 7 kHz
+low-pass, 20 ms attack and 200 ms tail fades, constant +11.905 dB gain bounded
+to −2 dBFS peak. Natural pitch/envelope preserved. During play a small velocity
+pitch adjustment and pan follow the falling aircraft. It plays once per fall,
+never loops/restarts at sample end, and hands off to an impact on ground contact.
+Mute consumes falls silently. Exact hashes and contributor provenance:
+`web/user-dive-source.json`; processing: `scripts/prepare_user_dive.py`.
+The mixer currently decodes thirteen samples (twelve local WAV URLs plus the
+embedded sample) and generates two cues. Sound remains off on first launch.

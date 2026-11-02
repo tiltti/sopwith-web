@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 const sources=[],draws=[],rotations=[],panels=[];
-class Image {width=1254;height=1254;set src(value){if(value.includes('pilot-walk-v3')){this.width=1536;this.height=1024;}else if(value.includes('departure')){this.width=288;this.height=64;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
+class Image {width=1254;height=1254;set src(value){if(/pilot-walk-v3|departure|parachute-sway|wing-badge|cockpit|scenery|clouds|soil|aircraft-roll/.test(value)){this.width=1536;this.height=1024;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
 const scope={window:{},Image,document:{createElement:()=>({getContext:()=>({
   drawImage(...args){draws.push(args);},fillRect(...args){panels.push([...args,this.fillStyle]);},translate(){},rotate(a){rotations.push(a);},scale(){}})})}};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-assets.js',import.meta.url),'utf8'),scope);
 const assets=scope.window.RainbowAssets;
 assert.equal(sources.length,0,'The classic edition must not fetch the Rainbow atlas.');
-await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,6);
+await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,13);
 const record=new Int32Array(18);record[1]=5;record[6]=1;record[7]=record[8]=16;
 const cases=[[1,0,0],[4,0,4],[4,1,5],[4,2,7],[4,3,6],[4,4,8],[4,5,9],[4,6,16],[4,7,10],[4,18,11],[4,19,17],[9,0,2],[12,0,12],[2,0,13],[10,0,21],[11,0,22]];
 for(const [type,kind,frame] of cases){record[0]=type;record[15]=kind;assert.equal(assets.frameFor(record),frame);}
@@ -50,3 +50,14 @@ const chute=assets.pilotPose(1);assert.equal(chute.worldWidth,24);
 assert.ok(draws.some(d=>d[1]===570&&d[2]===490),'Airborne pilots retain the original detailed parachute crop.');
 assert.equal(walking.worldHeight,16);assert.equal(standing.worldHeight,16);
 console.log('Original airborne raster poses restored; detailed ground frames share one boot baseline and body scale.');
+
+const sway=[0,1,2,3].map(i=>assets.parachutePose(i));
+assert.equal(new Set(sway).size,4);assert.ok(sway.every(s=>s.worldWidth===24&&s.worldHeight===30));
+assert.notEqual(assets.parachutePose(0,true),sway[0]);
+assert.equal(assets.interfaceArt('speed').worldWidth,56);
+assert.equal(assets.interfaceArt('panel').worldHeight,88);
+console.log('Four fixed-scale canopy animation frames, damaged canopy, cockpit instruments and panel verified.');
+
+const roll=[0,1,2,3].map(i=>assets.wreckPose(i,1));assert.equal(new Set(roll).size,4);
+assert.ok(roll.every(s=>s.worldWidth===36&&s.worldHeight===48));assert.notEqual(assets.wreckPose(0,2),roll[0]);
+console.log('Falling aircraft: four constant-scale axial roll frames for each faction.');

@@ -120,6 +120,12 @@ bool WebVariant_CanCollide(const OBJECTS *a,const OBJECTS *b)
     if(!pilot)return true;
     const OBJECTS *other=pilot==a?b:a;
     if(pilot->ob_state==FINISHED||WebVariant_ObjectKind(other)==21)return false;
+    /* A returning ground crewman is safe beside his own runway aircraft.
+     * Keep hostile ground contacts and all airborne collisions meaningful. */
+    if(pilot->ob_state==STANDING&&other->ob_type==PLANE
+        &&pilot->ob_faction==other->ob_faction&&other->ob_original_ob
+        &&(other->ob_athome||(abs(other->ob_x-other->ob_original_ob->x)<32
+            &&other->ob_y<=ground[clamp_range(0,other->ob_x+8,(int)currgame->gm_max_x-1)]+24)))return false;
     if(other->ob_type!=SHOT&&other->ob_type!=BOMB&&other->ob_type!=MISSILE&&other->ob_type!=PLANE&&other->ob_type!=EXPLOSION)return false;
     if(other->ob_owner==pilot)return false;
     if(pilot->ob_life<8&&(other==pilot->ob_owner||other->ob_owner==pilot->ob_owner))return false;

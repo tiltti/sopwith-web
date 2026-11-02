@@ -134,6 +134,25 @@ License and author links are in `licenses/CC-BY-SA-4.0.txt` and deployed `source
 Source metadata and original bytes are retained in `assets/audio/patrol-v06/`.
 
 The victory mix combines the previously credited CC0 Trumpet Fanfare and War
-Theme v2, with bounded excerpts, gain mixing and fades. The dive sound is an
-original procedural cue in the GPL game code. Complete processing and hashes:
+Theme v2, with bounded excerpts, gain mixing and fades. The earlier dive sound was an
+original procedural cue, replaced in the current update below. Complete processing and hashes:
 `dist/assets/audio/patrol-v06/SOURCES.json`, `scripts/prepare_audio_v06.py`.
+
+## Painted flight update (2026-11-02)
+
+New original imagegen artwork, exact prompts, immutable full outputs and hashes
+are documented in `dist/assets/ARTWORK.md` and `web/flight-art-v08-files.json`.
+It includes the painted coast/terrain, cockpit, wing badge, debrief background,
+rear-view departure, animated canopy and faction-specific axial roll sheets.
+These project images are distributed with the GPL-2.0-or-later game.
+
+**Falling aircraft — generated with elevenlabs.io.** The project owner supplied
+this self-created ElevenLabs sound for adaptation and inclusion in the game.
+The audio is subject to [ElevenLabs Creative Platform Terms / Sound Effects
+Terms](https://elevenlabs.io/creative-terms), checked 2026-11-02. It is not CC0
+and is not relicensed as GPL audio. The functional audio runtime embeds the
+four-second adaptation as integrated game content; no standalone original or
+adapted sound file is distributed. Code around it remains GPL-2.0-or-later.
+`web/user-dive-source.json` records the contributor statement, hashes and
+processing. `scripts/prepare_user_dive.py` reproduces the embedded adaptation
+when provided with the contributor's original file.

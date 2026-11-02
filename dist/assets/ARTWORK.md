@@ -16,7 +16,7 @@ project's GPL-2.0-or-later source. They are not taken from another game.
   atlas was a style reference. Source rectangles are measured explicitly.
 
 The Canvas renderer uses a 640×400 logical flight area plus a 68-pixel HUD,
-rendered into a 1920×1404 framebuffer. The
+rendered into a 1920×1464 framebuffer. The
 art is Amiga-inspired; this is not a claim of authentic Amiga palette or
 hardware compatibility. Clouds and combat particles are original code art.
 
@@ -144,8 +144,8 @@ imagegen output or artwork copied from another game.
 `patrol-departure-v1.svg` (288×64) contains three original rear-view biplane
 frames, GPL-2.0-or-later; reproduce with `scripts/prepare_patrol_art.py`.
 
-The rejected geometric pilot SVG sheet has been removed. Airborne pilots again
-use the original `rainbow-defense-pilots-v1.png` crops above, unchanged.
+The rejected geometric pilot SVG sheet has been removed. The original detailed airborne pilot remains the character reference. The new
+four-frame sway sheet below animates the same cream and burning canopies.
 
 `rainbow-pilot-walk-v3.png` (1536×1024, transparent RGBA) was created with the
 built-in OpenAI image_gen tool on 2026-11-02, using that original pilot atlas as
@@ -155,3 +155,32 @@ is included; the exact prompt, reference/output hashes and dimensions are in
 `web/pilot-walk-v3-generation.json`. There is no third-party reference art. The
 sheet is distributed with the GPL-2.0-or-later game. Every cell has the same
 measured sole baseline, used by the renderer to anchor feet to terrain.
+
+## Painted coast, cockpit and flight animation (2026-11-02)
+
+The nine full PNG outputs below were made with the built-in OpenAI imagegen
+ tool, copied unchanged into this project and distributed with the GPL-2.0-or-later
+ game. No Wings or RETRY assets were copied. The selected environment concept
+was this project's own generated coastal scene, explicitly selected by the user
+with an image attachment; its image takes precedence over earlier A/B/C labels.
+
+| Asset | Runtime use |
+| --- | --- |
+| `rainbow-scenery-v1.png` | Distant coast / blue sky, slower scrolling layer |
+| `rainbow-clouds-v1.png` | Three painted clouds and three meadow decorations |
+| `rainbow-soil-v1.png` | World-anchored soil texture clipped to native mutable ground |
+| `rainbow-cockpit-v1.png` | Wood/leather panel, brass instrument faces and plates |
+| `rainbow-wing-badge-v1.png` | Victory / pause wings, live text in the enamel centre |
+| `rainbow-debrief-v1.png` | Quiet airfield, pilot and aircraft beside menus / high scores |
+| `rainbow-departure-v2.png` | Four rear-view aircraft poses replacing the earlier vector |
+| `rainbow-parachute-sway-v4.png` | Four cream and four burning-canopy pendulum poses |
+| `rainbow-aircraft-roll-v1.png` | Four axial roll poses per faction for falling aircraft |
+
+All are 1536×1024. The exact prompt sets are in
+`web/flight-art-v08-prompts.json`, `web/environment-v08-prompts.json` and
+`web/aircraft-roll-v08-prompt.json`; dimensions, byte lengths and SHA-256 are in
+`web/flight-art-v08-files.json`. Runtime cropping preserves the original alpha.
+The earlier SVG departure sheet is retained as historical source, no longer used.
+The environment materials follow the real height field and crater updates;
+clouds and decorations cannot alter collisions. Cockpit needles and markings
+are live code drawn over the blank painted instrument faces.

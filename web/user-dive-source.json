@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-02",
+  "title": "Falling aircraft — generated with elevenlabs.io",
+  "creator": "Project owner; self-generated with ElevenLabs, as stated by the contributor",
+  "sourceFilename": "sound_of_a_falling_w_#4-1793650777735.wav",
+  "sourceSha256": "60d336ab5a7586f7dfe92fce35ce9bfba101c0d462740bd028ccc43df5f90688",
+  "sourceBytes": 1536078,
+  "sourceDurationSeconds": 8,
+  "termsUrl": "https://elevenlabs.io/creative-terms",
+  "termsChecked": "2026-11-02",
+  "rightsNote": "User supplied this self-created sound for adaptation and use in Rainbow Patrol. Provider terms apply to the audio; it is not designated CC0 or relicensed as GPL audio. Only the integrated game runtime is distributed; the original and standalone adaptation are development files.",
+  "runtime": "dist/rainbow-audio.js (embedded game content)",
+  "processing": "First 4 seconds; 90 Hz high-pass / 7000 Hz low-pass; mono 22050 Hz PCM16; 20ms attack and 200ms tail fades; constant gain bounded to -2 dBFS peak and -18 dBFS RMS. No baked-in pitch change, time stretch or repeated loop.",
+  "gainDb": 11.905,
+  "sampleSha256": "0907ae4c67587a665e6baa05ee7874afea93f504ca8691d0b9358513b58ed216",
+  "sampleBytes": 176478,
+  "sampleDurationSeconds": 4.0,
+  "samplePeakDbfs": -2.01
+}

@@ -71,6 +71,16 @@ int main(void){
     p->ob_symbol=&silhouette;p->ob_x=man->ob_x;p->ob_y=man->ob_y;p->ob_state=FLYING;p->ob_athome=false;insertx(p,deletex(p));
     assert(WebVariant_CanCollide(man,p)&&CollisionTest(man,p));swcollsn();assert(man->ob_state==FINISHED&&p->ob_state==FALLING);
     puts("Actual native collision pass: aircraft can collide with parachutes, disabling the aircraft and pilot.");
+    man=eject(FACTION_PLAYER1);p=consoleplayer;man->ob_life=20;man->ob_state=STANDING;man->ob_orient=3;
+    p->ob_state=FLYING;p->ob_endsts=PLAYING;p->ob_athome=true;
+    assert(!WebVariant_CanCollide(man,p)&&!WebVariant_CanCollide(p,man));
+    p->ob_athome=false;p->ob_x=p->ob_original_ob->x+10;p->ob_y=ground[p->ob_x+8]+17;
+    assert(!WebVariant_CanCollide(man,p));
+    p->ob_y+=60;assert(WebVariant_CanCollide(man,p));
+    p->ob_athome=true;man->ob_state=FALLING;assert(WebVariant_CanCollide(man,p));
+    man->ob_state=STANDING;man->ob_faction=FACTION_PLAYER2;assert(WebVariant_CanCollide(man,p));
+    WebVariant_SetEnabled(false);assert(WebVariant_CanCollide(man,p));WebVariant_SetEnabled(true);
+    puts("Runway safety: friendly walking pilots pass parked/taxiing home aircraft; airborne, hostile and Classic contacts remain active.");
     fresh();int level=gamenum;winner(consoleplayer);assert(endcount==72);
     while(endcount>0){swmove();WebVariant_Apply(consoleplayer);}
     assert(gamenum==level+1&&restart_flag);swinitlevel();WebVariant_Apply(consoleplayer);
