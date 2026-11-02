@@ -1,5 +1,28 @@
 # Validation
 
+## 2026-11-02: Lower end targets and temporary playtest trainer
+
+- Highest end targets and their terrain are lowered with a smooth 128-pixel
+  falloff, leaving roofs at or below native Y=168. Tests verify both map ends,
+  unchanged central terrain/boundary walls, and bounded adjacent height changes.
+  New AA emplacements are rejected above the same reachable ceiling.
+- Cow art increases from 16 to 18 logical pixels, with matching 9×7 native
+  silhouettes. A bullet from the real native level gun initializer intersects
+  the cow at six native pixels above its ground level.
+- The temporary trainer settings toggle stays synchronized with console and
+  engine state and resets off on page reload. A final-release removal checklist
+  is included. Trainer runs remain ineligible after turning it off mid-flight.
+- Trainer fuel refills live aircraft only: falling/crash timers and the native
+  QUIT sentinel are preserved. Real crash/respawn, weapon, fuel and mission tests
+  pass. The return-home audit remains Rainbow 30/30, classic baseline 28/30.
+- LEVEL 2 is directly available on the splash, using the existing single-player
+  launch and saved starting-level selection; enemy aircraft are not enabled.
+- Browser inspection of native WASM snapshots showed both end factory roofs at
+  Y=168. Settings had equal 574px client/scroll height with Back fully visible.
+  A trainer-enabled LEVEL 2 launch used practice mode, level=2 and trainer=1;
+  native diagnostics showed fuel=9000 and audio off. Disabling trainer mid-flight
+  synchronized the menu and runner to false. No fullscreen transitions were used.
+
 ## 2026-11-01: Splash fullscreen option
 
 - The title menu delegates its fullscreen button to the existing fullscreen

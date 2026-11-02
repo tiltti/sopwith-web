@@ -72,7 +72,7 @@
     repaint = true;
     game?._web_trainer(enabled ? 1 : 0);
     send('trainer-state', { enabled });
-    return { enabled, unlimitedLives:enabled, unlimitedBombs:enabled, unlimitedAmmo:enabled, invincible:false };
+    return { enabled, unlimitedLives:enabled, unlimitedBombs:enabled, unlimitedAmmo:enabled, unlimitedFuel:enabled, invincible:false };
   };
   window.addEventListener('keydown', event => {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
@@ -132,7 +132,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261101-v05c',
+      locateFile: name => 'engine/' + name + '?v=20261102-playtest1',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -199,6 +199,7 @@
       canvas.dataset.planeX = String(game._web_read(1));
       canvas.dataset.planeY = String(game._web_read(2));
       canvas.dataset.bombs = String(game._web_read(3));
+      canvas.dataset.fuel = String(game._web_read(4));
       canvas.dataset.ammo = String(game._web_read(7));
       canvas.dataset.crashes = String(game._web_read(8));
       canvas.dataset.planeState = String(game._web_read(5));

@@ -39,6 +39,10 @@ Terrain strips are cached and slide smoothly. The original source landscape is
 restored under buildings; foundations bridge slopes instead of cutting abrupt
 platforms. Vehicles follow the slope. Cow collision masks are scaled with the art. The map plots true world altitude,
 birds and ground objects below the flight area; no instruments hide targets.
+The highest buildings at both map ends now sit on smoothly lowered hillsides,
+leaving at least 32 native pixels of space above their roofs. Central airfields
+and the outer map walls retain their original heights. Cows use slightly larger
+9×7 collision silhouettes so low, level gunfire can hit them.
 Aircraft artwork now keeps the same world dimensions through every rotation.
 The scene includes soft drifting smoke, muzzle flashes, brass-colored tracers,
 independent crewed ground AA emplacements, tank recoil, ballistic tank shells and animated cows
@@ -62,6 +66,7 @@ Rainbow-only integration rules are in `web/variant.c`:
 - In Rainbow settings, starting level 2 enables ground return fire without enemy
   aircraft when choosing YKSINPELI. Level 1 is quiet; level 3 increases aggression.
   The selection is saved for the next flight and does not change a flight underway.
+  The splash's LEVEL 2 button starts that single-player mode directly.
 
 `dist/rainbow-ui.js` supplies keyboard/mouse/touch arcade menus. Game over shows the current board and provisional rank behind
 exactly three A–Z/0–9 initials, editable by typing or arrows. Saving ends on
@@ -175,11 +180,15 @@ On-screen buttons provide the same game inputs on touch devices.
 S toggles sound during flight. In native game menus S remains the single-player
 selection; menu navigation and text entry are handled by the original game.
 
-## Console trainer
+## Playtest and console trainer
+
+Rainbow settings temporarily expose a TRAINER (TESTI) toggle for playtesting.
+It starts off on reload and can be changed before or during a flight. Its UI
+must be removed before the final release; see `web/RELEASE-CHECKLIST.md`.
 
 On the game page, enter `trainer()` in the browser's JavaScript developer
-console. The player's bombs, gun ammunition and lives are replenished between
-game ticks. Crashes, crash/respawn delays, fuel use, firing rates and mission
+console. The player's bombs, gun ammunition, fuel and lives are replenished between
+game ticks. Crashes, crash/respawn delays, firing rates and mission
 outcomes retain their normal behavior. Use `trainer(false)` to disable it.
 The setting carries over to new games on the same page but resets on reload.
 It can also be enabled before starting a game. It affects only the player.

@@ -1,0 +1,24 @@
+<!doctype html><html lang="fi"><head><meta charset="utf-8"><base href="../dist/"><title>Native end-target previews</title>
+<style>body{margin:0;padding:16px;background:#19374b;color:#fff2ce;font:14px monospace}h1{font-size:18px}section{display:grid;grid-template-columns:1fr 1fr;gap:16px}figure{margin:0}canvas{display:block;width:100%;height:auto}figcaption{padding:8px 0}#native{display:none}pre{white-space:pre-wrap}</style></head><body>
+<h1>Development check — native Rainbow terrain and targets, paused</h1>
+<section><figure><canvas id="left"></canvas><figcaption>Left end</figcaption></figure><figure><canvas id="right"></canvas><figcaption>Right end</figcaption></figure></section>
+<pre id="status">Loading native game…</pre><canvas id="native"></canvas>
+<script src="engine/sopwith.js"></script><script src="rainbow-assets.js"></script><script src="rainbow-renderer.js"></script>
+<script type="module">
+try{
+ await RainbowAssets.ready;
+ const game=await createSopwith({canvas:document.getElementById('native'),locateFile:name=>'engine/'+name+'?v=20261102-playtest2',print(){},printErr:console.warn,setStatus(){}});
+ game.FS.mkdirTree('/libsdl/SDL Sopwith');game._web_variant(1);game._web_sound(0);game.callMain(['-q','-s','-g1']);
+ const poll=setInterval(()=>{
+  const ptr=game._web_scene()>>>2,source=game.HEAP32.slice(ptr,ptr+RainbowRenderer.LENGTH);if(!source[3])return;
+  clearInterval(poll);game._web_pause(1);
+  const ground=game.HEAP32.slice(source[24]>>>2,(source[24]>>>2)+source[3]),roofs=[];
+  for(const [id,camera] of [['left',0],['right',source[3]-320]]){
+   const scene=source.slice();scene[2]=camera;
+   new RainbowRenderer(document.getElementById(id)).drawScene(scene,game.HEAPU8,false,null,ground);
+   for(let i=0;i<source[14];i++){const r=source.subarray(348+i*18,348+(i+1)*18);if(r[0]===4&&r[15]===1&&r[2]>=camera&&r[2]<camera+320)roofs.push({side:id,x:r[2],roof:r[3]});}
+  }
+  document.getElementById('status').textContent=JSON.stringify({paused:true,nativeLevel:source[18]+1,highestEndRoofs:roofs},null,2);
+ },50);
+}catch(error){document.getElementById('status').textContent='FAIL: '+error;}
+</script></body></html>

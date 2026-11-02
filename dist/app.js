@@ -5,6 +5,7 @@
   const edition = document.body?.dataset.edition === 'rainbow' ? 'rainbow' : 'classic';
   const aimToggle = edition === 'rainbow' ? $('aim-toggle') : null;
   const startLevel = edition === 'rainbow' ? $('start-level') : null;
+  const trainerToggle = edition === 'rainbow' ? $('settings-trainer') : null;
   const keys = { ArrowUp:54, Comma:54, ArrowDown:56, Slash:56, ArrowRight:27, KeyX:27, ArrowLeft:29, KeyZ:29, Period:55, KeyB:5, Space:44, KeyH:11, KeyS:22 };
   let state = 'idle', muted = true, bootTimer, mode = 'practice';
   let inputMode = 0, trainerEnabled = false;
@@ -14,11 +15,17 @@
   const post = (type, extra = {}) => frame.contentWindow?.postMessage({ sopwith:true, type, ...extra }, location.origin);
   const setStatus = text => { $('status-text').textContent = text; };
   const focusGame = () => { if (state === 'playing') { frame.contentWindow?.focus(); post('focus'); } };
+  function syncTrainer(){
+    if(!trainerToggle)return;
+    trainerToggle.textContent='TRAINER (TESTI): '+(trainerEnabled?'PÄÄLLÄ':'POIS');
+    trainerToggle.setAttribute('aria-pressed',String(trainerEnabled));
+  }
   window.trainer = (enabled = true) => {
     if (typeof enabled !== 'boolean') throw new TypeError('Use trainer() or trainer(false).');
     trainerEnabled = enabled;
+    syncTrainer();
     post('trainer', { enabled });
-    return { enabled, unlimitedLives:enabled, unlimitedBombs:enabled, unlimitedAmmo:enabled, invincible:false };
+    return { enabled, unlimitedLives:enabled, unlimitedBombs:enabled, unlimitedAmmo:enabled, unlimitedFuel:enabled, invincible:false };
   };
   function setMuted(value) {
     muted = value;
@@ -118,6 +125,7 @@
     const saved=loadPref('rainbow.start-level','1');startLevel.value=['1','2','3'].includes(saved)?saved:'1';
     startLevel.addEventListener('change',()=>savePref('rainbow.start-level',startLevel.value));
   }
+  trainerToggle?.addEventListener('click',()=>window.trainer(!trainerEnabled));syncTrainer();
   if(aimToggle) {
     aimToggle.checked=loadPref('rainbow.aim','1')!=='0';
     aimToggle.addEventListener('change',()=>{
@@ -185,7 +193,7 @@
     if (msg.type === 'pause-request') pause();
     if (msg.type === 'mute-request') setMuted(!muted);
     if (msg.type === 'input-mode') inputMode = msg.mode;
-    if (msg.type === 'trainer-state') trainerEnabled = msg.enabled;
+    if (msg.type === 'trainer-state'){trainerEnabled = msg.enabled;syncTrainer();}
     if (msg.type === 'round-ended' && edition==='rainbow' && ['playing','paused'].includes(state)) {
       state='ended';showLayer('complete');setStatus('Lento päättyi');
       $('complete-score').textContent='Pisteet: '+msg.score;

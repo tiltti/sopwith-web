@@ -113,8 +113,14 @@ int main(void)
 
     consoleplayer->ob_life = 1234;
     WebTrainer_Apply(consoleplayer);
-    assert(consoleplayer->ob_life == 1234);
+    assert(consoleplayer->ob_life == MAXFUEL);
+    consoleplayer->ob_state=FALLING;consoleplayer->ob_life=7;
+    WebTrainer_Apply(consoleplayer);assert(consoleplayer->ob_life==7);
+    consoleplayer->ob_state=CRASHED;WebTrainer_Apply(consoleplayer);assert(consoleplayer->ob_life==7);
+    consoleplayer->ob_state=FLYING;consoleplayer->ob_life=QUIT;
+    WebTrainer_Apply(consoleplayer);assert(consoleplayer->ob_life==QUIT);
     WebTrainer_SetEnabled(false);
+    consoleplayer->ob_life=1234;WebTrainer_Apply(consoleplayer);assert(consoleplayer->ob_life==1234);
     consoleplayer->ob_bdelay = 0;
     assert(fire_weapon(true));
     assert(consoleplayer->ob_bombs == MAXBOMBS - 1);
@@ -127,7 +133,7 @@ int main(void)
     consoleplayer->ob_crashcnt = 3;
     WebTrainer_Apply(consoleplayer);
     assert(consoleplayer->ob_endsts == WINNER && consoleplayer->ob_crashcnt == 3);
-    puts("Fuel and mission outcomes are unchanged; disabling trainer restores normal resource use.");
+    puts("Trainer fuel: live aircraft refill; falling/crash timers, quit and mission outcomes are preserved. Disabling restores normal fuel use.");
 
     fresh_game(false);
     WebVariant_SetEnabled(true);
@@ -227,20 +233,37 @@ int main(void)
     puts("Rainbow ground combat: one muzzle event, ballistic tank shell, one cow reaction and one target-destroyed event.");
     fresh_game(false);int base_targets=numtarg[FACTION_PLAYER1]+numtarg[FACTION_PLAYER2];
     WebVariant_SetEnabled(true);++countmove;WebVariant_Apply(consoleplayer);
-    int guns=0,slopes=0;OBJECTS *gun=NULL,*building=NULL;
+    int guns=0,slopes=0,lowered_left=0,lowered_right=0;OBJECTS *gun=NULL,*building=NULL;
     for(OBJECTS *ob=objtop;ob;ob=ob->ob_next){
         if(WebVariant_ObjectKind(ob)==20){
-            guns++;gun=ob;assert(ob->ob_symbol->w==16);assert(abs(ob->ob_x-consoleplayer->ob_original_ob->x)>=85);
+            guns++;gun=ob;assert(ob->ob_symbol->w==16);assert(ob->ob_y<=MAX_Y-32);assert(abs(ob->ob_x-consoleplayer->ob_original_ob->x)>=85);
             slopes+=abs((int)ground[ob->ob_x+15]-(int)ground[ob->ob_x])>=3;
         }else if(ob->ob_type==TARGET&&ob->ob_orient==TARGET_FACTORY)building=ob;
-        if(ob->ob_type==OX){int left=16,right=0,top=16,bottom=0;
+        if(ob->ob_type==TARGET&&WebVariant_ObjectKind(ob)!=20){
+            int original_base=0;for(int x=ob->ob_x;x<ob->ob_x+ob->ob_symbol->w;x++)original_base=imax(original_base,currgame->gm_ground[x]);
+            if(original_base+ob->ob_symbol->h>MAX_Y-32&&(ob->ob_x<500||ob->ob_x>2500)){
+                assert(ob->ob_y<=MAX_Y-32);if(ob->ob_x<500)lowered_left++;else lowered_right++;
+            }
+        }
+        if(ob->ob_type==OX){cow=ob;int left=16,right=0,top=16,bottom=0;
             for(int y=0;y<16;y++)for(int x=0;x<16;x++)if(ob->ob_symbol->data[y*16+x]){left=imin(left,x);right=imax(right,x+1);top=imin(top,y);bottom=imax(bottom,y+1);}
-            assert(right-left<=8&&bottom-top<=6);
+            assert(right-left<=9&&bottom-top<=7);
         }
     }
     assert(guns>0&&slopes>0&&gun&&building);
     assert(numtarg[FACTION_PLAYER1]+numtarg[FACTION_PLAYER2]==base_targets+guns);
-    for(i=0;i<(int)currgame->gm_max_x;i++)assert(ground[i]==currgame->gm_ground[i]);
+    assert(lowered_left>0&&lowered_right>0);
+    for(i=0;i<(int)currgame->gm_max_x;i++){
+        assert(ground[i]<=currgame->gm_ground[i]);
+        if((i>=500&&i<2500)||i==0||i==(int)currgame->gm_max_x-1)assert(ground[i]==currgame->gm_ground[i]);
+        if(i)assert(abs((int)ground[i]-(int)ground[i-1])<=imax(2,abs((int)currgame->gm_ground[i]-(int)currgame->gm_ground[i-1])+1));
+    }
+    int cow_floor=cow->ob_y-16;consoleplayer->ob_x=cow->ob_x-32;consoleplayer->ob_y=cow_floor+14;
+    consoleplayer->ob_angle=consoleplayer->ob_orient=0;consoleplayer->ob_dx=consoleplayer->ob_dy=0;
+    initshot(consoleplayer,NULL);OBJECTS *level_shot=objbot;
+    assert(level_shot->ob_type==SHOT&&level_shot->ob_dy==0&&level_shot->ob_y==cow_floor+6);
+    bool cow_hit=false;for(int x=cow->ob_x;x<cow->ob_x+16;x++){level_shot->ob_x=x;cow_hit|=CollisionTest(level_shot,cow);}assert(cow_hit);
+    puts("Rainbow end targets: lowered roofs at both ends, smooth hillsides, unchanged middle and walls; low horizontal gunfire can hit the resized cow.");
     OBJECTS *before_shot=objbot;WebVariant_InitShot(building,consoleplayer);assert(objbot==before_shot);
     consoleplayer->ob_x=gun->ob_x+30;consoleplayer->ob_y=gun->ob_y+25;consoleplayer->ob_dx=consoleplayer->ob_dy=0;
     WebVariant_InitShot(gun,consoleplayer);assert(objbot!=before_shot&&objbot->ob_owner==gun);

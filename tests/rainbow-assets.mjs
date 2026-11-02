@@ -23,7 +23,7 @@ assert.ok(dx>=3&&dx+dw<=31&&dy>=13&&dy+dh<=31,
 assert.deepEqual(heap,original,'Sampling art must never modify collision pixels.');
 assert.equal(assets.sprite(record,heap),sprite,'Identical native frames reuse the prepared canvas.');
 const poses=[0,1,2,3].map(i=>assets.cowPose(i));
-assert.ok(poses.every(p=>p.width===48),'Falling cows retain the same visual width.');
+assert.ok(poses.every(p=>p.width===54),'Falling cows retain the same visual width.');
 assert.ok(poses[3].height<poses[0].height,'The last cow pose lies down.');
 console.log('Rainbow assets: lazy loading, target identities, crop bounds, cache and unchanged collision pixels verified.');
 

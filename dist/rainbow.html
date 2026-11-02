@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#183449"><title>Rainbow Patrol — Sopwith Tribute</title>
 <meta name="description" content="Rainbow Patrol: oma arcade-versio Sopwithin pohjalta.">
-<link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261101-v05d">
+<link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261102-playtest1">
 </head>
 <body data-edition="rainbow" data-layout="arcade" data-game-state="idle">
 <main class="game-column arcade-root" aria-label="Rainbow Patrol">
@@ -22,6 +22,7 @@
       <img class="splash-art" src="assets/rainbow-splash-v1.png" width="1586" height="992" alt="Rainbow Patrol">
       <div class="title-menu pixel-menu" aria-label="Pelivalinnat">
         <button id="start" class="menu-link selected" aria-label="Aloita yksinpeli">Yksinpeli</button>
+        <button id="level-two-start" class="menu-link" aria-label="Aloita yksinpeli kentästä 2, maakohteet ampuvat">Level 2</button>
         <button id="combat-start" class="menu-link">Ilmataistelu</button>
         <button class="menu-link" data-open-panel="help">Ohjaus</button>
         <button class="menu-link" data-open-panel="scores">Ennätykset</button>
@@ -64,6 +65,8 @@
       <button id="settings-sound" class="pixel-button">ÄÄNET: POIS</button>
       <label class="level-setting" for="start-level">ALOITUSKENTTÄ<select id="start-level"><option value="1">1 · EI VASTATULTA</option><option value="2">2 · MAAKOHTEET AMPUVAT</option><option value="3">3 · VOIMAKAS VASTATULI</option></select></label>
       <p class="tiny-text level-help">VALINTA VAIKUTTAA SEURAAVAAN LENTOON.<br>YKSINPELI: EI VIHOLLISKONEITA.</p>
+      <!-- TEMPORARY playtest control: remove before the final release. -->
+      <button id="settings-trainer" class="pixel-button" aria-pressed="false" data-playtest-only title="Rajattomat elämät, pommit, ammukset ja polttoaine. Kuoleminen toimii normaalisti. Ei ennätyslistalle.">TRAINER (TESTI): POIS</button>
       <label class="pixel-toggle"><input type="checkbox" id="aim-toggle" checked><span>POMMITÄHTÄIN</span></label>
       <button id="touch-toggle" class="pixel-button" aria-pressed="false">NÄYTTÖOHJAIMET</button>
       <button id="settings-fullscreen" class="pixel-button">KOKO NÄYTTÖ</button>
@@ -81,5 +84,5 @@
   <div class="sr-only" aria-live="polite"><span id="status-text">PÄÄVALIKKO</span><span id="mode-label">YKSINPELI</span></div>
 </main>
 <noscript>PELAAMINEN VAATII JAVASCRIPTIN JA WEBASSEMBLY-TUEN.</noscript>
-<script src="app.js?v=20261101-splash-fullscreen"></script><script src="title-audio.js?v=20261101-v05c"></script><script src="rainbow-ui.js?v=20261101-v05c"></script><script src="leaderboard.js?v=20261101-v05c"></script>
+<script src="app.js?v=20261102-playtest1"></script><script src="title-audio.js?v=20261101-v05c"></script><script src="rainbow-ui.js?v=20261102-playtest1"></script><script src="leaderboard.js?v=20261101-v05c"></script>
 </body></html>

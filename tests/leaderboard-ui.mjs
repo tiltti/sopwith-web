@@ -22,3 +22,10 @@ assert.equal(get('entry-rank').textContent,'SIJOITUS: 21','A lower score retains
 await get('score-form').listeners.submit({preventDefault(){}});
 assert.equal(get('scores-rows').children.length,10);assert.ok(dispatched.includes('sopwith-score-saved'));
 console.log('Arcade board: top ten in both views, provisional rank 21 and safe lower-rank save verified.');
+get('game').src='runner.html?mode=practice&run=trainer-run';message({type:'ready'});await settle();
+const saved=storage.get('sopwith.scores.rainbow.practice');
+message({type:'trainer-state',enabled:true});message({type:'trainer-state',enabled:false});
+message({type:'score-ready',score:999999,level:2,ticks:1000,trainerUsed:false});await settle();
+assert.equal(get('score-form').hidden,true);assert.equal(storage.get('sopwith.scores.rainbow.practice'),saved);
+assert.match(get('scores-status').textContent,/Trainer/);
+console.log('Trainer score eligibility: enabling then disabling mid-flight still excludes the run.');

@@ -111,8 +111,10 @@ static bool emplacement_clear(int x)
 static void add_emplacement(int x,faction_t faction)
 {
     if(emplacement_count>=24||!emplacement_clear(x))return;
-    int i=emplacement_count++,base=0;
+    int base=0;
     for(int n=x;n<x+16;n++)base=imax(base,ground[n]);
+    if(base+16>MAX_Y-32)return;
+    int i=emplacement_count++;
     emplacement_origins[i]=(original_ob_t){.type=TARGET,.x=x,.orient=TARGET_CUSTOM1,.faction=faction};
     OBJECTS *ob=allocobj(),*previous=ob->ob_prev;
     memset(ob,0,sizeof(*ob));ob->ob_prev=previous;
@@ -121,12 +123,34 @@ static void add_emplacement(int x,faction_t faction)
     ob->ob_faction=faction;ob->ob_clr=faction;ob->ob_movef=movetarg;ob->ob_onmap=ob->ob_drwflg=true;
     emplacements[i]=ob;WebVariant_TargetMask(ob);insertx(ob,&topobj);++numtarg[faction];
 }
+static void lower_end_buildings(void)
+{
+    const int reach=128,roof=MAX_Y-32,width=currgame->gm_max_x;
+    /* Leave the outer map walls and central airfields alone. Lower the highest
+     * end targets with their hillside, keeping a smooth transition into
+     * the source landscape instead of burying/moving only the artwork. */
+    for(OBJECTS *ob=objtop;ob;ob=ob->ob_next){
+        if(ob->ob_type!=TARGET||!ob->ob_symbol||(ob->ob_x>=width/6&&ob->ob_x<width*5/6)
+            ||ob->ob_orient==TARGET_TANK||ob->ob_orient==TARGET_TRUCK
+            ||ob->ob_orient==TARGET_TANKER_TRUCK||ob->ob_orient==TARGET_FLAG)continue;
+        int base=0;
+        for(int x=ob->ob_x;x<ob->ob_x+ob->ob_symbol->w;x++)base=imax(base,currgame->gm_ground[x]);
+        int drop=base+ob->ob_symbol->h-roof;if(drop<=0)continue;
+        int left=ob->ob_x-8,right=ob->ob_x+ob->ob_symbol->w+8;
+        for(int x=imax(1,left-reach);x<imin(width-1,right+reach);x++){
+            int distance=x<left?left-x:x>right?x-right:0,t=reach-distance;
+            int offset=(drop*t*t*(3*reach-2*t)+reach*reach*reach/2)/(reach*reach*reach);
+            ground[x]=imin(ground[x],imax(0,(int)currgame->gm_ground[x]-offset));
+        }
+    }
+}
 static void setup_level(void)
 {
     level_ready=true;emplacement_count=0;
     /* Restore the continuous source landscape. The upstream initializer
      * flattens each target's footprint with abrupt vertical joins. */
     memcpy(ground,currgame->gm_ground,sizeof(*ground)*currgame->gm_max_x);
+    lower_end_buildings();
     for(int state=0;state<2;state++){
         memset(gun_pixels[state],0,256);
         for(int y=state?11:3;y<16;y++)for(int x=1;x<15;x++)
@@ -171,9 +195,9 @@ void WebVariant_CowMask(OBJECTS *cow)
             left=imin(left,x);right=imax(right,x+1);top=imin(top,y);bottom=imax(bottom,y+1);
         }
         if(right<=left||bottom<=top)return;
-        for(int y=0;y<6;y++)for(int x=0;x<8;x++){
-            int sx=left+(2*x+1)*(right-left)/16,sy=top+(2*y+1)*(bottom-top)/12;
-            pixels[state][transform][(10+y)*16+4+x]=source->data[sy*source->w+sx];
+        for(int y=0;y<7;y++)for(int x=0;x<9;x++){
+            int sx=left+(2*x+1)*(right-left)/18,sy=top+(2*y+1)*(bottom-top)/14;
+            pixels[state][transform][(9+y)*16+4+x]=source->data[sy*source->w+sx];
         }
         masks[state][transform].w=masks[state][transform].h=16;
         masks[state][transform].data=pixels[state][transform];ready[state][transform]=true;

@@ -83,7 +83,9 @@ async function pageTests() {
   scope.requestAnimationFrame=fn=>animationFrames.push(fn);
   vm.runInNewContext(await readFile(new URL('../dist/app.js',import.meta.url),'utf8'),scope);
   assert.equal(get('mute')['aria-pressed'], 'true', 'Sound starts off.');
-  scope.trainer(); get('start').listeners.click();
+  assert.equal(get('settings-trainer')['aria-pressed'],'false','The temporary trainer starts off and is not saved across reloads.');
+  get('settings-trainer').listeners.click();assert.equal(get('settings-trainer')['aria-pressed'],'true');
+  assert.equal(scope.trainer().unlimitedFuel,true);get('start').listeners.click();
   assert.match(get('game').src,/trainer=1/);
   assert.match(get('game').src,/edition=rainbow/, 'The tribute page must request the new renderer.');
   assert.match(get('game').src,/aim=1/);
@@ -100,6 +102,7 @@ async function pageTests() {
   documentHandlers.keydown(event('KeyS','s'));
   assert.equal(get('mute')['aria-pressed'], 'false');
   scope.trainer(false); get('restart').listeners.click(); get('start').listeners.click();
+  assert.equal(get('settings-trainer')['aria-pressed'],'false','Console and menu trainer states stay synchronized.');
   assert.match(get('game').src,/trainer=0/);
   message({type:'ready',inputMode:1});
   scope.document.querySelector=()=>({requestFullscreen:async()=>{scope.document.hidden=true;documentHandlers.visibilitychange();}});

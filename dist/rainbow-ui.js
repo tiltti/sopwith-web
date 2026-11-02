@@ -32,6 +32,10 @@
     select(0);
   }
   let combat=false;
+  $('level-two-start').addEventListener('click',()=>{
+    $('start-level').value='2';$('start-level').dispatchEvent(new Event('change'));
+    combat=false;$('start').click();
+  });
   $('combat-start').addEventListener('click',()=>{
     combat=true;document.querySelector('input[name="mode"][value="combat"]').checked=true;$('start').click();
   });

@@ -91,7 +91,7 @@
     frame=Math.max(0,Math.min(3,frame));const key='cow:'+frame;
     if(cache.has(key))return cache.get(key);
     const crop=cowFrames[frame],out=document.createElement('canvas');
-    out.width=16*DETAIL;out.height=Math.ceil(16*crop[3]/crop[2]*DETAIL);
+    out.width=18*DETAIL;out.height=Math.ceil(18*crop[3]/crop[2]*DETAIL);
     out.getContext('2d').drawImage(cows,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
   }
   function pilotPose(frame) {
