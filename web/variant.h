@@ -17,10 +17,14 @@ int WebVariant_ObjectKind(const OBJECTS *ob);
 void WebVariant_InitShot(OBJECTS *owner,OBJECTS *target);
 void WebVariant_TargetMask(OBJECTS *target);
 void WebVariant_CowMask(OBJECTS *cow);
+bool WebVariant_CanCollide(const OBJECTS *a,const OBJECTS *b);
+void WebVariant_PilotHit(OBJECTS *pilot,OBJECTS *weapon);
+void WebVariant_Eject(OBJECTS *plane);
 void WebVariant_ShellImpact(OBJECTS *shot);
 /* [version, newest-id, count, stride], then ring records:
  * Types: 1 blast, 2 feathers, 3 cow down, 4 bomb released,
  * 5 ground cannon fired (size = signed target-kind+1, sign is direction),
- * 6 target destroyed (size < 0 means friendly). */
+ * 6 target destroyed (size < 0 means friendly),
+ * 7 friendly/8 enemy pilot hit (size = player score delta). */
 const int *WebVariant_Effects(void);
 #endif

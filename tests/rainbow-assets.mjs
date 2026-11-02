@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 const sources=[],draws=[],rotations=[],panels=[];
-class Image {width=1254;height=1254;set src(value){if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
+class Image {width=1254;height=1254;set src(value){if(value.includes('patrol-pilots')){this.width=320;this.height=128;}else if(value.includes('departure')){this.width=288;this.height=64;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
 const scope={window:{},Image,document:{createElement:()=>({getContext:()=>({
   drawImage(...args){draws.push(args);},fillRect(...args){panels.push([...args,this.fillStyle]);},translate(){},rotate(a){rotations.push(a);},scale(){}})})}};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-assets.js',import.meta.url),'utf8'),scope);
 const assets=scope.window.RainbowAssets;
 assert.equal(sources.length,0,'The classic edition must not fetch the Rainbow atlas.');
-await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,4);
+await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,6);
 const record=new Int32Array(18);record[1]=5;record[6]=1;record[7]=record[8]=16;
 const cases=[[1,0,0],[4,0,4],[4,1,5],[4,2,7],[4,3,6],[4,4,8],[4,5,9],[4,6,16],[4,7,10],[4,18,11],[4,19,17],[9,0,2],[12,0,12],[2,0,13],[10,0,21],[11,0,22]];
 for(const [type,kind,frame] of cases){record[0]=type;record[15]=kind;assert.equal(assets.frameFor(record),frame);}
@@ -41,3 +41,7 @@ assert.ok(panels.some(p=>p.at(-1)==='#71cebb'));panels.length=0;
 record[6]=2;const enemyTank=assets.sprite(record,heap);assert.notEqual(enemyTank,friendlyTank,'Opposing tanks cannot share an unmarked cached sprite.');
 assert.ok(panels.some(p=>p.at(-1)==='#ed786b'));assert.deepEqual(heap,original);
 console.log('Ground teams: faction-specific painted panels and distinct sprite caches preserve collision masks.');
+
+const standing=assets.pilotFrame(0,1),walking=assets.pilotFrame(1,1),hostile=assets.pilotFrame(1,2),rear=assets.departurePose(1);
+assert.notEqual(standing,walking);assert.notEqual(walking,hostile);assert.equal(rear.width,288);
+console.log("Pilots/departure: distinct walk/team poses and padded rear-view airframe assets verified.");

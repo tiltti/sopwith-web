@@ -1,5 +1,30 @@
 # Validation
 
+## 2026-11-02: Mission transitions, real pilots and rapid-salvo fix
+
+- Native tests run five-bomb release/movement/collision salvos for 16 heading/
+  orientation cases. The plane survives; hostile bombs still collide and the
+  classic collision step is unchanged. Existing trainer and home tests pass
+  (Rainbow 30/30; unchanged classic baseline 28/30).
+- Real pilot objects open canopies, reach terrain, stand, walk to the nearest
+  allied airfield and are safely removed there. Tests cover both factions,
+  aircraft/parachute and bullet/parachute collisions, one-time score changes
+  (air −1000; grounded friendly −500 / hostile +100), and level 2 rifle fire.
+- Native victory completes its 72-tick countdown and enters the next native
+  level with the bonus preserved. READY unit tests cover initial/new levels,
+  the 2.2-second simulation hold and pause-safe display time.
+- Original SVG sheets supply separate rear-view aircraft and faction-specific
+  pilot poses. Browser checks use a paused native scene plus explicitly edited
+  preview copies; those preview copies are not a gameplay simulation. Actual
+  runner inspection separately verified READY LEVEL 1 at native tick 0, then
+  advancing ticks after release, loaded artwork, and silent audio.
+- Mock mixer tests verify licensed human/German vocal samples, cinematic dive
+  loop/crash handoff, once-per-win fanfare/march and no mute/repaint replay.
+  Sample format/source digests are verified; no audible review was performed.
+- Speaker buttons stay gold in both states. The gear is drawn symmetrically
+  around its SVG centre, LVL labels the level, and the sun has a plain luminous
+  disc with soft haze instead of spiked/ringed balloon artwork.
+
 ## 2026-11-02: Sound icons, languages, friendly AA and Easy combat
 
 - Matching original SVG speaker/mute images and explicit labels are used for

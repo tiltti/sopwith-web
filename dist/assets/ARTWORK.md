@@ -137,3 +137,13 @@ renderer profile.
 `sound-on.svg` and `sound-off.svg` are original code-authored pixel speaker icons
 for this project, licensed GPL-2.0-or-later. They are vector UI assets, not
 imagegen output or artwork copied from another game.
+
+
+## Mission / pilot SVG sheets (2026-11-02)
+
+`patrol-departure-v1.svg` (288×64) contains three original rear-view biplane
+frames. `patrol-pilots-v2.svg` (320×128) contains ten poses for each of two
+factions: standing, walking, rifle, casualty, freefall and opening canopy.
+Original code-authored artwork, GPL-2.0-or-later; no RETRY or other game art is
+included. Reproduce with `scripts/prepare_patrol_art.py`. The images are
+rasterized at renderer detail 3; native pilot masks remain separate game data.

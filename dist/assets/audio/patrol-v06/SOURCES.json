@@ -1,0 +1,87 @@
+{
+  "acquired": "2026-11-02",
+  "sources": [
+    {
+      "name": "argh",
+      "author": "EZduzziteh",
+      "title": "Hurt Sound Effects / hurt_01",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://opengameart.org/content/hurt-sound-effects",
+      "downloadUrl": "https://opengameart.org/sites/default/files/hurt_01_0.mp3",
+      "original": "original/hurt.mp3",
+      "output": "argh.wav",
+      "changes": "High/low-pass, loudness normalization, fades; original pitch; mono PCM16 22050 Hz."
+    },
+    {
+      "name": "himmel",
+      "author": "Jeuwre",
+      "title": "De-Himmel.ogg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:De-Himmel.ogg",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/7/70/De-Himmel.ogg",
+      "original": "original/himmel.ogg",
+      "output": "himmel.wav",
+      "changes": "Leading silence removed, speech band EQ, compression and normalization; original pitch; mono PCM16 22050 Hz. Adapted sample remains CC BY-SA 4.0."
+    },
+    {
+      "name": "victory",
+      "authors": [
+        "Graciano Choc / gchoc",
+        "Spring Spring"
+      ],
+      "license": "CC0-1.0",
+      "sourceUrls": [
+        "https://opengameart.org/content/trumpet-fanfare",
+        "https://opengameart.org/content/war-theme"
+      ],
+      "originals": [
+        "../audition-v05/original/castlefanfare.ogg",
+        "../audition-v05/original/war-theme-v2.ogg"
+      ],
+      "output": "victory.wav",
+      "changes": "Fanfare over 18..25.8-second War Theme v2 excerpt; bounded 7.8-second mix with fades, limiter and 7 kHz low-pass; mono PCM16 22050 Hz."
+    }
+  ],
+  "files": [
+    {
+      "path": "argh.wav",
+      "bytes": 11704,
+      "sha256": "587418174999631d4a2c30fc630f838e7c3ee940e41de3053e42dfb95374a67c",
+      "channels": 1,
+      "rate": 22050,
+      "seconds": 0.2636281179138322
+    },
+    {
+      "path": "himmel-license.json",
+      "bytes": 2690,
+      "sha256": "9e20a653ec3781b2c2c7d071fac14da2fb3ab87c7efd3b3efe706ae5d5d1ff3e"
+    },
+    {
+      "path": "himmel.wav",
+      "bytes": 45080,
+      "sha256": "0f31e76402b0161a66841b84ae07fd4d9a4f537853c793ff7e362a2ef6eff85d",
+      "channels": 1,
+      "rate": 22050,
+      "seconds": 1.020453514739229
+    },
+    {
+      "path": "original/himmel.ogg",
+      "bytes": 14480,
+      "sha256": "bf621cd41c945d59a0d5c4b1efc8930debd82d384aca68a3f69ea6dc5731fbc6"
+    },
+    {
+      "path": "original/hurt.mp3",
+      "bytes": 7148,
+      "sha256": "45f19e4f637ff0e8936186977aa7cb131f67a95ca68660686476a47da224322e"
+    },
+    {
+      "path": "victory.wav",
+      "bytes": 344058,
+      "sha256": "50a054a82c57c1867ce8d4446c13a61726699d024b2747ea8c3bd27b7b76331e",
+      "channels": 1,
+      "rate": 22050,
+      "seconds": 7.8
+    }
+  ]
+}

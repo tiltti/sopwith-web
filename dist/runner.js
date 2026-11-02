@@ -4,7 +4,7 @@
   const params = new URLSearchParams(location.search);
   const held = new Set();
   const physicalHeld = new Map();
-  let game, paused = false, storage = false, visualRenderer, visualTimeline, sampleMixer, repaint = false;
+  let game, paused = false, stagePaused=false, storage = false, visualRenderer, visualTimeline, sampleMixer, repaint = false;
   let trainerEnabled = params.get('trainer') === '1';
   let trainerUsed = trainerEnabled, scoreSent = false;
   let lastInputMode = -1;
@@ -29,7 +29,7 @@
     repaint = true;
   }
   function key(scancode, down) {
-    if (!game || paused || !scancode) return;
+    if (!game || paused || stagePaused || !scancode) return;
     const wasHeld=held.has(scancode);
     if (down) held.add(scancode); else held.delete(scancode);
     updateAim();
@@ -62,7 +62,7 @@
     release();
     if(value)visualTimeline?.pause(clock());else visualTimeline?.resume(clock());
     paused = value;
-    game?._web_pause(value ? 1 : 0);
+    game?._web_pause(value||stagePaused ? 1 : 0);
     audio();
   }
   window.trainer = (enabled = true) => {
@@ -132,7 +132,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261102-ui2',
+      locateFile: name => 'engine/' + name + '?v=20261102-patrol6',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -164,6 +164,7 @@
       updateAim();
       window.RainbowAssets?.ready.then(()=>{repaint=true;});
       visualTimeline=window.RainbowTimeline?new RainbowTimeline():null;
+      const stages=window.RainbowStages?new RainbowStages():null;
       let renderedTick=-1,wasActive=false,endSent=false,snapshot,effects,ground,lastDisplay;
       let frameCount=0,metricAt=clock(),drawTotal=0;
       const draw = (now=clock()) => {
@@ -178,6 +179,11 @@
           visualTimeline?.push(snapshot,now);sampleMixer?.step(snapshot,effects);
           renderedTick=tick;
           if(snapshot[12]===2&&!endSent) {endSent=true;pause(true);send('round-ended',{score:snapshot[10]});}
+        }
+        if(active&&snapshot&&stages){
+          const stage=stages.update(snapshot,now,paused);
+          if(stage.blocked!==stagePaused){stagePaused=stage.blocked;if(stagePaused)release();game._web_pause(paused||stagePaused?1:0);}
+          renderer.readyLevel=stage.blocked?stage.level:null;renderer.readyProgress=stage.progress;
         }
         if(active&&snapshot&&(!paused||repaint||!lastDisplay)) {
           const begin=clock();

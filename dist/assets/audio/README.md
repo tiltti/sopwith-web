@@ -80,3 +80,18 @@ muted launch. The look study page has explicit audition buttons only.
 
 Regenerate from retained sources with `python scripts/prepare_audio_v05.py`
 (requires ffmpeg's native AAC encoder). No runtime audio comes from third parties.
+
+
+## Mission / pilot samples (2026-11-02)
+
+`patrol-v06/` retains the original human hurt recording (EZduzziteh, CC0,
+[Hurt Sound Effects](https://opengameart.org/content/hurt-sound-effects)) and
+[De-Himmel.ogg](https://commons.wikimedia.org/wiki/File:De-Himmel.ogg) by
+[Jeuwre](https://commons.wikimedia.org/wiki/User:Jeuwre),
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The modified
+Himmel sample retains that license. EQ/dynamics, silence trimming, mono
+conversion and 22050 Hz resampling are recorded in `patrol-v06/SOURCES.json`;
+original pitch is preserved. The victory fanfare/march is a 7.8-second mix of
+the existing gchoc and Spring Spring CC0 recordings. Rebuild using
+`scripts/prepare_audio_v06.py`. The film-style dive is synthesized by the mixer;
+it is not a recording of a specific aircraft. All playback remains opt-in.

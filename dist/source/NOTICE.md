@@ -113,3 +113,23 @@ The external audio retains its stated CC0 / CC BY 4.0 license; those licenses
 are separate from the GPL license of the game code. The exact credits, original
 provider renditions, modifications, source URLs and hashes are recorded in
 `dist/assets/audio/audition-v05/SOURCES.json` and `dist/assets/audio/README.md`.
+
+
+## Rainbow mission and pilot update
+
+Original rear-view aircraft and animated pilot SVG artwork are GPL-2.0-or-later,
+created as project-native vector code by Sopwith Web contributors (2026).
+
+Pilot hurt voice: **EZduzziteh, Hurt Sound Effects**, CC0,
+https://opengameart.org/content/hurt-sound-effects .
+German **De-Himmel.ogg**, by **Jeuwre**, is licensed **CC BY-SA 4.0**:
+https://commons.wikimedia.org/wiki/File:De-Himmel.ogg . The adapted sample removes
+leading silence and applies EQ, compression, normalization and mono 22050 Hz
+conversion; original pitch is retained. The adaptation remains CC BY-SA 4.0.
+License and author links are in `licenses/CC-BY-SA-4.0.txt` and deployed `source/`.
+Source metadata and original bytes are retained in `assets/audio/patrol-v06/`.
+
+The victory mix combines the previously credited CC0 Trumpet Fanfare and War
+Theme v2, with bounded excerpts, gain mixing and fades. The dive sound is an
+original procedural cue in the GPL game code. Complete processing and hashes:
+`dist/assets/audio/patrol-v06/SOURCES.json`, `scripts/prepare_audio_v06.py`.

@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),cache=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),cache=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -30,16 +30,19 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=4,okay=true;
+    let remaining=6,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
     cows.onload=()=>done(cows.width===1254&&cows.height===1254);
     pilots.onload=()=>done(pilots.width===1536&&pilots.height===1024);
-    atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=()=>done(false);
+    actors.onload=()=>done(actors.width===320&&actors.height===128);
+    departure.onload=()=>done(departure.width===288&&departure.height===64);
+    atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=()=>done(false);
     atlas.src='assets/rainbow-sprites-v1.png';
     extras.src='assets/rainbow-extras-v1.png';
     cows.src='assets/rainbow-cow-reaction-v1.png';pilots.src='assets/rainbow-defense-pilots-v1.png';
+    actors.src='assets/patrol-pilots-v2.svg';departure.src='assets/patrol-departure-v1.svg';
   }); }
   function sprite(r,heap) {
     if(!loaded){load();return null;}
@@ -101,5 +104,19 @@
     const out=document.createElement('canvas');out.width=width*DETAIL;out.height=Math.ceil(width*crop[3]/crop[2]*DETAIL);
     out.getContext('2d').drawImage(pilots,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
   }
-  window.RainbowAssets={DETAIL,pilotPose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
+  function pilotFrame(frame,faction=1){
+    if(!loaded)return null;frame=Math.max(0,Math.min(9,frame));
+    const key=`actor:${frame}:${faction}`;if(cache.has(key))return cache.get(key);
+    const airborne=frame>=7,crop=airborne?[0,0,32,64]:frame===5?[0,32,32,32]:[6,31,26,33];
+    const out=document.createElement('canvas');out.worldWidth=airborne?24:frame===5?20:15;
+    out.worldHeight=out.worldWidth*crop[3]/crop[2];out.width=Math.ceil(out.worldWidth*DETAIL);out.height=Math.ceil(out.worldHeight*DETAIL);
+    out.getContext('2d').drawImage(actors,frame*32+crop[0],(faction===1?0:64)+crop[1],crop[2],crop[3],0,0,out.width,out.height);
+    cache.set(key,out);return out;
+  }
+  function departurePose(frame){
+    if(!loaded)return null;frame=Math.max(0,Math.min(2,frame));const key='departure:'+frame;if(cache.has(key))return cache.get(key);
+    const out=document.createElement('canvas');out.width=96*DETAIL;out.height=64*DETAIL;
+    out.getContext('2d').drawImage(departure,frame*96,0,96,64,0,0,out.width,out.height);cache.set(key,out);return out;
+  }
+  window.RainbowAssets={DETAIL,pilotPose,pilotFrame,departurePose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
 })();

@@ -10,7 +10,7 @@
 const GAMES *currgame;
 GRNDTYPE *ground;
 OBJECTS *consoleplayer, *objtop;
-int countmove, displx, maxcrash, gamenum;
+int countmove, displx, maxcrash, gamenum, endcount;
 playmode_t playmode;
 
 int WebVariant_ObjectKind(const OBJECTS *ob){return ob->ob_original_ob?ob->ob_original_ob->orient:0;}
@@ -34,11 +34,12 @@ int main(void)
     enemy.ob_owner=&player;
     OBJECTS before_player=player, before_enemy=enemy;
     currgame=&game; ground=terrain; consoleplayer=objtop=&player;
-    playmode=PLAYMODE_SINGLE; countmove=123; displx=8; maxcrash=5;
+    playmode=PLAYMODE_SINGLE; countmove=123; displx=8; maxcrash=5;endcount=72;
     s=web_scene();
     assert(s[1]==123 && s[2]==8 && s[3]==640);
     assert(s[4]==160 && s[5]==100 && s[6]==8700 && s[7]==199 && s[8]==4);
     assert(s[9]==3 && s[14]==2 && s[15]==70);
+    assert(s[25]==72);
     assert(s[21]==0 && s[22]==(int)terrain[0] && s[23]==(int)terrain[220]);
     assert(s[WEB_SCENE_HEADER]==8 && s[WEB_SCENE_HEADER+319]==327%190);
     const int *r=s+WEB_SCENE_HEADER+320;

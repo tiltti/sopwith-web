@@ -157,12 +157,11 @@
       const bands=['#3b9bd6','#40a6e1','#49b2e7','#56bfed','#68cbef','#82d8ef','#a4e8ee','#c9f5ef'];
       bands.forEach((color,i) => rect(c,0,i*50,W,51,color));
       const sunX=552-Math.round(camera*.035)%95;
-      for(let i=0;i<12;i++){
-        const a=i*Math.PI/6,dx=Math.cos(a),dy=Math.sin(a),px=-dy,py=dx;
-        c.fillStyle='#ffe99b';c.beginPath();c.moveTo(sunX+dx*19+px,63+dy*19+py);c.lineTo(sunX+dx*24,63+dy*24);c.lineTo(sunX+dx*19-px,63+dy*19-py);c.closePath();c.fill();
-      }
-      c.fillStyle='#ffe99b';c.beginPath();c.ellipse(sunX,63,15.5,15.5,0,0,Math.PI*2);c.fill();
-      c.fillStyle='#fff2ba';c.beginPath();c.ellipse(sunX,63,12.5,12.5,0,0,Math.PI*2);c.fill();
+      // A quiet luminous solar disc, without the old balloon-like rim/rays.
+      const glow=c.createRadialGradient(sunX,63,9,sunX,63,35);
+      glow.addColorStop(0,'rgba(255,242,180,.22)');glow.addColorStop(1,'rgba(255,242,180,0)');
+      c.fillStyle=glow;c.fillRect(sunX-36,27,72,72);
+      c.fillStyle='#fff2bd';c.beginPath();c.ellipse(sunX,63,16,16,0,0,Math.PI*2);c.fill();
       for (let i=-1;i<5;i++) {
         let x=i*210-((camera*.11+tick*.12)%210);
         cloud(c,x,62+((i+5)%3)*39,i%2===0?1.5:1.05);
@@ -276,6 +275,12 @@
       for(const e of this.effects) {
         const age=Math.max(0,tick-e.tick),x=(e.x-camera)*2,y=(199-e.y)*2;
         if(x < -100 || x>W+100)continue;
+        if(e.type===7||e.type===8){
+          const label=e.type===8?'HIMMEL':'AARGH',yy=y-age*1.5;
+          rect(c,x-26,yy-19,55,11,P.ink);text(c,label,x-22,yy-16,P.cream);
+          if(e.size)text(c,(e.size>0?'+':'')+e.size,x-17,yy-3,e.size>0?P.mint:P.red,2);
+          continue;
+        }
         if(e.type===2) {
           const count=e.size>1?28:12;
           for(let i=0;i<count;i++) {
@@ -403,16 +408,12 @@
       const active=new Set();
       for(const r of objects)if(r[0]===1){
         const id=r[16]||r[2],old=this.airplanes.get(id);active.add(id);
-        const floor=ground?.[Math.max(0,Math.min(ground.length-1,Math.round(r[2]+r[7]/2)))]??0;
-        if(r[1]===4&&old?.state!==4&&r[3]-floor>18){
-          this.bailouts.push({id,start:time,x:r[2]+r[7]/2,y:r[3]-r[8]/2,dx:r[12],burning:((id>>>4)+tick)%4===0});
-        }
         const trail=old?.trail||[];
         if((r[1]===4||r[1]===3)&&old?.tick!==tick)trail.push({x:r[2]+r[7]/2,y:r[3]-r[8]/2,tick});
         this.airplanes.set(id,{state:r[1],tick,trail:trail.filter(p=>tick-p.tick<28).slice(-28)});
       }
       for(const id of this.airplanes.keys())if(!active.has(id))this.airplanes.delete(id);
-      this.bailouts=this.bailouts.filter(p=>time-p.start<180).slice(-12);
+
     }
     drawPlaneFire(r,camera,time) {
       if(![3,4].includes(r[1]))return;
@@ -429,23 +430,52 @@
         polygon(c,[[x+dx-1,y+2],[x+dx,y-h*.6],[x+dx+2,y+1]],P.gold);
       }
     }
-    drawBailouts(camera,time,ground) {
-      const c=this.c;
-      for(const p of this.bailouts){
-        const seconds=Math.max(0,(time-p.start)/10),open=seconds>.6;
-        const x=p.x+p.dx*1.8*(1-Math.exp(-seconds*2.5))+Math.sin(seconds*1.2)*1.2;
-        const floor=ground?.[Math.max(0,Math.min(ground.length-1,Math.round(x)))]??0;
-        const y=Math.max(floor+2,p.y+6*(1-Math.exp(-seconds*8))-(open?1.44+(seconds-.6)*5.5:4*seconds*seconds));
-        if(y===floor+2&&seconds>12)continue;
-        const sprite=window.RainbowAssets?.pilotPose(open?(p.burning?2:1):0);if(!sprite)continue;
-        const w=sprite.width/DETAIL,h=sprite.height/DETAIL,sx=(x-camera)*2,sy=(199-y)*2;
-        c.save();c.translate(sx,sy);c.rotate(open?Math.sin(seconds*2)*.06:seconds*.8);c.drawImage(sprite,-w/2,-h,w,h);c.restore();
+    drawPilots(objects,camera,time){
+      const c=this.c;let count=0;
+      for(const r of objects)if(r[15]===21){
+        count++;const phase=r[5],air=phase<2,shooting=(r[14]&2)!==0;
+        let frame=phase===0?7:phase===1?8+(Math.floor(time/4)%2):phase===4?5:shooting?4:phase===3?[1,0,2,0][Math.floor(time/2)%4]:0;
+        const image=window.RainbowAssets?.pilotFrame(frame,r[6]);if(!image)continue;
+        const x=(r[2]-camera)*2+r[7],y=(199-r[3]+r[8])*2,w=image.worldWidth,h=image.worldHeight;
+        if(x< -30||x>W+30)continue;
+        c.save();c.translate(x,y);if(r[4]===8)c.scale(-1,1);
+        if(air)c.rotate(Math.sin(time*.21+r[16])*.055);
+        c.drawImage(image,-w/2,-h,w,h);
+        if(phase===1&&(r[14]&1)){polygon(c,[[-8,-h+8],[-10,-h-1],[-6,-h+3],[-4,-h-3],[-2,-h+9]],P.red);rect(c,-7,-h+3,3,5,P.gold);}
+        if(shooting){rect(c,9,-12,5,2,P.gold);rect(c,12,-13,2,4,P.cream);}
+        c.restore();
       }
-      this.canvas.dataset.parachutes=String(this.bailouts.length);
+      this.canvas.dataset.parachutes=String(objects.filter(r=>r[15]===21&&r[5]<2).length);
+      this.canvas.dataset.pilots=String(count);
+    }
+    drawDeparture(scene,time,ground){
+      const c=this.c;
+      if(scene[12]!==1){this.departure=null;delete this.canvas.dataset.departure;return;}
+      if(!this.departure)this.departure={start:time,x:(scene[4]-scene[2])*2+16,y:(199-scene[5])*2+16,camera:scene[2]};
+      const age=Math.max(0,time-this.departure.start),t=Math.max(0,Math.min(1,age/69)),ease=1-Math.pow(1-t,2);
+      const gx=Math.max(0,Math.min((ground?.length||1)-1,Math.round(this.departure.camera+W*.34)));
+      const horizon=Math.max(60,Math.min(H*.6,ground?.length?(199-ground[gx])*2-24:H*.6));
+      const x=this.departure.x+(W*.68-this.departure.x)*ease,y=this.departure.y+(horizon-this.departure.y)*ease;
+      const image=window.RainbowAssets?.departurePose(t<.2?0:t>.8?2:1),w=58*Math.pow(1-t,1.4)+1.5;
+      if(image){c.save();c.globalAlpha=Math.min(1,(1-t)*8);c.drawImage(image,x-w/2,y-w/3,w,w*2/3);c.restore();}
+      rect(c,184,37,272,37,P.ink);rect(c,186,39,268,1,P.gold);
+      text(c,'MISSION COMPLETE',205,48,P.gold,3);text(c,'LEVEL '+(scene[18]+1)+' CLEARED',257,65,P.cream);
+      this.canvas.dataset.departure=t.toFixed(3);
+    }
+    drawReady(){
+      if(!this.readyLevel)return;
+      const c=this.c;c.fillStyle='rgba(24,52,73,.35)';c.fillRect(0,0,W,H);
+      rect(c,168,137,304,106,P.ink);rect(c,171,140,298,100,'#3678ac');rect(c,171,140,298,2,P.pale);
+      text(c,'READY PLAYER',214,158,P.gold,3);text(c,'LEVEL '+this.readyLevel,260,191,P.cream,3);
+      rect(c,205,224,230,3,'#284b6c');rect(c,205,224,230*Math.min(1,this.readyProgress||0),3,P.gold);
+      this.canvas.dataset.readyLevel=String(this.readyLevel);
     }
     drawScene(scene,heap,trainer=false,effects=null,ground=null) {
       if(scene[0]!==3||scene[3]===0)return false;
-      const c=this.c,tick=scene[1],time=scene[26]||tick,camera=scene[2];
+      const c=this.c,tick=scene[1],time=scene[26]||tick;
+      if(scene[12]!==1)this.departure=null;
+      const camera=this.departure?.camera??scene[2];
+      if(this.departure){scene=scene.slice();scene[2]=camera;}
       if(tick<this.lastTick){this.effects=[];this.lastEffectId=effects?.[1]||0;this.cowDeaths.clear();this.airplanes.clear();this.bailouts=[];}
       this.readEffects(effects,tick);
       if(tick!==this.lastTick) {
@@ -470,6 +500,7 @@
       for(const r of objects) {
         const [type,,x,y,,,,w,h]=r, sx=(x-camera)*2,sy=(199-y)*2;
         if(sx < -w*2-3||sx>W||sy>H||sy < -h*2-3)continue;
+        if(r[15]===21||(type===1&&r[10]&&scene[12]===1))continue;
         if(type===3) {
           if(r[17]>=100) {
             const angle=Math.atan2(-r[13],r[12]),dx=Math.cos(angle),dy=Math.sin(angle);
@@ -534,7 +565,9 @@
       this.aimVisible=aimVisible;
       this.canvas.dataset.aimActivations=String(this.aimActivations);
       this.drawEffects(camera,time);
-      this.drawBailouts(camera,time,ground);
+      this.drawPilots(objects,camera,time);
+      this.drawDeparture(scene,time,ground);
+      delete this.canvas.dataset.readyLevel;this.drawReady();
       // Native low-altitude collision geometry is preserved all the way down
       // to the original bottom edge; the information strip lives below the world.
       this.hud(scene,objects,trainer,ground);
@@ -552,7 +585,7 @@
       rect(c,0,0,W,HUD,P.ink);rect(c,0,0,W,2,P.teal);rect(c,0,50,W,18,'#1d3048');
       text(c,'SCORE',10,9,P.pale);text(c,s[10]<0?'-'+String(-s[10]).padStart(5,'0'):String(s[10]).padStart(6,'0'),10,21,P.cream,2);
       text(c,'LIVES',88,9,P.pale);text(c,trainer?'INF':s[9],88,21,P.gold,2);
-      text(c,'LV',140,9,P.pale);text(c,s[18]+1,140,21,P.cream,2);
+      text(c,'LVL',140,9,P.pale);text(c,s[18]+1,140,21,P.cream,2);
       rect(c,183,4,264,44,P.outline);rect(c,185,6,260,40,'#34718a');
       if(ground?.length)for(let x=0;x<260;x++) {
         const y=39-Math.round(ground[Math.min(ground.length-1,Math.floor(x/260*ground.length))]/200*39);

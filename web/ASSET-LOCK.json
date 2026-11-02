@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 10909,
-      "sha256": "04a6de6d96559af4332f001bdf1c7b8e35718e70dd38daa0dbfbddd083f259c2"
+      "bytes": 11417,
+      "sha256": "95b10b6448820a61c5ca572cdb8a25932dc77d841d5fc530aee30ad091158348"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -14,8 +14,8 @@
     },
     {
       "path": "dist/assets/audio/README.md",
-      "bytes": 4872,
-      "sha256": "1df2c2dfac5d689ff461694012c83c40994878b49c5c3d01c4f56879fceb252c"
+      "bytes": 5728,
+      "sha256": "04589a46248e1922d9aad526270639e94ed8a61b92a789d8be0056ee865527f6"
     },
     {
       "path": "dist/assets/audio/SOURCES.json",
@@ -153,6 +153,41 @@
       "sha256": "996fed8b1c27360f2950657a1a2d710f4cae9e0c7c65300937722ec0b423abaa"
     },
     {
+      "path": "dist/assets/audio/patrol-v06/SOURCES.json",
+      "bytes": 2866,
+      "sha256": "354c7494cb14c4594f0c086ace06793287976335576c62524df23253aaeff26a"
+    },
+    {
+      "path": "dist/assets/audio/patrol-v06/argh.wav",
+      "bytes": 11704,
+      "sha256": "587418174999631d4a2c30fc630f838e7c3ee940e41de3053e42dfb95374a67c"
+    },
+    {
+      "path": "dist/assets/audio/patrol-v06/himmel-license.json",
+      "bytes": 2690,
+      "sha256": "9e20a653ec3781b2c2c7d071fac14da2fb3ab87c7efd3b3efe706ae5d5d1ff3e"
+    },
+    {
+      "path": "dist/assets/audio/patrol-v06/himmel.wav",
+      "bytes": 45080,
+      "sha256": "0f31e76402b0161a66841b84ae07fd4d9a4f537853c793ff7e362a2ef6eff85d"
+    },
+    {
+      "path": "dist/assets/audio/patrol-v06/original/himmel.ogg",
+      "bytes": 14480,
+      "sha256": "bf621cd41c945d59a0d5c4b1efc8930debd82d384aca68a3f69ea6dc5731fbc6"
+    },
+    {
+      "path": "dist/assets/audio/patrol-v06/original/hurt.mp3",
+      "bytes": 7148,
+      "sha256": "45f19e4f637ff0e8936186977aa7cb131f67a95ca68660686476a47da224322e"
+    },
+    {
+      "path": "dist/assets/audio/patrol-v06/victory.wav",
+      "bytes": 344058,
+      "sha256": "50a054a82c57c1867ce8d4446c13a61726699d024b2747ea8c3bd27b7b76331e"
+    },
+    {
       "path": "dist/assets/classic-cover.svg",
       "bytes": 989,
       "sha256": "a34ae60becb77d00574e92a01ac4eba0a7e17b35dafe002a60cfc8c7379be43e"
@@ -171,6 +206,16 @@
       "path": "dist/assets/fonts/SOURCE.json",
       "bytes": 316,
       "sha256": "b83dd916f142b034726c2d55d9407b2ded95add8ed14690d1cce3e8770e17898"
+    },
+    {
+      "path": "dist/assets/patrol-departure-v1.svg",
+      "bytes": 3721,
+      "sha256": "22f6af421203fb6169f69146676754535e388fae273d30834134c835b400ff35"
+    },
+    {
+      "path": "dist/assets/patrol-pilots-v2.svg",
+      "bytes": 20344,
+      "sha256": "76149f9cc785cb574bf289a63268385d43fbac2ebf9b10816bf34426af96aa4b"
     },
     {
       "path": "dist/assets/previews/rainbow-look-a.png",

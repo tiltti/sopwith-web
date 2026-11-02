@@ -25,9 +25,9 @@ def main(test_source="trainer.c"):
         video_object = temporary / "video.o"
         subprocess.run([compiler, *flags, *cflags, "-DVid_GetPrefPath=Native_Vid_GetPrefPath",
                         "-c", str(SRC / "sdl/video.c"), "-o", str(video_object)], check=True)
-        sources = sorted(p for p in SRC.glob("*.c") if p.name != "swmove.c")
+        sources = sorted(p for p in SRC.glob("*.c") if p.name not in ("swmove.c", "swcollsn.c"))
         sources += [SRC / "sdl" / name for name in ("pcsound.c", "timer.c", "controller.c")]
-        sources += [ROOT / "web/trainer.c", ROOT / "web/variant.c", ROOT / "web/move.c", ROOT / "tests" / test_source]
+        sources += [ROOT / "web/trainer.c", ROOT / "web/variant.c", ROOT / "web/move.c", ROOT / "web/collisions.c", ROOT / "tests" / test_source]
         binary = temporary / "trainer-test"
         subprocess.run([compiler, *flags, *cflags, '-DWEB_TEST_PREF_PATH="' + str(prefs) + '/"',
                         *map(str, sources), str(video_object), *libs, "-lm", "-o", str(binary)], check=True)

@@ -209,6 +209,27 @@ It can also be enabled before starting a game. It affects only the player.
 The [Info page](https://tiltti.github.io/sopwith-web/info.html) documents the
 C / SDL2 / Emscripten / WASM architecture and source provenance.
 
+## Rainbow mission transitions and pilots
+
+A 2.2-second READY PLAYER / LEVEL intermission holds the native simulation before
+level 1 and every new level. Victory keeps the normal 72-tick native countdown,
+with original rear-view aircraft artwork receding toward the horizon and a
+single 7.8-second licensed fanfare/march mix. Game-over still ends on high scores.
+
+Pilots are native Rainbow objects, not timed visual overlays. They open their
+canopies, descend to the real terrain, stand briefly and walk slowly to the
+nearest airfield of their own faction. Arrival removes them safely. Aircraft,
+bullets, bombs and debris can hit them. A player-caused airborne casualty is
+**−1000** regardless of faction. On foot, friendly casualties cost **−500** and
+hostile casualties award **+100**. From level 2, grounded pilots defend themselves
+against hostile aircraft and other grounded pilots; they do not shoot parachutes.
+Human/German vocal reactions and a procedural cinematic dive loop respect mute.
+
+Rainbow filters direct collisions between a plane and its own released bombs,
+and between those bombs and its own ordnance. This prevents rapid salvos from
+self-detonating on the rack. Ground blasts and debris remain dangerous to the
+plane. Classic continues to use the complete original collision step.
+
 ## Validation
 
 ```sh
@@ -217,11 +238,13 @@ node tests/rainbow-renderer.mjs
 node tests/rainbow-assets.mjs
 node tests/rainbow-audio.mjs
 node tests/rainbow-timeline.mjs
+node tests/rainbow-stages.mjs
 node tests/title-audio.mjs
 node tests/i18n.mjs
 node tests/leaderboard.mjs
 node tests/leaderboard-ui.mjs
 python3 scripts/test_trainer.py
+python3 scripts/test_patrol.py
 python3 scripts/test_scene.py
 python3 scripts/test_home.py
 python3 scripts/verify_release.py

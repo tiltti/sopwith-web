@@ -93,12 +93,14 @@ activeTarget[6]=2;calls.length=0;renderer.teamMark(activeTarget,100);
 assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#ed786b'),'Enemy ground flags match the map.');
 activeTarget[1]=3;calls.length=0;renderer.teamMark(activeTarget,100);assert.equal(calls.length,0,'Destroyed sites lose their active flag.');
 
-// The same killed aircraft emits one bailout, then keeps a burning wreck.
-scope.window.RainbowAssets={loaded:true,sprite:()=>null,pilotPose:()=>({width:54,height:70})};
-scene[14]=1;scene[1]=59;scene[26]=0;plane[0]=1;plane[1]=1;plane[16]=128;plane[3]=180;plane[12]=4;plane[13]=-4;
-renderer.drawScene(scene,heap,false,null,ground);
-scene[1]=60;plane[1]=4;renderer.drawScene(scene,heap,false,null,ground);
-assert.equal(renderer.bailouts.length,1);assert.equal(renderer.bailouts[0].burning,true);
-renderer.drawScene(scene,heap,false,null,ground);assert.equal(renderer.bailouts.length,1,'Repaint cannot eject the pilot twice.');
-scene[1]=61;plane[1]=3;renderer.drawScene(scene,heap,false,null,ground);assert.equal(renderer.bailouts.length,1);
-console.log('Crash visuals: one bailout per disabled plane, deterministic occasional burning canopy and persistent wreck fire verified.');
+// Pilots come from native objects; repaint never creates a duplicate actor.
+scope.window.RainbowAssets={loaded:true,sprite:()=>null,pilotFrame:()=>({worldWidth:24,worldHeight:48}),departurePose:()=>({width:288,height:192})};
+scene[14]=1;scene[1]=60;scene[26]=0;plane[0]=99;plane[1]=4;plane[5]=1;plane[15]=21;plane[16]=128;plane[3]=180;
+renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.parachutes,'1');
+renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.pilots,'1');
+plane[1]=5;plane[5]=3;renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.parachutes,'0');
+renderer.readyLevel=2;renderer.readyProgress=.5;renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.readyLevel,'2');
+renderer.readyLevel=null;scene[12]=1;scene[1]=70;renderer.drawScene(scene,heap,false,null,ground);const first=Number(display.dataset.departure);
+scene[1]=105;renderer.drawScene(scene,heap,false,null,ground);assert.ok(Number(display.dataset.departure)>first);
+scene[12]=0;renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.departure,undefined);
+console.log('Native pilot rendering, grounded walking, READY level labels, receding departure progress and renderer continuity verified.');

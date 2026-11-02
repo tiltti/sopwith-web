@@ -20,10 +20,10 @@ def main():
         sys.exit("Emscripten missing. Follow README.md to install Emscripten 4.0.10 locally.")
     (OUTPUT / "engine").mkdir(parents=True, exist_ok=True)
     (OUTPUT / "source").mkdir(parents=True, exist_ok=True)
-    sources = sorted(p for p in (UPSTREAM / "src").glob("*.c") if p.name != "swmove.c")
+    sources = sorted(p for p in (UPSTREAM / "src").glob("*.c") if p.name not in ("swmove.c", "swcollsn.c"))
     sources += [UPSTREAM / "src/sdl" / name for name in
                 ("main.c", "video.c", "pcsound.c", "controller.c")]
-    sources += [ROOT / "web/bridge.c", ROOT / "web/trainer.c", ROOT / "web/scene.c", ROOT / "web/variant.c", ROOT / "web/move.c"]
+    sources += [ROOT / "web/bridge.c", ROOT / "web/trainer.c", ROOT / "web/scene.c", ROOT / "web/variant.c", ROOT / "web/move.c", ROOT / "web/collisions.c"]
     env = os.environ.copy()
     env["EM_CONFIG"] = str(EMSDK / ".emscripten")
     env["EMSDK_PYTHON"] = sys.executable

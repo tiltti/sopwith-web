@@ -2,7 +2,7 @@
 // Sources/licenses: assets/audio/README.md and audition-v05/SOURCES.json.
 (() => {
   const SAMPLE={engine:'audition-v05/radial-idle',gun:'impactPunch_heavy_000',
-    metal:'impactMetal_light_000',blast:'explosionCrunch_000',boom:'lowFrequency_explosion_000',moo:'audition-v05/moo',wah:'audition-v05/wah-wah',bird:'audition-v05/bird',startup:'audition-v05/startup'};
+    metal:'impactMetal_light_000',blast:'explosionCrunch_000',boom:'lowFrequency_explosion_000',moo:'audition-v05/moo',wah:'audition-v05/wah-wah',bird:'audition-v05/bird',startup:'audition-v05/startup',argh:'patrol-v06/argh',himmel:'patrol-v06/himmel',victory:'patrol-v06/victory'};
   class RainbowAudio {
     constructor(options={}) {
       this.Context=options.AudioContext||window.AudioContext||window.webkitAudioContext;
@@ -10,6 +10,7 @@
       this.requested=false;this.enabled=false;this.voices=new Map();this.buffers={};
       this.initialStartupWanted=!!options.startup;this.player=null;this.pendingStartup=null;this.startupCount=0;this.lastBirdTick=-100;
       this.airplanes=new Map();this.lastTick=-1;this.lastEffect=0;this.lastBombs=null;this.status='off';
+      this.winning=false;
     }
     async setEnabled(enabled) {
       this.requested=enabled;
@@ -25,7 +26,7 @@
           this.filter=this.context.createBiquadFilter();this.filter.type='lowpass';this.filter.frequency.value=6500;
           this.master.connect(this.filter);this.filter.connect(this.context.destination);
           this.loading=Promise.all(Object.entries(SAMPLE).map(async([name,file])=>{
-            const response=await this.fetch(`assets/audio/${file}.wav?v=20261101-spawn1`);
+            const response=await this.fetch(`assets/audio/${file}.wav?v=20261102-patrol6`);
             if(!response.ok)throw new Error(`Sample unavailable: ${file}`);
             this.buffers[name]=await this.context.decodeAudioData(await response.arrayBuffer());
           }));
@@ -59,7 +60,11 @@
         return clunk+sine(1600*Math.exp(-t*.7)+220+12*Math.sin(t*32))*Math.min(1,t/.025)*Math.max(0,1-t/3.2)*.42;
       });
       make('cannon',.85,(t,n,sine)=>(n*.55+sine(100*Math.exp(-t*12)+42)*.65)*Math.exp(-t*7)*Math.min(1,t/.003));
-
+      // An original film-style dive: propeller harmonic, flutter and wind.
+      make('dive',2.4,(t,n,sine)=>{
+        const flutter=.7+.3*Math.sin(t*Math.PI*48),edge=Math.min(1,t/.025,(2.4-t)/.025);
+        return (sine(460+70*Math.sin(t*Math.PI*2/2.4))*.34+n*.28)*flutter*Math.max(0,edge);
+      });
     }
     play(channel,name,{gain=.2,rate=1,pan=0,duration,loop=false,priority=0}={}) {
       if(!this.enabled||!this.buffers[name])return null;
@@ -80,9 +85,14 @@
     step(scene,effects) {
       const tick=scene[1];if(tick===this.lastTick)return;
       const reset=tick<this.lastTick;this.lastTick=tick;
-      if(reset){this.airplanes.clear();this.player=null;this.pendingStartup=null;this.stopAll();this.lastEffect=effects?.[1]||0;this.lastBombs=null;}
+      if(reset){this.airplanes.clear();this.player=null;this.pendingStartup=null;this.stopAll();this.lastEffect=effects?.[1]||0;this.lastBombs=null;this.winning=false;}
       const camera=scene[2],audible=this.enabled&&scene[12]!==2;
       if(!audible)this.stopAll();
+      if(scene[12]===1){
+        if(!this.winning){this.stopAll();if(audible)this.play('jingle','victory',{gain:.35,priority:5});}
+        this.winning=true;this.lastEffect=effects?.[1]||this.lastEffect;return;
+      }
+      this.winning=false;
       if(scene[3]>0){
         const alive=[1,6,8,9].includes(scene[13]);
         const spawn=alive&&scene[12]===0&&(!this.player||!this.player.alive||this.player.level!==scene[18]);
@@ -116,18 +126,25 @@
           this.play('gun','gun',{gain:.28,rate:1.8,pan,duration:.075});
         }
       }
+      let diving=false;
       for(let i=0;i<scene[14];i++){
         const r=scene.subarray(348+i*18,348+(i+1)*18);if(r[0]!==1)continue;
         const id=r[16]||i,previous=this.airplanes.get(id),pan=(r[2]-camera-160)/180;
-        if(audible&&Math.abs(pan)<2.5&&r[1]===4&&previous!==4){
-          const voice=this.play('mechanical','engine',{gain:.24,rate:1.2,pan,duration:1.4,priority:3});
-          voice?.source.playbackRate.exponentialRampToValueAtTime(.3,this.context.currentTime+1.3);
+        if(audible&&Math.abs(pan)<2&&r[1]===4&&!diving){
+          diving=true;
+          let voice=this.voices.get('mechanical');
+          if(voice?.name!=='dive')voice=this.play('mechanical','dive',{gain:.25,rate:.85,pan,loop:true,priority:4});
+          if(voice?.name==='dive'){
+            voice.source.playbackRate.setTargetAtTime(.85+Math.min(12,Math.abs(r[13]))*.09,this.context.currentTime,.25);
+            voice.gain.gain.setTargetAtTime(.18+Math.min(12,Math.abs(r[13]))*.018,this.context.currentTime,.25);
+          }
         }
         if(audible&&Math.abs(pan)<2.5&&r[1]===3&&previous!==3){
-          this.stop('mechanical');this.play('mechanical','blast',{gain:.48,rate:.75,pan,priority:3});this.play('fx','boom',{gain:.32,rate:.75,pan,priority:2});
+          this.stop('mechanical');this.play('mechanical','blast',{gain:.48,rate:.75,pan,priority:5});this.play('fx','boom',{gain:.32,rate:.75,pan,priority:2});
         }
         this.airplanes.set(id,r[1]);
       }
+      if(!diving&&this.voices.get('mechanical')?.name==='dive')this.stop('mechanical');
       this.lastBombs=scene[8];
       if(effects?.[0]===1) {
         const pending=[];
@@ -148,6 +165,7 @@
           if(event.type===2&&tick-this.lastBirdTick>=3){this.lastBirdTick=tick;this.play('fx','bird',{gain:event.size>1?.4:.3,rate:1,pan,priority:4});}
           if(event.type===3)this.play('fx','moo',{gain:.65,rate:1,pan,priority:4});
           if(event.type===6&&event.size<0)this.play('jingle','wah',{gain:.32,priority:3});
+          if(event.type===7||event.type===8)this.play('fx',event.type===8?'himmel':'argh',{gain:.48,pan,priority:5});
         }
       }
     }

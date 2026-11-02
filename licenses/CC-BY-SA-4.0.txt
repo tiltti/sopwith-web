@@ -1,0 +1,11 @@
+Creative Commons Attribution-ShareAlike 4.0 International
+License URI: https://creativecommons.org/licenses/by-sa/4.0/
+Full legal terms: https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+Applies to De-Himmel.ogg by Jeuwre and the adapted himmel.wav sample.
+Source: https://commons.wikimedia.org/wiki/File:De-Himmel.ogg
+Author: https://commons.wikimedia.org/wiki/User:Jeuwre
+Changes: leading silence removed; equalization, compression, normalization,
+mono conversion and 22050 Hz resampling. Original pitch is preserved.
+The adaptation is distributed under the same CC BY-SA 4.0 license.
+These audio licenses are separate from the game's GPL-2.0-or-later code.

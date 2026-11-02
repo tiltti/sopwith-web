@@ -1,6 +1,7 @@
 /* Rainbow Patrol-only rules and visual events. GPL-2.0-or-later. */
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "sw.h"
 #include "swmain.h"
 #include "swinit.h"
@@ -29,11 +30,18 @@ static original_ob_t emplacement_origins[24];
 static int emplacement_count;
 static unsigned char gun_pixels[2][256];
 static sopsym_t gun_masks[2];
+typedef struct {OBJECTS *ob;double x,y,drift;int born,landed,home,dead;} pilot_t;
+static pilot_t pilots[64];
+static struct {OBJECTS *ob;int state;} plane_states[16];
+static int plane_count;
+static unsigned char pilot_pixels[2][264];
+static sopsym_t pilot_masks[2];
 
 void WebVariant_SetEnabled(bool value)
 {
     enabled = value;level_ready=false;emplacement_count=0;
     easy_mode=false;player_was_dead=false;grace_until=0;fire_count=0;
+    memset(pilots,0,sizeof(pilots));plane_count=0;
     last_tick = -1;
     previous_count = 0;
     previous_bomb_count = 0;
@@ -87,8 +95,117 @@ void WebVariant_ShellImpact(OBJECTS *ob)
 
 int WebVariant_ObjectKind(const OBJECTS *ob)
 {
+    if(!ob)return 0;
+    if(enabled)for(int i=0;i<64;i++)if(pilots[i].ob==ob)return 21;
     if(enabled)for(int i=0;i<emplacement_count;i++)if(emplacements[i]==ob)return 20;
     return ob->ob_original_ob?ob->ob_original_ob->orient:0;
+}
+
+static const OBJECTS *weapon_owner(const OBJECTS *ob)
+{
+    for(int n=0;ob&&ob->ob_owner&&ob->ob_owner!=ob&&n<4;n++)ob=ob->ob_owner;
+    return ob;
+}
+bool WebVariant_CanCollide(const OBJECTS *a,const OBJECTS *b)
+{
+    if(!enabled)return true;
+    /* Native bombs have no young-shot exemption. A rapid salvo can collide
+     * with itself, the gun or its releasing plane before clearing the rack. */
+    if(a->ob_type==BOMB||b->ob_type==BOMB){
+        const OBJECTS *bomb=a->ob_type==BOMB?a:b,*other=bomb==a?b:a;
+        if(bomb->ob_owner&&(other==bomb->ob_owner||((other->ob_type==BOMB||other->ob_type==SHOT||other->ob_type==EXPLOSION)
+            &&weapon_owner(other)==weapon_owner(bomb))))return false;
+    }
+    const OBJECTS *pilot=WebVariant_ObjectKind(a)==21?a:WebVariant_ObjectKind(b)==21?b:NULL;
+    if(!pilot)return true;
+    const OBJECTS *other=pilot==a?b:a;
+    if(pilot->ob_state==FINISHED||WebVariant_ObjectKind(other)==21)return false;
+    if(other->ob_type!=SHOT&&other->ob_type!=BOMB&&other->ob_type!=MISSILE&&other->ob_type!=PLANE&&other->ob_type!=EXPLOSION)return false;
+    if(other->ob_owner==pilot)return false;
+    if(pilot->ob_life<8&&(other==pilot->ob_owner||other->ob_owner==pilot->ob_owner))return false;
+    return other->ob_type!=PLANE||(!PlaneIsKilled(other->ob_state)&&other->ob_endsts==PLAYING);
+}
+
+void WebVariant_PilotHit(OBJECTS *ob,OBJECTS *weapon)
+{
+    if(!enabled||!ob||ob->ob_state==FINISHED||!weapon)return;
+    bool airborne=ob->ob_state==FALLING;
+    int score=0;
+    if(weapon_owner(weapon)==consoleplayer){
+        score=airborne?-1000:ob->ob_faction==consoleplayer->ob_faction?-500:100;
+        consoleplayer->ob_score.score+=score;
+    }
+    emit(ob->ob_faction==FACTION_PLAYER1?7:8,ob,score);
+    ob->ob_state=FINISHED;ob->ob_orient=4;ob->ob_firing=NULL;
+    for(int i=0;i<64;i++)if(pilots[i].ob==ob)pilots[i].dead=countmove+16;
+}
+
+static bool move_pilot(OBJECTS *ob)
+{
+    pilot_t *p=NULL;for(int i=0;i<64;i++)if(pilots[i].ob==ob){p=&pilots[i];break;}
+    if(!p)return false;
+    if(p->dead){
+        if(countmove>=p->dead){p->ob=NULL;deallobj(ob);return false;}
+        p->y=fmax(ground[clamp_range(0,(int)p->x+3,(int)currgame->gm_max_x-1)]+1,p->y-2);
+        ob->ob_y=(int)p->y+ob->ob_symbol->h;return true;
+    }
+    int age=++ob->ob_life;ob->ob_firing=NULL;
+    double oldx=p->x,oldy=p->y;
+    if(ob->ob_state==FALLING){
+        p->x+=p->drift*exp(-age*.2)+sin(age*.15)*.08;
+        p->x=fmax(2,fmin(currgame->gm_max_x-14,p->x));
+        p->y+=age<4?.9:age<7?-1.4:-.55;
+        ob->ob_orient=age<6?0:1;
+        int floor=ground[(int)p->x+6];
+        if(p->y<=floor+1){p->y=floor+1;p->x+=3;ob->ob_state=STANDING;ob->ob_orient=2;p->landed=countmove;p->home=-1;
+            int nearest=100000;
+            for(OBJECTS *base=objtop;base;base=base->ob_next)if(base->ob_type==PLANE&&base->ob_faction==ob->ob_faction&&base->ob_original_ob){
+                int x=base->ob_original_ob->x+5,d=abs(x-(int)p->x);if(d<nearest){nearest=d;p->home=x;}
+            }
+        }
+    }else{
+        if(countmove-p->landed>=10){
+            ob->ob_orient=3;
+            if(p->home>=0){
+                int direction=p->home>p->x?1:-1;ob->ob_angle=direction<0?8:0;p->x+=direction*.32;
+                if(fabs(p->x-p->home)<7){p->ob=NULL;deallobj(ob);return false;}
+            }
+        }
+        p->y=ground[clamp_range(0,(int)p->x+3,(int)currgame->gm_max_x-1)]+1;
+        if(gamenum>=1&&countmove%15==0&&countmove>=grace_until){
+            OBJECTS *target=NULL;int nearest=75*75;
+            for(OBJECTS *other=objtop;other;other=other->ob_next){
+                if(other->ob_faction==ob->ob_faction||other->ob_state==FINISHED)continue;
+                if(other->ob_type!=PLANE&&WebVariant_ObjectKind(other)!=21)continue;
+                if(other->ob_type!=PLANE&&other->ob_state!=STANDING)continue;
+                if(other->ob_type==PLANE&&(PlaneIsKilled(other->ob_state)||other->ob_endsts!=PLAYING))continue;
+                int distance=range(ob->ob_x,ob->ob_y,other->ob_x,other->ob_y);
+                if(distance<nearest){nearest=distance;target=other;}
+            }
+            if(target){ob->ob_angle=target->ob_x<ob->ob_x?8:0;WebVariant_InitShot(ob,target);ob->ob_firing=target;}
+        }
+    }
+    ob->ob_symbol=&pilot_masks[ob->ob_state==FALLING?1:0];
+    ob->ob_x=(int)p->x;ob->ob_y=(int)p->y+ob->ob_symbol->h;
+    ob->ob_dx=(int)round(p->x-oldx);ob->ob_dy=(int)round(p->y-oldy);
+    insertx(ob,deletex(ob));return true;
+}
+
+void WebVariant_Eject(OBJECTS *plane)
+{
+    if(!enabled||!plane||!ground||plane->ob_y-ground[clamp_range(0,plane->ob_x+8,(int)currgame->gm_max_x-1)]<22)return;
+    int slot=0;while(slot<64&&pilots[slot].ob)slot++;if(slot==64)return;
+    OBJECTS *ob=allocobj(),*prev=ob->ob_prev;memset(ob,0,sizeof(*ob));ob->ob_prev=prev;
+    /* DUMMYTYPE has no native scoring/target-count semantics. */
+    ob->ob_type=DUMMYTYPE;ob->ob_state=FALLING;ob->ob_owner=plane;ob->ob_faction=plane->ob_faction;
+    ob->ob_clr=((countmove+(plane->ob_x>>2))%4==0);ob->ob_rounds=10000;
+    memset(pilot_pixels,0,sizeof(pilot_pixels));
+    for(int y=0;y<9;y++)for(int x=1;x<5;x++)pilot_pixels[0][y*6+x]=1;
+    for(int y=0;y<22;y++)for(int x=0;x<12;x++)if((y<6&&x>0&&x<11)||(y>=6&&y<14&&(x==2||x==9))||(y>=14&&x>=4&&x<=7))pilot_pixels[1][y*12+x]=1;
+    pilot_masks[0]=(sopsym_t){.w=6,.h=9,.data=pilot_pixels[0]};pilot_masks[1]=(sopsym_t){.w=12,.h=22,.data=pilot_pixels[1]};
+    ob->ob_symbol=&pilot_masks[1];ob->ob_movef=move_pilot;ob->ob_onmap=ob->ob_drwflg=true;
+    pilots[slot]=(pilot_t){.ob=ob,.x=plane->ob_x+5,.y=plane->ob_y-8,.drift=plane->ob_dx*.5,.born=countmove,.home=-1};
+    ob->ob_x=(int)pilots[slot].x;ob->ob_y=(int)pilots[slot].y+22;insertx(ob,plane);
 }
 void WebVariant_TargetMask(OBJECTS *ob)
 {
@@ -107,7 +224,7 @@ void WebVariant_InitShot(OBJECTS *owner,OBJECTS *target)
     if(enabled&&owner->ob_type==TARGET&&owner->ob_orient!=TARGET_TANK&&WebVariant_ObjectKind(owner)!=20)return;
     int slot=-1;
     if(easy_mode&&consoleplayer&&owner->ob_faction!=consoleplayer->ob_faction
-        &&(owner->ob_type==PLANE||owner->ob_type==TARGET)){
+        &&(owner->ob_type==PLANE||owner->ob_type==TARGET||WebVariant_ObjectKind(owner)==21)){
         if(countmove<grace_until)return;
         int reach=owner->ob_type==PLANE?96:80,interval=owner->ob_type==PLANE?4:6;
         if(range(owner->ob_x,owner->ob_y,consoleplayer->ob_x,consoleplayer->ob_y)>reach*reach)return;
@@ -167,6 +284,7 @@ static void lower_end_buildings(void)
 static void setup_level(void)
 {
     level_ready=true;emplacement_count=0;
+    memset(pilots,0,sizeof(pilots));plane_count=0;
     grace_until=countmove+30;fire_count=0;player_was_dead=false;
     /* Restore the continuous source landscape. The upstream initializer
      * flattens each target's footprint with abrupt vertical joins. */
@@ -243,6 +361,11 @@ void WebVariant_Apply(OBJECTS *player)
     OBJECTS *current[512], *owners[128], *bombs[256], *shots[512];
     int current_count = 0, owner_count = 0, bomb_count = 0, shot_count = 0, shot_life[512];
     for (OBJECTS *ob = objtop; ob; ob = ob->ob_next) {
+        if(ob->ob_type==PLANE){
+            int index=0;while(index<plane_count&&plane_states[index].ob!=ob)index++;
+            if(index==plane_count&&plane_count<16){plane_states[index].ob=ob;plane_states[index].state=FLYING;plane_count++;}
+            if(index<16){if(ob->ob_state==FALLING&&plane_states[index].state!=FALLING)WebVariant_Eject(ob);plane_states[index].state=ob->ob_state;}
+        }
         if(ob->ob_type==OX)WebVariant_CowMask(ob);
         if (ob->ob_type == SHOT && ob->ob_owner && ob->ob_owner->ob_type == TARGET) {
             bool known = false;

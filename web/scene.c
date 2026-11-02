@@ -48,6 +48,7 @@ EMSCRIPTEN_KEEPALIVE const int *web_scene(void)
     scene[22] = ground[scene[21]];
     scene[23] = ground[scene[21] + clamp_max(220, (int)currgame->gm_max_x - 1)];
     scene[24] = (int)(uintptr_t)ground;
+    scene[25] = endcount;
     for (int x = 0; x < SCR_WDTH; ++x) {
         int wx = clamp_range(0, displx + x, (int)currgame->gm_max_x - 1);
         scene[WEB_SCENE_HEADER + x] = ground[wx];
@@ -67,6 +68,7 @@ EMSCRIPTEN_KEEPALIVE const int *web_scene(void)
         r[12] = ob->ob_dx; r[13] = ob->ob_dy;
         r[14] = ob->ob_clr;
         r[15] = WebVariant_ObjectKind(ob);
+        if(r[15]==21&&ob->ob_firing)r[14]|=2;
         r[16] = (int)(uintptr_t)ob;
         r[17] = ob->ob_owner == consoleplayer ? 1 : !ob->ob_owner ? 0
             : ob->ob_owner->ob_type == TARGET ? 100 + ob->ob_owner->ob_orient

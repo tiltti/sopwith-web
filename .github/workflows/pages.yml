@@ -45,11 +45,13 @@ jobs:
           node tests/rainbow-assets.mjs
           node tests/rainbow-audio.mjs
           node tests/rainbow-timeline.mjs
+          node tests/rainbow-stages.mjs
           node tests/title-audio.mjs
           node tests/i18n.mjs
           node tests/leaderboard.mjs
           node tests/leaderboard-ui.mjs
           python scripts/test_trainer.py
+          python scripts/test_patrol.py
           python scripts/test_scene.py
           python scripts/test_home.py
 
@@ -64,6 +66,7 @@ jobs:
           node --check dist/rainbow-assets.js
           node --check dist/rainbow-audio.js
           node --check dist/rainbow-timeline.js
+          node --check dist/rainbow-stages.js
           node --check dist/rainbow-ui.js
           node --check dist/title-audio.js
           node --check dist/i18n.js
