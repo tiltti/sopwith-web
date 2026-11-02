@@ -1,5 +1,6 @@
 // Sopwith community leaderboard. GPL-2.0-or-later.
-const EDITIONS=new Set(['classic','rainbow']),MODES=new Set(['practice','combat']);
+const EDITIONS=new Set(['classic','rainbow']),MODES=new Set(['practice','combat']),DIFFICULTIES=new Set(['normal','easy']);
+const validBoard=(edition,mode,difficulty)=>EDITIONS.has(edition)&&MODES.has(mode)&&DIFFICULTIES.has(difficulty)&&(edition==='rainbow'||difficulty==='normal');
 const MAX_BODY=2048;
 const allowedOrigin=origin=>origin==='https://tiltti.github.io'||/^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(origin);
 const hash=async text=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text)))].map(x=>x.toString(16).padStart(2,'0')).join('');
@@ -21,9 +22,9 @@ export default {
       if(path==='/'||path==='/api/health')return json({service:'Sopwith high scores',version:1});
       if(!env.DB)return fail('Storage is not configured.',503);
       if(request.method==='GET'&&path==='/api/scores') {
-        const edition=url.searchParams.get('edition'),mode=url.searchParams.get('mode');
-        if(!EDITIONS.has(edition)||!MODES.has(mode))return fail('Unknown edition or mode.');
-        const {results}=await env.DB.prepare('SELECT nickname, score, level, finished_at FROM scores WHERE edition = ? AND mode = ? ORDER BY score DESC, finished_at ASC LIMIT 20').bind(edition,mode).all();
+        const edition=url.searchParams.get('edition'),mode=url.searchParams.get('mode'),difficulty=url.searchParams.get('difficulty')||'normal';
+        if(!validBoard(edition,mode,difficulty))return fail('Unknown edition, mode or difficulty.');
+        const {results}=await env.DB.prepare('SELECT nickname, score, level, finished_at FROM scores WHERE edition = ? AND mode = ? AND difficulty = ? ORDER BY score DESC, finished_at ASC LIMIT 20').bind(edition,mode,difficulty).all();
         return json({scores:results});
       }
       if(request.method!=='POST')return fail('Not found.',404);
@@ -36,13 +37,14 @@ export default {
       if(!body||typeof body!=='object'||Array.isArray(body))return fail('Invalid request.');
       const now=Date.now();
       if(path==='/api/runs') {
-        if(!EDITIONS.has(body.edition)||!MODES.has(body.mode))return fail('Unknown edition or mode.');
+        const difficulty=body.difficulty??'normal';
+        if(!validBoard(body.edition,body.mode,difficulty))return fail('Unknown edition, mode or difficulty.');
         await env.DB.prepare('DELETE FROM runs WHERE expires_at < ?').bind(now-86400000).run();
         const recent=await env.DB.prepare('SELECT COUNT(*) AS n FROM runs WHERE started_at > ?').bind(now-60000).first();
         if(recent.n>=100)return fail('Try again shortly.',429);
         const id=crypto.randomUUID(),token=crypto.randomUUID()+crypto.randomUUID();
-        await env.DB.prepare('INSERT INTO runs (id, token_hash, edition, mode, started_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)')
-          .bind(id,await hash(token),body.edition,body.mode,now,now+86400000).run();
+        await env.DB.prepare('INSERT INTO runs (id, token_hash, edition, mode, difficulty, started_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+          .bind(id,await hash(token),body.edition,body.mode,difficulty,now,now+86400000).run();
         return json({id,token},201);
       }
       if(path==='/api/scores') {
@@ -57,8 +59,8 @@ export default {
         if(!Number.isInteger(body.score)||body.score< -100000||body.score>1000000)return fail('Invalid score.');
         if(!Number.isInteger(body.level)||body.level<1||body.level>1000)return fail('Invalid level.');
         if(!Number.isInteger(body.ticks)||body.ticks<1||body.ticks>(now-run.started_at)/100+50)return fail('Invalid run duration.');
-        await env.DB.prepare('INSERT OR IGNORE INTO scores (run_id, edition, mode, nickname, score, level, finished_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-          .bind(run.id,run.edition,run.mode,nickname,body.score,body.level,now).run();
+        await env.DB.prepare('INSERT OR IGNORE INTO scores (run_id, edition, mode, difficulty, nickname, score, level, finished_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+          .bind(run.id,run.edition,run.mode,run.difficulty,nickname,body.score,body.level,now).run();
         const saved=await env.DB.prepare('SELECT nickname, score, level, finished_at FROM scores WHERE run_id = ?').bind(run.id).first();
         return json({saved},201);
       }

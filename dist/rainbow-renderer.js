@@ -516,7 +516,7 @@
             const slope=Math.atan2(-(ground[right]-ground[l]),w-1);
             const shot=this.effects.find(e=>e.type===5&&Math.abs(e.x-x-w/2)<20&&tick-e.tick<2),kick=shot?Math.max(0,2-(time-shot.tick)*1.5):0;
             c.save();c.translate(sx+w,sy+h*2);c.rotate(slope*(r[15]===20?.35:1));
-            if(r[15]===3&&scene[4]<x)c.scale(-1,1);
+            if(r[15]===3&&r[4]===8)c.scale(-1,1);
             c.drawImage(sprite,-dw/2-kick,-dh+1,dw,dh);c.restore();
           }else c.drawImage(sprite,sx+w-dw/2,sy+h-dh/2+groundBlend*3.2,dw,dh);
         }

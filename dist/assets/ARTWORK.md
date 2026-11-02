@@ -131,3 +131,9 @@ studies, not recordings of live gameplay. Clouds use flat color clusters,
 without a shade gradient. Terrain, foundations, rays and rainbows are code art.
 No RETRY pixels are bundled. Selecting a study does not yet select a live-game
 renderer profile.
+
+## Original sound-control vectors (2026-11-02)
+
+`sound-on.svg` and `sound-off.svg` are original code-authored pixel speaker icons
+for this project, licensed GPL-2.0-or-later. They are vector UI assets, not
+imagegen output or artwork copied from another game.

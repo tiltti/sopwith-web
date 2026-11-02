@@ -1,5 +1,31 @@
 # Validation
 
+## 2026-11-02: Sound icons, languages, friendly AA and Easy combat
+
+- Matching original SVG speaker/mute images and explicit labels are used for
+  all Rainbow audio controls. Silent default and opt-in splash playback tests
+  still pass; switching language does not enable audio.
+- English/Finnish menu selection follows the browser initially, with English
+  fallback and a saved override. Tests cover switching both ways, dynamic
+  scores/ranks, browser fallback, invalid preferences and unchanged nicknames.
+- Friendly ground tanks/AA now acquire hostile computer aircraft in single
+  player. Native tests check both weapon types, actual aiming direction and
+  exclusion of friendly/dead planes; classic acquisition is unchanged.
+- Easy combat bounds hostile aircraft/ground firing to 4/6 native ticks,
+  reduces their firing range, and delays new hostile fire for 30 ticks after
+  a player spawn. Native tests verify those limits, respawns, unchanged player
+  fire and restoration of Normal rules. Flight/collision physics are unchanged.
+- Easy/Normal scores are separated. Frontend tests preserve existing Normal
+  scores and verify Easy filtering. Server SQLite tests migrate legacy scores
+  to Normal and bind the board to the run ticket. The private backend has not
+  been redeployed or made public; the live frontend still uses local storage.
+- Browser QA verified English fallback, Finnish/English switching and saved
+  language/difficulty after reload. The complete settings panel fits without
+  scrolling (459px client and scroll height). Enter on the trainer toggles that
+  control while sound remains off. A Level 2 launch reached the actual WASM with
+  difficulty=easy, practice mode, five bombs and audio off. The native return-home
+  audit remains Rainbow 30/30, classic baseline 28/30; scene ABI checks pass.
+
 ## 2026-11-02: Lower end targets and temporary playtest trainer
 
 - Highest end targets and their terrain are lowered with a smooth 128-pixel

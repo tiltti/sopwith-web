@@ -278,5 +278,36 @@ int main(void)
     gamenum=1;targrnge=75*75;movetarg(gun);
     assert(playmode==PLAYMODE_SINGLE&&objbot!=before_shot&&objbot->ob_owner==gun);
     puts("Single player: ground AA stays quiet at level 1 and fires back at level 2 without air-combat mode.");
+    gun->ob_faction=FACTION_PLAYER1;enemy_plane=planes[1];enemy_plane->ob_type=PLANE;
+    enemy_plane->ob_state=FLYING;enemy_plane->ob_faction=FACTION_PLAYER2;enemy_plane->ob_symbol=consoleplayer->ob_symbol;
+    enemy_plane->ob_x=gun->ob_x+30;enemy_plane->ob_y=gun->ob_y+25;
+    enemy_plane->ob_dx=enemy_plane->ob_dy=0;enemy_plane->ob_rounds=MAXROUNDS;
+    consoleplayer->ob_x=gun->ob_x-25;countmove=3;before_shot=objbot;movetarg(gun);
+    assert(objbot!=before_shot&&gun->ob_firing==enemy_plane&&gun->ob_angle==0);
+    OBJECTS *friendly_tank=NULL;for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(ob->ob_type==TARGET&&ob->ob_orient==TARGET_TANK){friendly_tank=ob;break;}
+    assert(friendly_tank);friendly_tank->ob_faction=FACTION_PLAYER1;
+    enemy_plane->ob_x=friendly_tank->ob_x-30;enemy_plane->ob_y=friendly_tank->ob_y+25;
+    countmove=5;before_shot=objbot;movetarg(friendly_tank);
+    assert(objbot!=before_shot&&friendly_tank->ob_firing==enemy_plane&&friendly_tank->ob_angle==8);
+    enemy_plane->ob_state=CRASHED;countmove=7;before_shot=objbot;movetarg(friendly_tank);assert(objbot==before_shot);
+    puts("Friendly AA and tanks fire at live enemy computer planes, aim at the actual target, and ignore friendly/dead aircraft.");
+
+    gun->ob_faction=FACTION_PLAYER2;consoleplayer->ob_x=gun->ob_x+30;consoleplayer->ob_y=gun->ob_y+25;
+    countmove=50;WebVariant_SetEasy(true);before_shot=objbot;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
+    countmove=80;WebVariant_InitShot(gun,consoleplayer);assert(objbot!=before_shot);before_shot=objbot;
+    countmove=81;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
+    WebVariant_InitShot(consoleplayer,NULL);assert(objbot!=before_shot);
+    before_shot=objbot;countmove=86;WebVariant_InitShot(gun,consoleplayer);assert(objbot!=before_shot);
+    enemy_plane->ob_state=FLYING;enemy_plane->ob_x=consoleplayer->ob_x+110;enemy_plane->ob_y=consoleplayer->ob_y;
+    before_shot=objbot;countmove=90;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot==before_shot);
+    enemy_plane->ob_x=consoleplayer->ob_x+60;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot!=before_shot);before_shot=objbot;
+    countmove=91;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot==before_shot);
+    countmove=94;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot!=before_shot);
+    countmove=100;consoleplayer->ob_state=CRASHED;WebVariant_Apply(consoleplayer);
+    countmove=101;consoleplayer->ob_state=FLYING;WebVariant_Apply(consoleplayer);before_shot=objbot;
+    countmove=110;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
+    countmove=131;WebVariant_InitShot(gun,consoleplayer);assert(objbot!=before_shot);before_shot=objbot;
+    WebVariant_SetEasy(false);countmove=132;WebVariant_InitShot(gun,consoleplayer);assert(objbot!=before_shot);
+    puts("Easy combat: shorter hostile range, per-owner shot intervals and three-second spawn grace; player weapons and normal difficulty unchanged.");
     return 0;
 }

@@ -4,13 +4,13 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#183449"><title>Rainbow Patrol — Sopwith Tribute</title>
 <meta name="description" content="Rainbow Patrol: oma arcade-versio Sopwithin pohjalta.">
-<link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261102-playtest1">
+<link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261102-ui2">
 </head>
 <body data-edition="rainbow" data-layout="arcade" data-game-state="idle">
 <main class="game-column arcade-root" aria-label="Rainbow Patrol">
   <nav class="arcade-rail" aria-label="Pelin painikkeet">
     <button id="pause" class="pixel-icon" aria-label="Tauko" disabled><span id="pause-label">Ⅱ</span><kbd>P</kbd></button>
-    <button id="mute" class="pixel-icon" aria-pressed="true"><span id="sound-icon">◖×</span><span id="sound-label" class="sr-only">Äänet pois</span></button>
+    <button id="mute" class="pixel-icon" aria-pressed="true"><img id="sound-icon" class="speaker-icon" src="assets/sound-off.svg" alt="" aria-hidden="true"><span id="sound-label" class="sr-only">Äänet pois</span></button>
     <button data-open-panel="help" class="pixel-icon" aria-label="Ohjaus">?</button>
     <button data-open-panel="settings" class="pixel-icon" aria-label="Asetukset">⚙</button>
     <button id="fullscreen" class="pixel-icon" aria-label="Koko näyttö"><svg width="23" height="23" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" fill="none" stroke="currentColor" stroke-width="3"/></svg><span class="sr-only">Koko näyttö</span></button>
@@ -30,7 +30,7 @@
         <button id="title-fullscreen" class="menu-link" aria-pressed="false">Koko näyttö</button>
       </div>
       <p class="press-fire">↑ ↓ VALITSE · VÄLILYÖNTI / ENTER</p>
-      <button id="title-sound" class="title-sound" aria-pressed="false">ÄÄNET: POIS</button>
+      <button id="title-sound" class="title-sound" aria-pressed="false"><img id="title-sound-icon" class="speaker-icon" src="assets/sound-off.svg" alt="" aria-hidden="true"><span id="title-sound-label">ÄÄNET: POIS</span></button>
       <a class="title-exit" href="./">← SOPWITH TRIBUTE</a>
       <fieldset hidden><legend>Pelitila</legend><input type="radio" name="mode" value="practice" checked><input type="radio" name="mode" value="combat"></fieldset>
     </section>
@@ -61,10 +61,12 @@
     <section id="panel-help" class="game-layer menu-backdrop auxiliary-panel" hidden><div class="pixel-panel"><h2>OHJAUS</h2><div id="ohjeet"><dl class="controls-list">
       <div><dt>KAASU + / −</dt><dd>X / Z</dd></div><div><dt>NOKKA YLÖS / ALAS</dt><dd>, / /</dd></div><div><dt>KÄÄNNÄ KONE</dt><dd>.</dd></div><div><dt>KONEKIVÄÄRI</dt><dd>VÄLILYÖNTI</dd></div><div><dt>POMMITÄHTÄIN</dt><dd>B POHJASSA</dd></div><div><dt>PUDOTA POMMI</dt><dd>VAPAUTA B</dd></div><div><dt>PALAA TUKIKOHTAAN</dt><dd>H</dd></div><div><dt>TAUKO / ÄÄNI</dt><dd>P / S</dd></div>
       </dl><p class="tiny-text">MYÖS NUOLINÄPPÄIMET TOIMIVAT.<br>TUKIKOHTA TÄYDENTÄÄ VARUSTEET.</p></div><button data-close-panel class="pixel-button">TAKAISIN</button></div></section>
-    <section id="panel-settings" class="game-layer menu-backdrop auxiliary-panel" hidden><div class="pixel-panel"><h2>ASETUKSET</h2><div class="pixel-menu">
-      <button id="settings-sound" class="pixel-button">ÄÄNET: POIS</button>
-      <label class="level-setting" for="start-level">ALOITUSKENTTÄ<select id="start-level"><option value="1">1 · EI VASTATULTA</option><option value="2">2 · MAAKOHTEET AMPUVAT</option><option value="3">3 · VOIMAKAS VASTATULI</option></select></label>
-      <p class="tiny-text level-help">VALINTA VAIKUTTAA SEURAAVAAN LENTOON.<br>YKSINPELI: EI VIHOLLISKONEITA.</p>
+    <section id="panel-settings" class="game-layer menu-backdrop auxiliary-panel" hidden><div class="pixel-panel"><h2>ASETUKSET</h2><div class="pixel-menu settings-grid">
+      <label class="level-setting" for="language-select">KIELI<select id="language-select"><option value="auto">SELAIMEN KIELI</option><option value="en">English</option><option value="fi">Suomi</option></select></label>
+      <label class="level-setting" for="difficulty-select">VAIKEUSTASO<select id="difficulty-select"><option value="normal">NORMAALI</option><option value="easy">HELPPO</option></select></label>
+      <label class="level-setting settings-wide" for="start-level">ALOITUSKENTTÄ<select id="start-level"><option value="1">1 · EI VASTATULTA</option><option value="2">2 · MAAKOHTEET AMPUVAT</option><option value="3">3 · VOIMAKAS VASTATULI</option></select></label>
+      <p class="tiny-text level-help settings-wide">KENTTÄ JA VAIKEUSTASO: SEURAAVA LENTO.<br>YKSINPELI: EI VIHOLLISKONEITA.</p>
+      <button id="settings-sound" class="pixel-button" aria-pressed="false"><img id="settings-sound-icon" class="speaker-icon" src="assets/sound-off.svg" alt="" aria-hidden="true"><span id="settings-sound-label">ÄÄNET: POIS</span></button>
       <!-- TEMPORARY playtest control: remove before the final release. -->
       <button id="settings-trainer" class="pixel-button" aria-pressed="false" data-playtest-only title="Rajattomat elämät, pommit, ammukset ja polttoaine. Kuoleminen toimii normaalisti. Ei ennätyslistalle.">TRAINER (TESTI): POIS</button>
       <label class="pixel-toggle"><input type="checkbox" id="aim-toggle" checked><span>POMMITÄHTÄIN</span></label>
@@ -74,7 +76,7 @@
     </div><select id="palette" hidden aria-label="Klassisen version paletti"><option value="0">CGA</option></select></div></section>
     <section id="panel-scores" class="game-layer menu-backdrop auxiliary-panel" hidden><div id="leaderboard" class="pixel-panel score-panel">
       <h2>HIGH SCORES</h2><p id="scores-scope" class="tiny-text">TULOKSET TÄSSÄ SELAIMESSA</p>
-      <div class="score-modes"><label for="scores-mode" class="sr-only">Pistetilaston pelitila</label><select id="scores-mode"><option value="practice">YKSINPELI</option><option value="combat">ILMATAISTELU</option></select><button id="scores-refresh" class="pixel-icon" aria-label="Päivitä pisteet">↻</button></div>
+      <div class="score-modes"><label for="scores-mode" class="sr-only">Pistetilaston pelitila</label><select id="scores-mode"><option value="practice">YKSINPELI</option><option value="combat">ILMATAISTELU</option></select><select id="scores-difficulty" aria-label="Pistetilaston vaikeustaso"><option value="normal">NORMAALI</option><option value="easy">HELPPO</option></select><button id="scores-refresh" class="pixel-icon" aria-label="Päivitä pisteet">↻</button></div>
       <table><thead><tr><th>#</th><th>NIMI</th><th>PISTEET</th><th>KENTTÄ</th></tr></thead><tbody id="scores-rows"></tbody></table><p id="scores-status" class="tiny-text" role="status"></p>
       <div class="score-end-actions"><button id="scores-new-flight" class="pixel-button green" hidden>UUSI LENTO</button><button id="scores-main-menu" class="pixel-button" hidden>PÄÄVALIKKO</button><button id="scores-back" data-close-panel class="pixel-button green">TAKAISIN</button></div>
     </div></section>
@@ -84,5 +86,5 @@
   <div class="sr-only" aria-live="polite"><span id="status-text">PÄÄVALIKKO</span><span id="mode-label">YKSINPELI</span></div>
 </main>
 <noscript>PELAAMINEN VAATII JAVASCRIPTIN JA WEBASSEMBLY-TUEN.</noscript>
-<script src="app.js?v=20261102-playtest1"></script><script src="title-audio.js?v=20261101-v05c"></script><script src="rainbow-ui.js?v=20261102-playtest1"></script><script src="leaderboard.js?v=20261101-v05c"></script>
+<script src="i18n.js?v=20261102-ui2"></script><script src="app.js?v=20261102-ui2"></script><script src="title-audio.js?v=20261102-ui2"></script><script src="rainbow-ui.js?v=20261102-ui2"></script><script src="leaderboard.js?v=20261102-ui2"></script>
 </body></html>

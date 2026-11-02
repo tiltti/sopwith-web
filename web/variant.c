@@ -10,6 +10,9 @@
 #include "variant.h"
 
 static bool enabled;
+static bool easy_mode,player_was_dead;
+static int grace_until,fire_count;
+static struct {OBJECTS *owner;int tick;} fire_times[128];
 static int last_tick = -1;
 static int effects[WEB_EFFECT_HEADER + WEB_EFFECT_CAPACITY * WEB_EFFECT_STRIDE] = {1,0,0,WEB_EFFECT_STRIDE};
 static OBJECTS *previous[512];
@@ -30,6 +33,7 @@ static sopsym_t gun_masks[2];
 void WebVariant_SetEnabled(bool value)
 {
     enabled = value;level_ready=false;emplacement_count=0;
+    easy_mode=false;player_was_dead=false;grace_until=0;fire_count=0;
     last_tick = -1;
     previous_count = 0;
     previous_bomb_count = 0;
@@ -40,6 +44,7 @@ void WebVariant_SetEnabled(bool value)
 }
 
 bool WebVariant_IsEnabled(void) { return enabled; }
+void WebVariant_SetEasy(bool easy){easy_mode=enabled&&easy;grace_until=countmove+30;fire_count=0;}
 const int *WebVariant_Effects(void) { return effects; }
 void WebVariant_BombRelease(bool release)
 {
@@ -87,17 +92,32 @@ int WebVariant_ObjectKind(const OBJECTS *ob)
 }
 void WebVariant_TargetMask(OBJECTS *ob)
 {
-    if(WebVariant_ObjectKind(ob)!=20)return;
-    int damaged=ob->ob_state!=STANDING;
-    ob->ob_symbol=&gun_masks[damaged];
-    if(consoleplayer)ob->ob_angle=consoleplayer->ob_x<ob->ob_x?8:0;
+    if(!enabled)return;
+    int kind=WebVariant_ObjectKind(ob);
+    if(kind!=20&&ob->ob_orient!=TARGET_TANK)return;
+    if(kind==20)ob->ob_symbol=&gun_masks[ob->ob_state!=STANDING];
+    const OBJECTS *aim=ob->ob_firing;
+    if(!aim&&consoleplayer&&consoleplayer->ob_faction!=ob->ob_faction)aim=consoleplayer;
+    if(aim)ob->ob_angle=aim->ob_x<ob->ob_x?8:0;
 }
 void WebVariant_InitShot(OBJECTS *owner,OBJECTS *target)
 {
     /* Buildings are scenery/targets. Their separate ground emplacements
      * own the defensive guns; only tanks and emplacements fire. */
     if(enabled&&owner->ob_type==TARGET&&owner->ob_orient!=TARGET_TANK&&WebVariant_ObjectKind(owner)!=20)return;
+    int slot=-1;
+    if(easy_mode&&consoleplayer&&owner->ob_faction!=consoleplayer->ob_faction
+        &&(owner->ob_type==PLANE||owner->ob_type==TARGET)){
+        if(countmove<grace_until)return;
+        int reach=owner->ob_type==PLANE?96:80,interval=owner->ob_type==PLANE?4:6;
+        if(range(owner->ob_x,owner->ob_y,consoleplayer->ob_x,consoleplayer->ob_y)>reach*reach)return;
+        for(int i=0;i<fire_count;i++)if(fire_times[i].owner==owner){slot=i;break;}
+        if(slot>=0&&countmove-fire_times[slot].tick<interval)return;
+        if(slot<0&&fire_count<128){slot=fire_count++;fire_times[slot].owner=owner;fire_times[slot].tick=-1000000;}
+    }
+    OBJECTS *before=objbot;
     initshot(owner,target);
+    if(slot>=0&&objbot!=before)fire_times[slot].tick=countmove;
 }
 static bool emplacement_clear(int x)
 {
@@ -147,6 +167,7 @@ static void lower_end_buildings(void)
 static void setup_level(void)
 {
     level_ready=true;emplacement_count=0;
+    grace_until=countmove+30;fire_count=0;player_was_dead=false;
     /* Restore the continuous source landscape. The upstream initializer
      * flattens each target's footprint with abrupt vertical joins. */
     memcpy(ground,currgame->gm_ground,sizeof(*ground)*currgame->gm_max_x);
@@ -215,6 +236,9 @@ void WebVariant_Apply(OBJECTS *player)
     if (countmove == last_tick) return;
     if (countmove < last_tick){previous_count = previous_bomb_count = previous_shot_count = bomb_requests = 0;level_ready=false;}
     if(!level_ready)setup_level();
+    bool alive=player->ob_state==FLYING||player->ob_state==STALLED||player->ob_state==WOUNDED||player->ob_state==WOUNDSTALL;
+    if(alive&&player_was_dead)grace_until=countmove+30;
+    player_was_dead=!alive;
     last_tick = countmove;
     OBJECTS *current[512], *owners[128], *bombs[256], *shots[512];
     int current_count = 0, owner_count = 0, bomb_count = 0, shot_count = 0, shot_life[512];

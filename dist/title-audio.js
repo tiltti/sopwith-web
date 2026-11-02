@@ -4,7 +4,9 @@
   const toggle=document.getElementById('title-sound'),mute=document.getElementById('mute');
   let music=null,muted=mute.getAttribute('aria-pressed')==='true';
   function update(){
-    toggle.textContent=muted?'ÄÄNET: POIS':'ÄÄNET: PÄÄLLÄ';toggle.setAttribute('aria-pressed',String(!muted));
+    document.getElementById('title-sound-label').textContent=muted?'ÄÄNET: POIS':'ÄÄNET: PÄÄLLÄ';
+    document.getElementById('title-sound-icon').src='assets/sound-'+(muted?'off':'on')+'.svg';
+    toggle.setAttribute('aria-pressed',String(!muted));toggle.setAttribute('aria-label',muted?'Laita äänet päälle':'Mykistä äänet');
     const active=!muted&&document.body.dataset.gameState==='idle'&&!document.hidden;
     if(active){
       if(!music){music=new Audio('assets/audio/audition-v05/title-theme.m4a');music.loop=true;music.preload='none';music.volume=.17;}

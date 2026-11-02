@@ -9,6 +9,7 @@
 
 void WebVariant_SetEnabled(bool enabled);
 bool WebVariant_IsEnabled(void);
+void WebVariant_SetEasy(bool easy);
 void WebVariant_Apply(OBJECTS *player);
 void WebVariant_BombRelease(bool release);
 int WebVariant_GoHome(OBJECTS *player);

@@ -132,7 +132,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261102-playtest1',
+      locateFile: name => 'engine/' + name + '?v=20261102-ui2',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -153,6 +153,7 @@
     if (storage) setInterval(() => FS.syncfs(false, () => {}), 1500);
     window.sopwith = game;
     game._web_variant(params.get('edition') === 'rainbow' ? 1 : 0);
+    game._web_easy?.(params.get('edition')==='rainbow'&&params.get('difficulty')==='easy'?1:0);
     game._web_trainer(trainerEnabled ? 1 : 0);
     if(params.get('edition')==='rainbow'&&window.RainbowAudio)sampleMixer=new RainbowAudio({startup:params.get('muted')==='0'});
     if (params.get('edition') === 'rainbow' && window.RainbowRenderer) {
@@ -200,6 +201,7 @@
       canvas.dataset.planeY = String(game._web_read(2));
       canvas.dataset.bombs = String(game._web_read(3));
       canvas.dataset.fuel = String(game._web_read(4));
+      canvas.dataset.difficulty=params.get('edition')==='rainbow'&&params.get('difficulty')==='easy'?'easy':'normal';
       canvas.dataset.ammo = String(game._web_read(7));
       canvas.dataset.crashes = String(game._web_read(8));
       canvas.dataset.planeState = String(game._web_read(5));

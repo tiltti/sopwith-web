@@ -9,7 +9,11 @@ import worker from '../server/worker.js';
 const directory=mkdtempSync(join(tmpdir(),'sopwith-scores-test-')),filename=join(directory,'scores.sqlite');
 let db=new DatabaseSync(filename);
 const migrationDir=new URL('../server/drizzle/',import.meta.url);
-for(const file of readdirSync(migrationDir).filter(n=>n.endsWith('.sql')).sort())db.exec(readFileSync(new URL(file,migrationDir),'utf8'));
+for(const file of readdirSync(migrationDir).filter(n=>n.endsWith('.sql')).sort()){
+  db.exec(readFileSync(new URL(file,migrationDir),'utf8'));
+  if(file.startsWith('0000'))db.exec("INSERT INTO scores VALUES ('legacy','classic','combat','LEG',1,1,0)");
+}
+assert.equal(db.prepare("SELECT difficulty FROM scores WHERE run_id='legacy'").get().difficulty,'normal','Existing server scores migrate to normal difficulty.');
 const DB={prepare(sql){const statement=db.prepare(sql);let args=[];return {
   bind(...values){args=values;return this;},async run(){return statement.run(...args);},
   async first(){return statement.get(...args)||null;},async all(){return {results:statement.all(...args)};}
@@ -34,6 +38,11 @@ try {
   r=await call('/api/runs',{body:{edition:'rainbow',mode:'practice',large:'x'.repeat(3000)}});assert.equal(r.status,413);
   r=await call('/api/scores?edition=classic&mode=practice');assert.deepEqual(r.data.scores,[]);
   r=await call('/api/scores?edition=rainbow&mode=combat');assert.deepEqual(r.data.scores,[]);
+  r=await call('/api/runs',{body:{edition:'rainbow',mode:'practice',difficulty:'easy'}});assert.equal(r.status,201);
+  const easyTicket=r.data;r=await call('/api/scores',{body:{...entry,runId:easyTicket.id,nickname:'EAS',score:777,difficulty:'normal'},token:easyTicket.token});assert.equal(r.status,201);
+  r=await call('/api/scores?edition=rainbow&mode=practice&difficulty=easy');assert.equal(r.data.scores.length,1);assert.equal(r.data.scores[0].score,777);
+  r=await call('/api/scores?edition=rainbow&mode=practice');assert.equal(r.data.scores.length,1);assert.equal(r.data.scores[0].score,500);
+  r=await call('/api/runs',{body:{edition:'classic',mode:'practice',difficulty:'easy'}});assert.equal(r.status,400);
   db.close();db=new DatabaseSync(filename);
   r=await call('/api/scores?edition=rainbow&mode=practice');assert.equal(r.data.scores.length,1);assert.equal(r.data.scores[0].nickname,'Testipilotti');
   db.prepare('UPDATE runs SET expires_at = 0 WHERE id = ?').run(ticket.id);

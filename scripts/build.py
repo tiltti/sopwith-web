@@ -35,7 +35,7 @@ def main():
            "-sSUPPORT_LONGJMP=emscripten", "-sFORCE_FILESYSTEM", "-lidbfs.js", "-Wl,-u,ntohs",
            "-sALLOW_MEMORY_GROWTH", "-sENVIRONMENT=web", "-sMODULARIZE",
            "-sEXPORT_NAME=createSopwith", "-sINVOKE_RUN=0",
-           '-sEXPORTED_FUNCTIONS=["_main","_web_key","_web_bomb","_web_pause","_web_palette","_web_sound","_web_read","_web_trainer","_web_input_mode","_web_scene","_web_variant","_web_effects"]',
+           '-sEXPORTED_FUNCTIONS=["_main","_web_key","_web_bomb","_web_pause","_web_palette","_web_sound","_web_read","_web_trainer","_web_input_mode","_web_scene","_web_variant","_web_easy","_web_effects"]',
            '-sEXPORTED_RUNTIME_METHODS=["FS","IDBFS","callMain","HEAP32","HEAPU8"]',
            "-o", str(OUTPUT / "engine/sopwith.js")]
     if not source_only:

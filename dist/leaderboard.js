@@ -3,12 +3,13 @@
   const panel=document.getElementById('leaderboard');if(!panel)return;
   const $=id=>document.getElementById(id),frame=$('game');
   const edition=document.body.dataset.edition==='rainbow'?'rainbow':'classic';
-  let endpoint=null,ticket=null,runKey='',pending=null,trainerUsed=false,mode='practice',loading=0,boardRows=[],savedRun='';
+  let endpoint=null,ticket=null,runKey='',pending=null,trainerUsed=false,mode='practice',difficulty='normal',loading=0,boardRows=[],savedRun='';
   const arcade=document.body.dataset.layout==='arcade';
   const status=text=>{$('scores-status').textContent=text;if($('arcade-score-status'))$('arcade-score-status').textContent=text;};
   const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}};
   const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}};
-  const localKey=()=>`sopwith.scores.${edition}.${$('scores-mode').value}`;
+  const selectedDifficulty=()=>arcade&&$('scores-difficulty')?.value==='easy'?'easy':'normal';
+  const localKey=(selected=$('scores-mode').value,diff=selectedDifficulty())=>`sopwith.scores.${edition}.${selected}`+(diff==='easy'?'.easy':'');
   async function api(path,body,token) {
     const response=await fetch(endpoint+path,{method:body?'POST':'GET',cache:'no-store',
       headers:body?{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})}:undefined,
@@ -42,9 +43,9 @@
   }
   if(arcade){window.addEventListener('sopwith-initials',drawEntryBoard);$('score-name').addEventListener('input',drawEntryBoard);}
   async function refresh() {
-    await ready;const id=++loading,selected=$('scores-mode').value;
+    await ready;const id=++loading,selected=$('scores-mode').value,diff=selectedDifficulty();
     try {
-      const rows=endpoint?(await api(`/api/scores?edition=${edition}&mode=${selected}`)).scores:read(localKey(),[]);
+      const rows=endpoint?(await api(`/api/scores?edition=${edition}&mode=${selected}&difficulty=${diff}`)).scores:read(localKey(selected,diff),[]);
       if(id!==loading)return;boardRows=rows;draw(rows);drawEntryBoard();status('');
       if(arcade&&savedRun){const index=rows.findIndex(row=>row.runId===savedRun);if(index>=0&&index<10)$('scores-rows').children[index].className='current';}
     }catch{if(id===loading)status('Listan lataaminen epäonnistui. Voit yrittää uudelleen.');}
@@ -53,10 +54,11 @@
     const params=new URL(frame.src,location.href).searchParams;
     runKey=params.get('run');const key=runKey;
     ticket=null;pending=null;mode=params.get('mode')==='combat'?'combat':'practice';
+    difficulty=edition==='rainbow'&&params.get('difficulty')==='easy'?'easy':'normal';
     if($('result-score'))$('result-score').hidden=true;
     trainerUsed=params.get('trainer')==='1';$('score-form').hidden=true;
-    $('scores-mode').value=mode;await ready;refresh();
-    if(endpoint)try{const result=await api('/api/runs',{edition,mode});if(key===runKey)ticket=result;}
+    $('scores-mode').value=mode;if(arcade)$('scores-difficulty').value=difficulty;await ready;refresh();
+    if(endpoint)try{const result=await api('/api/runs',{edition,mode,difficulty});if(key===runKey)ticket=result;}
       catch{if(key===runKey)status('Pistetallennuksen yhteys ei auennut tälle lennolle.');}
   }
   window.addEventListener('message',event=>{
@@ -68,7 +70,7 @@
       trainerUsed=trainerUsed||msg.trainerUsed;
       if(trainerUsed){status('Trainer-lennon tulosta ei lisätä ennätyslistalle.');if(arcade)window.dispatchEvent(new CustomEvent('sopwith-score-saved'));return;}
       pending={score:msg.score,level:msg.level,ticks:msg.ticks,trainerUsed:false};
-      if(arcade){$('scores-mode').value=mode;drawEntryBoard();refresh();}
+      if(arcade){$('scores-mode').value=mode;$('scores-difficulty').value=difficulty;drawEntryBoard();refresh();}
       $('score-result').textContent=`Lennon tulos: ${msg.score} pistettä.`;
       $('score-consent').textContent=endpoint?'Nimimerkkisi ja tuloksesi näkyvät kaikille pelaajille.':'Tulos tallennetaan tähän selaimeen.';
       $('score-form').hidden=false;
@@ -86,13 +88,13 @@
         if(!ticket)throw new Error('Run connection unavailable.');
         await api('/api/scores',{...result,nickname,runId:ticket.id},ticket.token);
       } else {
-        const storageKey=`sopwith.scores.${edition}.${mode}`,rows=read(storageKey,[]);
+        const storageKey=localKey(mode,difficulty),rows=read(storageKey,[]);
         if(!rows.some(r=>r.runId===key))rows.push({...result,nickname,runId:key,finished_at:Date.now()});
         rows.sort((a,b)=>b.score-a.score||a.finished_at-b.finished_at);
         if(!write(storageKey,rows.slice(0,20)))throw new Error('Browser storage unavailable.');
       }
       write('sopwith.score-name',nickname);
-      if(runKey===key){pending=null;$('score-form').hidden=true;$('scores-mode').value=mode;}
+      if(runKey===key){pending=null;$('score-form').hidden=true;$('scores-mode').value=mode;if(arcade)$('scores-difficulty').value=difficulty;}
       savedRun=key;await refresh();status('Tulos tallennettu.');if(arcade)window.dispatchEvent(new CustomEvent('sopwith-score-saved'));
     } catch {status('Tulosta ei saatu tallennettua. Tulos säilyy lomakkeella uutta yritystä varten.');}
     finally{$('score-submit').disabled=false;}
@@ -103,6 +105,7 @@
     else {panel.scrollIntoView({behavior:'smooth',block:'center'});$('score-name').focus({preventScroll:true});}
   });
   $('scores-mode').addEventListener('change',refresh);
+  if(arcade)$('scores-difficulty').addEventListener('change',refresh);
   setInterval(()=>{if(!document.hidden&&endpoint)refresh();},30000);
   refresh();
 })();

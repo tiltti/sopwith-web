@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "date": "2026-11-01",
+  "date": "2026-11-02",
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 10649,
-      "sha256": "32f4b43c66830002f1925954ca8ae3d8cdd7e1ab2b8dd8dab23f765c692ffd36"
+      "bytes": 10909,
+      "sha256": "04a6de6d96559af4332f001bdf1c7b8e35718e70dd38daa0dbfbddd083f259c2"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -211,6 +211,16 @@
       "path": "dist/assets/rainbow-sprites-v1.png",
       "bytes": 1668380,
       "sha256": "0d633559780c12cdeff6ec735962627cfcd3c6862fc23d7463570e882df7bfd2"
+    },
+    {
+      "path": "dist/assets/sound-off.svg",
+      "bytes": 490,
+      "sha256": "8c16205b744450dc2ee3fd37e7ef89b8064cd4d13cf282d3d67f262780cee429"
+    },
+    {
+      "path": "dist/assets/sound-on.svg",
+      "bytes": 402,
+      "sha256": "dbba82f63d269ee09d9092f6f279d7dd3191efaf56dcf2aebfd79534ab366301"
     },
     {
       "path": "dist/assets/tribute-mark.svg",

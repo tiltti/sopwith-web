@@ -76,6 +76,17 @@ screens use the game's own style. Fullscreen transitions do not pause the game
 through a transient visibility event; changing tabs normally still does.
 The splash menu also has a KOKO NÄYTTÖ toggle before starting a game; its label
 changes to IKKUNATILA while fullscreen is active.
+Rainbow menus offer English/Finnish and browser-language selection, remembered
+locally. Finnish browsers start in Finnish; other languages fall back to English.
+Sound controls use matching speaker-on/muted SVG images on the splash, rail and
+settings screen, with a visible on/off label and a green enabled state.
+
+Normal difficulty retains the existing combat tempo. Optional Easy difficulty
+limits hostile aircraft shots to one per 0.4 seconds within 96 native pixels and
+ground shots to one per 0.6 seconds within 80 pixels. Hostiles wait three seconds
+after a player spawn before firing. Player weapons, flight physics, crashes and
+friendly defenses keep their usual rules. Friendly tanks and AA now acquire
+hostile computer planes in single-player too and aim at their actual target.
 
 `dist/rainbow-audio.js` uses five named Web Audio voice slots. Recorded CC0
 gunfire, impacts, explosions, cow, bird and jingle cues are bundled alongside
@@ -118,6 +129,8 @@ Both editions now have separate practice/combat boards. Without a shared
 endpoint, scores persist in this browser and the UI explicitly says so. The
 player saves a finished run with a nickname; runs that used the trainer are
 excluded, even if the trainer was subsequently disabled.
+Rainbow Easy and Normal boards are also separate. Existing browser scores keep
+their original key and appear on Normal; Easy uses a new local key.
 
 The shared Worker/D1 service is implemented in `server/` and has been deployed
 owner-private through Sites. Public service access requires explicit approval;
@@ -205,6 +218,7 @@ node tests/rainbow-assets.mjs
 node tests/rainbow-audio.mjs
 node tests/rainbow-timeline.mjs
 node tests/title-audio.mjs
+node tests/i18n.mjs
 node tests/leaderboard.mjs
 node tests/leaderboard-ui.mjs
 python3 scripts/test_trainer.py

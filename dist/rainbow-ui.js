@@ -52,7 +52,12 @@
   window.addEventListener('sopwith-score-saved',()=>openPanel('scores'));
   $('settings-fullscreen').addEventListener('click',()=>{const resume=resumeAfterPanel;closePanel();if(resume)$('resume').click();$('fullscreen').click();});
   $('settings-sound').addEventListener('click',()=>{$('mute').click();syncSettings();});
-  function syncSettings() {$('settings-sound').textContent='ÄÄNET: '+($('mute').getAttribute('aria-pressed')==='true'?'POIS':'PÄÄLLÄ');}
+  function syncSettings() {
+    const muted=$('mute').getAttribute('aria-pressed')==='true';
+    $('settings-sound-label').textContent='ÄÄNET: '+(muted?'POIS':'PÄÄLLÄ');
+    $('settings-sound-icon').src='assets/sound-'+(muted?'off':'on')+'.svg';
+    $('settings-sound').setAttribute('aria-pressed',String(!muted));
+  }
   new MutationObserver(syncSettings).observe($('mute'),{attributes:true,attributeFilter:['aria-pressed']});
   function initials() {return $('score-name').value.toUpperCase().replace(/[^A-Z0-9]/g,'').padEnd(3,'A').slice(0,3);}
   function paintInitials() {
@@ -95,6 +100,9 @@
     if(panel&&event.code==='Escape'){event.preventDefault();event.stopImmediatePropagation();const end=panel==='scores'&&document.body.dataset.gameState==='ended';closePanel();if(end)$('restart').click();return;}
     if(['INPUT','SELECT','TEXTAREA'].includes(event.target.tagName))return;
     items=menuItems();if(!items.length)return;
+    if(event.target.tagName==='BUTTON'){
+      const focused=items.indexOf(event.target);if(focused<0)return;selection=focused;
+    }
     if(['ArrowUp','ArrowDown','Enter','Space'].includes(event.code)) {
       event.preventDefault();event.stopImmediatePropagation();if(event.repeat)return;
       if(event.code==='ArrowUp')select(selection-1,true);

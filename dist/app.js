@@ -6,6 +6,7 @@
   const aimToggle = edition === 'rainbow' ? $('aim-toggle') : null;
   const startLevel = edition === 'rainbow' ? $('start-level') : null;
   const trainerToggle = edition === 'rainbow' ? $('settings-trainer') : null;
+  const difficultySelect=edition==='rainbow'?$('difficulty-select'):null;
   const keys = { ArrowUp:54, Comma:54, ArrowDown:56, Slash:56, ArrowRight:27, KeyX:27, ArrowLeft:29, KeyZ:29, Period:55, KeyB:5, Space:44, KeyH:11, KeyS:22 };
   let state = 'idle', muted = true, bootTimer, mode = 'practice';
   let inputMode = 0, trainerEnabled = false;
@@ -31,7 +32,8 @@
     muted = value;
     $('mute').setAttribute('aria-pressed', String(value));
     $('sound-label').textContent = value ? 'Äänet pois' : 'Äänet päällä';
-    $('sound-icon').textContent = value ? '◖×' : '◖))';
+    if(edition==='rainbow')$('sound-icon').src='assets/sound-'+(value?'off':'on')+'.svg';
+    else $('sound-icon').textContent = value ? '◖×' : '◖))';
     $('mute').setAttribute('aria-label', value ? 'Laita äänet päälle' : 'Mykistä äänet');
     post('mute', { value });
     if(document.body?.dataset.layout==='arcade')window.dispatchEvent?.(new CustomEvent('sopwith-mute',{detail:{muted:value}}));
@@ -53,7 +55,7 @@
     $('loading-text').textContent = 'Ladataan peliä…';
     $('mode-label').textContent = mode === 'combat' ? '/ ILMATAISTELU' : edition==='rainbow'?'/ YKSINPELI':'/ HARJOITTELU';
     frame.hidden = false;
-    const levelQuery=startLevel?'&level='+(['1','2','3'].includes(startLevel.value)?startLevel.value:'1'):'';
+    const levelQuery=startLevel?'&level='+(['1','2','3'].includes(startLevel.value)?startLevel.value:'1')+'&difficulty='+(difficultySelect?.value==='easy'?'easy':'normal'):'';
     frame.src = `runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&trainer=${trainerEnabled ? 1 : 0}&edition=${edition}&aim=${aimToggle?.checked === false ? 0 : 1}&run=${Date.now()}${levelQuery}`;
     clearTimeout(bootTimer);
     bootTimer = setTimeout(() => fail('Pelin lataaminen kesti liian kauan. Tarkista yhteys ja yritä uudelleen.'), 45000);
@@ -126,6 +128,10 @@
     startLevel.addEventListener('change',()=>savePref('rainbow.start-level',startLevel.value));
   }
   trainerToggle?.addEventListener('click',()=>window.trainer(!trainerEnabled));syncTrainer();
+  if(difficultySelect){
+    difficultySelect.value=loadPref('rainbow.difficulty','normal')==='easy'?'easy':'normal';
+    difficultySelect.addEventListener('change',()=>savePref('rainbow.difficulty',difficultySelect.value));
+  }
   if(aimToggle) {
     aimToggle.checked=loadPref('rainbow.aim','1')!=='0';
     aimToggle.addEventListener('change',()=>{

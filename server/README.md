@@ -26,3 +26,12 @@ Only activate the endpoint after the service's public access is approved.
 
 Tests use real in-memory SQLite through Node's built-in `node:sqlite` module.
 They do not insert test scores into the public leaderboard.
+
+## Difficulty boards
+
+Rainbow supports `difficulty: "normal" | "easy"` on run creation and the
+`difficulty` query parameter on score reads. Missing values mean Normal.
+Classic supports Normal only. Scores inherit difficulty from the run ticket.
+Apply `drizzle/0001_combat_difficulty.sql` before deploying the updated worker;
+it preserves existing rows as Normal. This source update does not deploy the
+private service or change its public access.

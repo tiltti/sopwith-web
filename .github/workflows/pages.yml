@@ -46,6 +46,7 @@ jobs:
           node tests/rainbow-audio.mjs
           node tests/rainbow-timeline.mjs
           node tests/title-audio.mjs
+          node tests/i18n.mjs
           node tests/leaderboard.mjs
           node tests/leaderboard-ui.mjs
           python scripts/test_trainer.py
@@ -65,6 +66,7 @@ jobs:
           node --check dist/rainbow-timeline.js
           node --check dist/rainbow-ui.js
           node --check dist/title-audio.js
+          node --check dist/i18n.js
           node --check dist/look-lab.js
           node --check dist/leaderboard.js
           python scripts/verify_release.py
