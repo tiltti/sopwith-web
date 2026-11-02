@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),cache=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),cache=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -30,7 +30,7 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=13,okay=true;
+    let remaining=14,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
@@ -41,11 +41,13 @@
     canopies.onload=()=>done(canopies.width===1536&&canopies.height===1024);
     badge.onload=()=>done(badge.width===1536&&badge.height===1024);
     cockpit.onload=()=>done(cockpit.width===1536&&cockpit.height===1024);
+    turf.onload=()=>done(turf.width===1536&&turf.height===1024);
     roll.onload=()=>done(roll.width===1536&&roll.height===1024);
     scenery.onload=()=>done(scenery.width===1536&&scenery.height===1024);
     clouds.onload=()=>done(clouds.width===1536&&clouds.height===1024);
     soil.onload=()=>done(soil.width===1536&&soil.height===1024);
-    roll.onerror=scenery.onerror=clouds.onerror=soil.onerror=atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=canopies.onerror=badge.onerror=cockpit.onerror=()=>done(false);
+    turf.onerror=roll.onerror=scenery.onerror=clouds.onerror=soil.onerror=atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=canopies.onerror=badge.onerror=cockpit.onerror=()=>done(false);
+    turf.src='assets/rainbow-turf-v1.png';
     roll.src='assets/rainbow-aircraft-roll-v1.png';
     scenery.src='assets/rainbow-scenery-v1.png';clouds.src='assets/rainbow-clouds-v1.png';soil.src='assets/rainbow-soil-v1.png';
     atlas.src='assets/rainbow-sprites-v1.png';
@@ -149,7 +151,7 @@
     out.getContext('2d').drawImage(roll,frame*384,row*512,384,512,0,0,out.width,out.height);cache.set(key,out);return out;
   }
   function sceneryArt(kind,index=0){
-    if(!loaded)return null;if(kind==='background')return scenery;if(kind==='soil')return soil;
+    if(!loaded)return null;if(kind==='background')return scenery;if(kind==='soil')return soil;if(kind==='turf')return turf;
     const crops=[[35,195,430,150],[0,165,512,195],[18,105,490,280],[35,805,440,160],[535,785,470,180],[1060,830,430,150]];
     index=((index%6)+6)%6;const key='scenery:'+index;if(cache.has(key))return cache.get(key);
     const out=document.createElement('canvas'),crop=crops[index];out.width=crop[2];out.height=crop[3];out.getContext('2d').drawImage(clouds,...crop,0,0,out.width,out.height);cache.set(key,out);return out;

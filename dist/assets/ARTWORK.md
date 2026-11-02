@@ -158,7 +158,7 @@ measured sole baseline, used by the renderer to anchor feet to terrain.
 
 ## Painted coast, cockpit and flight animation (2026-11-02)
 
-The nine full PNG outputs below were made with the built-in OpenAI imagegen
+The ten full PNG outputs below were made with the built-in OpenAI imagegen
  tool, copied unchanged into this project and distributed with the GPL-2.0-or-later
  game. No Wings or RETRY assets were copied. The selected environment concept
 was this project's own generated coastal scene, explicitly selected by the user
@@ -168,6 +168,7 @@ with an image attachment; its image takes precedence over earlier A/B/C labels.
 | --- | --- |
 | `rainbow-scenery-v1.png` | Distant coast / blue sky, slower scrolling layer |
 | `rainbow-clouds-v1.png` | Three painted clouds and three meadow decorations |
+| `rainbow-turf-v1.png` | Painted meadow edge warped along the real ground surface |
 | `rainbow-soil-v1.png` | World-anchored soil texture clipped to native mutable ground |
 | `rainbow-cockpit-v1.png` | Wood/leather panel, brass instrument faces and plates |
 | `rainbow-wing-badge-v1.png` | Victory / pause wings, live text in the enamel centre |

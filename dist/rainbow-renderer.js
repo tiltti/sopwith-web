@@ -185,14 +185,15 @@
         c.lineTo(ground.length*2,H);c.lineTo(0,H);c.closePath();c.clip();
         const span=512,offset=(camera*2)%span;
         for(let x=-offset;x<ground.length*2;x+=span)for(let y=0;y<H;y+=span*2/3)c.drawImage(soil,x,y,span,span*2/3);
-        // Fine grass roots and blades share the surface, including bomb craters.
-        for(let x=0;x<ground.length*2;x+=1/DETAIL){
-          const i=Math.floor(x/2),f=x/2-i,y=top(i)*(1-f)+top(i+1)*f,wx=Math.floor(camera*2+x),noise=((wx*1103515245+12345)>>>8)&255;
-          c.fillStyle=noise<60?'#826b31':'#556327';c.fillRect(x,y,1/DETAIL,10+noise%3);
-          c.fillStyle=noise<90?'#a9b84c':noise<180?'#859d35':'#b6be55';c.fillRect(x,y,1/DETAIL,5+noise%4);
-          c.fillStyle='#cfbf67';if(noise<55)c.fillRect(x,y,1/DETAIL,1);
-        }
         c.restore();
+        // Warp the painted sod strip column by column, using one world-fixed
+        // texture coordinate and the same continuous native surface as soil.
+        const turf=window.RainbowAssets?.sceneryArt?.('turf');
+        if(turf)for(let x=0;x<ground.length*2;x++){
+          const i=Math.floor(x/2),f=x/2-i,y=top(i)*(1-f)+top(i+1)*f;
+          const sx=((camera*2+x)%512+512)%512*3;
+          c.drawImage(turf,sx,400,3,320,x,y-4.5,1,16);
+        }
         const first=Math.ceil(camera/37)*37;
         for(let wx=first;wx<camera+ground.length;wx+=37){
           const i=Math.floor(wx-camera);if(i<3||i>=ground.length-3||Math.abs(ground[i-2]-ground[i+2])>4)continue;

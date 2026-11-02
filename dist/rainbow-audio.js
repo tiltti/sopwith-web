@@ -31,7 +31,7 @@
           this.filter=this.context.createBiquadFilter();this.filter.type='lowpass';this.filter.frequency.value=6500;
           this.master.connect(this.filter);this.filter.connect(this.context.destination);
           this.loading=Promise.all(Object.entries(SAMPLE).map(async([name,file])=>{
-            const response=await this.fetch(name==='dive'?file:`assets/audio/${file}.wav?v=20261102-painted1`);
+            const response=await this.fetch(name==='dive'?file:`assets/audio/${file}.wav?v=20261102-painted2`);
             if(!response.ok)throw new Error(`Sample unavailable: ${file}`);
             this.buffers[name]=await this.context.decodeAudioData(await response.arrayBuffer());
           }));

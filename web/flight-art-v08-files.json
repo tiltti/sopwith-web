@@ -74,6 +74,14 @@
       "mode": "RGBA",
       "bytes": 2017945,
       "sha256": "8ae6631214960c0182c981048aff1e97d588197f9c424c3695e5feaea99017fe"
+    },
+    {
+      "path": "dist/assets/rainbow-turf-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "bytes": 1556515,
+      "sha256": "f49a5bf9bd8e39fbe911901edfa6112bdaca50678121225fd7c920ec0aaf2658"
     }
   ]
 }

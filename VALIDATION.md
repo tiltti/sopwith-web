@@ -10,6 +10,8 @@
   Classic filtering. Existing real rapid-salvo and pilot-collision tests pass.
 - Native trainer and scene tests pass. Return-to-base audit remains Rainbow
   30/30 successes, Classic baseline 28/30 (the two existing failures retained).
+- Final turf edge uses an immutable painted sprite strip, warped onto the
+  same height field; the earlier striped procedural fringe was removed.
 - Fresh local WASM build passed. The existing upstream signed-char warning is
   unchanged. All media remain local; no actual speaker output or fullscreen
   transitions were used during this round of QA.

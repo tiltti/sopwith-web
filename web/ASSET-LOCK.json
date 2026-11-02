@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 13811,
-      "sha256": "bc2ac8b59e02876ca6063d22052bba5d4dc416e79c91f25db9efa646ec06fcbd"
+      "bytes": 13895,
+      "sha256": "b1e9a0375eabc47609e0ea3b7ae29a3eca86f116a53abf5929724ab096cd60c3"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -296,6 +296,11 @@
       "path": "dist/assets/rainbow-sprites-v1.png",
       "bytes": 1668380,
       "sha256": "0d633559780c12cdeff6ec735962627cfcd3c6862fc23d7463570e882df7bfd2"
+    },
+    {
+      "path": "dist/assets/rainbow-turf-v1.png",
+      "bytes": 1556515,
+      "sha256": "f49a5bf9bd8e39fbe911901edfa6112bdaca50678121225fd7c920ec0aaf2658"
     },
     {
       "path": "dist/assets/rainbow-wing-badge-v1.png",
