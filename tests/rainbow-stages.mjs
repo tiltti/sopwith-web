@@ -7,5 +7,6 @@ for(let t=200;t<=1000;t+=100)stages.update(scene,t);
 const remaining=stages.remaining;for(let t=1100;t<=3000;t+=100)stages.update(scene,t,true);assert.equal(stages.remaining,remaining);
 for(let t=3100;t<=4400;t+=100)stages.update(scene,t);assert.equal(stages.remaining,0);
 scene[12]=1;stages.update(scene,4500);assert.equal(stages.remaining,0);
-scene[12]=0;scene[18]=1;scene[1]=0;assert.equal(stages.update(scene,4600).level,2);assert.equal(stages.remaining,2200);
+scene[12]=0;scene[18]=1;scene[1]=0;assert.equal(stages.update(scene,4600).blocked,false,'Native camera initialization must finish before the next READY hold.');
+scene[1]=1;assert.equal(stages.update(scene,4700).level,2);assert.equal(stages.remaining,2200);
 console.log('READY: first/new level, 2.2-second native hold, pause-safe countdown and no win interruption verified.');

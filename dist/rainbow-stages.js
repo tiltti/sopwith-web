@@ -5,7 +5,9 @@
     constructor(){this.level=null;this.tick=-1;this.remaining=0;this.at=null;}
     update(scene,now,paused=false){
       const valid=scene[3]>0,playing=scene[12]===0;
-      if(valid&&playing&&(this.level!==scene[18]||scene[1]<this.tick)){
+      // Tick zero can expose initialized objects before native initdisp has
+      // positioned the camera. Hold after the first complete flight step.
+      if(valid&&playing&&scene[1]>=1&&(this.level!==scene[18]||scene[1]<this.tick)){
         this.level=scene[18];this.remaining=2200;this.at=now;
       }
       if(valid){this.tick=scene[1];if(!playing)this.remaining=0;}

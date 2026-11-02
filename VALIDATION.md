@@ -16,8 +16,10 @@
 - Original SVG sheets supply separate rear-view aircraft and faction-specific
   pilot poses. Browser checks use a paused native scene plus explicitly edited
   preview copies; those preview copies are not a gameplay simulation. Actual
-  runner inspection separately verified READY LEVEL 1 at native tick 0, then
-  advancing ticks after release, loaded artwork, and silent audio.
+  runner inspection separately verified READY LEVEL 1, then
+  advancing ticks after release, loaded artwork, and silent audio. Public QA
+  caught tick-zero camera initialization; READY now waits for the first
+  complete native flight tick and a regression test covers that ordering.
 - Mock mixer tests verify licensed human/German vocal samples, cinematic dive
   loop/crash handoff, once-per-win fanfare/march and no mute/repaint replay.
   Sample format/source digests are verified; no audible review was performed.
