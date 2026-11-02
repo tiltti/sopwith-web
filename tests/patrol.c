@@ -41,7 +41,7 @@ int main(void){
       man=eject((faction_t)faction);int walked=0;
       for(int n=0;n<1000&&WebVariant_ObjectKind(man)==21;n++){
         ++countmove;man->ob_movef(man);
-        if(WebVariant_ObjectKind(man)==21&&man->ob_state==STANDING){assert(man->ob_y-man->ob_symbol->h==ground[man->ob_x+3]+1);walked+=man->ob_orient==3;}
+        if(WebVariant_ObjectKind(man)==21&&man->ob_state==STANDING){assert(man->ob_y-man->ob_symbol->h==ground[man->ob_x+3]);walked+=man->ob_orient==3;}
       }
       assert(walked>20&&WebVariant_ObjectKind(man)!=21);
     }

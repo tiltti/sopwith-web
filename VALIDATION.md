@@ -1,5 +1,26 @@
 # Validation
 
+## 2026-11-02: Restore pilot artwork, ground contact and compact READY
+
+- Restored airborne pilots from the unchanged original defense/pilot raster
+  atlas. New ground poses use built-in image_gen with the same aviator identity
+  and painted detail. Raw RGBA output, exact prompt and source/output digests
+  are retained; the rejected geometric pilot SVG is removed.
+- Native foot altitude is now exactly the terrain height. Ground rendering
+  samples current terrain at the interpolated foot position, avoiding altitude
+  interpolation gaps on slopes. Fixed sprite cell/sole coordinates remove
+  transparent bottom padding and per-frame anchor shifts. Tests cover slopes
+  and both native factions reaching their own airfields.
+- Pilot hurt events produce audio only. No AARGH/HIMMEL text or floating score
+  popup is drawn; score changes and voiced reactions remain functional.
+- READY is a small shadowed text line, without a panel, dimmer or progress bar;
+  its native hold is reduced from 2.2 seconds to 0.7 seconds. The pause-safe
+  timer, first-tick camera ordering and absence of large rectangles are tested.
+- Rainbow loads its sprite images before beginning the first native flight, so
+  the shorter READY cue does not expose temporary native-art fallback frames.
+- Browser previews checked the restored original canopy, the new raster walk
+  cycle and foot contact on both the ascending and descending runway slopes.
+
 ## 2026-11-02: Mission transitions, real pilots and rapid-salvo fix
 
 - Native tests run five-bomb release/movement/collision salvos for 16 heading/

@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-02",
+  "tool": "image_gen.imagegen (built-in)",
+  "intent": "identity-preserve reference / new ground poses",
+  "reference": "dist/assets/rainbow-defense-pilots-v1.png",
+  "referenceSha256": "1c0b27472e3d98fcca86cb569329c548485919304dcedc047e44aa50d518f12c",
+  "output": "dist/assets/rainbow-pilot-walk-v3.png",
+  "sha256": "291a84e6142cb0bf68d02e5f3c9c1d567b28c5811fa56908f6cab86998b2a955",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "transparentBackground": true,
+  "rawOutputPreserved": true,
+  "prompt": "Use case: identity-preserve. Asset type: ONE transparent PNG sprite sheet of ground animation frames for the SAME aviator pictured at the bottom of the reference image. Reference is character identity and detailed pixel-painting style only; do not reproduce the guns or parachutes. Create 8 isolated full-body sprites in an exact 4-column, 2-row evenly spaced grid, on a truly transparent background. Each cell is equal size. Face right / side three-quarter view throughout. Top row: standing relaxed, walking right left boot contacting ground, walking passing pose, walking right opposite boot contacting ground. Bottom row: second passing walk pose, standing aiming a short period rifle right, stumbling/falling sideways, lying on side. Every upright sprite has the soles on the SAME cell baseline, with generous transparent margins. Character invariant: brown leather pilot helmet, large round goggles, warm brown flight suit, cream scarf, olive parachute backpack and harness, dark leather boots, expressive small face. Keep the reference's rich Amiga adventure-game pixel-art shading and textured illustrated detail, clear contours and warm palette. Same body proportions and scale in each cell. This is detailed painted raster pixel art, NOT flat vector art, NOT geometric block people, NOT stick figures or low-resolution placeholder sprites. Scarf moves subtly with walking. No canopy, no ropes, no guns from the reference, no scenery, no floor, no cast shadow, no text, no labels, no borders, no watermark. Landscape sheet, preferred 1536x1024, each cell 384x512. Do not change the character into a uniformed infantryman.",
+  "licensing": "Project artwork distributed with the GPL-2.0-or-later game; no third-party visual material."
+}

@@ -117,8 +117,12 @@ provider renditions, modifications, source URLs and hashes are recorded in
 
 ## Rainbow mission and pilot update
 
-Original rear-view aircraft and animated pilot SVG artwork are GPL-2.0-or-later,
-created as project-native vector code by Sopwith Web contributors (2026).
+Original rear-view aircraft SVG artwork is GPL-2.0-or-later, created as
+project-native vector code by Sopwith Web contributors (2026). Ground pilot
+poses were created with built-in OpenAI image_gen using the project's existing
+pilot artwork as reference. The complete raw output, generation prompt and
+provenance are distributed with the GPL-2.0-or-later game. Airborne pilots use
+the original generated pilot atlas, unchanged.
 
 Pilot hurt voice: **EZduzziteh, Hurt Sound Effects**, CC0,
 https://opengameart.org/content/hurt-sound-effects .

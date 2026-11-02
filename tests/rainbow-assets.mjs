@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 const sources=[],draws=[],rotations=[],panels=[];
-class Image {width=1254;height=1254;set src(value){if(value.includes('patrol-pilots')){this.width=320;this.height=128;}else if(value.includes('departure')){this.width=288;this.height=64;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
+class Image {width=1254;height=1254;set src(value){if(value.includes('pilot-walk-v3')){this.width=1536;this.height=1024;}else if(value.includes('departure')){this.width=288;this.height=64;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
 const scope={window:{},Image,document:{createElement:()=>({getContext:()=>({
   drawImage(...args){draws.push(args);},fillRect(...args){panels.push([...args,this.fillStyle]);},translate(){},rotate(a){rotations.push(a);},scale(){}})})}};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-assets.js',import.meta.url),'utf8'),scope);
@@ -45,3 +45,8 @@ console.log('Ground teams: faction-specific painted panels and distinct sprite c
 const standing=assets.pilotFrame(0,1),walking=assets.pilotFrame(1,1),hostile=assets.pilotFrame(1,2),rear=assets.departurePose(1);
 assert.notEqual(standing,walking);assert.notEqual(walking,hostile);assert.equal(rear.width,288);
 console.log("Pilots/departure: distinct walk/team poses and padded rear-view airframe assets verified.");
+
+const chute=assets.pilotPose(1);assert.equal(chute.worldWidth,24);
+assert.ok(draws.some(d=>d[1]===570&&d[2]===490),'Airborne pilots retain the original detailed parachute crop.');
+assert.equal(walking.worldHeight,16);assert.equal(standing.worldHeight,16);
+console.log('Original airborne raster poses restored; detailed ground frames share one boot baseline and body scale.');

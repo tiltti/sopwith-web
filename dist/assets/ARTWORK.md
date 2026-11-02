@@ -142,8 +142,16 @@ imagegen output or artwork copied from another game.
 ## Mission / pilot SVG sheets (2026-11-02)
 
 `patrol-departure-v1.svg` (288×64) contains three original rear-view biplane
-frames. `patrol-pilots-v2.svg` (320×128) contains ten poses for each of two
-factions: standing, walking, rifle, casualty, freefall and opening canopy.
-Original code-authored artwork, GPL-2.0-or-later; no RETRY or other game art is
-included. Reproduce with `scripts/prepare_patrol_art.py`. The images are
-rasterized at renderer detail 3; native pilot masks remain separate game data.
+frames, GPL-2.0-or-later; reproduce with `scripts/prepare_patrol_art.py`.
+
+The rejected geometric pilot SVG sheet has been removed. Airborne pilots again
+use the original `rainbow-defense-pilots-v1.png` crops above, unchanged.
+
+`rainbow-pilot-walk-v3.png` (1536×1024, transparent RGBA) was created with the
+built-in OpenAI image_gen tool on 2026-11-02, using that original pilot atlas as
+a character/style reference. It preserves the brown suit, goggles, scarf and
+backpack in eight ground poses on a 4×2 grid. The unmodified complete tool output
+is included; the exact prompt, reference/output hashes and dimensions are in
+`web/pilot-walk-v3-generation.json`. There is no third-party reference art. The
+sheet is distributed with the GPL-2.0-or-later game. Every cell has the same
+measured sole baseline, used by the renderer to anchor feet to terrain.

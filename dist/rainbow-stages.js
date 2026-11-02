@@ -8,12 +8,12 @@
       // Tick zero can expose initialized objects before native initdisp has
       // positioned the camera. Hold after the first complete flight step.
       if(valid&&playing&&scene[1]>=1&&(this.level!==scene[18]||scene[1]<this.tick)){
-        this.level=scene[18];this.remaining=2200;this.at=now;
+        this.level=scene[18];this.remaining=700;this.at=now;
       }
       if(valid){this.tick=scene[1];if(!playing)this.remaining=0;}
       if(this.at!==null&&!paused)this.remaining=Math.max(0,this.remaining-Math.max(0,Math.min(100,now-this.at)));
       this.at=now;
-      return {blocked:this.remaining>0,level:this.level+1,progress:1-this.remaining/2200};
+      return {blocked:this.remaining>0,level:this.level+1,progress:1-this.remaining/700};
     }
   }
   window.RainbowStages=RainbowStages;

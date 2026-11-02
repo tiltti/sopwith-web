@@ -2,13 +2,13 @@
 <style>body{margin:0;padding:16px;background:#19374b;color:#fff2ce;font:14px monospace}h1{font-size:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}figure{margin:0}canvas{display:block;width:100%;height:auto}figcaption{padding:8px 0}button{padding:8px;margin:4px;background:#f1ba43;color:#263b55;border:2px solid #ffed9b;font:inherit}#native{display:none}pre{white-space:pre-wrap}</style></head><body>
 <h1>Development check — native scene, new mission art and pilot poses, audio off</h1>
 <button id="ready-two">READY LEVEL 2</button><button id="departure-next">DEPARTURE +2 SECONDS</button><button id="walk-next">WALK NEXT FRAME</button>
-<div class="grid"><figure><canvas id="ready"></canvas><figcaption>READY: the native clock is held before flight</figcaption></figure><figure><canvas id="departure"></canvas><figcaption>Mission complete: dedicated rear airframe recedes into the horizon</figcaption></figure><figure><canvas id="pilots"></canvas><figcaption>Open canopy, standing/armed and walking pilot — native object records</figcaption></figure><figure><img src="assets/patrol-pilots-v2.svg" width="640" style="width:100%;image-rendering:pixelated;background:#64bce0"><figcaption>Original team-specific pilot animation sheet</figcaption></figure></div>
+<div class="grid"><figure><canvas id="ready"></canvas><figcaption>READY: the native clock is held before flight</figcaption></figure><figure><canvas id="departure"></canvas><figcaption>Mission complete: dedicated rear airframe recedes into the horizon</figcaption></figure><figure><canvas id="pilots"></canvas><figcaption>Open canopy, standing/armed and walking pilot — native object records</figcaption></figure><figure><img src="assets/rainbow-pilot-walk-v3.png" width="640" style="width:100%;image-rendering:pixelated;background:#64bce0"><figcaption>Detailed raster walking poses of the original aviator</figcaption></figure></div>
 <pre id="status">Loading native game…</pre><canvas id="native"></canvas>
-<script src="engine/sopwith.js?v=20261102-patrol6"></script><script src="rainbow-assets.js?v=20261102-patrol6"></script><script src="rainbow-renderer.js?v=20261102-patrol6"></script>
+<script src="engine/sopwith.js?v=20261102-patrol7"></script><script src="rainbow-assets.js?v=20261102-patrol7"></script><script src="rainbow-renderer.js?v=20261102-patrol7"></script>
 <script type="module">
 try{
  await RainbowAssets.ready;
- const game=await createSopwith({canvas:document.getElementById('native'),locateFile:n=>'engine/'+n+'?v=20261102-patrol6',print(){},printErr:console.warn,setStatus(){}});
+ const game=await createSopwith({canvas:document.getElementById('native'),locateFile:n=>'engine/'+n+'?v=20261102-patrol7',print(){},printErr:console.warn,setStatus(){}});
  game.FS.mkdirTree('/libsdl/SDL Sopwith');game._web_variant(1);game._web_sound(0);game.callMain(['-q','-s']);
  const poll=setInterval(()=>{
   const ptr=game._web_scene()>>>2,source=game.HEAP32.slice(ptr,ptr+RainbowRenderer.LENGTH);if(!source[3])return;
@@ -19,8 +19,8 @@ try{
   departure.drawScene(winning,game.HEAPU8,false,null,terrain);let departureAge=12;
   const fly=()=>{winning[1]=10+departureAge;departure.drawScene(winning,game.HEAPU8,false,null,terrain);};fly();
   const scene=source.slice();let n=scene[14];
-  for(const [x,phase,faction] of [[source[4]-40,1,1],[source[4]+40,2,1],[source[4]+80,3,2]]){
-   const air=phase<2,h=air?22:9,w=air?12:6,y=terrain[x]+(air?80:1)+h;
+  for(const [x,phase,faction] of [[source[4]-40,1,1],[source[4]+40,2,1],[source[4]-100,3,1],[source[4]+140,3,2]]){
+   const air=phase<2,h=air?16:9,w=air?12:6,y=terrain[x]+(air?80:0)+h;
    scene.set([99,air?4:5,x,y,0,phase,faction,w,h,0,0,20,0,0,0,21,90000+n,0],348+n++*18);
   }
   scene[14]=n;scene[1]=30;const people=new RainbowRenderer(document.getElementById('pilots'));people.drawScene(scene,game.HEAPU8,false,null,terrain);

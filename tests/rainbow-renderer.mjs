@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 
 const calls=[];
-function context() { return {setTransform(){},scale(){},translate(){},rotate(){},save(){},restore(){},beginPath(){},moveTo(...a){calls.push(['move',...a]);},lineTo(...a){calls.push(['line',...a]);},closePath(){},ellipse(){},fill(){},strokeRect(){},createRadialGradient(){return {addColorStop(){}};},fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
+function context() { return {setTransform(){},scale(){},translate(...a){calls.push(['translate',...a]);},rotate(){},save(){},restore(){},beginPath(){},moveTo(...a){calls.push(['move',...a]);},lineTo(...a){calls.push(['line',...a]);},closePath(){},ellipse(){},fill(){},strokeRect(){},createRadialGradient(){return {addColorStop(){}};},fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
 function canvas() { const c=context();return {dataset:{},getContext:()=>c}; }
 const scope={window:{},document:{querySelectorAll:()=>[],createElement:()=>canvas()},Int32Array,Math};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-renderer.js',import.meta.url),'utf8'),scope);
@@ -94,7 +94,7 @@ assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#ed786b'),'Enemy ground flags
 activeTarget[1]=3;calls.length=0;renderer.teamMark(activeTarget,100);assert.equal(calls.length,0,'Destroyed sites lose their active flag.');
 
 // Pilots come from native objects; repaint never creates a duplicate actor.
-scope.window.RainbowAssets={loaded:true,sprite:()=>null,pilotFrame:()=>({worldWidth:24,worldHeight:48}),departurePose:()=>({width:288,height:192})};
+scope.window.RainbowAssets={loaded:true,sprite:()=>null,pilotPose:()=>({worldWidth:24,worldHeight:31}),pilotFrame:()=>({worldWidth:24,worldHeight:48}),departurePose:()=>({width:288,height:192})};
 scene[14]=1;scene[1]=60;scene[26]=0;plane[0]=99;plane[1]=4;plane[5]=1;plane[15]=21;plane[16]=128;plane[3]=180;
 renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.parachutes,'1');
 renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.pilots,'1');
@@ -104,3 +104,15 @@ renderer.readyLevel=null;scene[12]=1;scene[1]=70;renderer.drawScene(scene,heap,f
 scene[1]=105;renderer.drawScene(scene,heap,false,null,ground);assert.ok(Number(display.dataset.departure)>first);
 scene[12]=0;renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.departure,undefined);
 console.log('Native pilot rendering, grounded walking, READY level labels, receding departure progress and renderer continuity verified.');
+
+// A walking pilot with a stale/interpolated altitude still has grounded soles.
+const walker=new Float64Array([99,5,153.4,160,0,3,1,6,9,0,0,20,0,0,0,21,1234,0]);
+const hill=new Int32Array(2000).fill(40);hill[156]=70;
+calls.length=0;renderer.drawPilots([walker],100,10,hill);
+assert.ok(calls.some(c=>c[0]==='translate'&&c[2]===(199-70)*2+2),'Walking feet follow the current terrain, not old actor altitude.');
+// Pilot reaction events have audio only, with no speech text or point popup.
+calls.length=0;renderer.effects=[{type:7,x:180,y:80,tick:10,id:1,size:-1000}];renderer.drawEffects(100,10);
+assert.equal(calls.length,0);
+renderer.readyLevel=1;calls.length=0;renderer.drawReady();
+assert.ok(!calls.some(c=>c[0]==='rect'&&c[3]>20&&c[4]>20),'READY never creates a box or full-world dimmer.');
+console.log('Ground contact on hills, audio-only reactions and compact READY text verified.');

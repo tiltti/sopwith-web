@@ -36,13 +36,13 @@
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
     cows.onload=()=>done(cows.width===1254&&cows.height===1254);
     pilots.onload=()=>done(pilots.width===1536&&pilots.height===1024);
-    actors.onload=()=>done(actors.width===320&&actors.height===128);
+    actors.onload=()=>done(actors.width===1536&&actors.height===1024);
     departure.onload=()=>done(departure.width===288&&departure.height===64);
     atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=()=>done(false);
     atlas.src='assets/rainbow-sprites-v1.png';
     extras.src='assets/rainbow-extras-v1.png';
     cows.src='assets/rainbow-cow-reaction-v1.png';pilots.src='assets/rainbow-defense-pilots-v1.png';
-    actors.src='assets/patrol-pilots-v2.svg';departure.src='assets/patrol-departure-v1.svg';
+    actors.src='assets/rainbow-pilot-walk-v3.png';departure.src='assets/patrol-departure-v1.svg';
   }); }
   function sprite(r,heap) {
     if(!loaded){load();return null;}
@@ -99,18 +99,19 @@
   }
   function pilotPose(frame) {
     if(!loaded)return null;
-    const bounds=[[99,671,336,276],[570,490,398,503],[1068,483,430,513]],crop=bounds[frame],width=frame===0?8:18;
+    const bounds=[[99,671,336,276],[570,490,398,503],[1068,483,430,513]],crop=bounds[frame],width=frame===0?14:24;
     const key='pilot:'+frame;if(cache.has(key))return cache.get(key);
     const out=document.createElement('canvas');out.width=width*DETAIL;out.height=Math.ceil(width*crop[3]/crop[2]*DETAIL);
-    out.getContext('2d').drawImage(pilots,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
+    out.worldWidth=width;out.worldHeight=out.height/DETAIL;out.getContext('2d').drawImage(pilots,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
   }
   function pilotFrame(frame,faction=1){
-    if(!loaded)return null;frame=Math.max(0,Math.min(9,frame));
+    if(!loaded)return null;frame=Math.max(0,Math.min(7,frame));
     const key=`actor:${frame}:${faction}`;if(cache.has(key))return cache.get(key);
-    const airborne=frame>=7,crop=airborne?[0,0,32,64]:frame===5?[0,32,32,32]:[6,31,26,33];
-    const out=document.createElement('canvas');out.worldWidth=airborne?24:frame===5?20:15;
-    out.worldHeight=out.worldWidth*crop[3]/crop[2];out.width=Math.ceil(out.worldWidth*DETAIL);out.height=Math.ceil(out.worldHeight*DETAIL);
-    out.getContext('2d').drawImage(actors,frame*32+crop[0],(faction===1?0:64)+crop[1],crop[2],crop[3],0,0,out.width,out.height);
+    // Fixed cell coordinates and the measured common boot baseline preserve
+    // proportions and contact. No bobbing or crop-centre changes per stride.
+    const out=document.createElement('canvas');out.worldHeight=16;out.worldWidth=384/374*16;
+    out.width=Math.ceil(out.worldWidth*DETAIL);out.height=16*DETAIL;
+    out.getContext('2d').drawImage(actors,(frame%4)*384,Math.floor(frame/4)*512+64,384,374,0,0,out.width,out.height);
     cache.set(key,out);return out;
   }
   function departurePose(frame){

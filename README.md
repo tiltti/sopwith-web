@@ -211,7 +211,7 @@ C / SDL2 / Emscripten / WASM architecture and source provenance.
 
 ## Rainbow mission transitions and pilots
 
-A 2.2-second READY PLAYER / LEVEL intermission holds the native simulation before
+A brief 0.7-second READY PLAYER / LEVEL text cue holds the native simulation before
 level 1 and every new level. Victory keeps the normal 72-tick native countdown,
 with original rear-view aircraft artwork receding toward the horizon and a
 single 7.8-second licensed fanfare/march mix. Game-over still ends on high scores.

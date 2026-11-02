@@ -275,12 +275,7 @@
       for(const e of this.effects) {
         const age=Math.max(0,tick-e.tick),x=(e.x-camera)*2,y=(199-e.y)*2;
         if(x < -100 || x>W+100)continue;
-        if(e.type===7||e.type===8){
-          const label=e.type===8?'HIMMEL':'AARGH',yy=y-age*1.5;
-          rect(c,x-26,yy-19,55,11,P.ink);text(c,label,x-22,yy-16,P.cream);
-          if(e.size)text(c,(e.size>0?'+':'')+e.size,x-17,yy-3,e.size>0?P.mint:P.red,2);
-          continue;
-        }
+        if(e.type===7||e.type===8)continue;
         if(e.type===2) {
           const count=e.size>1?28:12;
           for(let i=0;i<count;i++) {
@@ -430,18 +425,22 @@
         polygon(c,[[x+dx-1,y+2],[x+dx,y-h*.6],[x+dx+2,y+1]],P.gold);
       }
     }
-    drawPilots(objects,camera,time){
+    drawPilots(objects,camera,time,ground){
       const c=this.c;let count=0;
       for(const r of objects)if(r[15]===21){
         count++;const phase=r[5],air=phase<2,shooting=(r[14]&2)!==0;
-        let frame=phase===0?7:phase===1?8+(Math.floor(time/4)%2):phase===4?5:shooting?4:phase===3?[1,0,2,0][Math.floor(time/2)%4]:0;
-        const image=window.RainbowAssets?.pilotFrame(frame,r[6]);if(!image)continue;
-        const x=(r[2]-camera)*2+r[7],y=(199-r[3]+r[8])*2,w=image.worldWidth,h=image.worldHeight;
+        const frame=phase===4?7:shooting?5:phase===3?[1,2,3,4][Math.floor(time/2)%4]:0;
+        const image=air?window.RainbowAssets?.pilotPose(phase===0?0:(r[14]&1)?2:1):window.RainbowAssets?.pilotFrame(frame,r[6]);if(!image)continue;
+        const x=(r[2]-camera)*2+r[7],w=image.worldWidth,h=image.worldHeight;
+        const footX=Math.max(0,Math.min((ground?.length||1)-1,Math.floor(r[2]+r[7]/2)));
+        // Walking sprites follow the rendered terrain, including slopes, instead
+        // of interpolating their feet through the previous tick's altitude.
+        const y=!air&&phase!==4&&ground?.length?(199-ground[footX])*2+2:(199-r[3]+r[8])*2;
         if(x< -30||x>W+30)continue;
         c.save();c.translate(x,y);if(r[4]===8)c.scale(-1,1);
         if(air)c.rotate(Math.sin(time*.21+r[16])*.055);
         c.drawImage(image,-w/2,-h,w,h);
-        if(phase===1&&(r[14]&1)){polygon(c,[[-8,-h+8],[-10,-h-1],[-6,-h+3],[-4,-h-3],[-2,-h+9]],P.red);rect(c,-7,-h+3,3,5,P.gold);}
+        if(!air&&phase!==4)rect(c,-.5,-9,2,1.2,r[6]===1?P.mint:P.red);
         if(shooting){rect(c,9,-12,5,2,P.gold);rect(c,12,-13,2,4,P.cream);}
         c.restore();
       }
@@ -464,10 +463,8 @@
     }
     drawReady(){
       if(!this.readyLevel)return;
-      const c=this.c;c.fillStyle='rgba(24,52,73,.35)';c.fillRect(0,0,W,H);
-      rect(c,168,137,304,106,P.ink);rect(c,171,140,298,100,'#3678ac');rect(c,171,140,298,2,P.pale);
-      text(c,'READY PLAYER',214,158,P.gold,3);text(c,'LEVEL '+this.readyLevel,260,191,P.cream,3);
-      rect(c,205,224,230,3,'#284b6c');rect(c,205,224,230*Math.min(1,this.readyProgress||0),3,P.gold);
+      const c=this.c,label='READY PLAYER - LEVEL '+this.readyLevel,x=W/2-label.length*4;
+      text(c,label,x+1,174,P.ink,2);text(c,label,x,173,P.cream,2);
       this.canvas.dataset.readyLevel=String(this.readyLevel);
     }
     drawScene(scene,heap,trainer=false,effects=null,ground=null) {
@@ -565,7 +562,7 @@
       this.aimVisible=aimVisible;
       this.canvas.dataset.aimActivations=String(this.aimActivations);
       this.drawEffects(camera,time);
-      this.drawPilots(objects,camera,time);
+      this.drawPilots(objects,camera,time,ground);
       this.drawDeparture(scene,time,ground);
       delete this.canvas.dataset.readyLevel;this.drawReady();
       // Native low-altitude collision geometry is preserved all the way down

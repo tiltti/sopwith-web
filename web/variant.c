@@ -146,7 +146,7 @@ static bool move_pilot(OBJECTS *ob)
     if(!p)return false;
     if(p->dead){
         if(countmove>=p->dead){p->ob=NULL;deallobj(ob);return false;}
-        p->y=fmax(ground[clamp_range(0,(int)p->x+3,(int)currgame->gm_max_x-1)]+1,p->y-2);
+        p->y=fmax(ground[clamp_range(0,(int)p->x+3,(int)currgame->gm_max_x-1)],p->y-2);
         ob->ob_y=(int)p->y+ob->ob_symbol->h;return true;
     }
     int age=++ob->ob_life;ob->ob_firing=NULL;
@@ -157,7 +157,7 @@ static bool move_pilot(OBJECTS *ob)
         p->y+=age<4?.9:age<7?-1.4:-.55;
         ob->ob_orient=age<6?0:1;
         int floor=ground[(int)p->x+6];
-        if(p->y<=floor+1){p->y=floor+1;p->x+=3;ob->ob_state=STANDING;ob->ob_orient=2;p->landed=countmove;p->home=-1;
+        if(p->y<=floor){p->y=floor;p->x+=3;ob->ob_state=STANDING;ob->ob_orient=2;p->landed=countmove;p->home=-1;
             int nearest=100000;
             for(OBJECTS *base=objtop;base;base=base->ob_next)if(base->ob_type==PLANE&&base->ob_faction==ob->ob_faction&&base->ob_original_ob){
                 int x=base->ob_original_ob->x+5,d=abs(x-(int)p->x);if(d<nearest){nearest=d;p->home=x;}
@@ -171,7 +171,7 @@ static bool move_pilot(OBJECTS *ob)
                 if(fabs(p->x-p->home)<7){p->ob=NULL;deallobj(ob);return false;}
             }
         }
-        p->y=ground[clamp_range(0,(int)p->x+3,(int)currgame->gm_max_x-1)]+1;
+        p->y=ground[clamp_range(0,(int)p->x+3,(int)currgame->gm_max_x-1)];
         if(gamenum>=1&&countmove%15==0&&countmove>=grace_until){
             OBJECTS *target=NULL;int nearest=75*75;
             for(OBJECTS *other=objtop;other;other=other->ob_next){
@@ -201,11 +201,11 @@ void WebVariant_Eject(OBJECTS *plane)
     ob->ob_clr=((countmove+(plane->ob_x>>2))%4==0);ob->ob_rounds=10000;
     memset(pilot_pixels,0,sizeof(pilot_pixels));
     for(int y=0;y<9;y++)for(int x=1;x<5;x++)pilot_pixels[0][y*6+x]=1;
-    for(int y=0;y<22;y++)for(int x=0;x<12;x++)if((y<6&&x>0&&x<11)||(y>=6&&y<14&&(x==2||x==9))||(y>=14&&x>=4&&x<=7))pilot_pixels[1][y*12+x]=1;
-    pilot_masks[0]=(sopsym_t){.w=6,.h=9,.data=pilot_pixels[0]};pilot_masks[1]=(sopsym_t){.w=12,.h=22,.data=pilot_pixels[1]};
+    for(int y=0;y<16;y++)for(int x=0;x<12;x++)if((y<5&&x>0&&x<11)||(y>=5&&y<10&&(x==2||x==9))||(y>=10&&x>=4&&x<=7))pilot_pixels[1][y*12+x]=1;
+    pilot_masks[0]=(sopsym_t){.w=6,.h=9,.data=pilot_pixels[0]};pilot_masks[1]=(sopsym_t){.w=12,.h=16,.data=pilot_pixels[1]};
     ob->ob_symbol=&pilot_masks[1];ob->ob_movef=move_pilot;ob->ob_onmap=ob->ob_drwflg=true;
     pilots[slot]=(pilot_t){.ob=ob,.x=plane->ob_x+5,.y=plane->ob_y-8,.drift=plane->ob_dx*.5,.born=countmove,.home=-1};
-    ob->ob_x=(int)pilots[slot].x;ob->ob_y=(int)pilots[slot].y+22;insertx(ob,plane);
+    ob->ob_x=(int)pilots[slot].x;ob->ob_y=(int)pilots[slot].y+16;insertx(ob,plane);
 }
 void WebVariant_TargetMask(OBJECTS *ob)
 {

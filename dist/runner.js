@@ -132,7 +132,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261102-patrol6',
+      locateFile: name => 'engine/' + name + '?v=20261102-patrol7',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -241,6 +241,7 @@
     else if (params.get('mode') === 'practice') args.push('-s');
     if(params.get('edition')==='rainbow'&&['1','2','3'].includes(params.get('level')))args.push('-g'+(Number(params.get('level'))-1));
     // Opening the runner directly preserves the original game's native menu.
+    if(params.get('edition')==='rainbow')await window.RainbowAssets?.ready;
     game.callMain(args);
   }
   boot().catch(error => send('error', { message: String(error) }));
