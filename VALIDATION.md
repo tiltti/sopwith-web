@@ -12,6 +12,8 @@
 - Native trainer/rules and read-only scene tests passed. Return-to-base audit
   passed 90/90 Rainbow scenarios across all three terrain profiles with ground return fire disabled to isolate
   navigation. Navigation samples the current landscape and adds approach speed/clearance assistance. Classic remains the known 28/30 baseline; its rules are unchanged.
+- Campaign start-level preferences use a new key: an old saved level-two
+  shortcut cannot silently skip the coast after the menu update.
 - Browser launch through PLAY → Flight Setup confirmed Easy/Normal, optional
   aircraft, English labels, sound off and trainer on by default. Real takeoff
   with X, comma and partial Z throttle stayed in flying state, showed around

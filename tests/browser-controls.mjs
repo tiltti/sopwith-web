@@ -76,7 +76,7 @@ async function pageTests() {
   get('game').contentWindow = child;
   const scope = { document:{body:{dataset:{edition:'rainbow'}},getElementById:get, querySelector:() => ({value:'practice'}),querySelectorAll:() => [],
     addEventListener:(name,fn) => {documentHandlers[name] = fn;}}, location:{origin},
-    matchMedia:() => ({matches:false}), localStorage:{getItem:() => null,setItem() {}},
+    matchMedia:() => ({matches:false}), localStorage:{getItem:key => key==='sopwith.rainbow.start-level'?'2':null,setItem() {}},
     setTimeout:() => 1, clearTimeout() {}, console,
     addEventListener:(name,fn) => {windowHandlers[name] = fn;} };
   scope.window = scope;

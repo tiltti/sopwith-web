@@ -131,8 +131,8 @@
   if (!$('palette').value) $('palette').value = '0';
   $('palette').addEventListener('change', () => { savePref('palette', $('palette').value); post('palette', { value:Number($('palette').value) }); });
   if(startLevel){
-    const saved=loadPref('rainbow.start-level','1');startLevel.value=['1','2','3'].includes(saved)?saved:'1';
-    startLevel.addEventListener('change',()=>savePref('rainbow.start-level',startLevel.value));
+    const saved=loadPref('rainbow.campaign-start-level','1');startLevel.value=['1','2','3'].includes(saved)?saved:'1';
+    startLevel.addEventListener('change',()=>savePref('rainbow.campaign-start-level',startLevel.value));
   }
   trainerToggle?.addEventListener('click',()=>window.trainer(!trainerEnabled));syncTrainer();
   if(enemyAircraft){enemyAircraft.checked=loadPref('rainbow.enemy-aircraft','0')==='1';enemyAircraft.addEventListener('change',()=>savePref('rainbow.enemy-aircraft',enemyAircraft.checked?'1':'0'));}
