@@ -120,8 +120,8 @@ engines. The final live environment profile awaits the user's selection.
 
 Splash music is Spring Spring's CC0 **War Theme (version 2)**, converted to
 22050 Hz stereo AAC. It is an original military/orchestral/FM-style composition,
-not a historical WWII recording. The splash sound button is opt-in; title music
-stops before gameplay. Full source/license details are in the audio README.
+not a historical WWII recording. The splash sound button is opt-in; menu music
+stops before gameplay and returns at a lower gain on the initials/high-score debrief. Full source/license details are in the audio README.
 
 ## High scores
 
@@ -297,3 +297,15 @@ without modifying its path.
 The contributor's own ElevenLabs falling-aircraft sample replaces the procedural
 dive. Its four-second adaptation plays once per fall; separate media terms and
 reproduction metadata are recorded in the audio README and NOTICE.
+
+### Inline arcade score entry — 2026-11-03
+
+The three-character editor occupies the provisional score's name cell. The
+selected character is highlighted; type letters/digits, use left/right to move,
+up/down to change a character, and Enter to save. Touch/mouse arrows remain
+available. The scene uses one left-hand board, leaving the pilot visible.
+Ten rows are shown; a run below rank ten temporarily shows a contiguous window
+around its actual position. Saving returns to the normal top-ten board.
+The same CC0 War Theme used by the splash plays at a lower gain on the debrief,
+only after sound has been enabled. It continues through save/score panels and
+stops on a new flight, mute or a hidden tab. One media player is reused.

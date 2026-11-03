@@ -13,4 +13,16 @@ scope.document.body.dataset.gameState='loading';events['sopwith-layer']();assert
 scope.document.body.dataset.gameState='idle';events['sopwith-layer']();assert.equal(created[0].paused,false);
 scope.document.hidden=true;documentEvents.visibilitychange();assert.equal(created[0].paused,true);
 events['sopwith-mute']({detail:{muted:true}});assert.equal(created[0].paused,true);
-console.log('Title music: silent opt-in, lazy request, splash-only playback and game/tab/mute cleanup verified.');
+scope.document.hidden=false;events['sopwith-mute']({detail:{muted:false}});
+scope.document.body.dataset.gameState='ended';events['sopwith-layer']();await Promise.resolve();
+assert.equal(created.length,1,'Debrief reuses the licensed theme rather than layering another player.');
+assert.equal(created[0].paused,false);assert.equal(created[0].volume,.13);
+assert.equal(scope.document.body.dataset.debriefMusic,'playing');
+created[0].currentTime=12;events['sopwith-layer']();assert.equal(created[0].currentTime,12,'Saving/opening another end panel cannot restart the music.');
+scope.document.hidden=true;documentEvents.visibilitychange();assert.equal(created[0].paused,true);
+scope.document.hidden=false;documentEvents.visibilitychange();assert.equal(created[0].paused,false);
+events['sopwith-mute']({detail:{muted:true}});assert.equal(created[0].paused,true);
+events['sopwith-mute']({detail:{muted:false}});assert.equal(created[0].paused,false);
+scope.document.body.dataset.gameState='loading';events['sopwith-layer']();assert.equal(created[0].paused,true);
+assert.equal(scope.document.body.dataset.debriefMusic,'off');
+console.log('Title/debrief music: silent opt-in, lazy request, splash/end-only playback, lower debrief gain, stable panel transitions and game/tab/mute cleanup verified.');

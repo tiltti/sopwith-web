@@ -30,18 +30,28 @@
   }
   function drawEntryBoard(){
     if(!arcade||!$('entry-scores-rows'))return;
-    const body=$('entry-scores-rows');body.replaceChildren();if(!pending)return;
+    const body=$('entry-scores-rows'),editor=$('score-initials'),parking=$('initials-parking');
+    const focused=editor?.contains?.(document.activeElement)?document.activeElement:null;
+    if(editor&&parking)parking.append(editor);
+    body.replaceChildren();if(!pending)return;
     const rows=[...boardRows,{...pending,nickname:$('score-name').value.toUpperCase().padEnd(3,'A').slice(0,3),runId:runKey,provisional:true}];
     rows.sort((a,b)=>b.score-a.score||Number(a.provisional)-Number(b.provisional));
     const rank=rows.findIndex(r=>r.provisional)+1;$('entry-rank').textContent='SIJOITUS: '+rank;
-    rows.slice(0,10).forEach((row,i)=>{
+    // Keep ten rows visible and include the editable score even below top ten.
+    const offset=rank<=10?0:Math.min(Math.max(0,rank-5),Math.max(0,rows.length-10));
+    rows.slice(offset,offset+10).forEach((row,i)=>{
       const tr=document.createElement('tr');
       if(row.provisional)tr.className='current';
-      for(const value of [i+1,row.nickname,row.score]){const td=document.createElement('td');td.textContent=String(value);tr.append(td);}
+      [offset+i+1,row.nickname,row.score].forEach((value,column)=>{
+        const td=document.createElement('td');
+        if(column===1&&row.provisional&&editor)td.append(editor);
+        else {td.textContent=String(value);if(column===1)td.className='nickname';}
+        tr.append(td);
+      });
       body.append(tr);
     });
+    focused?.focus({preventScroll:true});
   }
-  if(arcade){window.addEventListener('sopwith-initials',drawEntryBoard);$('score-name').addEventListener('input',drawEntryBoard);}
   async function refresh() {
     await ready;const id=++loading,selected=$('scores-mode').value,diff=selectedDifficulty();
     try {

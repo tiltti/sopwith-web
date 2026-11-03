@@ -19,6 +19,7 @@
     ['Nokka ylös','Pitch up'],['Nokka alas','Pitch down'],['Lisää kaasua','Increase throttle'],['Vähennä kaasua','Decrease throttle'],
     ['Käännä kone ympäri','Roll aircraft'],['Pommitähtäin ja pudotus','Aim and drop bomb'],['Ammu','Fire'],
     ['NIMI','NAME'],['PISTEET','SCORE'],['KENTTÄ','LEVEL'],['NIMIMERKKI','INITIALS'],['TALLENNA','SAVE'],['OHITA TALLENNUS','SKIP SAVE'],['UUSI LENTO','NEW FLIGHT'],
+    ['↑ ↓ KIRJAIN · ← → PAIKKA · ENTER TALLENNA','↑ ↓ LETTER · ← → POSITION · ENTER SAVE'],
     ['Kolmen merkin nimimerkki','Three-character initials'],['Nimimerkki, kolme kirjainta tai numeroa','Initials, three letters or digits'],
     ['Pistetilaston pelitila','Scoreboard game mode'],['Pistetilaston vaikeustaso','Scoreboard difficulty'],['Päivitä pisteet','Refresh scores'],
     ['TULOKSET TÄSSÄ SELAIMESSA','SCORES IN THIS BROWSER'],['Kaikkien pelaajien yhteinen lista','SHARED LEADERBOARD'],['Ei vielä tuloksia tässä pelitilassa.','No scores for this mode yet.'],
@@ -56,7 +57,7 @@
     }
     return result===undefined?value:value.replace(trimmed,result);
   }
-  const protectedText='script,style,code,pre,#scores-rows td:nth-child(2),#entry-scores-rows td:nth-child(2)';
+  const protectedText='script,style,code,pre,#scores-rows td:nth-child(2),#entry-scores-rows td.nickname';
   function localize(root){
     if(root.nodeType===3){if(!root.parentElement?.closest(protectedText)){let next=translate(root.nodeValue);if(language==='en'&&root.parentElement?.id==='pause-label'&&next==='PAUSED')next='PAUSE';if(next!==root.nodeValue)root.nodeValue=next;}return;}
     if(root.nodeType!==1||root.closest?.(protectedText))return;

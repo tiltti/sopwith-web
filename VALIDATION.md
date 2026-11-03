@@ -1,3 +1,19 @@
+## Inline initials / debrief music — 2026-11-03
+
+- Leaderboard UI, menu music, localization and browser-control suites pass.
+- Browser fixture: the real three-character editor occupies rank 6's name cell.
+  Typing RPT, cursor movement, up/down changes and Enter save passed; the input
+  retains focus and belongs to the score form while inside the table.
+- Saving returned to the top ten with RPT at rank 6. The final panel had
+  scrollHeight == clientHeight (377 px), with navigation visible.
+- Lower-rank check: exactly ten contiguous rows (12–21), with the editor at
+  actual rank 21; the entry panel had no vertical overflow (425 px).
+- Debrief music was tested with a clearly labelled silent HTMLAudio stub in the
+  local fixture: the existing War Theme starts at volume 0.13 and remains active
+  after saving. Lifecycle tests cover mute, hidden tabs and a new flight. No
+  actual speaker playback or fullscreen transitions were used.
+- Desktop proof: parent workspace `research/inline-initials-desktop.png`.
+
 ## Painted flight / cockpit update — 2026-11-02
 
 - Ten JavaScript suites pass: browser controls, renderer, atlas crops, audio,

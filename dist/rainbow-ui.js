@@ -85,7 +85,7 @@
   document.addEventListener('keydown',event=>{
     if(event.ctrlKey||event.metaKey||event.altKey)return;
     if(!$('complete').hidden&&!$('score-form').hidden&&!panel) {
-      if(event.target===$('score-submit'))return;
+      if(event.target===$('score-submit')||event.target===$('result-score'))return;
       if(/^[a-zA-Z0-9]$/.test(event.key)){event.preventDefault();event.stopImmediatePropagation();setLetter(event.key.toUpperCase());cursor=(cursor+1)%3;paintInitials();return;}
       if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Enter'].includes(event.code)) {
         event.preventDefault();event.stopImmediatePropagation();

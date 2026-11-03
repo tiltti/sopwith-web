@@ -5,7 +5,7 @@
 <link rel="preload" as="image" href="assets/rainbow-debrief-v1.png">
 <meta name="theme-color" content="#183449"><title>Rainbow Patrol — Sopwith Tribute</title>
 <meta name="description" content="Rainbow Patrol: oma arcade-versio Sopwithin pohjalta.">
-<link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261102-painted2">
+<link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261103-inline1">
 </head>
 <body data-edition="rainbow" data-layout="arcade" data-game-state="idle">
 <main class="game-column arcade-root" aria-label="Rainbow Patrol">
@@ -44,20 +44,28 @@
       <a href="./" class="menu-link">TAKAISIN SIVUSTOLLE</a>
     </div></div></section>
     <section id="complete" class="game-layer menu-backdrop" hidden><div class="end-layout">
-      <div class="pixel-panel entry-board"><h2>HIGH SCORES</h2><p id="entry-rank" class="rank-label"></p><table><thead><tr><th>#</th><th>NIMI</th><th>PISTEET</th></tr></thead><tbody id="entry-scores-rows"></tbody></table></div>
-      <div class="pixel-panel result-panel">
-      <h2>GAME OVER</h2><p id="complete-score">PISTEET: 0</p>
-      <form id="score-form" class="score-form" hidden><p id="score-result" class="sr-only"></p><p class="initials-title">NIMIMERKKI</p>
-        <div class="initials-editor" aria-label="Kolmen merkin nimimerkki">
+      <div class="pixel-panel entry-board">
+        <p class="debrief-heading">GAME OVER</p><h2>HIGH SCORES</h2>
+        <p id="complete-score">PISTEET: 0</p><p id="entry-rank" class="rank-label"></p>
+        <table><thead><tr><th>#</th><th>NIMI</th><th>PISTEET</th></tr></thead><tbody id="entry-scores-rows"></tbody></table>
+        <div id="initials-parking" hidden>
+        <div id="score-initials" class="initials-editor" aria-label="Kolmen merkin nimimerkki">
           <div class="initial-column"><button type="button" data-initial-index="0" data-step="1" aria-label="Merkki 1 eteenpäin">▲</button><button type="button" data-initial-focus="0" class="initial-char" aria-label="Muokkaa merkkiä 1">A</button><button type="button" data-initial-index="0" data-step="-1" aria-label="Merkki 1 taaksepäin">▼</button></div>
           <div class="initial-column"><button type="button" data-initial-index="1" data-step="1" aria-label="Merkki 2 eteenpäin">▲</button><button type="button" data-initial-focus="1" class="initial-char" aria-label="Muokkaa merkkiä 2">A</button><button type="button" data-initial-index="1" data-step="-1" aria-label="Merkki 2 taaksepäin">▼</button></div>
           <div class="initial-column"><button type="button" data-initial-index="2" data-step="1" aria-label="Merkki 3 eteenpäin">▲</button><button type="button" data-initial-focus="2" class="initial-char" aria-label="Muokkaa merkkiä 3">A</button><button type="button" data-initial-index="2" data-step="-1" aria-label="Merkki 3 taaksepäin">▼</button></div>
-          <label class="sr-only" for="score-name">Nimimerkki, kolme kirjainta tai numeroa</label><input id="score-name" class="initials-keyboard" maxlength="3" minlength="3" pattern="[A-Z0-9]{3}" required autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Nimimerkki, kolme kirjainta tai numeroa">
-        </div><button id="score-submit" class="pixel-button green" type="submit">TALLENNA</button><p id="score-consent" class="tiny-text"></p>
-      </form>
-      <p id="arcade-score-status" class="tiny-text" role="status"></p>
-      <button id="play-again" class="pixel-button" hidden>UUSI LENTO</button><button id="result-score" class="menu-link" hidden>OHITA TALLENNUS</button>
-    </div></div></section>
+          <label class="sr-only" for="score-name">Nimimerkki, kolme kirjainta tai numeroa</label><input form="score-form" id="score-name" class="initials-keyboard" maxlength="3" minlength="3" pattern="[A-Z0-9]{3}" required autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Nimimerkki, kolme kirjainta tai numeroa">
+        </div>
+        </div>
+        <form id="score-form" class="score-form" hidden>
+          <p id="score-result" class="sr-only"></p>
+          <p class="initials-help tiny-text">↑ ↓ KIRJAIN · ← → PAIKKA · ENTER TALLENNA</p>
+          <div class="entry-actions"><button id="score-submit" class="pixel-button green" type="submit">TALLENNA</button><button id="result-score" class="menu-link" type="button" hidden>OHITA TALLENNUS</button></div>
+          <p id="score-consent" class="tiny-text"></p>
+        </form>
+        <p id="arcade-score-status" class="tiny-text" role="status"></p>
+        <button id="play-again" class="pixel-button" hidden>UUSI LENTO</button>
+      </div>
+    </div></section>
     <section id="error" class="game-layer menu-backdrop" hidden><div class="pixel-panel"><h2>LATAUSVIRHE</h2><p id="error-text"></p><button id="retry" class="pixel-button green">YRITÄ UUDELLEEN</button><a href="./" class="menu-link">SIVUSTOLLE</a></div></section>
     <section id="panel-help" class="game-layer menu-backdrop auxiliary-panel" hidden><div class="pixel-panel"><h2>OHJAUS</h2><div id="ohjeet"><dl class="controls-list">
       <div><dt>KAASU + / −</dt><dd>X / Z</dd></div><div><dt>NOKKA YLÖS / ALAS</dt><dd>, / /</dd></div><div><dt>KÄÄNNÄ KONE</dt><dd>.</dd></div><div><dt>KONEKIVÄÄRI</dt><dd>VÄLILYÖNTI</dd></div><div><dt>POMMITÄHTÄIN</dt><dd>B POHJASSA</dd></div><div><dt>PUDOTA POMMI</dt><dd>VAPAUTA B</dd></div><div><dt>PALAA TUKIKOHTAAN</dt><dd>H</dd></div><div><dt>TAUKO / ÄÄNI</dt><dd>P / S</dd></div>
@@ -87,5 +95,5 @@
   <div class="sr-only" aria-live="polite"><span id="status-text">PÄÄVALIKKO</span><span id="mode-label">YKSINPELI</span></div>
 </main>
 <noscript>PELAAMINEN VAATII JAVASCRIPTIN JA WEBASSEMBLY-TUEN.</noscript>
-<script src="i18n.js?v=20261102-painted2"></script><script src="app.js?v=20261102-painted2"></script><script src="title-audio.js?v=20261102-painted2"></script><script src="rainbow-ui.js?v=20261102-painted2"></script><script src="leaderboard.js?v=20261102-painted2"></script>
+<script src="i18n.js?v=20261103-inline1"></script><script src="app.js?v=20261102-painted2"></script><script src="title-audio.js?v=20261103-inline1"></script><script src="rainbow-ui.js?v=20261103-inline1"></script><script src="leaderboard.js?v=20261103-inline1"></script>
 </body></html>

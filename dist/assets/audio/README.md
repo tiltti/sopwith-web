@@ -73,7 +73,9 @@ files, exact source URLs, licenses, conversion details and SHA-256 in
 
 The game mixer has five bounded slots, with the friendly-target warning separate
 from gunfire. The current version loads thirteen samples and synthesizes two cues. Splash music uses a
-separate opt-in HTML audio player and stops before play. Startup plays once for
+single opt-in HTML audio player and stops before play. The same CC0 War Theme
+returns on the initials/high-score debrief at gain 0.13 (splash: 0.17), continues
+through score saving, and stops on a new flight, mute or tab hiding. Startup plays once for
 each sound-enabled player spawn, including respawns and new levels; refueling,
 pause and unmute cannot replay it. The game still creates no audio requests or contexts on a
 muted launch. The look study page has explicit audition buttons only.

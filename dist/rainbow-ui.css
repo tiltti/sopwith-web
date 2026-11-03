@@ -60,3 +60,28 @@ body[data-game-state=idle] .touch-controls,body[data-game-state=loading] .touch-
 @media(max-width:700px){.pause-panel{width:58%}.pause-panel .pixel-button,.pause-panel .menu-link{font-size:1.9cqw}.pause-panel .pixel-menu{gap:2.4cqw}.wing-heading h2{font-size:3.4cqw}.score-panel{width:76%}.score-panel table{font-size:1.45cqw}.score-panel .tiny-text{font-size:1.1cqw}.score-modes select{font-size:1.25cqw}.score-end-actions .pixel-button{font-size:1.3cqw}}
 
 .pixel-panel{background-size:auto,100% 250%;background-repeat:no-repeat}
+
+/* The arcade initials editor occupies the provisional score's own name cell. */
+#complete{justify-content:flex-start;padding:2.5cqw 4cqw}
+#complete .end-layout{display:block;width:59%;max-height:100%;margin-right:auto}
+#complete .entry-board{width:100%;padding:1.5cqw 2cqw;background:#332417e8}
+#complete .debrief-heading{font-size:.9cqw;letter-spacing:.2em;margin:0 0 .5cqw;color:#d5be92}
+#complete h2{font-size:2.5cqw;line-height:1.25;margin:0 0 .6cqw}
+#complete #complete-score,#complete .rank-label{display:inline-block;font-size:1cqw;margin:.5cqw 1cqw .7cqw}
+#complete table{font-size:1.1cqw;line-height:1.6;margin:.5cqw 0;border-collapse:collapse;table-layout:fixed}
+#complete td,#complete th{vertical-align:middle;padding:.25cqw .6cqw}
+#complete td:first-child,#complete th:first-child{width:17%}
+#complete td:nth-child(2),#complete th:nth-child(2){width:39%}
+#complete .initials-editor{justify-content:flex-start;gap:.35cqw;margin:0;padding:0;min-height:0}
+#complete .initial-column button{min-width:0;min-height:0;font-size:.8cqw;line-height:1;padding:.25cqw .5cqw}
+#complete .initial-column .initial-char{font-size:2.1cqw;padding:.2cqw .45cqw .25cqw;border-bottom:2px solid #b59650;line-height:1.1;text-shadow:2px 2px #382d20}
+#complete .initial-column.active .initial-char{color:#fff8d6;border-color:#ffe16a;box-shadow:none;animation:initial-cursor 1s steps(2,end) infinite}
+@keyframes initial-cursor{50%{border-bottom-color:transparent}}
+#complete .initials-help{font-size:.67cqw;line-height:1.8;margin:.8cqw 0}
+#complete .entry-actions{display:flex;align-items:center;justify-content:center;gap:1.5cqw}
+#complete .entry-actions .pixel-button{font-size:1cqw;padding:.7cqw 1.3cqw;margin:0}
+#complete .entry-actions .menu-link{font-size:.8cqw;margin:0;padding:.5cqw 0}
+#complete #score-consent,#complete #arcade-score-status{font-size:.75cqw;line-height:1.7;margin:.7cqw 0 0}
+#complete #arcade-score-status:empty{display:none}
+@media(max-width:700px){#complete .end-layout{width:76%}#complete h2{font-size:3.4cqw}#complete table{font-size:1.5cqw;line-height:1.6}#complete .debrief-heading{font-size:1.2cqw}#complete #complete-score,#complete .rank-label{font-size:1.4cqw}#complete .initial-column button{font-size:1.2cqw;padding:.4cqw .6cqw}#complete .initial-column .initial-char{font-size:2.8cqw}#complete .initials-help{font-size:1cqw}#complete .entry-actions .pixel-button{font-size:1.5cqw}#complete .entry-actions .menu-link{font-size:1.15cqw}#complete #score-consent,#complete #arcade-score-status{font-size:1.1cqw}}
+@media(prefers-reduced-motion:reduce){#complete .initial-column.active .initial-char{animation:none}}
