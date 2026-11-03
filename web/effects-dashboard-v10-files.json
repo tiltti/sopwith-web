@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-03",
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-explosions-v2.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "bytes": 2055106,
+      "sha256": "90427312f7c8fe744814afd74b7c7e3481ad590301ba48cdc60e34f58bc7ae16"
+    },
+    {
+      "path": "dist/assets/rainbow-dashboard-details-v3.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "bytes": 1547900,
+      "sha256": "385b6aea903c5f6ee238d5990192f4873c896bdf5b99e9d73adba55200b421a1"
+    },
+    {
+      "path": "dist/assets/rainbow-gauge-layers-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "bytes": 1863390,
+      "sha256": "5702c22f5497234b2d97c27d5fe837bbd5533a2231605ee9f06a1e92664dae84"
+    }
+  ]
+}

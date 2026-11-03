@@ -1,3 +1,28 @@
+## Explosion sprites / instrument layers — 2026-11-03
+
+- All ten JavaScript suites passed: assets, renderer, stages, browser controls,
+  timeline, audio, title audio, language, leaderboard and leaderboard UI.
+- READY holds each new aircraft for 1.5 seconds; its virtual-clock regression
+  covers paused time, respawns, trainer, new levels and first-life takeoff help.
+- Explosion regression advances frames 0→2→7 and expires without looping.
+  Eight immutable sprite frames share a fixed centre. Native damage is unchanged.
+- Pointer regression covers calibrated/clamped 270-degree sweep, separate
+  ivory/blue and charcoal/brass layers, glass above the pointer. Five bomb icons
+  fit completely inside their own clipped tray. Full and two-bomb inventory
+  views were checked in the browser; no icons extend into the outer dashboard.
+- Native-scene visual fixture checked peak flame, new counters, enlarged clipped
+  navigation, embossed team tapes and both complete gauge alternatives at full
+  width. Review JPEGs are in the local research/validation folder as
+  effects-cockpit-v10-a.jpg and effects-cockpit-v10-b.jpg.
+- Real local Rainbow launch rendered 1920×1488, loaded all art, reported 60 FPS,
+  five bombs, map aperture 208/25/203/39, correct units and first-life idle help.
+  Audio stayed off with zero voices; no fullscreen switch was used.
+- Three production PNGs were shown to the owner and preserved unchanged.
+  Exact prompts/hashes/dimensions are in web/effects-dashboard-v10-*.json.
+  The two finished gauge mockups are review-only local research images.
+- Corresponding source is packaged by scripts/build.py --source-only; release
+  verification checks the closed asset roster and byte-matching source archive.
+
 ## Scoreboard sprites / cockpit / spawn help — 2026-11-03
 
 - Renderer, assets, stages, timeline, controls, leaderboard UI, language and

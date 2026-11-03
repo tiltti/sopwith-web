@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 15001,
-      "sha256": "0308868d9f18ab12c7969585448c6e6f9438aa20c0356b73a52a0b511c70e71c"
+      "bytes": 16346,
+      "sha256": "0b6f9d482d88bf0ab561cbe3c266f52667f4c9d5f32847b2203cd5e372b34c7e"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -253,6 +253,11 @@
       "sha256": "2fc524280abba50756f327e151364d494daad36cfa077a3dd5c0308925eafff7"
     },
     {
+      "path": "dist/assets/rainbow-dashboard-details-v3.png",
+      "bytes": 1547900,
+      "sha256": "385b6aea903c5f6ee238d5990192f4873c896bdf5b99e9d73adba55200b421a1"
+    },
+    {
       "path": "dist/assets/rainbow-debrief-v1.png",
       "bytes": 3552637,
       "sha256": "be345828d8db307993835a1ad88978ce555c7d3d450b836d85bd8f42aace42d0"
@@ -268,9 +273,19 @@
       "sha256": "6e59ada24db0e61063b58d22385fe0c003d049b62d57fde0ba383811f90459d9"
     },
     {
+      "path": "dist/assets/rainbow-explosions-v2.png",
+      "bytes": 2055106,
+      "sha256": "90427312f7c8fe744814afd74b7c7e3481ad590301ba48cdc60e34f58bc7ae16"
+    },
+    {
       "path": "dist/assets/rainbow-extras-v1.png",
       "bytes": 1160011,
       "sha256": "6c2a384d1995221b2427026a42e800d2b94c2fd00d8347a1f6df339da55e1bb1"
+    },
+    {
+      "path": "dist/assets/rainbow-gauge-layers-v1.png",
+      "bytes": 1863390,
+      "sha256": "5702c22f5497234b2d97c27d5fe837bbd5533a2231605ee9f06a1e92664dae84"
     },
     {
       "path": "dist/assets/rainbow-parachute-sway-v4.png",

@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),cache=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),cache=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -30,7 +30,7 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=15,okay=true;
+    let remaining=18,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
@@ -41,13 +41,18 @@
     canopies.onload=()=>done(canopies.width===1536&&canopies.height===1024);
     badge.onload=()=>done(badge.width===1536&&badge.height===1024);
     cockpit.onload=()=>done(cockpit.width===1536&&cockpit.height===1024);
+    details.onload=()=>done(details.width===1536&&details.height===1024);
+    blasts.onload=()=>done(blasts.width===1536&&blasts.height===1024);
+    gauges.onload=()=>done(gauges.width===1536&&gauges.height===1024);
     instruments.onload=()=>done(instruments.width===1536&&instruments.height===1024);
     turf.onload=()=>done(turf.width===1536&&turf.height===1024);
     roll.onload=()=>done(roll.width===1536&&roll.height===1024);
     scenery.onload=()=>done(scenery.width===1536&&scenery.height===1024);
     clouds.onload=()=>done(clouds.width===1536&&clouds.height===1024);
     soil.onload=()=>done(soil.width===1536&&soil.height===1024);
-    instruments.onerror=turf.onerror=roll.onerror=scenery.onerror=clouds.onerror=soil.onerror=atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=canopies.onerror=badge.onerror=cockpit.onerror=()=>done(false);
+    gauges.onerror=details.onerror=blasts.onerror=instruments.onerror=turf.onerror=roll.onerror=scenery.onerror=clouds.onerror=soil.onerror=atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=canopies.onerror=badge.onerror=cockpit.onerror=()=>done(false);
+    gauges.src='assets/rainbow-gauge-layers-v1.png';
+    details.src='assets/rainbow-dashboard-details-v3.png';blasts.src='assets/rainbow-explosions-v2.png';
     instruments.src='assets/rainbow-cockpit-instruments-v2.png';
     turf.src='assets/rainbow-turf-v1.png';
     roll.src='assets/rainbow-aircraft-roll-v1.png';
@@ -141,14 +146,30 @@
   function interfaceArt(kind){
     if(!loaded)return null;const key='ui:'+kind;if(cache.has(key))return cache.get(key);
     const pieces={fuel:[[22,20,460,450],56,56],map:[[526,101,488,281],246,62],score:[[1047,112,467,267],100,46],bomb:[[153,538,207,464],9,20],ammo:[[520,647,491,194],64,28],home:[[1074,541,415,419],14,14]};
+    const detailPieces={lives:[[18,177,352,195],55,23],level:[[439,178,280,194],34,23],counter:[[786,177,352,195],54,27],bombRack:[[1171,180,351,183],55,30],you:[[15,714,356,93],33,9],friend:[[399,714,356,93],48,9],enemy:[[783,714,356,93],46,9],birds:[[1167,714,356,93],46,9]};
     let sheet,crop,w,h;
-    if(pieces[kind]){[crop,w,h]=pieces[kind];sheet=instruments;}
+    if(detailPieces[kind]){[crop,w,h]=detailPieces[kind];sheet=details;}
+    else if(pieces[kind]){[crop,w,h]=pieces[kind];sheet=instruments;}
     else [sheet,crop,w,h]=kind==='badge'?[badge,[12,200,1512,600],360,360*600/1512]
       :kind==='panel'?[cockpit,[0,0,1536,512],640,96]
       :kind==='plate'?[cockpit,[1030,662,500,188],110,42]
       :[cockpit,[kind==='altitude'?536:24,524,459,468],56,56];
     const out=document.createElement('canvas');out.worldWidth=w;out.worldHeight=h;out.width=Math.ceil(w*DETAIL);out.height=Math.ceil(h*DETAIL);
     out.getContext('2d').drawImage(sheet,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
+  }
+  function explosionPose(frame){
+    if(!loaded)return null;frame=Math.max(0,Math.min(7,frame));const key='blast:'+frame;if(cache.has(key))return cache.get(key);
+    const out=document.createElement('canvas');out.width=96*DETAIL;out.height=128*DETAIL;
+    out.getContext('2d').drawImage(blasts,(frame%4)*384,Math.floor(frame/4)*512,384,512,0,0,out.width,out.height);cache.set(key,out);return out;
+  }
+  function gaugeLayer(kind){
+    if(!loaded)return null;const key='gauge:'+kind;if(cache.has(key))return cache.get(key);
+    // Measured pivots, rather than cell centres, keep the ornamental hands
+    // concentric as they turn. Transparent glass stays above live markings.
+    const centres={ivory:[256,244],dark:[768,244],blue:[1274,244],brass:[256,768],glass:[768,762],cap:[1274,758]};
+    const pivot=centres[kind];if(!pivot)return null;
+    const out=document.createElement('canvas');out.width=out.height=512;
+    out.getContext('2d').drawImage(gauges,pivot[0]-256,pivot[1]-256,512,512,0,0,512,512);cache.set(key,out);return out;
   }
   function wreckPose(frame,faction=1){
     if(!loaded)return null;frame=((frame%4)+4)%4;const row=faction===1?0:1,key=`roll:${row}:${frame}`;if(cache.has(key))return cache.get(key);
@@ -161,5 +182,5 @@
     index=((index%6)+6)%6;const key='scenery:'+index;if(cache.has(key))return cache.get(key);
     const out=document.createElement('canvas'),crop=crops[index];out.width=crop[2];out.height=crop[3];out.getContext('2d').drawImage(clouds,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
   }
-  window.RainbowAssets={DETAIL,wreckPose,sceneryArt,pilotPose,pilotFrame,parachutePose,interfaceArt,departurePose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
+  window.RainbowAssets={DETAIL,gaugeLayer,explosionPose,wreckPose,sceneryArt,pilotPose,pilotFrame,parachutePose,interfaceArt,departurePose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
 })();

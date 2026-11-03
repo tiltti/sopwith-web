@@ -204,3 +204,25 @@ Exact prompts, references, immutable output hashes and dimensions are in
 `web/score-cockpit-v09-prompts.json` and `web/score-cockpit-v09-files.json`.
 References were this project's cockpit and debrief art. No third-party game
 art was copied. These images are distributed with the GPL-2.0-or-later game.
+
+## Explosions and instrument details (2026-11-03)
+
+Three original built-in OpenAI imagegen outputs, all shown in chat and copied
+unchanged into the project (1536×1024 RGBA each):
+
+- `rainbow-explosions-v2.png`: eight sequential ignition/fire/smoke frames in a
+  4×2 sheet. Runtime crops retain a fixed animation centre and transparent margin.
+- `rainbow-dashboard-details-v3.png`: blank LIVES/LVL/AMMO bezels, five empty bomb
+  clips, and embossed YOU / FRIEND / ENEMY / BIRDS tapes in a 4×2 atlas.
+- `rainbow-gauge-layers-v1.png`: ivory/charcoal blank dials, blued spade/brass leaf
+  hands, transparent convex-glass highlight and pivot cap. Runtime crops use
+  measured pivots. Needles rotate independently; live serif graduations are
+  rendered between dial and glass at the 3× framebuffer resolution.
+
+Exact production and two design-review gauge prompts are retained in
+`web/effects-dashboard-v10-prompts.json`; production PNG hashes and dimensions
+are in `web/effects-dashboard-v10-files.json`. The gauge concepts used our own
+cockpit materials as references, followed by the layer sheet using those
+concepts. Review-only concept PNGs remain in the owner's local research folder.
+No third-party game art was copied. These original game images are distributed
+with the GPL-2.0-or-later game. No paid-provider CLI/API workflow was used.

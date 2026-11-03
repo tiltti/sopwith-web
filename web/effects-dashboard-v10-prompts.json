@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-03",
+  "tool": "image_gen.imagegen (built-in)",
+  "reference": "dist/assets/rainbow-cockpit-instruments-v2.png",
+  "rawOutputsPreserved": true,
+  "prompts": [
+    {
+      "key": "explosions",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept. Production original game animation sprite sheet, transparent 1536x1024, EXACTLY 4 columns x 2 rows, eight equal 384x512 cells. Eight sequential frames of ONE explosive burst, read left to right then next row. Fine hand-painted Amiga adventure raster style matching reference metal/material shading, dramatic but readable rich amber, orange, pale yellow hot cores, charcoal smoke and glowing embers. Fixed explosion centre at the centre of each cell, consistent scale and generous empty gutters so no frame touches another. Frame 1 small bright ignition flash. Frame 2 compact hot expanding orange burst. Frame 3 large billowing fireball. Frame 4 peak rolling fireball with irregular flame tongues. Frame 5 fire cooling into rolling dark smoke. Frame 6 smoky ember cloud. Frame 7 thin charcoal smoke and scattered faint sparks. Frame 8 very faint dissipating wisps/embers. Natural volumetric painted flame detail and craft pixels, not geometric star polygons, no flat circular rings, no real photo. Largest burst roughly 280px wide, always contained in its cell. Genuine transparent background around every frame, NO ground, vehicles, characters, text, borders, labels or watermark. No gore."
+    },
+    {
+      "key": "dashboard-details",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept. Production transparent UI sprite atlas for the existing vintage wooden biplane cockpit, match reference warm painted Amiga adventure raster art and aged brass. Exactly 1536x1024, 4 columns x 2 rows, eight equal 384x512 cells with generous transparent gutters. TOP ROW: cell 1 a wide small old brass rectangular LIVES counter bezel, dark completely blank interior, approx 330x180. Cell 2 a narrower matching LEVEL counter bezel, dark completely blank face, approx 260x180. Cell 3 a small matching AMMO counter bezel with blank dark face, approx 330x180. Cell 4 a wide low brass bomb-magazine tray with dark interior, approx 330x180, five EMPTY subtle rack clips along the top, no bombs and no words. BOTTOM ROW: four separate black embossed-label-maker tapes with hand-cut ends, approximately 330x95 each, slightly curled black vinyl, tiny bevel and raised bright ivory letters, in the same painted sprite style. EXACT text: cell 1 \"YOU\" with a tiny amber/gold square at left; cell 2 \"FRIEND\" with a tiny mint square; cell 3 \"ENEMY\" with a tiny coral red square; cell 4 \"BIRDS\" with a tiny white square. Keep letters perfectly readable, embossed and aligned, spelling exact. No extra text anywhere, no logos. Orthographic straight-on, no scenery or background. All eight isolated on genuine transparency."
+    },
+    {
+      "key": "gauge-a-ivory",
+      "transparent": false,
+      "prompt": "Use case: stylized-concept. A finished original vintage biplane AIR SPEED gauge example for design review, one large circular instrument mounted on a small square of honey-brown wooden cockpit and stitched leather. Match reference handpainted Amiga adventure material quality, much finer raster detail than crude pixel text, not a photograph. Front view, square composition. Aged brass bezel and screws, warm IVORY parchment dial, crisp dark old aviation serif numerals arranged around a 270-degree scale: 0, 40, 80, 120, 160, 200 in correct ascending order clockwise from lower left to lower right, smaller fine tick marks between. Small exact labels \"AIR SPEED\" and \"MPH\". Needle is NOT a red tachometer triangle: a beautiful slender blued-steel antique clock-style spade pointer, with an ornate pierced counterweight and small brass pivot; points approximately to 90 MPH, toward 11:30. Subtle convex GLASS over the entire face, soft curved sky reflection across upper left and fine rim highlight, no glare obscuring numerals. Legible refined engravings, 1920s aviation workshop aesthetic, cheerful warm adventure palette. Original design, no brand names, no UI labels A or B outside the dial, no extra objects."
+    },
+    {
+      "key": "gauge-b-charcoal",
+      "transparent": false,
+      "prompt": "Use case: stylized-concept. A finished original vintage biplane AIR SPEED gauge example for design review, one large circular instrument mounted on a small square of honey-brown wooden cockpit and stitched leather. Match reference handpainted Amiga adventure material quality, much finer raster detail than crude pixel text, not a photograph. Front view, square composition. Aged brass bezel and screws, deep CHARCOAL enamel dial, crisp warm ivory old aviation serif numerals arranged around a 270-degree scale: 0, 40, 80, 120, 160, 200 in correct ascending order clockwise from lower left to lower right, smaller fine tick marks between. Small exact labels \"AIR SPEED\" and \"MPH\". Needle is NOT a red tachometer triangle: an elegant slender cream/brass antique clock-style leaf pointer with a delicate hollow round counterweight and small brass pivot; points approximately to 90 MPH, toward 11:30. Subtle convex GLASS over the entire face, restrained blue-white curved reflection in upper right and a narrow rim highlight, no glare obscuring numerals. Rich hand-painted engraved metal detail, legible refined lettering, 1920s aviation workshop aesthetic. Original design, no brand names, no UI labels A or B outside the dial, no extra objects."
+    },
+    {
+      "key": "gauge-layers",
+      "transparent": true,
+      "references": [
+        "research/gauge-directions/gauge-a-ivory.png",
+        "research/gauge-directions/gauge-b-charcoal.png"
+      ],
+      "prompt": "Use case: stylized-concept. A production transparent 1536x1024 layered instrument sprite atlas for the two original vintage AIR SPEED gauge designs supplied as references. References define materials/style only. EXACT 3 columns x 2 rows, six equal 512x512 cells. All complete objects inside their cells with large transparent gutters. TOP LEFT: perfectly circular aged brass instrument bezel and BLANK warm ivory parchment face, front-on, no numbers, no marks, NO needle, no glass glare. TOP MIDDLE: same circular brass bezel and BLANK charcoal enamel face, no numbers, no marks, NO needle, no glass glare. TOP RIGHT: isolated slender blued-steel ornate antique SPADE CLOCK NEEDLE, pointing straight UP, delicate pierced counterweight below, pivot exactly at cell centre (256,256), tip near y45 and tail ending y400, needle axis x256. BOTTOM LEFT: isolated cream/brass LEAF CLOCK NEEDLE, pointing UP, fine hollow round counterweight, pivot exactly cell centre (256,256), tip near y45, tail near y400, axis x256. BOTTOM MIDDLE: ONLY a subtle convex circular GLASS REFLECTION overlay centred (256,256), diameter 430px, with a restrained pale blue-white curved reflection in the upper quadrant and thin curved rim glints; everything else genuinely TRANSPARENT including almost all of the centre, no opaque dark disc or bezel, no background. BOTTOM RIGHT: small round aged-brass central pivot cap, centred, on transparency. Rich finely painted Amiga adventure raster texture, excellent clean silhouettes, not vector triangles or automotive tachometer hands. Absolutely no letters, numbers, ticks, words, labels, wood background, scenes or extra parts. Preserve transparency, individual separated layers for dynamic game assembly."
+    }
+  ]
+}

@@ -211,7 +211,7 @@ C / SDL2 / Emscripten / WASM architecture and source provenance.
 
 ## Rainbow mission transitions and pilots
 
-A brief one-second READY PLAYER / LEVEL text cue holds the native simulation before
+A brief 1.5-second READY PLAYER / LEVEL text cue holds the native simulation before
 level 1 and every new level. Victory keeps the normal 72-tick native countdown,
 with original rear-view aircraft artwork receding toward the horizon and a
 single 7.8-second licensed fanfare/march mix. Game-over still ends on high scores.
@@ -288,7 +288,7 @@ Pause and score screens share the painted airfield; top-ten scores retain their
 visible navigation. Victory has an original winged badge and dedicated rear
 biplane frames. Descending canopies sway through four raster poses; falling
 planes roll around the fuselage with separate faction sprites. A quick pilot
-run/boarding animation fits inside the existing one-second READY hold. Friendly
+run/boarding animation fits inside the existing 1.5-second READY hold. Friendly
 walking pilots cannot destroy parked/taxiing aircraft at their home runway;
 hostile and airborne contacts keep their rules. Bomb artwork leaves parallel
 to its aircraft and eases toward actual ballistic velocity over four ticks,
@@ -319,8 +319,23 @@ numbered graduations, while a separate fuel needle reads E / 1/2 / F. The bomb
 rack shows only the remaining bombs; spent slots are empty. The scoreboard is
 narrower/taller and uses painted wooden/brass frames and mechanical name tiles.
 
-Every new aircraft, including trainer respawns, gets a one-second READY / level
+Every new aircraft, including trainer respawns, gets a 1.5-second READY / level
 and lives-left intermission. On the first life only, five idle seconds while
 parked shows throttle and takeoff key instructions. Input clears the hint timer;
 takeoff disables it for the rest of that run. All of this uses the display clock
 and leaves native physics/collision masks unchanged.
+
+### Explosion / instrument detail pass — 2026-11-03
+
+Explosions use eight original painted animation frames from ignition to smoke.
+Native explosion debris is hidden when the replacement artwork is available;
+collision and damage calculations remain native. LIVES, LVL and AMMO have their
+own sprite bezels. Bombs are clipped to a five-slot magazine; the navigation
+image fills a larger bevel-clipped aperture and its legend uses embossed tapes.
+
+All three analogue instruments use a blank charcoal/brass dial, separately
+rotating ornamental brass hand and transparent glass reflection. Graduations,
+units and counter values use higher-resolution live type at the 3× framebuffer
+scale. An ivory dial/blued-steel hand alternative is available in the development
+visual fixture for comparison. Exact prompts and immutable raw-image hashes are
+in `web/effects-dashboard-v10-*.json`.

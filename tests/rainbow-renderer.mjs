@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 
 const calls=[];
-function context() { return {setTransform(){},scale(){},translate(...a){calls.push(['translate',...a]);},rotate(){},save(){},restore(){},beginPath(){},clip(){calls.push(['clip']);},moveTo(...a){calls.push(['move',...a]);},lineTo(...a){calls.push(['line',...a]);},closePath(){},ellipse(){},fill(){},strokeRect(){},createRadialGradient(){return {addColorStop(){}};},fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
+function context() { return {measureText(s){return {width:String(s).length*Number(this.font?.match(/([0-9.]+)px/)?.[1]||7)*.6};},fillText(...a){calls.push(['type',...a,this.font,this.textAlign]);},setTransform(){},scale(){},translate(...a){calls.push(['translate',...a]);},rotate(a){calls.push(['rotate',a]);},save(){},restore(){},beginPath(){},clip(){calls.push(['clip']);},moveTo(...a){calls.push(['move',...a]);},lineTo(...a){calls.push(['line',...a]);},closePath(){},ellipse(){},fill(){},strokeRect(){},createRadialGradient(){return {addColorStop(){}};},fillRect(...args){calls.push(['rect',...args,this.fillStyle]);},drawImage(...args){calls.push(['image',...args]);}}; }
 function canvas() { const c=context();return {dataset:{},getContext:()=>c}; }
 const scope={window:{},document:{querySelectorAll:()=>[],createElement:()=>canvas()},Int32Array,Math};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-renderer.js',import.meta.url),'utf8'),scope);
@@ -83,9 +83,9 @@ console.log('Rainbow renderer: alignment, level grounded arch, visible optional 
 
 const activeTarget=new Int32Array([4,5,500,80,0,0,2,16,16]);
 calls.length=0;renderer.hud(scene,[activeTarget],false,ground);
-assert.ok(calls.some(r=>r[0]==='rect'&&r[1]>=210&&r[1]<=409&&r[2]>=28&&r[2]<62&&r.at(-1)==='#ed786b'),'Active enemy ground targets are red.');
+assert.ok(calls.some(r=>r[0]==='rect'&&r[1]>=208&&r[1]<=411&&r[2]>=25&&r[2]<64&&r.at(-1)==='#ed786b'),'Active enemy ground targets are red.');
 activeTarget[1]=3;calls.length=0;renderer.hud(scene,[activeTarget],false,ground);
-assert.ok(!calls.some(r=>r[0]==='rect'&&r[1]>=210&&r[1]<=409&&r[2]>=28&&r[2]<62&&r.at(-1)==='#ed786b'),'Destroyed targets cannot keep a red active marker.');
+assert.ok(!calls.some(r=>r[0]==='rect'&&r[1]>=208&&r[1]<=411&&r[2]>=25&&r[2]<64&&r.at(-1)==='#ed786b'),'Destroyed targets cannot keep a red active marker.');
 assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#526d78'),'Destroyed locations retain a subdued cross marker.');
 activeTarget[1]=5;activeTarget[6]=1;calls.length=0;renderer.teamMark(activeTarget,100);
 assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#71cebb'),'Friendly ground flags match the map.');
@@ -147,7 +147,7 @@ console.log('Painted terrain follows native geometry; fractional scenery layers 
 const localPlayer=new Int32Array([1,1,150,180,0,0,2,16,16,0,1]);
 const friendly=new Int32Array([4,5,400,80,0,0,2,16,16]);
 calls.length=0;renderer.hud(scene,[localPlayer,friendly],false,ground);
-const inMap=r=>r[0]==='rect'&&r[1]>=210&&r[1]<=409&&r[2]>=28&&r[2]<62;
+const inMap=r=>r[0]==='rect'&&r[1]>=208&&r[1]<=411&&r[2]>=25&&r[2]<64;
 assert.ok(calls.some(r=>inMap(r)&&r.at(-1)==='#71cebb'),'The map compares teams with the actual player faction.');
 assert.ok(!calls.some(r=>inMap(r)&&r.at(-1)==='#ed786b'));
 assert.ok(calls.some(r=>r[0]==='clip'),'The navigation aperture is clipped before drawing terrain and markers.');
@@ -156,3 +156,27 @@ assert.equal(display.dataset.airspeedUnit,'MPH');assert.equal(display.dataset.al
 renderer.readyLevel=1;renderer.readyLives=4;renderer.drawReady();assert.equal(display.dataset.readyLives,'4');
 renderer.readyLevel=null;renderer.takeoffHint=true;renderer.drawReady();assert.equal(display.dataset.takeoffHint,'true');
 console.log('Clipped navigation, player-relative team legend, remaining bomb icons, MPH/FT readouts, respawn lives and idle instructions verified.');
+
+scope.window.RainbowAssets.explosionPose=frame=>({frame,width:288,height:384});
+renderer.effects=[{id:51,type:1,tick:20,x:160,y:140,size:2}];
+renderer.drawEffects(100,20);assert.equal(display.dataset.explosionFrame,'0');
+renderer.drawEffects(100,24);assert.equal(display.dataset.explosionFrame,'2');
+renderer.drawEffects(100,34);assert.equal(display.dataset.explosionFrame,'7');
+renderer.drawEffects(100,36);assert.equal(display.dataset.explosionFrame,undefined,'A finished sprite burst never loops.');
+console.log('Sprite explosion advances through ignition, fire and smoke, then expires without replay.');
+
+// Live pointers retain calibration; glass must cover the pointer, not the face alone.
+const gaugeParts=Object.fromEntries(['dark','ivory','brass','blue','glass'].map(k=>[k,{kind:k}]));
+scope.window.RainbowAssets.gaugeLayer=k=>gaugeParts[k];
+const angles=[];
+for(const value of [-20,0,200,240]){calls.length=0;renderer.gauge(144,43,'speed',value,200,'AIR','MPH');angles.push(calls.find(c=>c[0]==='rotate')[1]);
+ const layers=calls.filter(c=>c[0]==='image').map(c=>c[1].kind);assert.deepEqual(layers,['dark','brass','glass']);}
+assert.equal(angles[0],angles[1]);assert.equal(angles[2],angles[3]);assert.ok(Math.abs(angles[2]-angles[1]-Math.PI*1.5)<1e-9);
+renderer.gaugeStyle='ivory';calls.length=0;renderer.gauge(144,43,'speed',80,200,'AIR','MPH');
+assert.deepEqual(calls.filter(c=>c[0]==='image').map(c=>c[1].kind),['ivory','blue','glass']);renderer.gaugeStyle='dark';
+const bombIcon={kind:'bomb'};scope.window.RainbowAssets.interfaceArt=k=>k==='bomb'?bombIcon:{kind:k};
+scene[8]=5;calls.length=0;renderer.hud(scene,[],false,ground);
+const inventory=calls.filter(c=>c[0]==='image'&&c[1]===bombIcon);assert.equal(inventory.length,5);
+assert.ok(inventory.every(c=>c[2]>=578&&c[2]+c[4]<=624&&c[3]>=47&&c[3]+c[5]<=68),'The complete inventory fits inside its own clipped magazine.');
+assert.ok(calls.some(c=>c[0]==='move'&&c[1]===578&&c[2]===47));
+console.log('Ornamental pointers clamp to the calibrated sweep, glass stays on top, and five bombs fit their clipped tray.');

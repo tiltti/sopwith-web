@@ -164,3 +164,11 @@ were made with built-in OpenAI imagegen using this project's own artwork as
 style references. Complete unmodified outputs and the exact prompts/hashes are
 retained in `dist/assets/ARTWORK.md` and `web/score-cockpit-v09-*.json` and are
 distributed with the GPL-2.0-or-later game. No external artwork was downloaded.
+
+## Explosion and gauge artwork (2026-11-03)
+
+The eight-frame explosion atlas, dashboard counter/tape atlas and layered
+ornamental gauges are original built-in OpenAI imagegen outputs using this
+project's own artwork and gauge concepts as references. Unmodified production
+PNGs, exact prompts, dimensions and hashes are distributed in `dist/assets/`
+and `web/effects-dashboard-v10-*.json` with the GPL-2.0-or-later game.
