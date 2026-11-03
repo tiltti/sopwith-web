@@ -226,3 +226,25 @@ cockpit materials as references, followed by the layer sheet using those
 concepts. Review-only concept PNGs remain in the owner's local research folder.
 No third-party game art was copied. These original game images are distributed
 with the GPL-2.0-or-later game. No paid-provider CLI/API workflow was used.
+
+## Three-mission campaign artwork (2026-11-03)
+
+Six original built-in OpenAI imagegen outputs were shown in chat and copied
+unchanged into this directory, each 1536×1024:
+
+- `rainbow-winter-scenery-v1.png`: snowy coastal valleys and winter sky.
+- `rainbow-storm-scenery-v1.png`: storm clouds, mountains and a ruined city skyline.
+- `rainbow-world-details-v1.png`: four buried fossil/antiquity details, British
+  Union Jack and Imperial German black-white-red flags, snowy firs and brick ruin.
+- `rainbow-winter-city-targets-v1.png`: four snow-covered and four damaged city
+  buildings, cropped into native target bounds at runtime.
+- `rainbow-mission-materials-v1.png`: four frozen-earth/snow/rubble/paving tiles.
+- `rainbow-medal-ceremony-v1.png`: campaign victory, medal presentation on the
+  right with room for the live score board on the left.
+
+The existing original painted coast was the style reference. Exact prompts and
+immutable output hashes/dimensions are in `web/campaign-v11-prompts.json` and
+`web/campaign-v11-files.json`. No commercial-game images were copied or bundled.
+Transparency of the sprite sheets is preserved; runtime crops and world-space
+placement leave collision masks untouched. Original production artwork is
+provided with this GPL-2.0-or-later game. No paid-provider API/CLI was used.

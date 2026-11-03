@@ -9,7 +9,7 @@
  * bombs, remaining-lives, score, speed, end-status, player-state, object-count,
  * home-x, returning-home, at-home, level, angle, orientation,
  * rainbow-left-x, rainbow-left-ground-y, rainbow-right-ground-y,
- * ground-height-array-pointer, native end-countdown, display-tick, reserved.
+ * ground-height-array-pointer, native end-countdown, display-tick, throttle-percent.
  * Rainbow span is 220 native pixels.
  * Then 320 visible ground heights (native upward Y coordinates).
  * Object record: type, state, world-x/y, angle, orientation, faction, width,

@@ -1,0 +1,48 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-winter-scenery-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1910004,
+      "sha256": "523cba59084ca3f27b2b0f363ec012cf0f7e831154fa339bf8503080db3d8624"
+    },
+    {
+      "path": "dist/assets/rainbow-storm-scenery-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2212767,
+      "sha256": "f6c85ae5c0700cc5828b4e854c53b10cedc96610999d4c7138b850af4ab7875e"
+    },
+    {
+      "path": "dist/assets/rainbow-world-details-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2208717,
+      "sha256": "f70351a7a692288888134c110de88430a8f718cb2d8274a0dd41048f10252a6b"
+    },
+    {
+      "path": "dist/assets/rainbow-winter-city-targets-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2151340,
+      "sha256": "7e97faf5e8a611704690fc3be0f38cdcc3c75647423a24c4d74fae99d2da146d"
+    },
+    {
+      "path": "dist/assets/rainbow-mission-materials-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 4050687,
+      "sha256": "90a9a03b1f250c35502c9243f4331920bc3abcca2ac8802651a123e6c5ee428f"
+    },
+    {
+      "path": "dist/assets/rainbow-medal-ceremony-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3047459,
+      "sha256": "beda1e2af3fa7121b46072adccd1c4f6b85e7e3deaaedbf536b708972229b4ca"
+    }
+  ]
+}

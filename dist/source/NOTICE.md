@@ -172,3 +172,11 @@ ornamental gauges are original built-in OpenAI imagegen outputs using this
 project's own artwork and gauge concepts as references. Unmodified production
 PNGs, exact prompts, dimensions and hashes are distributed in `dist/assets/`
 and `web/effects-dashboard-v10-*.json` with the GPL-2.0-or-later game.
+
+## Campaign artwork (2026-11-03)
+
+Winter/storm scenery, snow/city targets, fossil/flag props, mission materials
+and the medal-ceremony background are original built-in OpenAI imagegen outputs.
+They use this project's own painted coast as a style reference. Unmodified
+production PNGs and exact prompts/hashes are distributed in `dist/assets/` and
+`web/campaign-v11-*.json` with the GPL-2.0-or-later game.

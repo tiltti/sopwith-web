@@ -13,10 +13,9 @@ vm.runInNewContext(await readFile(new URL('../dist/i18n.js',import.meta.url),'ut
 const language=scope.window.PatrolLanguage;assert.equal(language.language,'en');assert.equal(nodes[0].nodeValue,'SINGLE PLAYER');
 assert.equal(nodes[1].nodeValue,'RANK: 21');assert.equal(nodes[2].nodeValue,'SOUND OFF');assert.equal(nodes[3].nodeValue,'BACK','A player nickname is not translated.');
 assert.equal(pause.nodeValue,'PAUSE','The running-game button is an action, not a paused-state label.');
-language.set('fi');assert.equal(scope.document.documentElement.lang,'fi');assert.equal(nodes[0].nodeValue,'YKSINPELI');assert.equal(nodes[1].nodeValue,'SIJOITUS: 21');assert.equal(nodes[3].nodeValue,'BACK');
-language.set('en');assert.equal(storage.get('sopwith.language'),'en');nodes[0].nodeValue='Lennon tulos: -50 pistettä.';
-assert.equal(pause.nodeValue,'PAUSE');
+language.set('fi');assert.equal(scope.document.documentElement.lang,'en');assert.equal(nodes[0].nodeValue,'SINGLE PLAYER');
+nodes[0].nodeValue='Lennon tulos: -50 pistettä.';
 observe([{type:'characterData',target:nodes[0]}]);assert.equal(nodes[0].nodeValue,'Flight score: -50.');
-scope.navigator.languages=['fi-FI'];language.set('auto');assert.equal(language.language,'fi');
-language.set('invalid');assert.equal(language.language,'fi');assert.equal(language.translate('Rainbow Patrol'),'Rainbow Patrol');
-console.log('Menu language: browser fallback, explicit English/Finnish, persistence, dynamic scores and untouched nicknames verified.');
+scope.navigator.languages=['fi-FI'];language.set('auto');assert.equal(language.language,'en');
+language.set('invalid');assert.equal(language.language,'en');assert.equal(language.translate('Rainbow Patrol'),'Rainbow Patrol');
+console.log('English-only UI ignores browser/legacy language preferences, translates dynamic legacy messages and preserves nicknames.');

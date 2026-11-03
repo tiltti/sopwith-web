@@ -1,37 +1,37 @@
 <!doctype html>
-<html lang="fi">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101a29">
-  <meta name="description" content="Sopwith Tribute: alkuperäinen Sopwith II selaimessa ja värikäs Rainbow Patrol -tribuuttiversio.">
+  <meta name="description" content="Sopwith II in your browser, alongside Rainbow Patrol, an original flying adventure.">
   <title>Sopwith Tribute</title>
   <link rel="icon" href="assets/tribute-mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="tribute.css?v=20261101-amiga1">
+  <link rel="stylesheet" href="tribute.css?v=20261103-campaign4">
 </head>
 <body class="collection-body">
-  <a class="skip" href="#versiot">Siirry versioihin</a>
+  <a class="skip" href="#versiot">Skip to games</a>
 <header class="collection-header">
-    <a class="collection-brand" href="./" aria-label="Sopwith Tribute, etusivu"><img src="assets/tribute-mark.svg" width="48" height="48" alt=""><span><strong>SOPWITH</strong><small>TRIBUTE</small></span></a>
-    <nav class="edition-nav" aria-label="Versiot ja tiedot"><a href="./" aria-current="page">Etusivu</a><a href="rainbow.html">Rainbow Patrol</a><a href="classic.html">Sopwith II</a><a href="info.html">Info</a></nav>
+    <a class="collection-brand" href="./" aria-label="Sopwith Tribute home"><img src="assets/tribute-mark.svg" width="48" height="48" alt=""><span><strong>SOPWITH</strong><small>TRIBUTE</small></span></a>
+    <nav class="edition-nav" aria-label="Games and information"><a href="./" aria-current="page">Home</a><a href="rainbow.html">Rainbow Patrol</a><a href="classic.html">Sopwith II</a><a href="info.html">Info</a></nav>
     <a class="nav-source" href="https://github.com/tiltti/sopwith-web" target="_blank" rel="noopener">GitHub ↗</a>
   </header>
   <main class="wrap">
-    <div class="collection-intro"><div><p class="collection-label">DAVID L. CLARKIN PELIN KUNNIAKSI</p><h1>Sopwith Tribute</h1><p>Sopwith II selaimessa ja sen rinnalla oma tribuuttiversio.</p></div></div>
-    <section class="edition-grid" id="versiot" aria-label="Pelattavat versiot">
-      <a class="edition-card" href="rainbow.html" aria-label="Pelaa Sopwith: Rainbow Patrol">
-        <div class="edition-art"><img src="assets/rainbow-splash-v1.png" width="1586" height="992" alt="Rainbow Patrolin splash: kaksitaso ja pelin tunnus pilvisellä rannikolla"><span class="edition-tag">OMA TRIBUUTTIVERSIO / 0.5</span></div>
-        <div class="card-copy"><div class="card-title"><h2>Rainbow Patrol</h2><span aria-hidden="true">↗</span></div><p>Oma arcade-käyttöliittymä, sulava vieritys ja tarkempi Amiga-henkinen grafiikka.</p><div class="edition-meta"><span>C / WASM + CANVAS</span><span>Pelaa →</span></div></div>
+    <div class="collection-intro"><div><p class="collection-label">A TRIBUTE TO DAVID L. CLARK’S GAME</p><h1>Sopwith Tribute</h1><p>The original Sopwith II and a new tribute, playable in your browser.</p></div></div>
+    <section class="edition-grid" id="versiot" aria-label="Playable games">
+      <a class="edition-card" href="rainbow.html" aria-label="Play Rainbow Patrol">
+        <div class="edition-art"><img src="assets/rainbow-splash-v1.png" width="1586" height="992" alt="Rainbow Patrol: a biplane above a painted coastline"><span class="edition-tag">ORIGINAL TRIBUTE · IN DEVELOPMENT</span></div>
+        <div class="card-copy"><div class="card-title"><h2>Rainbow Patrol</h2><span aria-hidden="true">↗</span></div><p>Three missions, painted scenery and a vintage cockpit. A new adventure built on Sopwith’s flight mechanics.</p><div class="edition-meta"><span>C / WASM + CANVAS</span><span>Play →</span></div></div>
       </a>
-      <a class="edition-card" href="classic.html" aria-label="Pelaa alkuperäistä Sopwith II -versiota">
-        <div class="edition-art"><img src="assets/classic-cover.svg" alt="Sopwith II:n CGA-ilme: musta taivas ja syaani-magenta kaksitaso" width="640" height="400"><span class="edition-tag classic-tag">ALKUPERÄINEN CGA</span></div>
-        <div class="card-copy"><div class="card-title"><h2>Sopwith II</h2><span aria-hidden="true">↗</span></div><p>Alkuperäiset grafiikat, PC-kaiutinäänet ja kaksi CGA-palettia. Pohjana SDL Sopwith 2.9.0.</p><div class="edition-meta"><span>C / SDL2 / WASM</span><span>Pelaa →</span></div></div>
+      <a class="edition-card" href="classic.html" aria-label="Play classic Sopwith II">
+        <div class="edition-art"><img src="assets/classic-cover.svg" alt="Sopwith II in cyan and magenta CGA graphics" width="640" height="400"><span class="edition-tag classic-tag">CLASSIC CGA</span></div>
+        <div class="card-copy"><div class="card-title"><h2>Sopwith II</h2><span aria-hidden="true">↗</span></div><p>Original graphics, PC speaker sound and two CGA palettes. Powered by SDL Sopwith 2.9.0.</p><div class="edition-meta"><span>C / SDL2 / WASM</span><span>Play →</span></div></div>
       </a>
     </section>
-    <p class="collection-note">Molemmat versiot ovat pelattavissa näppäimistöllä tai näyttöohjaimilla. Äänet ovat aluksi pois päältä. <a href="info.html">Tekniikka, tekijät ja lähdekoodi →</a> · <a href="look-lab.html">Ulkoasuvaihtoehdot A/B/C</a></p>
-    <section class="project-links" aria-label="Alkuperäiset projektit"><p>Alkuperäinen peli: David L. Clark / BMB Compuscience.<br>Pelimoottori: SDL Sopwith 2.9.0, Simon Howard ja muut tekijät.</p><div><a href="https://www.sopwith.org/" target="_blank" rel="noopener">sopwith.org ↗</a><a href="https://github.com/fragglet/sdl-sopwith" target="_blank" rel="noopener">SDL Sopwith ↗</a><a href="https://github.com/tiltti/sopwith-web" target="_blank" rel="noopener">GitHub ↗</a></div></section>
+    <p class="collection-note">Play with a keyboard or on-screen controls. Sound starts off. <a href="info.html">Technology, credits and source →</a> · <a href="look-lab.html">Artwork and sound previews</a></p>
+    <section class="project-links" aria-label="Original projects"><p>Original game: David L. Clark / BMB Compuscience.<br>Game engine: SDL Sopwith 2.9.0, Simon Howard and contributors.</p><div><a href="https://www.sopwith.org/" target="_blank" rel="noopener">sopwith.org ↗</a><a href="https://github.com/fragglet/sdl-sopwith" target="_blank" rel="noopener">SDL Sopwith ↗</a><a href="https://github.com/tiltti/sopwith-web" target="_blank" rel="noopener">GitHub ↗</a></div></section>
   </main>
-  <footer class="site-footer wrap"><p>SOPWITH TRIBUTE <span>·</span> 2026</p><div><a href="source/AUTHORS.txt">Alkuperäiset tekijät</a><a href="source/COPYING.md">GPL v2+</a><a href="source/sopwith-web-source.tar.gz" download>Lähdekoodi ↓</a></div></footer>
+  <footer class="site-footer wrap"><p>SOPWITH TRIBUTE <span>·</span> 2026</p><div><a href="source/AUTHORS.txt">Original authors</a><a href="source/COPYING.md">GPL v2+</a><a href="source/sopwith-web-source.tar.gz" download>Source code ↓</a></div></footer>
 </body>
 </html>

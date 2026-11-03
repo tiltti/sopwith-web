@@ -113,7 +113,13 @@
       if(audible&&scene[12]===0&&[1,6,8,9].includes(scene[13])) {
         let engine=this.voices.get('engine');
         if(!engine)engine=this.play('engine','engine',{loop:true,gain:.08});
-        if(engine?.name==='engine'){engine.source.playbackRate.setTargetAtTime(.6+scene[11]*.055,this.context.currentTime,.12);engine.gain.gain.setTargetAtTime(scene[17] ? .035 : .09,this.context.currentTime,.12);}
+        if(engine?.name==='engine'){
+          let descent=0;for(let i=0;i<scene[14];i++){const r=scene.subarray(348+i*18,348+(i+1)*18);if(r[0]===1&&r[10])descent=Math.max(0,-r[13]);}
+          const throttle=Math.max(0,Math.min(1,(scene[27]||0)/100)),speed=Math.max(0,Math.min(1,scene[11]/18));
+          engine.source.playbackRate.setTargetAtTime(Math.min(1.5,.64+throttle*.4+speed*.18+descent*.012),this.context.currentTime,.2);
+          engine.gain.gain.setTargetAtTime(scene[17]?.065:Math.min(.16,.065+throttle*.055+speed*.025+descent*.0015),this.context.currentTime,.2);
+        }
+        if(scene[18]%3===2&&tick%150===74)this.play('fx','boom',{gain:.14,rate:.5,priority:0});
       } else this.stop('engine');
       if(audible) {
         let shot=null;

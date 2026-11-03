@@ -13,6 +13,9 @@ OBJECTS *consoleplayer, *objtop;
 int countmove, displx, maxcrash, gamenum, endcount;
 playmode_t playmode;
 
+bool WebVariant_IsEnabled(void){return false;}
+int WebVariant_Speed(void){return 0;}
+int WebVariant_Throttle(void){return 0;}
 int WebVariant_ObjectKind(const OBJECTS *ob){return ob->ob_original_ob?ob->ob_original_ob->orient:0;}
 
 int main(void)

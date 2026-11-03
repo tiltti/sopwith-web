@@ -83,8 +83,8 @@ async function pageTests() {
   scope.requestAnimationFrame=fn=>animationFrames.push(fn);
   vm.runInNewContext(await readFile(new URL('../dist/app.js',import.meta.url),'utf8'),scope);
   assert.equal(get('mute')['aria-pressed'], 'true', 'Sound starts off.');
-  assert.equal(get('settings-trainer')['aria-pressed'],'false','The temporary trainer starts off and is not saved across reloads.');
-  get('settings-trainer').listeners.click();assert.equal(get('settings-trainer')['aria-pressed'],'true');
+  assert.equal(get('settings-trainer')['aria-pressed'],'true','The development trainer starts on in Rainbow.');
+  get('settings-trainer').listeners.click();assert.equal(get('settings-trainer')['aria-pressed'],'false');
   assert.equal(scope.trainer().unlimitedFuel,true);get('start').listeners.click();
   assert.match(get('game').src,/trainer=1/);
   assert.match(get('game').src,/edition=rainbow/, 'The tribute page must request the new renderer.');
@@ -94,6 +94,8 @@ async function pageTests() {
   assert.match(get('game').src,/level=2/,'The selected level reaches the next game launch.');
   get('difficulty-select').value='easy';get('difficulty-select').listeners.change();get('start').listeners.click();
   assert.match(get('game').src,/difficulty=easy/,'Difficulty is selected for the next native game.');
+  get('enemy-aircraft').checked=true;get('enemy-aircraft').listeners.change();get('start').listeners.click();assert.match(get('game').src,/mode=combat/);
+  get('enemy-aircraft').checked=false;get('start').listeners.click();assert.match(get('game').src,/mode=practice/);
   get('aim-toggle').checked=false;get('aim-toggle').listeners.change();
   assert.equal(sent.at(-1).type,'aim');assert.equal(sent.at(-1).enabled,false);
   const message = data => windowHandlers.message({origin,source:child,data:{sopwith:true,...data}});
@@ -182,4 +184,13 @@ await pageTests();
   assert.equal(sent.at(-1).score,750);assert.equal(pauseChanges.at(-1),1);
   frames.shift()();assert.equal(sent.filter(x=>x.type==='round-ended').length,1);
   console.log('End screen: winner/loser retain Rainbow, native game freezes once, and the score reaches the retry page.');
+  const jumps=[];engine._web_test=action=>{jumps.push(action);tick++;if(action){inputMode=1;end=0;heap[12]=0;heap[18]=action-1;}else{inputMode=0;end=1;heap[12]=1;heap[25]=72;}};
+  handlers.keydown(event('Digit3'));assert.equal(jumps.length,0,'Level shortcuts are inert outside trainer mode.');
+  scope.trainer(true);handlers.keydown(event('Digit3'));assert.deepEqual(jumps,[3]);frames.shift()();
+  handlers.keydown(event('KeyE'));assert.deepEqual(jumps,[3,0]);frames.shift()();
+  heap[9]=3;heap[10]=500;heap[25]=4;tick++;frames.shift()();
+  const victory=sent.filter(x=>x.type==='round-ended'&&x.victory);assert.equal(victory.length,1);assert.equal(victory[0].score,650);
+  assert.equal(sent.filter(x=>x.type==='score-ready'&&x.victory).length,1);frames.shift()();assert.equal(sent.filter(x=>x.type==='score-ready'&&x.victory).length,1);
+  console.log('Trainer numbers/E are gated; mission-three departure freezes once and sends one campaign result including the native remaining-lives bonus.');
+
 }

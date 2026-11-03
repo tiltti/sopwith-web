@@ -3,9 +3,9 @@
 (() => {
   const W=640,H=400,HUD=68,D=3,$=id=>document.getElementById(id),canvas=$('preview'),c=canvas.getContext('2d',{alpha:false});
   const profiles={
-    a:{grid:1.5,detail:0,description:'A · Suuremmat, selkeät pikseliryhmät. Kaksisävyiset pilvet ja rauhallinen maastotekstuuri.'},
-    b:{grid:.75,detail:1,description:'B · Hienommat reunat, kolmiväriset pilvet ja enemmän maaston yksityiskohtia.'},
-    c:{grid:1/3,detail:2,description:'C · Pienimmät ympäristöpikselit, tarkemmat pilvenreunat ja tiheämpi ruohikko. Sama tasainen väritys.'}
+    a:{grid:1.5,detail:0,description:'A · Bold pixel clusters, two-tone clouds and restrained terrain detail.'},
+    b:{grid:.75,detail:1,description:'B · Finer outlines, three-tone clouds and more terrain detail.'},
+    c:{grid:1/3,detail:2,description:'C · Smaller environment pixels, finer clouds and denser grass.'}
   };
   const capture=new URLSearchParams(location.search).get('capture');
   if(capture&&profiles[capture])document.body.classList.add('capture');
@@ -152,11 +152,11 @@
     }
     c.restore();hud();canvas.dataset.look=selected;canvas.dataset.scene=scene;canvas.dataset.planeWidth='36';canvas.dataset.environmentGrid=String(profiles[selected].grid);canvas.dataset.ready='true';
   }
-  function select(value){selected=value;document.querySelectorAll('[data-look]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.look===value)));$('static-image').href=`assets/previews/rainbow-look-${value}.png`;descriptions.textContent=profiles[value].description;canvas.setAttribute('aria-label',`Vaihtoehdon ${value.toUpperCase()} renderöity peliruutu`);draw();}
+  function select(value){selected=value;document.querySelectorAll('[data-look]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.look===value)));$('static-image').href=`assets/previews/rainbow-look-${value}.png`;descriptions.textContent=profiles[value].description;canvas.setAttribute('aria-label',`Rendered game view ${value.toUpperCase()}`);draw();}
   document.querySelectorAll('[data-look]').forEach(button=>button.addEventListener('click',()=>select(button.dataset.look)));
   $('scene').addEventListener('change',()=>{scene=$('scene').value;time=0;draw();});
   $('angle').addEventListener('input',()=>{angle=Number($('angle').value);$('angle-value').value=angle+'°';draw();});
-  $('motion').addEventListener('click',()=>{moving=!moving;$('motion').setAttribute('aria-pressed',String(moving));$('motion').textContent=moving?'PYSÄYTÄ':'ANIMOI';last=0;if(moving)requestAnimationFrame(frame);else draw();});
+  $('motion').addEventListener('click',()=>{moving=!moving;$('motion').setAttribute('aria-pressed',String(moving));$('motion').textContent=moving?'STOP':'ANIMATE';last=0;if(moving)requestAnimationFrame(frame);else draw();});
   function frame(now){if(!moving)return;if(last)time+=Math.min(.05,(now-last)/1000);last=now;draw();requestAnimationFrame(frame);}
   document.addEventListener('keydown',event=>{if(['INPUT','SELECT','TEXTAREA'].includes(event.target.tagName))return;const look={Digit1:'a',Digit2:'b',Digit3:'c'}[event.code];if(look){event.preventDefault();select(look);}});
   $('export').addEventListener('click',()=>canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=`rainbow-look-${selected}-${scene}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);},'image/png'));
@@ -164,5 +164,5 @@
   function stopAudio(){if(audio){audio.pause();audio.currentTime=0;}}
   document.querySelectorAll('[data-sound]').forEach(button=>button.addEventListener('click',()=>{stopAudio();audio=new Audio(`assets/audio/audition-v05/${button.dataset.sound}.${button.dataset.sound==='title-theme'?'m4a':'wav'}?v=20261101-moo2`);audio.volume=.5;audio.play().catch(()=>{});}));
   $('stop-audio').addEventListener('click',stopAudio);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio();});
-  Promise.all(Object.entries({main:'rainbow-sprites-v1.png',defense:'rainbow-defense-pilots-v1.png'}).map(([name,file])=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{images[name]=img;resolve();};img.onerror=reject;img.src='assets/'+file;}))).then(()=>{loaded=true;select(selected);}).catch(()=>{descriptions.textContent='Kuvien lataaminen epäonnistui. Lataa sivu uudelleen.';});
+  Promise.all(Object.entries({main:'rainbow-sprites-v1.png',defense:'rainbow-defense-pilots-v1.png'}).map(([name,file])=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{images[name]=img;resolve();};img.onerror=reject;img.src='assets/'+file;}))).then(()=>{loaded=true;select(selected);}).catch(()=>{descriptions.textContent='Artwork could not load. Reload this page.';});
 })();

@@ -26,7 +26,19 @@ void swcollsn(void)
     }
     for(int i=0;i<killptr;i++){
         if(WebVariant_ObjectKind(killed[i])==21)WebVariant_PilotHit(killed[i],killer[i]);
-        else swkill(killed[i],killer[i]);
+        else {
+            OBJECTS *victim=killed[i];
+            bool crater_hit=!killer[i]&&(victim->ob_type==BOMB||victim->ob_type==MISSILE
+                ||(victim->ob_type==PLANE&&victim->ob_state!=CRASHED&&victim->ob_endsts!=WINNER
+                    &&(victim->ob_state==FALLING||victim->ob_state<FINISHED)));
+            int left=0;GRNDTYPE before[8]={0};
+            if(crater_hit){left=victim->ob_x+(victim->ob_symbol->w-8)/2;
+                for(int n=0;n<8;n++)if(left+n>=0&&left+n<(int)currgame->gm_max_x)before[n]=ground[left+n];}
+            swkill(victim,killer[i]);
+            /* Native crater floors refer to the original DOS landscape.
+             * Replace that terrain write using this mission's real surface. */
+            if(crater_hit)WebVariant_Crater(left,before);
+        }
     }
     for(int i=0;i<collptr;i++){collsno[i]->ob_dx=collsdx[i];collsno[i]->ob_dy=collsdy[i];}
 }

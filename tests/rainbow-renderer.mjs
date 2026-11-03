@@ -83,14 +83,14 @@ console.log('Rainbow renderer: alignment, level grounded arch, visible optional 
 
 const activeTarget=new Int32Array([4,5,500,80,0,0,2,16,16]);
 calls.length=0;renderer.hud(scene,[activeTarget],false,ground);
-assert.ok(calls.some(r=>r[0]==='rect'&&r[1]>=208&&r[1]<=411&&r[2]>=25&&r[2]<64&&r.at(-1)==='#ed786b'),'Active enemy ground targets are red.');
+assert.ok(calls.some(r=>r[0]==='rect'&&r[1]>=201&&r[1]<=417&&r[2]>=19&&r[2]<64&&r.at(-1)==='#ed786b'),'Active enemy ground targets are red.');
 activeTarget[1]=3;calls.length=0;renderer.hud(scene,[activeTarget],false,ground);
-assert.ok(!calls.some(r=>r[0]==='rect'&&r[1]>=208&&r[1]<=411&&r[2]>=25&&r[2]<64&&r.at(-1)==='#ed786b'),'Destroyed targets cannot keep a red active marker.');
+assert.ok(!calls.some(r=>r[0]==='rect'&&r[1]>=201&&r[1]<=417&&r[2]>=19&&r[2]<64&&r.at(-1)==='#ed786b'),'Destroyed targets cannot keep a red active marker.');
 assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#526d78'),'Destroyed locations retain a subdued cross marker.');
 activeTarget[1]=5;activeTarget[6]=1;calls.length=0;renderer.teamMark(activeTarget,100);
-assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#71cebb'),'Friendly ground flags match the map.');
+assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#15386b'),'Friendly flags have a British blue fallback.');
 activeTarget[6]=2;calls.length=0;renderer.teamMark(activeTarget,100);
-assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#ed786b'),'Enemy ground flags match the map.');
+assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#15151d'),'Enemy flags have an Imperial black fallback.');
 activeTarget[1]=3;calls.length=0;renderer.teamMark(activeTarget,100);assert.equal(calls.length,0,'Destroyed sites lose their active flag.');
 
 // Pilots come from native objects; repaint never creates a duplicate actor.
@@ -129,7 +129,7 @@ bomb[13]=-8;renderer.drawBomb(bomb,[bomb,releasePlane],100,12,heap);const midway
 assert.ok(midway>0&&midway<Math.atan2(8,4));renderer.drawBomb(bomb,[bomb,releasePlane],100,15,heap);
 assert.ok(Math.abs(Number(display.dataset.bombHeading)-Math.atan2(8,4))<1e-9);
 console.log('Bombs release along the airframe and smoothly align with actual ballistic velocity.');
-renderer.readyLevel=1;renderer.readyProgress=.2;renderer.drawBoarding(scene,[releasePlane],100,ground);assert.equal(display.dataset.boarding,'20');
+renderer.readyLevel=1;renderer.readyProgress=.2;renderer.drawBoarding(scene,[releasePlane],100,ground);assert.equal(display.dataset.boarding,'56');
 renderer.readyLevel=null;renderer.drawBoarding(scene,[releasePlane],100,ground);assert.equal(display.dataset.boarding,undefined);
 console.log('Boarding crew follows READY progress only; it creates no physics objects or extra delay.');
 
@@ -147,7 +147,7 @@ console.log('Painted terrain follows native geometry; fractional scenery layers 
 const localPlayer=new Int32Array([1,1,150,180,0,0,2,16,16,0,1]);
 const friendly=new Int32Array([4,5,400,80,0,0,2,16,16]);
 calls.length=0;renderer.hud(scene,[localPlayer,friendly],false,ground);
-const inMap=r=>r[0]==='rect'&&r[1]>=208&&r[1]<=411&&r[2]>=25&&r[2]<64;
+const inMap=r=>r[0]==='rect'&&r[1]>=201&&r[1]<=417&&r[2]>=19&&r[2]<64;
 assert.ok(calls.some(r=>inMap(r)&&r.at(-1)==='#71cebb'),'The map compares teams with the actual player faction.');
 assert.ok(!calls.some(r=>inMap(r)&&r.at(-1)==='#ed786b'));
 assert.ok(calls.some(r=>r[0]==='clip'),'The navigation aperture is clipped before drawing terrain and markers.');
@@ -180,3 +180,10 @@ const inventory=calls.filter(c=>c[0]==='image'&&c[1]===bombIcon);assert.equal(in
 assert.ok(inventory.every(c=>c[2]>=578&&c[2]+c[4]<=624&&c[3]>=47&&c[3]+c[5]<=68),'The complete inventory fits inside its own clipped magazine.');
 assert.ok(calls.some(c=>c[0]==='move'&&c[1]===578&&c[2]===47));
 console.log('Ornamental pointers clamp to the calibrated sweep, glass stays on top, and five bombs fit their clipped tray.');
+
+const detailSprites=Array.from({length:8},(_,index)=>({index,width:330,height:308}));scope.window.RainbowAssets.worldDetail=i=>detailSprites[i];
+activeTarget[1]=5;activeTarget[6]=1;calls.length=0;renderer.teamMark(activeTarget,100);assert.ok(calls.some(c=>c[0]==='image'&&c[1]===detailSprites[4]));
+activeTarget[6]=2;calls.length=0;renderer.teamMark(activeTarget,100);assert.ok(calls.some(c=>c[0]==='image'&&c[1]===detailSprites[5]));
+scene[18]=1;scene[1]++;renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.environment,'winter-valley');assert.equal(display.dataset.weather,undefined);
+scene[18]=2;scene[1]++;renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.environment,'storm-city');assert.equal(display.dataset.weather,'rain-thunder');
+assert.deepEqual(ground,terrainCopy);console.log('British/Imperial German flag art and distinct winter/storm layers preserve terrain and collision data.');

@@ -61,12 +61,13 @@ Rainbow-only integration rules are in `web/variant.c`:
   The original autopilot remains in the classic edition.
 - Ground tank shots have gravity and their own muzzle events. Target destruction
   gives a brief TARGET DESTROYED message without a repeating victory fanfare.
-  Ground units have painted team panels and matching flags: mint/plus for friendly,
-  red/bar for enemy, also explained in the HUD.
-- In Rainbow settings, starting level 2 enables ground return fire without enemy
-  aircraft when choosing YKSINPELI. Level 1 is quiet; level 3 increases aggression.
-  The selection is saved for the next flight and does not change a flight underway.
-  The splash's LEVEL 2 button starts that single-player mode directly.
+  Ground units have painted team panels and British Union Jack / Imperial German black-white-red cloth flags. The map
+  retains mint/red team markers.
+- The campaign has three different landscapes: coast, winter valleys and
+  mountainous storm city. Easy ground defenses stay quiet; Normal fires back
+  from mission one. Enemy aircraft are a separate optional extra in Flight Setup.
+  Completing the third mission ends at the medal ceremony and Badge of Honor board.
+
 
 `dist/rainbow-ui.js` supplies keyboard/mouse/touch arcade menus. Game over shows the current board and provisional rank behind
 exactly three A–Z/0–9 initials, editable by typing or arrows. Saving ends on
@@ -74,19 +75,20 @@ the top-ten high-score list with qualifying submitted local runs highlighted.
 Entry shows the provisional rank even below tenth place. The pause/settings
 screens use the game's own style. Fullscreen transitions do not pause the game
 through a transient visibility event; changing tabs normally still does.
-The splash menu also has a KOKO NÄYTTÖ toggle before starting a game; its label
-changes to IKKUNATILA while fullscreen is active.
-Rainbow menus offer English/Finnish and browser-language selection, remembered
-locally. Finnish browsers start in Finnish; other languages fall back to English.
+The splash menu has a FULLSCREEN toggle. PLAY opens Flight Setup, with Easy/Normal
+and optional enemy aircraft before START FLIGHT. The website and game UI are
+English-only; old stored language preferences are ignored.
 Sound controls use matching speaker-on/muted SVG images on the splash, rail and
 settings screen, with a visible on/off label and a gold enabled state.
 
-Normal difficulty retains the existing combat tempo. Optional Easy difficulty
-limits hostile aircraft shots to one per 0.4 seconds within 96 native pixels and
-ground shots to one per 0.6 seconds within 80 pixels. Hostiles wait three seconds
-after a player spawn before firing. Player weapons, flight physics, crashes and
-friendly defenses keep their usual rules. Friendly tanks and AA now acquire
-hostile computer planes in single-player too and aim at their actual target.
+Normal ground defenses fire in every mission. Easy disables all ground and pilot
+return fire; optional enemy aircraft keep their shorter range, per-owner shot
+interval and spawn grace. Friendly defenses engage hostile aircraft on Normal.
+Rainbow has sixteen throttle steps with gradual acceleration and up to 18 native
+speed units (roughly 200 arcade MPH in a dive), while Classic keeps its original
+flight rules. Returning home uses native steering with current-terrain sampling, an approach
+speed cap, terrain/building clearance assistance and the earlier landing handoff.
+
 
 `dist/rainbow-audio.js` uses five named Web Audio voice slots. Recorded CC0
 gunfire, impacts, explosions, cow, bird and jingle cues are bundled alongside
@@ -106,8 +108,7 @@ bailout. Bird/flock hits have grouped squawks and feather sprays. Classic retain
 font is Press Start 2P under OFL 1.1. Provenance/licenses are in `NOTICE.md` and
 `dist/assets/`; `web/ASSET-LOCK.json` locks the complete asset roster. RETRY,
 Rainbow Islands and Amiga-era games are references; none of their files is bundled.
-WebGL or Three.js is not required for this measured 2D path. A separate flight
-model and new obstacle courses are future work.
+WebGL or Three.js is not required for this measured 2D path. Further flight-model changes and new obstacle courses can be explored separately.
 
 ## Art-direction studies
 
@@ -196,7 +197,7 @@ selection; menu navigation and text entry are handled by the original game.
 ## Playtest and console trainer
 
 Rainbow settings temporarily expose a TRAINER (TESTI) toggle for playtesting.
-It starts off on reload and can be changed before or during a flight. Its UI
+During development it starts ON in Rainbow after every page reload, and can be disabled in Settings before a ranked flight. Classic remains off by default. Its UI
 must be removed before the final release; see `web/RELEASE-CHECKLIST.md`.
 
 On the game page, enter `trainer()` in the browser's JavaScript developer
@@ -211,7 +212,7 @@ C / SDL2 / Emscripten / WASM architecture and source provenance.
 
 ## Rainbow mission transitions and pilots
 
-A brief 1.5-second READY PLAYER / LEVEL text cue holds the native simulation before
+A brief 2.5-second READY PLAYER / LEVEL text cue holds the native simulation before
 level 1 and every new level. Victory keeps the normal 72-tick native countdown,
 with original rear-view aircraft artwork receding toward the horizon and a
 single 7.8-second licensed fanfare/march mix. Game-over still ends on high scores.
@@ -221,7 +222,7 @@ canopies, descend to the real terrain, stand briefly and walk slowly to the
 nearest airfield of their own faction. Arrival removes them safely. Aircraft,
 bullets, bombs and debris can hit them. A player-caused airborne casualty is
 **−1000** regardless of faction. On foot, friendly casualties cost **−500** and
-hostile casualties award **+100**. From level 2, grounded pilots defend themselves
+hostile casualties award **+100**. On Normal, grounded pilots defend themselves from mission one
 against hostile aircraft and other grounded pilots; they do not shoot parachutes.
 Human/German vocal reactions and a procedural cinematic dive loop respect mute.
 
@@ -288,7 +289,7 @@ Pause and score screens share the painted airfield; top-ten scores retain their
 visible navigation. Victory has an original winged badge and dedicated rear
 biplane frames. Descending canopies sway through four raster poses; falling
 planes roll around the fuselage with separate faction sprites. A quick pilot
-run/boarding animation fits inside the existing 1.5-second READY hold. Friendly
+run/boarding animation fits inside the existing 2.5-second READY hold. Friendly
 walking pilots cannot destroy parked/taxiing aircraft at their home runway;
 hostile and airborne contacts keep their rules. Bomb artwork leaves parallel
 to its aircraft and eases toward actual ballistic velocity over four ticks,
@@ -319,7 +320,7 @@ numbered graduations, while a separate fuel needle reads E / 1/2 / F. The bomb
 rack shows only the remaining bombs; spent slots are empty. The scoreboard is
 narrower/taller and uses painted wooden/brass frames and mechanical name tiles.
 
-Every new aircraft, including trainer respawns, gets a 1.5-second READY / level
+Every new aircraft, including trainer respawns, gets a 2.5-second READY / level
 and lives-left intermission. On the first life only, five idle seconds while
 parked shows throttle and takeoff key instructions. Input clears the hint timer;
 takeoff disables it for the rest of that run. All of this uses the display clock
@@ -339,3 +340,29 @@ units and counter values use higher-resolution live type at the 3× framebuffer
 scale. An ivory dial/blued-steel hand alternative is available in the development
 visual fixture for comparison. Exact prompts and immutable raw-image hashes are
 in `web/effects-dashboard-v10-*.json`.
+
+### Three-mission campaign / development build — 2026-11-03
+
+- Mission terrain is generated in `web/variant.c`, blending new valleys/mountains
+  into preserved native airfields. Targets are re-grounded on the new surface.
+  Craters use a mission baseline and never raise terrain back to the DOS map.
+- Friendly walking crew are safe beside any low departing/taxiing friendly plane,
+  including beyond the old 32-pixel airfield exemption. Airborne/hostile contacts
+  keep their existing rules.
+- Trainer starts on during development. With it enabled, 1–9 rebuild a selected
+  level, while E clears targets and invokes the native 72-tick departure. The
+  three visual themes cycle for level numbers beyond three as test previews.
+  The normal campaign ends after three. Trainer actions are gated again in C.
+- Every spawn gets a 2.5-second winged READY/lives badge; the short boarding
+  animation finishes within its first 0.9 seconds. Completion labels share the
+  badge's blank face. The native remaining-lives bonus is preserved; its old
+  busy-wait presentation is skipped in Rainbow to avoid blocking the browser.
+- Six new immutable PNGs supply winter/storm backgrounds, eight building sprites,
+  eight archaeology/flag/prop sprites, four material tiles and the medal ceremony.
+  `web/campaign-v11-*.json` records exact built-in imagegen prompts and hashes.
+- The cockpit uses aspect-preserving bezel corners, a wider clipped map, full
+  altitude numerals and a visible throttle strip. Speed/throttle interpolate and
+  the airspeed pointer is damped. The quiet radial loop follows speed, throttle
+  and descent; storm thunder shares an existing low-frequency effect sample.
+- Menus follow PLAY → Flight Setup → START FLIGHT. Controls and setup use painted
+  scoreboard frames. The English-only home page presents equal-size game cards.

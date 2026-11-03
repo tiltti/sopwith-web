@@ -78,7 +78,14 @@
     if(msg.type==='trainer-state'&&msg.enabled)trainerUsed=true;
     if(msg.type==='score-ready') {
       trainerUsed=trainerUsed||msg.trainerUsed;
-      if(trainerUsed){status('Trainer-lennon tulosta ei lisätä ennätyslistalle.');if(arcade)window.dispatchEvent(new CustomEvent('sopwith-score-saved'));return;}
+      if(trainerUsed){
+        status('Trainer-lennon tulosta ei lisätä ennätyslistalle.');
+        if(arcade&&msg.victory){
+          const rows=$('entry-scores-rows');rows.replaceChildren();
+          boardRows.slice(0,10).forEach((row,i)=>{const tr=document.createElement('tr');for(const value of [i+1,row.nickname,row.score]){const td=document.createElement('td');td.textContent=String(value);tr.append(td);}rows.append(tr);});
+          $('entry-rank').textContent='TRAINER';$('play-again').hidden=false;
+        }else if(arcade)window.dispatchEvent(new CustomEvent('sopwith-score-saved'));return;
+      }
       pending={score:msg.score,level:msg.level,ticks:msg.ticks,trainerUsed:false};
       if(arcade){$('scores-mode').value=mode;$('scores-difficulty').value=difficulty;drawEntryBoard();refresh();}
       $('score-result').textContent=`Lennon tulos: ${msg.score} pistettä.`;

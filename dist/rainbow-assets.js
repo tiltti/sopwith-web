@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),cache=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),cache=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -30,7 +30,7 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=18,okay=true;
+    let remaining=23,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
@@ -43,6 +43,7 @@
     cockpit.onload=()=>done(cockpit.width===1536&&cockpit.height===1024);
     details.onload=()=>done(details.width===1536&&details.height===1024);
     blasts.onload=()=>done(blasts.width===1536&&blasts.height===1024);
+    for(const img of [winter,storm,worldDetails,missionTargets,materials])img.onload=()=>done(img.width===1536&&img.height===1024);
     gauges.onload=()=>done(gauges.width===1536&&gauges.height===1024);
     instruments.onload=()=>done(instruments.width===1536&&instruments.height===1024);
     turf.onload=()=>done(turf.width===1536&&turf.height===1024);
@@ -50,7 +51,8 @@
     scenery.onload=()=>done(scenery.width===1536&&scenery.height===1024);
     clouds.onload=()=>done(clouds.width===1536&&clouds.height===1024);
     soil.onload=()=>done(soil.width===1536&&soil.height===1024);
-    gauges.onerror=details.onerror=blasts.onerror=instruments.onerror=turf.onerror=roll.onerror=scenery.onerror=clouds.onerror=soil.onerror=atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=canopies.onerror=badge.onerror=cockpit.onerror=()=>done(false);
+    winter.onerror=storm.onerror=worldDetails.onerror=missionTargets.onerror=materials.onerror=gauges.onerror=details.onerror=blasts.onerror=instruments.onerror=turf.onerror=roll.onerror=scenery.onerror=clouds.onerror=soil.onerror=atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=canopies.onerror=badge.onerror=cockpit.onerror=()=>done(false);
+    winter.src='assets/rainbow-winter-scenery-v1.png';storm.src='assets/rainbow-storm-scenery-v1.png';worldDetails.src='assets/rainbow-world-details-v1.png';missionTargets.src='assets/rainbow-winter-city-targets-v1.png';materials.src='assets/rainbow-mission-materials-v1.png';
     gauges.src='assets/rainbow-gauge-layers-v1.png';
     details.src='assets/rainbow-dashboard-details-v3.png';blasts.src='assets/rainbow-explosions-v2.png';
     instruments.src='assets/rainbow-cockpit-instruments-v2.png';
@@ -63,18 +65,23 @@
     actors.src='assets/rainbow-pilot-walk-v3.png';departure.src='assets/rainbow-departure-v2.png';
     canopies.src='assets/rainbow-parachute-sway-v4.png';badge.src='assets/rainbow-wing-badge-v1.png';cockpit.src='assets/rainbow-cockpit-v1.png';
   }); }
-  function sprite(r,heap) {
+  function sprite(r,heap,mission=0) {
     if(!loaded){load();return null;}
     const index=frameFor(r),[type,state,,,,orient,,w,h,ptr]=r,angle=Math.round(r[4]*8)/8;
     if(index<0||w<1||h<1||w>256||h>256||ptr<0||ptr+w*h>heap.length)return null;
-    const key=[index,type,state,angle,orient,r[6],w,h,ptr,r[12]<0].join(':');
+    const key=[mission,index,type,state,angle,orient,r[6],w,h,ptr,r[12]<0].join(':');
     if(cache.has(key))return cache.get(key);
     const out=document.createElement('canvas');
     const rotating=type===1||type===10,worldSize=type===1?46:type===10?30:0;
     out.worldWidth=rotating?worldSize:w*2+2;out.worldHeight=rotating?worldSize:h*2+2;
     out.width=out.worldWidth*DETAIL;out.height=out.worldHeight*DETAIL;
     const c=out.getContext('2d');c.imageSmoothingEnabled=true;c.scale(DETAIL,DETAIL);
-    const sheet=index<16?atlas:index<24?extras:pilots,crop=index<16?frames[index]:index<24?extraFrames[index-16]:defenseFrames[index-24];
+    let sheet=index<16?atlas:index<24?extras:pilots,crop=index<16?frames[index]:index<24?extraFrames[index-16]:defenseFrames[index-24];
+    if(mission&&type===4&&[0,1,2,7].includes(r[15])){
+      const building=({0:0,1:2,2:3,7:1})[r[15]],row=mission===2||state!==5?4:0;
+      const bounds=[[10,200,365,218],[400,170,355,248],[780,125,365,293],[1160,220,370,198],[10,680,365,268],[400,600,355,348],[780,600,365,348],[1160,700,370,248]];
+      sheet=missionTargets;crop=bounds[row+building];
+    }
     let left=w,top=h,right=0,bottom=0;
     for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(heap[ptr+y*w+x]) {
       left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x+1);bottom=Math.max(bottom,y+1);
@@ -155,7 +162,16 @@
       :kind==='plate'?[cockpit,[1030,662,500,188],110,42]
       :[cockpit,[kind==='altitude'?536:24,524,459,468],56,56];
     const out=document.createElement('canvas');out.worldWidth=w;out.worldHeight=h;out.width=Math.ceil(w*DETAIL);out.height=Math.ceil(h*DETAIL);
-    out.getContext('2d').drawImage(sheet,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
+    const context=out.getContext('2d');
+    if(['panel','map','score','lives','level','counter','bombRack'].includes(kind)){
+      // Uniformly scaled corner pieces keep rivets circular. Only the wood
+      // and straight border centres stretch to the cockpit's wide aspect.
+      const [sx,sy,sw,sh]=crop,edge=Math.min(sw,sh)*.24,scale=out.height/sh,pad=edge*scale;
+      const xs=[sx,sx+edge,sx+sw-edge,sx+sw],ys=[sy,sy+edge,sy+sh-edge,sy+sh];
+      const dx=[0,pad,out.width-pad,out.width],dy=[0,pad,out.height-pad,out.height];
+      for(let y=0;y<3;y++)for(let x=0;x<3;x++)context.drawImage(sheet,xs[x],ys[y],xs[x+1]-xs[x],ys[y+1]-ys[y],dx[x],dy[y],dx[x+1]-dx[x],dy[y+1]-dy[y]);
+    }else context.drawImage(sheet,...crop,0,0,out.width,out.height);
+    cache.set(key,out);return out;
   }
   function explosionPose(frame){
     if(!loaded)return null;frame=Math.max(0,Math.min(7,frame));const key='blast:'+frame;if(cache.has(key))return cache.get(key);
@@ -176,11 +192,16 @@
     const out=document.createElement('canvas');out.worldWidth=36;out.worldHeight=48;out.width=108;out.height=144;
     out.getContext('2d').drawImage(roll,frame*384,row*512,384,512,0,0,out.width,out.height);cache.set(key,out);return out;
   }
+  function worldDetail(index){
+    if(!loaded)return null;index=Math.max(0,Math.min(7,index));const key='detail:'+index;if(cache.has(key))return cache.get(key);
+    const crops=[[8,156,370,270],[392,176,370,250],[776,156,370,280],[1160,145,370,285],[32,620,330,308],[416,620,330,308],[780,560,365,370],[1160,660,370,288]],crop=crops[index];
+    const out=document.createElement('canvas');out.width=crop[2];out.height=crop[3];out.getContext('2d').drawImage(worldDetails,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
+  }
   function sceneryArt(kind,index=0){
-    if(!loaded)return null;if(kind==='background')return scenery;if(kind==='soil')return soil;if(kind==='turf')return turf;
+    if(!loaded)return null;if(kind==='winter')return winter;if(kind==='storm')return storm;if(kind==='materials')return materials;if(kind==='background')return scenery;if(kind==='soil')return soil;if(kind==='turf')return turf;
     const crops=[[35,195,430,150],[0,165,512,195],[18,105,490,280],[35,805,440,160],[535,785,470,180],[1060,830,430,150]];
     index=((index%6)+6)%6;const key='scenery:'+index;if(cache.has(key))return cache.get(key);
     const out=document.createElement('canvas'),crop=crops[index];out.width=crop[2];out.height=crop[3];out.getContext('2d').drawImage(clouds,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
   }
-  window.RainbowAssets={DETAIL,gaugeLayer,explosionPose,wreckPose,sceneryArt,pilotPose,pilotFrame,parachutePose,interfaceArt,departurePose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
+  window.RainbowAssets={DETAIL,worldDetail,gaugeLayer,explosionPose,wreckPose,sceneryArt,pilotPose,pilotFrame,parachutePose,interfaceArt,departurePose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
 })();

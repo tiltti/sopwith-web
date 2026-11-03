@@ -1,6 +1,6 @@
 // Standalone arcade menus and three-character initials. GPL-2.0-or-later.
 (() => {
-  const $=id=>document.getElementById(id),panels=['help','settings','scores'];
+  const $=id=>document.getElementById(id),panels=['help','settings','scores','flight'];
   let panel=null,selection=0,cursor=0,items=[],resumeAfterPanel=false;
   const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   function menuItems() {
@@ -31,18 +31,10 @@
     const first=$('panel-'+name).querySelector('button,input,select');first?.focus({preventScroll:true});
     select(0);
   }
-  let combat=false;
-  $('level-two-start').addEventListener('click',()=>{
-    $('start-level').value='2';$('start-level').dispatchEvent(new Event('change'));
-    combat=false;$('start').click();
-  });
-  $('combat-start').addEventListener('click',()=>{
-    combat=true;document.querySelector('input[name="mode"][value="combat"]').checked=true;$('start').click();
-  });
-  $('start').addEventListener('click',()=>{
-    if(!combat)document.querySelector('input[name="mode"][value="practice"]').checked=true;
-    combat=false;
-  },true);
+  const difficulty=$('difficulty-select');
+  const syncDifficulty=()=>{for(const value of ['easy','normal'])$('flight-'+value).setAttribute('aria-pressed',String(difficulty.value===value));};
+  for(const value of ['easy','normal'])$('flight-'+value).addEventListener('click',()=>{difficulty.value=value;difficulty.dispatchEvent(new Event('change'));syncDifficulty();});
+  difficulty.addEventListener('change',syncDifficulty);syncDifficulty();
   document.querySelectorAll('[data-open-panel]').forEach(button=>button.addEventListener('click',()=>openPanel(button.dataset.openPanel)));
   document.querySelectorAll('[data-close-panel]').forEach(button=>button.addEventListener('click',closePanel));
   window.addEventListener('sopwith-menu',event=>openPanel(event.detail));

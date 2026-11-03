@@ -35,7 +35,7 @@ EMSCRIPTEN_KEEPALIVE const int *web_scene(void)
     scene[8] = consoleplayer->ob_bombs;
     scene[9] = clamp_min(0, maxcrash - consoleplayer->ob_crashcnt);
     scene[10] = consoleplayer->ob_score.score;
-    scene[11] = consoleplayer->ob_speed;
+    scene[11] = WebVariant_IsEnabled()?WebVariant_Speed():consoleplayer->ob_speed;
     scene[12] = consoleplayer->ob_endsts;
     scene[13] = consoleplayer->ob_state;
     scene[15] = consoleplayer->ob_original_ob ? consoleplayer->ob_original_ob->x : consoleplayer->ob_x;
@@ -49,6 +49,7 @@ EMSCRIPTEN_KEEPALIVE const int *web_scene(void)
     scene[23] = ground[scene[21] + clamp_max(220, (int)currgame->gm_max_x - 1)];
     scene[24] = (int)(uintptr_t)ground;
     scene[25] = endcount;
+    scene[27] = WebVariant_Throttle();
     for (int x = 0; x < SCR_WDTH; ++x) {
         int wx = clamp_range(0, displx + x, (int)currgame->gm_max_x - 1);
         scene[WEB_SCENE_HEADER + x] = ground[wx];

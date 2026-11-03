@@ -1,3 +1,35 @@
+## Three-mission campaign / English menus — 2026-11-03
+
+- All ten JavaScript suites passed, including trainer-only number/E actions,
+  one-shot campaign completion with the remaining-lives bonus, English-only
+  legacy text handling, interpolated throttle/speed, variable engine mix and
+  muted thunder. New renderer/asset checks cover winter/storm layers and flags.
+- Real C patrol checks passed: runway pilot overlap beyond the old safe radius,
+  distinct winter/city height fields and preserved runways, ten real crater
+  impacts on ground below the DOS baseline without any upward terrain change,
+  sixteen throttle steps, gradual acceleration beyond the old maximum and
+  sustained half-throttle speed. Trainer gating and E departure passed.
+- Native trainer/rules and read-only scene tests passed. Return-to-base audit
+  passed 90/90 Rainbow scenarios across all three terrain profiles with ground return fire disabled to isolate
+  navigation. Navigation samples the current landscape and adds approach speed/clearance assistance. Classic remains the known 28/30 baseline; its rules are unchanged.
+- Browser launch through PLAY → Flight Setup confirmed Easy/Normal, optional
+  aircraft, English labels, sound off and trainer on by default. Real takeoff
+  with X, comma and partial Z throttle stayed in flying state, showed around
+  50 percent throttle and 517 ft AGL, with 120 FPS reported on this local device.
+  Audio stayed off with zero voices; no fullscreen switching was used.
+- Trainer keys 2 and 3 loaded visibly different terrain, buildings, materials
+  and skies. Mission 3 has animated rain and gentle spaced lightning. E cleared
+  targets, ran departure and stopped at the medal-ceremony Badge of Honor board;
+  a trainer result was explicitly excluded from storage. Native bonus animation
+  busy-waits are skipped only in Rainbow while the exact score is preserved.
+- Controls and Flight Setup fit their sprite-backed panels. English home cards
+  measured exactly equal: 580 × 524.84 CSS pixels each at the test viewport.
+  Local review JPEGs: campaign-v11-home.jpg, campaign-v11-controls.jpg,
+  campaign-v11-winter.jpg, campaign-v11-storm.jpg, campaign-v11-medal.jpg.
+- Six original generated PNGs were displayed and copied unchanged. Exact prompts,
+  dimensions and hashes: web/campaign-v11-prompts.json and campaign-v11-files.json.
+  Release verification locks all runtime assets and byte-matching source files.
+
 ## Explosion sprites / instrument layers — 2026-11-03
 
 - All ten JavaScript suites passed: assets, renderer, stages, browser controls,

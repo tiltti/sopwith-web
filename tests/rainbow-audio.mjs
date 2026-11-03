@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 let created=0,fetched=0,started=0,stopped=0;
-const param=()=>({value:0,setValueAtTime(){},setTargetAtTime(){},exponentialRampToValueAtTime(){}});
+const param=()=>({value:0,setValueAtTime(){},setTargetAtTime(value){this.value=value;},exponentialRampToValueAtTime(){}});
 function node(){return {connect(){},disconnect(){},gain:param(),frequency:param(),pan:param()};}
 class Context {
   constructor(){created++;this.state='suspended';this.currentTime=0;this.destination={};}
@@ -82,3 +82,14 @@ assert.equal(mixer.voices.size,1);assert.equal(mixer.voices.get('jingle').name,'
 scene[1]++;mixer.step(scene,effects);assert.equal(started,beforeVictory+1,'The level fanfare/march starts only once.');
 await mixer.setEnabled(false);await mixer.setEnabled(true);scene[1]++;mixer.step(scene,effects);assert.equal(mixer.voices.size,0,'Unmuting does not replay a consumed victory.');
 console.log('One-shot dive/crash handoff, separate human/German pilot reactions, once-per-level victory music and silent-win dedup verified.');
+
+const rpm=new scope.window.RainbowAudio();await rpm.setEnabled(true);
+const flight=new Int32Array(5000);flight[1]=1;flight[3]=3000;flight[13]=1;flight[17]=1;
+rpm.step(flight,null);rpm.voices.get('engine').source.onended();flight[1]++;rpm.step(flight,null);
+const idleRate=rpm.voices.get('engine').source.playbackRate.value;
+flight[1]++;flight[17]=0;flight[11]=16;flight[27]=100;flight[14]=1;flight.set([1,1,100,150,0,0,1,16,16,0,1,1,14,-8],348);rpm.step(flight,null);
+assert.ok(rpm.voices.get('engine').source.playbackRate.value>idleRate);
+assert.ok(rpm.voices.get('engine').gain.gain.value<=.16,'The continuous engine remains below the weapon/effect mix.');
+flight[1]=74;flight[18]=2;rpm.step(flight,null);assert.equal(rpm.voices.get('fx').name,'boom');assert.equal(rpm.voices.get('fx').source.playbackRate.value,.5);
+await rpm.setEnabled(false);flight[1]=224;rpm.step(flight,null);assert.equal(rpm.voices.size,0);
+console.log('Quiet engine RPM/gain follow throttle, speed and descent; storm thunder shares an existing effect voice and stays muted by default.');

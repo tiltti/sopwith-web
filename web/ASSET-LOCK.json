@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 16346,
-      "sha256": "0b6f9d482d88bf0ab561cbe3c266f52667f4c9d5f32847b2203cd5e372b34c7e"
+      "bytes": 17665,
+      "sha256": "3d184e1cdc16f24a735927b90258ef88775d151af5ea2a598d72450e732c38c1"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -288,6 +288,16 @@
       "sha256": "5702c22f5497234b2d97c27d5fe837bbd5533a2231605ee9f06a1e92664dae84"
     },
     {
+      "path": "dist/assets/rainbow-medal-ceremony-v1.png",
+      "bytes": 3047459,
+      "sha256": "beda1e2af3fa7121b46072adccd1c4f6b85e7e3deaaedbf536b708972229b4ca"
+    },
+    {
+      "path": "dist/assets/rainbow-mission-materials-v1.png",
+      "bytes": 4050687,
+      "sha256": "90a9a03b1f250c35502c9243f4331920bc3abcca2ac8802651a123e6c5ee428f"
+    },
+    {
       "path": "dist/assets/rainbow-parachute-sway-v4.png",
       "bytes": 2436849,
       "sha256": "5d06244fb0de3d613055fd31b6b0f55e9541db4aeace9a950878acf19edadb2f"
@@ -328,6 +338,11 @@
       "sha256": "0d633559780c12cdeff6ec735962627cfcd3c6862fc23d7463570e882df7bfd2"
     },
     {
+      "path": "dist/assets/rainbow-storm-scenery-v1.png",
+      "bytes": 2212767,
+      "sha256": "f6c85ae5c0700cc5828b4e854c53b10cedc96610999d4c7138b850af4ab7875e"
+    },
+    {
       "path": "dist/assets/rainbow-turf-v1.png",
       "bytes": 1556515,
       "sha256": "f49a5bf9bd8e39fbe911901edfa6112bdaca50678121225fd7c920ec0aaf2658"
@@ -336,6 +351,21 @@
       "path": "dist/assets/rainbow-wing-badge-v1.png",
       "bytes": 1937475,
       "sha256": "4b338ab5467b1320c45715f619f9fc7ee072430dd3ff1c365a0ae465d3abb7b8"
+    },
+    {
+      "path": "dist/assets/rainbow-winter-city-targets-v1.png",
+      "bytes": 2151340,
+      "sha256": "7e97faf5e8a611704690fc3be0f38cdcc3c75647423a24c4d74fae99d2da146d"
+    },
+    {
+      "path": "dist/assets/rainbow-winter-scenery-v1.png",
+      "bytes": 1910004,
+      "sha256": "523cba59084ca3f27b2b0f363ec012cf0f7e831154fa339bf8503080db3d8624"
+    },
+    {
+      "path": "dist/assets/rainbow-world-details-v1.png",
+      "bytes": 2208717,
+      "sha256": "f70351a7a692288888134c110de88430a8f718cb2d8274a0dd41048f10252a6b"
     },
     {
       "path": "dist/assets/sound-off.svg",

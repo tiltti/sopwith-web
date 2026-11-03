@@ -1,7 +1,13 @@
 // Rainbow menu localization. GPL-2.0-or-later. Game state and nicknames stay untouched.
 (() => {
-  if(document.body.dataset.edition!=='rainbow')return;
+  if(!document.body)return;
   const pairs=[
+    ['1 · RANNIKKO','1 · COAST'],['2 · TALVILAAKSO','2 · WINTER VALLEY'],['3 · MYRSKYKAUPUNKI','3 · STORM CITY'],
+    ['VIHOLLISKONEET (LISÄVALINTA)','ENEMY AIRCRAFT (OPTIONAL)'],
+    ['HELPPO: EI MAAKOHTEIDEN VASTATULTA.','EASY: NO GROUND RETURN FIRE.'],['NORMAALI: VASTATULTA KAIKISSA KENTISSÄ.','NORMAL: RETURN FIRE IN EVERY MISSION.'],
+    ['TRAINER: 1–9 VAIHTAA KENTTÄÄ · E LÄPÄISEE KENTÄN.','TRAINER: 1–9 CHANGES LEVEL · E CLEARS THE LEVEL.'],
+    ['CAMPAIGN COMPLETE','CAMPAIGN COMPLETE'],['BADGE OF HONOR','BADGE OF HONOR'],
+
     ['YKSINPELI','SINGLE PLAYER'],['KENTTÄ 2','LEVEL 2'],['ILMATAISTELU','AIR COMBAT'],['OHJAUS','CONTROLS'],['ASETUKSET','SETTINGS'],['ENNÄTYKSET','HIGH SCORES'],
     ['KOKO NÄYTTÖ','FULLSCREEN'],['IKKUNATILA','WINDOWED'],['PÄÄVALIKKO','MAIN MENU'],['TAUKO','PAUSED'],['JATKA','RESUME'],['JATKA LENTOA','RESUME FLIGHT'],
     ['TAKAISIN','BACK'],['TAKAISIN SIVUSTOLLE','BACK TO WEBSITE'],['SIVUSTOLLE','WEBSITE'],['PELIVALINNAT','GAME MENU'],['PELIN PAINIKKEET','GAME BUTTONS'],
@@ -40,9 +46,7 @@
   for(const pair of pairs)for(const text of pair)lookup.set(key(text),pair);
   lookup.set(key('Äänet pois'),['ÄÄNET: POIS','SOUND OFF']);lookup.set(key('Äänet päällä'),['ÄÄNET: PÄÄLLÄ','SOUND ON']);
   lookup.set(key('PAUSE'),['TAUKO','PAUSED']);
-  let preference='auto';try{const saved=localStorage.getItem('sopwith.language');if(['auto','en','fi'].includes(saved))preference=saved;}catch{}
-  const resolve=value=>value==='auto'?(/^fi\b/i.test(navigator.languages?.[0]||navigator.language||'en')?'fi':'en'):value;
-  let language=resolve(preference);
+  let preference='en',language='en';
   function translate(value){
     const trimmed=value.trim(),pair=lookup.get(key(trimmed));let result;
     if(pair)result=pair[language==='fi'?0:1];
@@ -67,7 +71,7 @@
     const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;while((node=walker.nextNode()))localize(node);
   }
   function apply(){document.documentElement.lang=language;localize(document.body);const select=document.getElementById('language-select');if(select)select.value=preference;}
-  function set(value){if(!['auto','en','fi'].includes(value))return;preference=value;language=resolve(value);try{localStorage.setItem('sopwith.language',value);}catch{}apply();}
+  function set(){preference=language='en';apply();}
   window.PatrolLanguage={set,translate,get language(){return language;},get preference(){return preference;}};
   document.getElementById('language-select')?.addEventListener('change',event=>set(event.target.value));
   apply();

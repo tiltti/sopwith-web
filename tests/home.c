@@ -18,8 +18,9 @@ int main(void) {
     int failures=0,successes=0;
     for(int edition=0;edition<2;edition++){
     failures=successes=0;
+    for(int mission=0;mission<(edition?3:1);mission++)
     for(int offset=-700;offset<=700;offset+=350)for(int altitude=25;altitude<=125;altitude+=50)for(int direction=-1;direction<=1;direction+=2) {
-        playmode=PLAYMODE_SINGLE;WebVariant_SetEnabled(edition==1);swinitlevel();
+        playmode=PLAYMODE_SINGLE;WebVariant_SetEnabled(edition==1);WebVariant_SetEasy(edition==1);gamenum=mission;swinitlevel();
         OBJECTS *p=consoleplayer;WebVariant_Apply(p);
         int x=clamp_range(20,p->ob_original_ob->x+offset,currgame->gm_max_x-30);
         p->ob_x=x;p->ob_y=clamp_max(ground[x]+altitude,180);p->ob_athome=false;p->ob_home=true;
@@ -37,7 +38,7 @@ int main(void) {
             if(p->ob_state==FALLING||p->ob_state==WOUNDED||p->ob_state==WOUNDSTALL)break;
         }
         if(p->ob_athome&&p->ob_state==FLYING)successes++;
-        else {failures++;printf("Home failure offset=%d altitude=%d direction=%d final=(%d,%d) state=%d home=%d\n",offset,altitude,direction,p->ob_x,p->ob_y,p->ob_state,p->ob_home);}
+        else {failures++;printf("Home failure mission=%d offset=%d altitude=%d direction=%d final=(%d,%d) state=%d home=%d\n",mission+1,offset,altitude,direction,p->ob_x,p->ob_y,p->ob_state,p->ob_home);}
     }
     printf("Return-to-base audit (%s): %d succeeded, %d failed.\n",edition?"Rainbow":"classic baseline",successes,failures);
     }

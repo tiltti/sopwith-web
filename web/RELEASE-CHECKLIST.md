@@ -1,5 +1,7 @@
 # Before the final Rainbow Patrol release
 
+- [ ] Set Rainbow trainer default back to OFF in `dist/app.js`.
+- [ ] Remove the trainer-only number/E shortcuts and development mission select.
 - [ ] Remove the temporary `settings-trainer` / `data-playtest-only` control
   from `dist/rainbow.html` and its UI binding in `dist/app.js`.
 - [ ] Verify that trainer runs remain excluded from high scores, including

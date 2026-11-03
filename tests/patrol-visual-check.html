@@ -4,12 +4,12 @@
 <button id="ready-two">READY LEVEL 2</button><button id="departure-next">DEPARTURE +2 SECONDS</button><button id="walk-next">WALK NEXT FRAME</button><button id="ready-next">BOARDING NEXT FRAME</button><button id="roll-next">FALL / BOMB NEXT FRAME</button><button id="stock">LOW FUEL / 2 BOMBS</button><button id="blast">EXPLOSION NEXT FRAME</button><button id="gauge">GAUGE A / B</button>
 <div class="grid"><figure><canvas id="ready"></canvas><figcaption>READY: the native clock is held before flight</figcaption></figure><figure><canvas id="departure"></canvas><figcaption>Mission complete: dedicated rear airframe recedes into the horizon</figcaption></figure><figure><canvas id="pilots"></canvas><figcaption>Open canopy, standing/armed and walking pilot — native object records</figcaption></figure><figure><canvas id="falling"></canvas><figcaption>Faction roll frames and bomb orientation, native motion samples copied for visual review</figcaption></figure></div>
 <pre id="status">Loading native game…</pre><canvas id="native"></canvas>
-<script src="engine/sopwith.js?v=20261103-effects3"></script><script src="rainbow-assets.js?v=20261103-effects3"></script><script src="rainbow-renderer.js?v=20261103-effects3"></script>
+<script src="engine/sopwith.js?v=20261103-campaign4"></script><script src="rainbow-assets.js?v=20261103-campaign4"></script><script src="rainbow-renderer.js?v=20261103-campaign4"></script>
 <script type="module">
 try{
  if(new URLSearchParams(location.search).has('solo'))document.body.classList.add('solo');
  await RainbowAssets.ready;
- const game=await createSopwith({canvas:document.getElementById('native'),locateFile:n=>'engine/'+n+'?v=20261103-effects3',print(){},printErr:console.warn,setStatus(){}});
+ const game=await createSopwith({canvas:document.getElementById('native'),locateFile:n=>'engine/'+n+'?v=20261103-campaign4',print(){},printErr:console.warn,setStatus(){}});
  game.FS.mkdirTree('/libsdl/SDL Sopwith');game._web_variant(1);game._web_sound(0);game.callMain(['-q','-s']);
  const poll=setInterval(()=>{
   const ptr=game._web_scene()>>>2,source=game.HEAP32.slice(ptr,ptr+RainbowRenderer.LENGTH);if(!source[3])return;

@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rainbow Patrol — kolme ulkoasuvaihtoehtoa</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rainbow Patrol — artwork comparisons</title>
 <link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="look-lab.css?v=05-3"></head>
 <body><main>
-<header><a href="rainbow.html">← PELI</a><h1>RAINBOW PATROL / ULKOASU</h1><span>ESIKATSELU</span></header>
-<div class="choices" role="group" aria-label="Ympäristön tarkkuus">
-<button data-look="a" aria-pressed="false"><b>A</b><span>Selkeät pikseliryhmät</span></button>
-<button data-look="b" aria-pressed="true"><b>B</b><span>Hienommat ääriviivat</span></button>
-<button data-look="c" aria-pressed="false"><b>C</b><span>Tarkempi ympäristö</span></button>
+<header><a href="rainbow.html">← GAME</a><h1>RAINBOW PATROL / ARTWORK</h1><span>PREVIEW</span></header>
+<div class="choices" role="group" aria-label="Environment detail">
+<button data-look="a" aria-pressed="false"><b>A</b><span>Bold pixel clusters</span></button>
+<button data-look="b" aria-pressed="true"><b>B</b><span>Finer outlines</span></button>
+<button data-look="c" aria-pressed="false"><b>C</b><span>Detailed environment</span></button>
 </div>
-<div class="options"><label>NÄKYMÄ <select id="scene"><option value="airfield">Lentokenttä</option><option value="slope">Rinne ja ilmatorjunta</option><option value="crash">Syöksy ja laskuvarjo</option></select></label><label>KONEEN KULMA <input id="angle" type="range" min="-180" max="180" value="-20" step="1"><output id="angle-value">−20°</output></label><button id="motion" aria-pressed="false">ANIMOI</button><button id="export">LATAA PNG</button><a id="static-image" href="assets/previews/rainbow-look-b.png" target="_blank" rel="noopener">Avaa lentokenttäkuva</a></div>
-<div class="game-frame"><canvas id="preview" width="1920" height="1404" aria-label="Vaihtoehdon B renderöity peliruutu"></canvas></div>
+<div class="options"><label>SCENE <select id="scene"><option value="airfield">Airfield</option><option value="slope">Hillside and AA</option><option value="crash">Crash and parachute</option></select></label><label>PLANE ANGLE <input id="angle" type="range" min="-180" max="180" value="-20" step="1"><output id="angle-value">−20°</output></label><button id="motion" aria-pressed="false">ANIMATE</button><button id="export">SAVE PNG</button><a id="static-image" href="assets/previews/rainbow-look-b.png" target="_blank" rel="noopener">Open airfield image</a></div>
+<div class="game-frame"><canvas id="preview" width="1920" height="1404" aria-label="Rendered game view B"></canvas></div>
 <p id="description" class="description"></p>
-<p class="note">Sama asetelma ja samat spritekuvat kaikissa. Erot ovat pilvissä, maastossa ja ympäristön pikselien koossa. Tämä on piirretty ulkoasuesikatselu, ei pelattava kenttä.</p>
-<section class="sounds" aria-label="Uusien äänien esikuuntelu"><h2>ÄÄNINÄYTTEET</h2><p>Toisto alkaa vain painikkeesta. Muu on alkuperäisellä äänenkorkeudella.</p><div>
-<button data-sound="moo">MOO</button><button data-sound="fanfare">FANFAARI (POISTETTU PELISTÄ)</button><button data-sound="wah-wah">OMA KOHDE / WAH WAH</button><button data-sound="startup">TÄHTIMOOTTORIN KÄYNNISTYS</button><button data-sound="bird">LINTUOSUMA</button><button data-sound="title-theme">SPLASH-MUSIIKKI</button><button id="stop-audio">LOPETA ÄÄNI</button></div><p class="sources"><a href="assets/audio/audition-v05/SOURCES.json">Äänien tekijät ja lisenssit</a> · <a href="assets/ARTWORK.md">Kuvien alkuperä ja promptit</a></p></section>
-</main><script src="rainbow-renderer.js?v=20261103-effects3"></script><script src="look-lab.js?v=05-3"></script></body></html>
+<p class="note">Earlier design studies using the same scene and sprites at three detail levels. These are artwork previews, not playable missions.</p>
+<section class="sounds" aria-label="Sound previews"><h2>SOUND PREVIEWS</h2><p>Audio plays only after a button press. The cow recording retains its original pitch.</p><div>
+<button data-sound="moo">MOO</button><button data-sound="fanfare">FANFARE (REMOVED FROM GAME)</button><button data-sound="wah-wah">FRIENDLY TARGET / WAH WAH</button><button data-sound="startup">RADIAL ENGINE START</button><button data-sound="bird">BIRD HIT</button><button data-sound="title-theme">TITLE MUSIC</button><button id="stop-audio">STOP AUDIO</button></div><p class="sources"><a href="assets/audio/audition-v05/SOURCES.json">Audio credits and licenses</a> · <a href="assets/ARTWORK.md">Artwork origins and prompts</a></p></section>
+</main><script src="rainbow-renderer.js?v=20261103-campaign4"></script><script src="look-lab.js?v=20261103-campaign4"></script></body></html>

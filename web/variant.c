@@ -8,6 +8,8 @@
 #include "swauto.h"
 #include "swobject.h"
 #include "swmove.h"
+#include "swend.h"
+#include "trainer.h"
 #include "variant.h"
 
 static bool enabled;
@@ -36,10 +38,13 @@ static struct {OBJECTS *ob;int state;} plane_states[16];
 static int plane_count;
 static unsigned char pilot_pixels[2][264];
 static sopsym_t pilot_masks[2];
+static GRNDTYPE *mission_ground;
+static int mission_width;
 
 void WebVariant_SetEnabled(bool value)
 {
     enabled = value;level_ready=false;emplacement_count=0;
+    WebVariant_ResetFlight();
     easy_mode=false;player_was_dead=false;grace_until=0;fire_count=0;
     memset(pilots,0,sizeof(pilots));plane_count=0;
     last_tick = -1;
@@ -53,11 +58,30 @@ void WebVariant_SetEnabled(bool value)
 
 bool WebVariant_IsEnabled(void) { return enabled; }
 void WebVariant_SetEasy(bool easy){easy_mode=enabled&&easy;grace_until=countmove+30;fire_count=0;}
+bool WebVariant_GroundFire(void){return enabled&&!easy_mode;}
 const int *WebVariant_Effects(void) { return effects; }
 void WebVariant_BombRelease(bool release)
 {
     if (!release) bomb_requests = 0;
     else if (enabled && bomb_requests < MAXBOMBS) ++bomb_requests;
+}
+static const GAMES *navigation_view(GAMES *view)
+{
+    const GAMES *source=currgame;
+    /* Native aim() samples gm_ground, not the mutable ground array. Give
+     * synchronous navigation the current mission/crater heights, then restore
+     * the immutable source game before returning to the main loop. */
+    if(enabled&&source&&ground){*view=*source;view->gm_ground=ground;currgame=view;}
+    return source;
+}
+void WebVariant_Auto(OBJECTS *plane)
+{
+    GAMES view;const GAMES *source=navigation_view(&view);swauto(plane);currgame=source;
+}
+int WebVariant_Aim(OBJECTS *plane,int x,int y,OBJECTS *target,bool longway)
+{
+    GAMES view;const GAMES *source=navigation_view(&view);
+    int result=aim(plane,x,y,target,longway);currgame=source;return result;
 }
 int WebVariant_GoHome(OBJECTS *ob)
 {
@@ -70,7 +94,11 @@ int WebVariant_GoHome(OBJECTS *ob)
         && abs(ob->ob_y-ob->ob_orig_y)<HOME+gmaxspeed+6) {
         initplyr(ob,ob->ob_original_ob);initdisp(true);return 0;
     }
-    return gohome(ob);
+    GAMES view;const GAMES *source=navigation_view(&view);
+    if(enabled&&ob==consoleplayer&&ob->ob_speed>gmaxspeed){
+        ob->ob_speed=gmaxspeed;setdxdy(ob,gmaxspeed*COS(ob->ob_angle),gmaxspeed*SIN(ob->ob_angle));
+    }
+    int result=gohome(ob);currgame=source;return result;
 }
 
 static void emit(int type, OBJECTS *ob, int size)
@@ -123,9 +151,8 @@ bool WebVariant_CanCollide(const OBJECTS *a,const OBJECTS *b)
     /* A returning ground crewman is safe beside his own runway aircraft.
      * Keep hostile ground contacts and all airborne collisions meaningful. */
     if(pilot->ob_state==STANDING&&other->ob_type==PLANE
-        &&pilot->ob_faction==other->ob_faction&&other->ob_original_ob
-        &&(other->ob_athome||(abs(other->ob_x-other->ob_original_ob->x)<32
-            &&other->ob_y<=ground[clamp_range(0,other->ob_x+8,(int)currgame->gm_max_x-1)]+24)))return false;
+        &&pilot->ob_faction==other->ob_faction
+        &&(other->ob_athome||other->ob_y<=ground[clamp_range(0,other->ob_x+8,(int)currgame->gm_max_x-1)]+26))return false;
     if(other->ob_type!=SHOT&&other->ob_type!=BOMB&&other->ob_type!=MISSILE&&other->ob_type!=PLANE&&other->ob_type!=EXPLOSION)return false;
     if(other->ob_owner==pilot)return false;
     if(pilot->ob_life<8&&(other==pilot->ob_owner||other->ob_owner==pilot->ob_owner))return false;
@@ -178,7 +205,7 @@ static bool move_pilot(OBJECTS *ob)
             }
         }
         p->y=ground[clamp_range(0,(int)p->x+3,(int)currgame->gm_max_x-1)];
-        if(gamenum>=1&&countmove%15==0&&countmove>=grace_until){
+        if(WebVariant_GroundFire()&&countmove%15==0&&countmove>=grace_until){
             OBJECTS *target=NULL;int nearest=75*75;
             for(OBJECTS *other=objtop;other;other=other->ob_next){
                 if(other->ob_faction==ob->ob_faction||other->ob_state==FINISHED)continue;
@@ -225,6 +252,7 @@ void WebVariant_TargetMask(OBJECTS *ob)
 }
 void WebVariant_InitShot(OBJECTS *owner,OBJECTS *target)
 {
+    if(enabled&&easy_mode&&(owner->ob_type==TARGET||WebVariant_ObjectKind(owner)==21))return;
     /* Buildings are scenery/targets. Their separate ground emplacements
      * own the defensive guns; only tanks and emplacements fire. */
     if(enabled&&owner->ob_type==TARGET&&owner->ob_orient!=TARGET_TANK&&WebVariant_ObjectKind(owner)!=20)return;
@@ -273,19 +301,72 @@ static void lower_end_buildings(void)
      * end targets with their hillside, keeping a smooth transition into
      * the source landscape instead of burying/moving only the artwork. */
     for(OBJECTS *ob=objtop;ob;ob=ob->ob_next){
-        if(ob->ob_type!=TARGET||!ob->ob_symbol||(ob->ob_x>=width/6&&ob->ob_x<width*5/6)
+        if(ob->ob_type!=TARGET||!ob->ob_symbol||(!gamenum&&ob->ob_x>=width/6&&ob->ob_x<width*5/6)
             ||ob->ob_orient==TARGET_TANK||ob->ob_orient==TARGET_TRUCK
             ||ob->ob_orient==TARGET_TANKER_TRUCK||ob->ob_orient==TARGET_FLAG)continue;
         int base=0;
-        for(int x=ob->ob_x;x<ob->ob_x+ob->ob_symbol->w;x++)base=imax(base,currgame->gm_ground[x]);
+        for(int x=ob->ob_x;x<ob->ob_x+ob->ob_symbol->w;x++)base=imax(base,ground[x]);
         int drop=base+ob->ob_symbol->h-roof;if(drop<=0)continue;
         int left=ob->ob_x-8,right=ob->ob_x+ob->ob_symbol->w+8;
         for(int x=imax(1,left-reach);x<imin(width-1,right+reach);x++){
             int distance=x<left?left-x:x>right?x-right:0,t=reach-distance;
             int offset=(drop*t*t*(3*reach-2*t)+reach*reach*reach/2)/(reach*reach*reach);
-            ground[x]=imin(ground[x],imax(0,(int)currgame->gm_ground[x]-offset));
+            ground[x]=imax(0,(int)ground[x]-offset);
         }
     }
+}
+static void mission_landscape(void)
+{
+    int mission=gamenum%3,width=currgame->gm_max_x;
+    if(!mission)return;
+    for(int x=1;x<width-1;x++){
+        double height=mission==1?55+25*sin(x/193.0)+16*sin(x/83.0+.8)+8*sin(x/43.0)
+            :73+35*sin(x/151.0)+25*sin(x/67.0+.5)+13*sin(x/33.0);
+        /* Blend into each original airstrip, preserving the native landing
+         * height and return-home path while changing the surrounding world. */
+        double keep=0;
+        for(OBJECTS *p=objtop;p;p=p->ob_next)if(p->ob_type==PLANE&&p->ob_original_ob){
+            double d=abs(x-p->ob_original_ob->x-8),t=fmax(0,fmin(1,(120-d)/65));
+            keep=fmax(keep,t*t*(3-2*t));
+        }
+        ground[x]=(GRNDTYPE)round(height*(1-keep)+currgame->gm_ground[x]*keep);
+    }
+}
+void WebVariant_Crater(int left,const GRNDTYPE before[8])
+{
+    static const int depth[]={1,2,2,3,3,2,2,1};
+    if(!enabled||!ground||!currgame)return;
+    for(int i=0;i<8;i++){
+        int x=left+i;if(x<0||x>=(int)currgame->gm_max_x)continue;
+        int floor=imax(0,(mission_ground&&x<mission_width?mission_ground[x]:before[i])-20);
+        floor=imin(floor,before[i]);
+        ground[x]=imax(floor,(int)before[i]-depth[i]);
+    }
+}
+void WebVariant_Test(int action)
+{
+    if(!enabled||!WebTrainer_IsEnabled()||!consoleplayer||playmode==PLAYMODE_UNSET)return;
+    if(action>=1&&action<=9){
+        gamenum=action-1;swinitlevel();level_ready=false;last_tick=-1;
+        previous_count=previous_bomb_count=previous_shot_count=bomb_requests=0;
+        WebVariant_ResetFlight();WebVariant_Apply(consoleplayer);WebTrainer_Apply(consoleplayer);
+    }else if(action==0&&consoleplayer->ob_endsts==PLAYING){
+        for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(ob->ob_type==TARGET&&ob->ob_state==STANDING){
+            ob->ob_state=FINISHED;ob->ob_onmap=false;emit(6,ob,ob->ob_faction==consoleplayer->ob_faction?-1:ob->ob_orient+1);
+        }
+        memset(numtarg,0,sizeof(numtarg));winner(consoleplayer);
+    }
+}
+void WebVariant_Restart(void)
+{
+    if(enabled&&consoleplayer&&consoleplayer->ob_endsts==WINNER){
+        /* The original bonus presentation busy-waits 200 ms per life.
+         * Preserve the exact bonus while avoiding a blocked browser frame. */
+        int lives=imax(0,maxcrash-consoleplayer->ob_crashcnt);
+        consoleplayer->ob_score.score+=25*lives*(lives+1)/2;
+        consoleplayer->ob_crashcnt=maxcrash;
+    }
+    swrestart();
 }
 static void setup_level(void)
 {
@@ -295,7 +376,10 @@ static void setup_level(void)
     /* Restore the continuous source landscape. The upstream initializer
      * flattens each target's footprint with abrupt vertical joins. */
     memcpy(ground,currgame->gm_ground,sizeof(*ground)*currgame->gm_max_x);
+    mission_landscape();
     lower_end_buildings();
+    if(mission_width!=(int)currgame->gm_max_x){free(mission_ground);mission_width=currgame->gm_max_x;mission_ground=malloc(sizeof(*mission_ground)*mission_width);}
+    if(mission_ground)memcpy(mission_ground,ground,sizeof(*ground)*mission_width);
     for(int state=0;state<2;state++){
         memset(gun_pixels[state],0,256);
         for(int y=state?11:3;y<16;y++)for(int x=1;x<15;x++)

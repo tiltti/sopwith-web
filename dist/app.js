@@ -7,9 +7,10 @@
   const startLevel = edition === 'rainbow' ? $('start-level') : null;
   const trainerToggle = edition === 'rainbow' ? $('settings-trainer') : null;
   const difficultySelect=edition==='rainbow'?$('difficulty-select'):null;
+  const enemyAircraft=edition==='rainbow'?$('enemy-aircraft'):null;
   const keys = { ArrowUp:54, Comma:54, ArrowDown:56, Slash:56, ArrowRight:27, KeyX:27, ArrowLeft:29, KeyZ:29, Period:55, KeyB:5, Space:44, KeyH:11, KeyS:22 };
   let state = 'idle', muted = true, bootTimer, mode = 'practice';
-  let inputMode = 0, trainerEnabled = false;
+  let inputMode = 0, trainerEnabled = edition==='rainbow';
   let fullscreenTransition = false;
   const loadPref = (name, fallback) => { try { return localStorage.getItem('sopwith.' + name) ?? fallback; } catch { return fallback; } };
   const savePref = (name, value) => { try { localStorage.setItem('sopwith.' + name, String(value)); } catch {} };
@@ -20,6 +21,7 @@
     if(!trainerToggle)return;
     trainerToggle.textContent='TRAINER (TESTI): '+(trainerEnabled?'PÄÄLLÄ':'POIS');
     trainerToggle.setAttribute('aria-pressed',String(trainerEnabled));
+    if(startLevel){startLevel.disabled=!trainerEnabled;if(!trainerEnabled)startLevel.value='1';}
   }
   window.trainer = (enabled = true) => {
     if (typeof enabled !== 'boolean') throw new TypeError('Use trainer() or trainer(false).');
@@ -49,13 +51,18 @@
   }
   function start() {
     mode = document.querySelector('input[name="mode"]:checked').value;
+    if(enemyAircraft)mode=enemyAircraft.checked?'combat':'practice';
+    if(document.body?.dataset){document.body.dataset.campaignComplete='false';}
+    if($('honor-title'))$('honor-title').textContent='HIGH SCORES';
+    if($('arcade-scores-title'))$('arcade-scores-title').textContent='HIGH SCORES';
+    if($('debrief-title'))$('debrief-title').textContent='GAME OVER';
     state = 'loading'; inputMode = 0; $('screen').classList.add('in-flight'); showLayer('loading'); setStatus('Ladataan peliä');
     $('pause').disabled = true; $('restart').disabled = false;
     $('pause-label').textContent='Tauko';$('pause').setAttribute('aria-label','Aseta peli tauolle');
     $('loading-text').textContent = 'Ladataan peliä…';
     $('mode-label').textContent = mode === 'combat' ? '/ ILMATAISTELU' : edition==='rainbow'?'/ YKSINPELI':'/ HARJOITTELU';
     frame.hidden = false;
-    const levelQuery=startLevel?'&level='+(['1','2','3'].includes(startLevel.value)?startLevel.value:'1')+'&difficulty='+(difficultySelect?.value==='easy'?'easy':'normal'):'';
+    const levelQuery=startLevel?'&level='+(trainerEnabled&&['1','2','3'].includes(startLevel.value)?startLevel.value:'1')+'&difficulty='+(difficultySelect?.value==='easy'?'easy':'normal'):'';
     frame.src = `runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&trainer=${trainerEnabled ? 1 : 0}&edition=${edition}&aim=${aimToggle?.checked === false ? 0 : 1}&run=${Date.now()}${levelQuery}`;
     clearTimeout(bootTimer);
     bootTimer = setTimeout(() => fail('Pelin lataaminen kesti liian kauan. Tarkista yhteys ja yritä uudelleen.'), 45000);
@@ -82,7 +89,7 @@
     state = 'idle'; inputMode = 0; $('screen').classList.remove('in-flight'); showLayer('launch'); setStatus('Ei käynnissä');
     $('pause-label').textContent = 'Tauko';
     $('pause').disabled = true; $('restart').disabled = true;
-    $('start').focus();
+    ($('open-flight')||$('start')).focus();
   }
   $('start').addEventListener('click', start);
   $('retry').addEventListener('click', start);
@@ -128,6 +135,7 @@
     startLevel.addEventListener('change',()=>savePref('rainbow.start-level',startLevel.value));
   }
   trainerToggle?.addEventListener('click',()=>window.trainer(!trainerEnabled));syncTrainer();
+  if(enemyAircraft){enemyAircraft.checked=loadPref('rainbow.enemy-aircraft','0')==='1';enemyAircraft.addEventListener('change',()=>savePref('rainbow.enemy-aircraft',enemyAircraft.checked?'1':'0'));}
   if(difficultySelect){
     difficultySelect.value=loadPref('rainbow.difficulty','normal')==='easy'?'easy':'normal';
     difficultySelect.addEventListener('change',()=>savePref('rainbow.difficulty',difficultySelect.value));
@@ -169,6 +177,9 @@
   }
   document.addEventListener('keydown', event => {
     if (['SELECT','INPUT','TEXTAREA'].includes(event.target.tagName) || event.ctrlKey || event.metaKey || event.altKey) return;
+    if(trainerEnabled&&edition==='rainbow'&&state==='playing'&&(event.code==='KeyE'||/^Digit[1-9]$/.test(event.code))){
+      event.preventDefault();if(!event.repeat)post('trainer-action',{action:event.code==='KeyE'?0:Number(event.code[5])});return;
+    }
     if (edition === 'rainbow' && state === 'idle' && event.code === 'Space' && event.target.tagName !== 'BUTTON') {
       event.preventDefault(); if (!event.repeat) start(); return;
     }
@@ -201,6 +212,10 @@
     if (msg.type === 'input-mode') inputMode = msg.mode;
     if (msg.type === 'trainer-state'){trainerEnabled = msg.enabled;syncTrainer();}
     if (msg.type === 'round-ended' && edition==='rainbow' && ['playing','paused'].includes(state)) {
+      if(document.body?.dataset)document.body.dataset.campaignComplete=msg.victory?'true':'false';
+      if($('honor-title'))$('honor-title').textContent=msg.victory?'BADGE OF HONOR':'HIGH SCORES';
+      if($('arcade-scores-title'))$('arcade-scores-title').textContent=msg.victory?'BADGE OF HONOR':'HIGH SCORES';
+      if($('debrief-title'))$('debrief-title').textContent=msg.victory?'CAMPAIGN COMPLETE':'GAME OVER';
       state='ended';showLayer('complete');setStatus('Lento päättyi');
       $('complete-score').textContent='Pisteet: '+msg.score;
       $('pause').disabled=true;$('play-again').focus();

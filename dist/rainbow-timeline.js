@@ -17,7 +17,7 @@
     sample(now) {
       if(!this.current)return null;
       const a=Math.max(0,Math.min(1,((this.frozenAt??now)-this.at)/100)),out=this.current.slice(),old=this.previous;
-      for(const n of [2,4,5])out[n]=old[n]+(out[n]-old[n])*a;
+      for(const n of [2,4,5,11,27])out[n]=old[n]+(out[n]-old[n])*a;
       out[26]=old[1]+(out[1]-old[1])*a;
       for(let i=0;i<out[14];i++) {
         const start=HEADER+i*STRIDE,r=out.subarray(start,start+STRIDE),p=this.oldObjects.get(r[16]||i+1);

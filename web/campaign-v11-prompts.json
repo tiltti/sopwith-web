@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-03",
+  "tool": "image_gen.imagegen (built-in)",
+  "reference": "dist/assets/rainbow-scenery-v1.png",
+  "rawOutputsPreserved": true,
+  "prompts": [
+    {
+      "key": "winter-scenery",
+      "transparent": false,
+      "prompt": "Use case: stylized-concept. Original production background for Rainbow Patrol, hand-painted fine raster Amiga adventure art, matching the supplied original painted coastal landscape reference. Full 1536x1024 image. Winter level, pale cold blue sky occupying upper 78 percent, layered painted snow clouds, distant snowy fir-covered hills and a little frozen coastal village occupying only bottom 18 percent, icy water and snowy shores at very bottom. Broad valleys, gentle white mountains, luminous cool daylight, readable cheerful adventure palette, no foreground terrain or gameplay objects. Skyline stays low like the reference so aircraft have abundant clear flight space. No planes, tanks, people, flags, UI, writing, borders, watermark. Original scenery, no copied commercial game artwork."
+    },
+    {
+      "key": "storm-scenery",
+      "transparent": false,
+      "prompt": "Use case: stylized-concept. Original production background for Rainbow Patrol, fine hand-painted raster Amiga adventure art matching supplied painted coastal reference. Full 1536x1024 image. Third mission, stormy mountainous war-damaged city at NIGHT. Upper 78 percent is dramatic layered slate-blue and purple thundercloud sky with subtle distant lightning illumination, readable rather than black; distant jagged mountain silhouettes behind low bomb-damaged city skyline in bottom 18 percent, broken rooftops, damaged bridges, a few small warm window lights and smoky ruined industrial district along a dark river at bottom. No foreground objects, gameplay terrain, planes, vehicles, people, UI or lettering. Keep low horizon placement and detailed painterly materials like reference. No large foreground lightning bolt, no full-image flash. No brands, watermark or copied commercial game art."
+    },
+    {
+      "key": "world-details",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept. Original transparent game sprite atlas, fine hand-painted Amiga adventure raster style, 1536x1024, EXACT 4 columns x 2 rows, cells384x512, abundant transparent margins, isolated side-view objects suitable for the supplied Rainbow Patrol materials. Top row four buried archaeological details, cream fossil dinosaur skull with short neck bones; fossil rib cage and tail in side view; partly wrapped small ancient mummy and cracked amphora, whimsical no gore; large coiled ammonite with fern fossil. Bottom row: a clearly accurate BRITISH UNION JACK cloth flag on a short wooden pole, full horizontal Union Jack blue field white and red crosses; an IMPERIAL GERMAN cloth flag on matching pole with only three horizontal stripes BLACK TOP WHITE MIDDLE RED BOTTOM; snow-covered fir tree cluster with a small rock; bomb-damaged low brick wall and rubble with a bent iron beam. Flags in mild wind, readable broad designs, no extra insignia or symbols. Do NOT use modern black-red-gold Germany flag or any Nazi symbols. All eight separated and contained in their cells. True transparent background, no shadows behind cells, labels, text, UI or watermarks."
+    },
+    {
+      "key": "winter-city-targets",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept. Production original game sprite atlas for Rainbow Patrol, fine hand-painted Amiga adventure raster materials matching supplied original cockpit/scenery art. Exact1536x1024 transparent,4columns x2rows,eight384x512 cells,generous empty gutters. Orthographic SIDE ELEVATION, flat common ground baseline near y420 of each cell, no perspective floor. Top row WINTER structures: snow-covered canvas aircraft hangar with open dark doorway; snow-covered small European cottage; snow-covered brick factory with two chimneys; snow-covered wooden supply hut with stacked crates. Bottom row STORM CITY structures: shell-damaged brick aircraft workshop with open doorway; bomb-damaged European townhouse with exposed interior and broken roof; ruined industrial factory with broken smokestack and warm inner embers; bombed city depot with damaged iron gantry and rubble. Each remains upright and recognisable as a gameplay target. No people, tanks, flags, guns, text, badges, logos or backgrounds. Painted high detail, not Lego or coarse pixel blocks, original designs. Genuine alpha."
+    },
+    {
+      "key": "mission-materials",
+      "transparent": false,
+      "prompt": "Use case: stylized-concept. Original production terrain material atlas for a painted Amiga adventure side-scrolling airplane game. 1536x1024 exact, FOUR equal 768x512 rectangular material tiles in 2columns x2rows, no borders or lettering. TOP LEFT cutaway frozen winter earth: cold brown compact soil with ice veins, small pale stones and frosty crystals, flat material fills tile edge to edge. TOP RIGHT cutaway bomb-damaged city foundation earth: charcoal and umber soil mixed with red brick fragments, little broken cobbles, clay, darker varied rubble, flat material fills entire tile. BOTTOM LEFT a tile of snow-covered grass with compressed frost, little exposed grass tips and stones, fills whole tile. BOTTOM RIGHT rubble-strewn dark dry ground with old paving and ash, fills tile. Similar fine hand-painted raster material detail to original Rainbow Patrol assets, natural nonrepeating detail without conspicuous identical stones or regular rows. No hills, sky, objects, people, dinosaur bones, text, labels, logos or watermark. Horizontal tile edges should blend to themselves."
+    },
+    {
+      "key": "medal-ceremony",
+      "transparent": false,
+      "prompt": "Use case: stylized-concept. Original Rainbow Patrol campaign victory/debrief background, 1536x1024 wide fine hand-painted raster art with rich Amiga adventure game material detail. Warm victorious sunset at a 1910s biplane airfield after three missions. Composition: LEFT 55 percent is comparatively calm airfield, warm golden grass and distant canvas hangars with pale blue sky above, suitable for an existing high score board that will be overlaid there. RIGHT 40 percent clearly shows a young leather-helmeted aviator in brown flying jacket, boots and white scarf receiving a small golden winged medal from a dignified senior aviation officer in blue-grey period uniform. Friendly proud quiet celebration, original figures, expressive faces, no caricature, no famous person. A beautiful red-and-cream biplane sits behind them near a canvas hangar. Small bystanders kept distant and unobtrusive. No flags, political symbols, lettering, score board, text, badges with writing, UI or watermark. Materials and palette match the supplied existing painted airfield illustration, original design."
+    }
+  ]
+}

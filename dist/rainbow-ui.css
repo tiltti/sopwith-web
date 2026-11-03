@@ -102,3 +102,18 @@ body[data-game-state=idle] .touch-controls,body[data-game-state=loading] .touch-
 #complete .initial-column button{padding:.2cqw .5cqw}
 #complete .entry-actions .pixel-button,#leaderboard .score-end-actions .pixel-button{border:0;box-shadow:none;background-image:url('assets/rainbow-scoreboard-parts-v1.png');background-size:216.21% 677.84%;background-position:96.44% 23.76%;background-repeat:no-repeat;background-color:transparent;padding:1.1cqw 1.8cqw;color:#fff0c6;text-shadow:1px 1px #171a14}
 @media(max-width:700px){#complete .end-layout,#leaderboard.score-panel{width:72%}#complete h2,#leaderboard.score-panel h2{height:8.4cqw;font-size:2.9cqw}#complete tbody tr,#leaderboard.score-panel tbody tr{height:3.45cqw}#complete .initial-column .initial-char{width:3.5cqw;height:5cqw;font-size:2.2cqw}}
+
+/* Campaign honors leave the medal ceremony visible beside the score board. */
+body[data-campaign-complete="true"] #complete,body[data-campaign-complete="true"] #panel-scores{background-image:url('assets/rainbow-medal-ceremony-v1.png');background-size:cover;background-position:center;backdrop-filter:none}
+body[data-campaign-complete="true"] #panel-scores{justify-content:flex-start;padding:2.5cqw 4cqw}
+body[data-campaign-complete="true"] #panel-scores .score-panel{width:54%;margin-right:auto}
+
+/* Shared painted board frames for flight setup, settings and controls. */
+#panel-help .pixel-panel,#panel-settings .pixel-panel,#panel-flight .pixel-panel{border:2.4cqw solid transparent;border-image:url('assets/rainbow-scoreboard-frame-v1.png') 160 fill / 1 / 0 stretch;background:none;box-shadow:none;color:#fff0c6;padding:1.5cqw 2cqw;width:72%}
+#panel-help .pixel-panel:before,#panel-settings .pixel-panel:before,#panel-flight .pixel-panel:before{display:none}
+#panel-help h2,#panel-settings h2,#panel-flight h2{font-size:2.3cqw;text-shadow:2px 2px #312010;color:#ffe2a0;margin-bottom:1.5cqw}
+.controls-list div{background:#261e19a6;border-bottom:1px solid #98713d;padding:.7cqw 1cqw;margin:.3cqw 0}.controls-list dd{color:#ffe8af;text-shadow:1px 1px #000}.controls-list dt{color:#e5d1a8}
+.difficulty-buttons{display:flex;gap:1.5cqw;justify-content:center}.difficulty-buttons .pixel-button{flex:1;margin:0}.difficulty-buttons small{display:block;font-size:.65cqw;line-height:1.8;margin-top:.7cqw}.difficulty-buttons [aria-pressed=true]{outline:2px solid #fff0b0;outline-offset:3px}
+#panel-flight .pixel-menu{max-width:48cqw;gap:1.6cqw}#panel-flight .pixel-toggle{background:#32281d;border-color:#a77c3d;color:#fff0c6}
+
+.difficulty-buttons .pixel-button{flex-direction:column;gap:.3cqw;justify-content:center}.difficulty-buttons small{margin-top:.3cqw}

@@ -1,6 +1,6 @@
 // Spawn intermissions and first-flight help use display time. GPL-2.0-or-later.
 (() => {
-  const READY_MS=1500;
+  const READY_MS=2500;
   class RainbowStages {
     constructor(){this.level=null;this.tick=-1;this.remaining=0;this.at=null;this.alive=false;this.spawns=0;this.idle=0;this.tookOff=false;}
     noteInput(){this.idle=0;}

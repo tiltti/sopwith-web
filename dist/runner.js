@@ -8,6 +8,7 @@
   let trainerEnabled = params.get('trainer') === '1';
   let trainerUsed = trainerEnabled, scoreSent = false;
   let lastInputMode = -1;
+  let resetMission=()=>{};
   const clock=()=>typeof performance==='undefined'?Date.now():performance.now();
   const send = (type, extra = {}) => parent.postMessage({ sopwith: true, type, ...extra }, location.origin);
   const keyMap = {
@@ -76,12 +77,22 @@
     send('trainer-state', { enabled });
     return { enabled, unlimitedLives:enabled, unlimitedBombs:enabled, unlimitedAmmo:enabled, unlimitedFuel:enabled, invincible:false };
   };
+  function trainerAction(action){
+    if(!trainerEnabled||params.get('edition')!=='rainbow'||!game||!Number.isInteger(action)||action<0||action>9)return;
+    release();stagePaused=false;game._web_pause(paused?1:0);
+    if(action>0){stages=window.RainbowStages?new RainbowStages():null;resetMission();}
+    game._web_test?.(action);repaint=true;
+  }
   window.addEventListener('keydown', event => {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     // Text entry stays with SDL's native text-input handling. In menus send
     // actual SDL scancodes, never the flight remaps or browser sound shortcut.
     const inputMode = game?._web_input_mode();
     if (inputMode === 2 || !game) return;
+    if(trainerEnabled&&params.get('edition')==='rainbow'&&(event.code==='KeyE'||/^Digit[1-9]$/.test(event.code))){
+      event.preventDefault();event.stopImmediatePropagation();
+      if(!event.repeat)trainerAction(event.code==='KeyE'?0:Number(event.code[5]));return;
+    }
     if (inputMode === 0) {
       const scan = menuScancode(event);
       if (scan) {
@@ -125,6 +136,7 @@
       repaint=true;
     }
     if (msg.type === 'trainer') window.trainer(msg.enabled);
+    if (msg.type === 'trainer-action') trainerAction(msg.action);
     if (msg.type === 'focus') { canvas.focus({preventScroll:true}); audio(); }
   });
   window.openManual = () => send('manual');
@@ -134,7 +146,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261103-effects3',
+      locateFile: name => 'engine/' + name + '?v=20261103-campaign4',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -168,6 +180,8 @@
       visualTimeline=window.RainbowTimeline?new RainbowTimeline():null;
       stages=window.RainbowStages?new RainbowStages():null;
       let renderedTick=-1,wasActive=false,endSent=false,snapshot,effects,ground,lastDisplay;
+      resetMission=()=>{renderedTick=-1;wasActive=false;endSent=false;snapshot=null;lastDisplay=null;scoreSent=false;
+        visualTimeline=window.RainbowTimeline?new RainbowTimeline():null;renderer.lastTick=Infinity;renderer.terrainCache=null;renderer.trail=[];renderer.departure=null;};
       let frameCount=0,metricAt=clock(),drawTotal=0;
       const draw = (now=clock()) => {
         const inputMode=game._web_input_mode();
@@ -181,6 +195,12 @@
           visualTimeline?.push(snapshot,now);sampleMixer?.step(snapshot,effects);
           renderedTick=tick;
           if(snapshot[12]===2&&!endSent) {endSent=true;pause(true);send('round-ended',{score:snapshot[10]});}
+          if(snapshot[12]===1&&snapshot[18]>=2&&snapshot[25]<=4&&!endSent){
+            const score=snapshot[10]+25*snapshot[9]*(snapshot[9]+1)/2;
+            endSent=scoreSent=true;pause(true);
+            send('round-ended',{score,victory:true});
+            send('score-ready',{score,level:3,ticks:snapshot[1],trainerUsed,victory:true});
+          }
         }
         if(active&&snapshot&&stages){
           const stage=stages.update(snapshot,now,paused);

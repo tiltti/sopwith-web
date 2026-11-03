@@ -10492,6 +10492,8 @@ var _web_variant = Module["_web_variant"] = makeInvalidEarlyAccess("_web_variant
 
 var _web_easy = Module["_web_easy"] = makeInvalidEarlyAccess("_web_easy");
 
+var _web_test = Module["_web_test"] = makeInvalidEarlyAccess("_web_test");
+
 var _web_effects = Module["_web_effects"] = makeInvalidEarlyAccess("_web_effects");
 
 var _web_input_mode = Module["_web_input_mode"] = makeInvalidEarlyAccess("_web_input_mode");
@@ -10630,6 +10632,7 @@ function assignWasmExports(wasmExports) {
   Module["_web_trainer"] = _web_trainer = createExportWrapper("web_trainer", 1);
   Module["_web_variant"] = _web_variant = createExportWrapper("web_variant", 1);
   Module["_web_easy"] = _web_easy = createExportWrapper("web_easy", 1);
+  Module["_web_test"] = _web_test = createExportWrapper("web_test", 1);
   Module["_web_effects"] = _web_effects = createExportWrapper("web_effects", 0);
   Module["_web_input_mode"] = _web_input_mode = createExportWrapper("web_input_mode", 0);
   Module["_web_key"] = _web_key = createExportWrapper("web_key", 2);
