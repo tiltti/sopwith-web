@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-03",
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "prompts": [
+    {
+      "key": "score-frame",
+      "transparent": false,
+      "refs": [
+        "dist/assets/rainbow-debrief-v1.png",
+        "dist/assets/rainbow-cockpit-v1.png"
+      ],
+      "prompt": "Use case: stylized-concept. Production original game UI texture, ONE square 1024x1024 antique airfield high-score scoreboard, viewed exactly straight-on. References are STYLE only: detailed warm painted Amiga adventure raster art, wood/leather/brass like the existing cockpit and pilot scene. A continuous narrow frame of beautifully worn honey-brown wood along all four edges, aged brass corner brackets, small screw heads and a thin inner brass lip. Border thickness about 90 pixels on all four edges, corner hardware entirely inside the outer 120x120 corner regions. The central 784x784 region is a QUIET empty very dark brown-black painted wooden writing surface, subtle fine grain, no lettering or lines. No inner header plaque intruding into the centre. This is a nine-slice UI texture: edge strips must repeat/stretch cleanly and corners must be consistent. Full bleed to the canvas edges, no exterior scenery or drop shadow outside canvas. Handpainted richly shaded sprite texture matching references, no photorealism or flat CSS/vector look. Absolutely NO text, numbers, letters, logo, medals, rows or decorative objects inside the writing surface."
+    },
+    {
+      "key": "score-parts",
+      "transparent": true,
+      "refs": [
+        "dist/assets/rainbow-cockpit-v1.png"
+      ],
+      "prompt": "Use case: stylized-concept. One production transparent 1024x1024 UI sprite atlas for an old airfield mechanical high-score board, rich handpainted Amiga adventure raster shading matching reference brass, charcoal and dark wood. Exact 2x2 grid, each 512x512 cell, generous transparent gutters. TOP LEFT: one wide horizontal charcoal wooden score-row slat, approximately 450x150, fine old brass rails at upper/lower edges and tiny rivets, centre completely EMPTY dark matte surface. TOP RIGHT: same wide row slat selected/highlighted with warm amber/brass edging and a restrained gold glow, centre EMPTY. BOTTOM LEFT: one tall vintage mechanical flip-character tile, roughly 190x270, ivory-on-black counter style but NO character drawn; dark black two-piece face, a subtle horizontal seam, brass hinge pins at the sides, EMPTY blank face for the game to print one live letter or digit. BOTTOM RIGHT: one wide antique brass title plate approximately 450x170, very dark enamel blank centre and small restrained wing flourishes extending sideways, EMPTY for live HIGH SCORES title text. Objects orthographic straight-on, individually isolated, crisp readable finely painted pixels, no scenery, no words, numbers, symbols, logos or extra pieces. Genuine transparent background."
+    },
+    {
+      "key": "cockpit-parts",
+      "transparent": true,
+      "refs": [
+        "dist/assets/rainbow-cockpit-v1.png"
+      ],
+      "prompt": "Use case: stylized-concept. One transparent 1536x1024 production cockpit UI sprite atlas, exactly 3 columns by 2 rows, six equal 512x512 cells, generous transparent gutters. Match reference original handpainted Amiga flight adventure style: worn brass, wood, dark charcoal enamel, detailed raster shading, orthographic front view. TOP LEFT: circular antique fuel instrument with round aged brass rim and EMPTY black face; absolutely no needle, numerals, letters or tick marks (runtime draws them). TOP MIDDLE: one wide horizontal rectangular brass navigation-window frame, approx 460x270, straight inner rectangular aperture, mostly dark empty charcoal centre, small corner screws, very restrained trim. TOP RIGHT: one wide horizontal rectangular brass score-window frame approx 460x270 with rectangular EMPTY black inner face and small corner screws. BOTTOM LEFT: one isolated olive/cream vintage aerial bomb pointing straight DOWN, metal fins and rounded pointed nose, no fuse flame, enough detail to read at small scale. BOTTOM MIDDLE: one wide small rectangular ammunition counter bezel, approx 460x160, dark EMPTY face and old brass hinges. BOTTOM RIGHT: one small vintage cream aircraft silhouette badge on a dark brass roundel, no writing, for a home/runway indicator. All six objects separated inside equal cells, no clipping, genuine transparency around each. No text or numbers anywhere, no HUD assembled scene, no backdrop, no maps drawn inside frames."
+    }
+  ]
+}

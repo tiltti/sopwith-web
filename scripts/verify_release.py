@@ -58,9 +58,14 @@ def main():
         assert (sound.getnchannels(), sound.getframerate(), sound.getsampwidth()) == (1,22050,2)
         assert sound.getnframes()/sound.getframerate() == metadata["sampleDurationSeconds"]
     assert not any("sound_of_a_falling" in name or "dive-game-preview" in name for name in actual)
+    for record in json.loads((ROOT / "web/score-cockpit-v09-files.json").read_text())["files"]:
+        data=(ROOT / record["path"]).read_bytes()
+        assert len(data)==record["bytes"] and hashlib.sha256(data).hexdigest()==record["sha256"]
+        assert data[:8]==b"\x89PNG\r\n\x1a\n"
+        assert (int.from_bytes(data[16:20],"big"),int.from_bytes(data[20:24],"big"))==(record["width"],record["height"])
     archive = DIST / "source/sopwith-web-source.tar.gz"
     with tarfile.open(archive, "r:gz") as bundle:
-        for relative in ("scripts/prepare_user_dive.py", "web/user-dive-source.json", "web/flight-art-v08-prompts.json", "web/flight-art-v08-files.json", "web/environment-v08-prompts.json", "web/aircraft-roll-v08-prompt.json", "tests/audio-offline-check.html", "web/bridge.c", "web/trainer.c", "web/collisions.c", "web/pilot-walk-v3-generation.json", "dist/rainbow-stages.js", "tests/patrol.c", "tests/rainbow-stages.mjs", "scripts/prepare_patrol_art.py", "scripts/prepare_audio_v06.py", "scripts/test_patrol.py", "web/RELEASE-CHECKLIST.md", "dist/i18n.js", "tests/i18n.mjs", "server/drizzle/0001_combat_difficulty.sql", "server/db/schema.ts", "scripts/build.py", "LICENSE", "NOTICE.md",
+        for relative in ("web/score-cockpit-v09-prompts.json", "web/score-cockpit-v09-files.json", "scripts/prepare_user_dive.py", "web/user-dive-source.json", "web/flight-art-v08-prompts.json", "web/flight-art-v08-files.json", "web/environment-v08-prompts.json", "web/aircraft-roll-v08-prompt.json", "tests/audio-offline-check.html", "web/bridge.c", "web/trainer.c", "web/collisions.c", "web/pilot-walk-v3-generation.json", "dist/rainbow-stages.js", "tests/patrol.c", "tests/rainbow-stages.mjs", "scripts/prepare_patrol_art.py", "scripts/prepare_audio_v06.py", "scripts/test_patrol.py", "web/RELEASE-CHECKLIST.md", "dist/i18n.js", "tests/i18n.mjs", "server/drizzle/0001_combat_difficulty.sql", "server/db/schema.ts", "scripts/build.py", "LICENSE", "NOTICE.md",
                          "dist/look-lab.html", "dist/look-lab.js", "dist/look-lab.css", "dist/title-audio.js", "tests/title-audio.mjs", "tests/leaderboard-ui.mjs", "scripts/prepare_audio_v05.py", "web/move.c", "tests/home.c", "scripts/test_home.py", "dist/rainbow-ui.css", "dist/rainbow-ui.js", "dist/rainbow-timeline.js", "tests/rainbow-timeline.mjs",
                          "web/scene.c", "web/scene.h", "web/variant.c", "web/variant.h", "tests/scene.c", "tests/rainbow-renderer.mjs", "scripts/test_scene.py",
                          "third_party/sdl-sopwith/src/swmain.c", "dist/app.js", "dist/runner.js", "dist/info.html",

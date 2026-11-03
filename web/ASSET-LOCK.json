@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 13895,
-      "sha256": "b1e9a0375eabc47609e0ea3b7ae29a3eca86f116a53abf5929724ab096cd60c3"
+      "bytes": 15001,
+      "sha256": "0308868d9f18ab12c7969585448c6e6f9438aa20c0356b73a52a0b511c70e71c"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -238,6 +238,11 @@
       "sha256": "14a639a5436764f9c8d41ed2eb01c75dc5d2aa087d47a862d79ed84750bc89f3"
     },
     {
+      "path": "dist/assets/rainbow-cockpit-instruments-v2.png",
+      "bytes": 2234788,
+      "sha256": "d1222a9d4f7acffc40494deb875c59568da5f0a4e64e3858b6c9b051f4713fff"
+    },
+    {
       "path": "dist/assets/rainbow-cockpit-v1.png",
       "bytes": 2926858,
       "sha256": "c03a19a9280d9b80247371d5f04807022a48fc73b02e1015b2686d6e3807559d"
@@ -281,6 +286,16 @@
       "path": "dist/assets/rainbow-scenery-v1.png",
       "bytes": 1623849,
       "sha256": "de416de60273dce2ec119a98d289b5568d0b18f8bb6d8a8135e7c64c65c8101f"
+    },
+    {
+      "path": "dist/assets/rainbow-scoreboard-frame-v1.png",
+      "bytes": 2428298,
+      "sha256": "39823119cd42013377d8759284653e2c38f5452d7e5e81e0ba9fd8ee89797a26"
+    },
+    {
+      "path": "dist/assets/rainbow-scoreboard-parts-v1.png",
+      "bytes": 1172456,
+      "sha256": "ab4ef6188f0c3480610b2a300735e347c247e8ad974a27bc7bd80ed905abe7fb"
     },
     {
       "path": "dist/assets/rainbow-soil-v1.png",

@@ -21,7 +21,7 @@ heap.set([0,1,2,3],16);
 const beforeScene=scene.slice(),beforeHeap=heap.slice();
 assert.equal(renderer.drawScene(scene,heap),true);
 assert.equal(display.dataset.renderer,'rainbow');
-assert.equal(display.width,1920);assert.equal(display.height,1464);
+assert.equal(display.width,1920);assert.equal(display.height,1488);
 assert.ok(Renderer.mapPoint(100,199,2000).y>=400,'The entire minimap is outside the flight area.');
 assert.ok(Renderer.mapPoint(100,199,2000).y<Renderer.mapPoint(100,0,2000).y,'Real altitude determines map height.');
 assert.equal(display.dataset.tick,'10');
@@ -83,9 +83,9 @@ console.log('Rainbow renderer: alignment, level grounded arch, visible optional 
 
 const activeTarget=new Int32Array([4,5,500,80,0,0,2,16,16]);
 calls.length=0;renderer.hud(scene,[activeTarget],false,ground);
-assert.ok(calls.some(r=>r[0]==='rect'&&r[1]>180&&r[1]<450&&r.at(-1)==='#ed786b'),'Active enemy ground targets are red.');
+assert.ok(calls.some(r=>r[0]==='rect'&&r[1]>=210&&r[1]<=409&&r[2]>=28&&r[2]<62&&r.at(-1)==='#ed786b'),'Active enemy ground targets are red.');
 activeTarget[1]=3;calls.length=0;renderer.hud(scene,[activeTarget],false,ground);
-assert.ok(!calls.some(r=>r[0]==='rect'&&r[1]>180&&r[1]<450&&r.at(-1)==='#ed786b'),'Destroyed targets cannot keep a red active marker.');
+assert.ok(!calls.some(r=>r[0]==='rect'&&r[1]>=210&&r[1]<=409&&r[2]>=28&&r[2]<62&&r.at(-1)==='#ed786b'),'Destroyed targets cannot keep a red active marker.');
 assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#526d78'),'Destroyed locations retain a subdued cross marker.');
 activeTarget[1]=5;activeTarget[6]=1;calls.length=0;renderer.teamMark(activeTarget,100);
 assert.ok(calls.some(r=>r[0]==='rect'&&r.at(-1)==='#71cebb'),'Friendly ground flags match the map.');
@@ -118,7 +118,7 @@ assert.ok(!calls.some(c=>c[0]==='rect'&&c[3]>20&&c[4]>20),'READY never creates a
 console.log('Ground contact on hills, audio-only reactions and compact READY text verified.');
 
 scene[11]=8;scene[4]=152;scene[5]=100;renderer.hud(scene,[],false,ground);
-assert.equal(display.dataset.airspeed,'144');assert.equal(display.dataset.altitude,'440');
+assert.equal(display.dataset.airspeed,'89');assert.equal(display.dataset.altitude,'1444');
 console.log('Cockpit instruments use native speed and height above the current terrain.');
 
 const bomb=new Int32Array([2,1,160,120,0,0,1,4,8,16,0,5,4,-2,0,0,4321,1]);
@@ -143,3 +143,16 @@ const rolls=new Set();for(let t=90;t<98;t+=2){scene[1]=t;renderer.drawScene(scen
 assert.ok(rolls.size>=3,'Falling aircraft advance through axial roll views.');
 assert.equal(display.dataset.environment,'painted-coast');
 console.log('Painted terrain follows native geometry; fractional scenery layers and falling axial frames render together.');
+
+const localPlayer=new Int32Array([1,1,150,180,0,0,2,16,16,0,1]);
+const friendly=new Int32Array([4,5,400,80,0,0,2,16,16]);
+calls.length=0;renderer.hud(scene,[localPlayer,friendly],false,ground);
+const inMap=r=>r[0]==='rect'&&r[1]>=210&&r[1]<=409&&r[2]>=28&&r[2]<62;
+assert.ok(calls.some(r=>inMap(r)&&r.at(-1)==='#71cebb'),'The map compares teams with the actual player faction.');
+assert.ok(!calls.some(r=>inMap(r)&&r.at(-1)==='#ed786b'));
+assert.ok(calls.some(r=>r[0]==='clip'),'The navigation aperture is clipped before drawing terrain and markers.');
+scene[8]=2;renderer.hud(scene,[],false,ground);assert.equal(display.dataset.bombIcons,'2');
+assert.equal(display.dataset.airspeedUnit,'MPH');assert.equal(display.dataset.altitudeUnit,'FT AGL');
+renderer.readyLevel=1;renderer.readyLives=4;renderer.drawReady();assert.equal(display.dataset.readyLives,'4');
+renderer.readyLevel=null;renderer.takeoffHint=true;renderer.drawReady();assert.equal(display.dataset.takeoffHint,'true');
+console.log('Clipped navigation, player-relative team legend, remaining bomb icons, MPH/FT readouts, respawn lives and idle instructions verified.');

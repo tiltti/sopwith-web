@@ -32,8 +32,8 @@ object identity and projectile-owner kind. The C simulation remains at 10 Hz.
 requestAnimationFrame, without changing collision masks or native state. It
 snaps across respawns and holds its clock while paused.
 
-The Canvas 2D framebuffer is **1920 × 1464**: a logical 640 × 400 flight area,
-plus a separate 88-pixel instrument strip, rendered at 3× detail. Higher-detail
+The Canvas 2D framebuffer is **1920 × 1488**: a logical 640 × 400 flight area,
+plus a separate 96-pixel instrument strip, rendered at 3× detail. Higher-detail
 atlas crops remain intact instead of first reducing them to a 34-pixel sprite.
 Terrain strips are cached and slide smoothly. The original source landscape is
 restored under buildings; foundations bridge slopes instead of cutting abrupt
@@ -211,7 +211,7 @@ C / SDL2 / Emscripten / WASM architecture and source provenance.
 
 ## Rainbow mission transitions and pilots
 
-A brief 0.7-second READY PLAYER / LEVEL text cue holds the native simulation before
+A brief one-second READY PLAYER / LEVEL text cue holds the native simulation before
 level 1 and every new level. Victory keeps the normal 72-tick native countdown,
 with original rear-view aircraft artwork receding toward the horizon and a
 single 7.8-second licensed fanfare/march mix. Game-over still ends on high scores.
@@ -279,16 +279,16 @@ to play it. Any local `.openai/` metadata is unrelated to this public release.
 The selected detailed coastal concept now supplies real scrolling scenery,
 painted cloud sprites, soil material and meadow details at the aircraft art's
 raster density. Soil remains clipped to the mutable native ground, including
-craters. The 88-pixel wood/leather/brass cockpit holds live analogue airspeed
+craters. The 96-pixel wood/leather/brass cockpit holds live analogue airspeed
 and altitude needles, score/resources and a map below the unobstructed flight
-area. Readouts are arcade calibrations: native speed × 18 km/h and native
-height above current terrain × 10 m; they are not a physical flight simulator.
+area. Readouts are arcade calibrations: native speed × 18 km/h converted to MPH and native
+height above current terrain × 10 m converted to feet; they are not a physical flight simulator.
 
 Pause and score screens share the painted airfield; top-ten scores retain their
 visible navigation. Victory has an original winged badge and dedicated rear
 biplane frames. Descending canopies sway through four raster poses; falling
 planes roll around the fuselage with separate faction sprites. A quick pilot
-run/boarding animation fits inside the existing 0.7-second READY hold. Friendly
+run/boarding animation fits inside the existing one-second READY hold. Friendly
 walking pilots cannot destroy parked/taxiing aircraft at their home runway;
 hostile and airborne contacts keep their rules. Bomb artwork leaves parallel
 to its aircraft and eases toward actual ballistic velocity over four ticks,
@@ -309,3 +309,18 @@ around its actual position. Saving returns to the normal top-ten board.
 The same CC0 War Theme used by the splash plays at a lower gain on the debrief,
 only after sound has been enabled. It continues through save/score panels and
 stops on a new flight, mute or a hidden tab. One media player is reused.
+
+### Cockpit layout / spawn help — 2026-11-03
+
+The navigation image is clipped inside its measured brass aperture. Player,
+friendly, hostile, bird and destroyed-site markers use the actual player faction.
+The score fits its own window. Airspeed (MPH) and altitude (FT AGL) have intermediate
+numbered graduations, while a separate fuel needle reads E / 1/2 / F. The bomb
+rack shows only the remaining bombs; spent slots are empty. The scoreboard is
+narrower/taller and uses painted wooden/brass frames and mechanical name tiles.
+
+Every new aircraft, including trainer respawns, gets a one-second READY / level
+and lives-left intermission. On the first life only, five idle seconds while
+parked shows throttle and takeoff key instructions. Input clears the hint timer;
+takeoff disables it for the rest of that run. All of this uses the display clock
+and leaves native physics/collision masks unchanged.

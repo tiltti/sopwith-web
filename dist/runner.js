@@ -28,7 +28,9 @@
     visualRenderer.bombHeld = held.has(5);
     repaint = true;
   }
+  let stages=null;
   function key(scancode, down) {
+    if(down)stages?.noteInput();
     if (!game || paused || stagePaused || !scancode) return;
     const wasHeld=held.has(scancode);
     if (down) held.add(scancode); else held.delete(scancode);
@@ -132,7 +134,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261102-painted2',
+      locateFile: name => 'engine/' + name + '?v=20261103-cockpit2',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -164,7 +166,7 @@
       updateAim();
       window.RainbowAssets?.ready.then(()=>{repaint=true;});
       visualTimeline=window.RainbowTimeline?new RainbowTimeline():null;
-      const stages=window.RainbowStages?new RainbowStages():null;
+      stages=window.RainbowStages?new RainbowStages():null;
       let renderedTick=-1,wasActive=false,endSent=false,snapshot,effects,ground,lastDisplay;
       let frameCount=0,metricAt=clock(),drawTotal=0;
       const draw = (now=clock()) => {
@@ -183,7 +185,7 @@
         if(active&&snapshot&&stages){
           const stage=stages.update(snapshot,now,paused);
           if(stage.blocked!==stagePaused){stagePaused=stage.blocked;if(stagePaused)release();game._web_pause(paused||stagePaused?1:0);}
-          renderer.readyLevel=stage.blocked?stage.level:null;renderer.readyProgress=stage.progress;
+          renderer.readyLevel=stage.blocked?stage.level:null;renderer.readyProgress=stage.progress;renderer.readyLives=trainerEnabled?'INF':stage.lives;renderer.takeoffHint=stage.takeoffHint;
         }
         if(active&&snapshot&&(!paused||repaint||!lastDisplay)) {
           const begin=clock();

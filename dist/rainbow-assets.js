@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),cache=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),cache=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -30,7 +30,7 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=14,okay=true;
+    let remaining=15,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
@@ -41,12 +41,14 @@
     canopies.onload=()=>done(canopies.width===1536&&canopies.height===1024);
     badge.onload=()=>done(badge.width===1536&&badge.height===1024);
     cockpit.onload=()=>done(cockpit.width===1536&&cockpit.height===1024);
+    instruments.onload=()=>done(instruments.width===1536&&instruments.height===1024);
     turf.onload=()=>done(turf.width===1536&&turf.height===1024);
     roll.onload=()=>done(roll.width===1536&&roll.height===1024);
     scenery.onload=()=>done(scenery.width===1536&&scenery.height===1024);
     clouds.onload=()=>done(clouds.width===1536&&clouds.height===1024);
     soil.onload=()=>done(soil.width===1536&&soil.height===1024);
-    turf.onerror=roll.onerror=scenery.onerror=clouds.onerror=soil.onerror=atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=canopies.onerror=badge.onerror=cockpit.onerror=()=>done(false);
+    instruments.onerror=turf.onerror=roll.onerror=scenery.onerror=clouds.onerror=soil.onerror=atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=canopies.onerror=badge.onerror=cockpit.onerror=()=>done(false);
+    instruments.src='assets/rainbow-cockpit-instruments-v2.png';
     turf.src='assets/rainbow-turf-v1.png';
     roll.src='assets/rainbow-aircraft-roll-v1.png';
     scenery.src='assets/rainbow-scenery-v1.png';clouds.src='assets/rainbow-clouds-v1.png';soil.src='assets/rainbow-soil-v1.png';
@@ -138,8 +140,11 @@
   }
   function interfaceArt(kind){
     if(!loaded)return null;const key='ui:'+kind;if(cache.has(key))return cache.get(key);
-    const [sheet,crop,w,h]=kind==='badge'?[badge,[12,200,1512,600],360,360*600/1512]
-      :kind==='panel'?[cockpit,[0,0,1536,512],640,88]
+    const pieces={fuel:[[22,20,460,450],56,56],map:[[526,101,488,281],246,62],score:[[1047,112,467,267],100,46],bomb:[[153,538,207,464],9,20],ammo:[[520,647,491,194],64,28],home:[[1074,541,415,419],14,14]};
+    let sheet,crop,w,h;
+    if(pieces[kind]){[crop,w,h]=pieces[kind];sheet=instruments;}
+    else [sheet,crop,w,h]=kind==='badge'?[badge,[12,200,1512,600],360,360*600/1512]
+      :kind==='panel'?[cockpit,[0,0,1536,512],640,96]
       :kind==='plate'?[cockpit,[1030,662,500,188],110,42]
       :[cockpit,[kind==='altitude'?536:24,524,459,468],56,56];
     const out=document.createElement('canvas');out.worldWidth=w;out.worldHeight=h;out.width=Math.ceil(w*DETAIL);out.height=Math.ceil(h*DETAIL);

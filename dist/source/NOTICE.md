@@ -156,3 +156,11 @@ adapted sound file is distributed. Code around it remains GPL-2.0-or-later.
 `web/user-dive-source.json` records the contributor statement, hashes and
 processing. `scripts/prepare_user_dive.py` reproduces the embedded adaptation
 when provided with the contributor's original file.
+
+## Scoreboard and cockpit artwork (2026-11-03)
+
+The original scoreboard frame/row/counter atlas and cockpit instrument atlas
+were made with built-in OpenAI imagegen using this project's own artwork as
+style references. Complete unmodified outputs and the exact prompts/hashes are
+retained in `dist/assets/ARTWORK.md` and `web/score-cockpit-v09-*.json` and are
+distributed with the GPL-2.0-or-later game. No external artwork was downloaded.

@@ -1,3 +1,24 @@
+## Scoreboard sprites / cockpit / spawn help — 2026-11-03
+
+- Renderer, assets, stages, timeline, controls, leaderboard UI, language and
+  title/debrief-music suites pass. New tests cover map clipping and actual player
+  faction, counted bomb icons, MPH/FT AGL values, one-second holds on every
+  respawn (including trainer), lives-left and first-life five-second idle help.
+- Browser: actual throttle/down/crash/respawn advanced crashes 0→1 and consumed
+  READY lives 5→4. The new parked aircraft had no first-life help. Audio stayed off.
+- Actual initial idle displayed takeoff key instructions after five seconds;
+  throttle input removed them. Snapshot fixture at fuel 30%, two bombs,
+  78 MPH / 1969 FT AGL verified needle movement and empty bomb rack slots.
+- Navigation terrain, markers and viewport stay inside their measured brass
+  aperture. Scores, team legend, fuel and bomb artwork fit their reserved areas.
+- Scoreboard: narrower painted frame, row slats, title plate and flip-character
+  sprites checked in browser. SFX + Enter saved at rank 6; final top ten had
+  scrollHeight == clientHeight (443 px), panel width 422 px, navigation visible.
+- Assets were displayed in chat as generated. Immutable raw outputs, exact
+  prompts and hashes are in `web/score-cockpit-v09-*.json` and ARTWORK.md.
+- Proof files in parent research directory: `scoreboard-sprites-entry-v2.png`,
+  `scoreboard-sprites-final-v2.png`, `cockpit-v2-takeoff-help.png`.
+
 ## Inline initials / debrief music — 2026-11-03
 
 - Leaderboard UI, menu music, localization and browser-control suites pass.

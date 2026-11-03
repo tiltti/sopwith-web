@@ -16,7 +16,7 @@ project's GPL-2.0-or-later source. They are not taken from another game.
   atlas was a style reference. Source rectangles are measured explicitly.
 
 The Canvas renderer uses a 640×400 logical flight area plus a 68-pixel HUD,
-rendered into a 1920×1464 framebuffer. The
+rendered into a 1920×1488 framebuffer. The
 art is Amiga-inspired; this is not a claim of authentic Amiga palette or
 hardware compatibility. Clouds and combat particles are original code art.
 
@@ -185,3 +185,22 @@ The earlier SVG departure sheet is retained as historical source, no longer used
 The environment materials follow the real height field and crater updates;
 clouds and decorations cannot alter collisions. Cockpit needles and markings
 are live code drawn over the blank painted instrument faces.
+
+## Scoreboard / cockpit sprites (2026-11-03)
+
+Three original full outputs made with built-in OpenAI imagegen, shown to the
+project owner in chat, then copied unchanged into this directory:
+
+- `rainbow-scoreboard-frame-v1.png` (1254×1254 RGB): nine-slice old wooden
+  scoreboard with brass corners and an empty dark writing surface.
+- `rainbow-scoreboard-parts-v1.png` (1254×1254 RGBA): normal/selected row slats,
+  mechanical flip-character tile and winged blank title plate. CSS crops the
+  raw atlas at runtime; names, ranks and scores remain live accessible text.
+- `rainbow-cockpit-instruments-v2.png` (1536×1024 RGBA): fuel dial, navigation
+  and score windows, bomb icon, ammunition bezel and home badge. The canvas
+  adapter crops these and draws calibrated needles/labels over blank faces.
+
+Exact prompts, references, immutable output hashes and dimensions are in
+`web/score-cockpit-v09-prompts.json` and `web/score-cockpit-v09-files.json`.
+References were this project's cockpit and debrief art. No third-party game
+art was copied. These images are distributed with the GPL-2.0-or-later game.

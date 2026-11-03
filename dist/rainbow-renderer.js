@@ -1,7 +1,7 @@
 // Sopwith: Rainbow Patrol. Original pixel renderer, GPL-2.0-or-later.
 // The native C engine remains responsible for simulation and collision masks.
 (() => {
-  const W = 640, H = 400, HUD = 88, DETAIL = 3, HEADER = 28, STRIDE = 18, GROUND = 320;
+  const W = 640, H = 400, HUD = 96, DETAIL = 3, HEADER = 28, STRIDE = 18, GROUND = 320;
   const P = {
     outline:'#34365b', blue:'#458fcb', sky:'#54b8e1', pale:'#98e6ed',
     cloud:'#e5fff0', cloudShade:'#9ce3e5', cloudDeep:'#76cddc',
@@ -32,6 +32,7 @@
     Y:['101','101','010','010','010'],Z:['111','001','010','100','111'],
     ':':['0','1','0','1','0'],'.':['0','0','0','0','1'],
     '/':['001','001','010','100','100'],'-':['000','000','111','000','000'],
+    '%':['11001','11010','00100','01011','10011'],
     '+':['000','010','111','010','000'],' ':['000','000','000','000','000'],
     '<':['001','010','100','010','001'],'>':['100','010','001','010','100'],
   };
@@ -87,7 +88,11 @@
       c.lineTo(cx-innerX,H);c.lineTo(cx-outerX,H);c.closePath();c.fill();
     }
   }
-  function mapPoint(x,y,width) {return {x:202+Math.max(0,Math.min(1,x/width))*230,y:H+12+34-Math.max(0,Math.min(199,y))/199*34};}
+  const MAP={x:210,y:28,w:199,h:34};
+  function mapPoint(x,y,width) {return {x:MAP.x+1+Math.max(0,Math.min(1,x/width))*(MAP.w-2),y:H+MAP.y+MAP.h-1-Math.max(0,Math.min(199,y))/199*(MAP.h-2)};}
+  function textWidth(str,scale=1){return Math.max(0,[...String(str).toUpperCase()].reduce((n,ch)=>n+((FONT[ch]||FONT[' '])[0].length+1)*scale,0)-scale);}
+  function centred(c,str,x,y,color=P.cream,scale=1){text(c,str,x-textWidth(str,scale)/2,y,color,scale);}
+
   const SINE=[0,98,181,237,256,237,181,98,0,-98,-181,-237,-256,-237,-181,-98];
   function predictBomb(plane,ground) {
     if(!plane||!ground?.length)return null;
@@ -498,10 +503,17 @@
       this.canvas.dataset.bombHeading=String(angle);
     }
     drawReady(){
-      if(!this.readyLevel)return;
-      const c=this.c,label='READY PLAYER - LEVEL '+this.readyLevel,x=W/2-label.length*4;
-      text(c,label,x+1,174,P.ink,2);text(c,label,x,173,P.cream,2);
-      this.canvas.dataset.readyLevel=String(this.readyLevel);
+      delete this.canvas.dataset.takeoffHint;
+      if(this.readyLevel){
+        const label='READY PLAYER 1 - LEVEL '+this.readyLevel;
+        centred(this.c,label,W/2+1,166,P.ink,2);centred(this.c,label,W/2,165,P.cream,2);
+        centred(this.c,(this.readyLives??5)+' LIVES LEFT',W/2+1,184,P.ink);centred(this.c,(this.readyLives??5)+' LIVES LEFT',W/2,183,P.gold);
+        this.canvas.dataset.readyLevel=String(this.readyLevel);this.canvas.dataset.readyLives=String(this.readyLives??5);
+      }else if(this.takeoffHint){
+        const c=this.c;
+        for(const [label,y,scale,color] of [['INCREASE THROTTLE TO TAKE OFF',116,2,P.gold],['X / RIGHT ARROW : INCREASE THROTTLE',135,1,P.cream],['COMMA / UP ARROW : LIFT THE NOSE',147,1,P.cream]]){centred(c,label,321,y+1,P.ink,scale);centred(c,label,320,y,color,scale);}
+        this.canvas.dataset.takeoffHint='true';
+      }
     }
     drawScene(scene,heap,trainer=false,effects=null,ground=null) {
       if(scene[0]!==3||scene[3]===0)return false;
@@ -623,51 +635,62 @@
       return true;
     }
     gauge(cx,cy,kind,value,max,label,unit){
-      const c=this.c,face=window.RainbowAssets?.interfaceArt?.(kind);
-      if(face)c.drawImage(face,cx-32,cy-32,64,64);else{c.fillStyle=P.ink;c.beginPath();c.ellipse(cx,cy,26,26,0,0,Math.PI*2);c.fill();}
-      for(let i=0;i<=20;i++){
-        const a=(135+i/20*270)*Math.PI/180,r=i%5===0?22:25;
-        const dx=Math.cos(a),dy=Math.sin(a);
-        polygon(c,[[cx+dx*r-dy*.35,cy+dy*r+dx*.35],[cx+dx*28-dy*.35,cy+dy*28+dx*.35],[cx+dx*28+dy*.35,cy+dy*28-dx*.35],[cx+dx*r+dy*.35,cy+dy*r-dx*.35]],P.cream);
-        if(i%10===0){const n=Math.round(i/20*max),t=kind==='altitude'&&n>0?n/1000+'K':String(n);text(c,t,cx+dx*20-t.length*2,cy+dy*20-2,P.cream);}
+      const c=this.c,face=window.RainbowAssets?.interfaceArt?.(kind),fuel=kind==='fuel',radius=fuel?27:37;
+      if(face)c.drawImage(face,cx-radius,cy-radius,radius*2,radius*2);
+      else {c.fillStyle=P.ink;c.beginPath();c.ellipse(cx,cy,radius,radius,0,0,Math.PI*2);c.fill();}
+      const steps=fuel?8:kind==='altitude'?24:20,major=fuel?4:4,outer=fuel?19:27,labels=fuel?13:20;
+      for(let i=0;i<=steps;i++){
+        const a=(135+i/steps*270)*Math.PI/180,dx=Math.cos(a),dy=Math.sin(a),inner=outer-(i%major===0?4:2);
+        polygon(c,[[cx+dx*inner-dy*.3,cy+dy*inner+dx*.3],[cx+dx*outer-dy*.3,cy+dy*outer+dx*.3],[cx+dx*outer+dy*.3,cy+dy*outer-dx*.3],[cx+dx*inner+dy*.3,cy+dy*inner-dx*.3]],P.cream);
+        if(i%major===0){const n=Math.round(i/steps*max),t=fuel?(i===0?'E':i===steps?'F':'1/2'):kind==='altitude'&&n?n/1000+'K':String(n);centred(c,t,cx+dx*labels,cy+dy*labels-2,P.cream);}
       }
-      text(c,label,cx-label.length*2,cy-8,P.gold);text(c,unit,cx-unit.length*2,cy+6,P.pale);
-      const a=(135+Math.max(0,Math.min(1,value/max))*270)*Math.PI/180,dx=Math.cos(a),dy=Math.sin(a);
-      polygon(c,[[cx-dy*1.2,cy+dx*1.2],[cx+dx*20,cy+dy*20],[cx+dy*1.2,cy-dx*1.2]],P.red);
-      rect(c,cx-1,cy-1,3,3,P.gold);text(c,String(Math.round(value)),cx-String(Math.round(value)).length*2,cy+34,P.cream);
+      centred(c,label,cx,cy-7,P.gold);if(unit)centred(c,unit,cx,cy+5,P.pale);
+      const a=(135+Math.max(0,Math.min(1,value/max))*270)*Math.PI/180,dx=Math.cos(a),dy=Math.sin(a),needle=fuel?15:23;
+      polygon(c,[[cx-dy,cy+dx],[cx+dx*needle,cy+dy*needle],[cx+dy,cy-dx]],P.red);
+      c.fillStyle=P.gold;c.beginPath();c.ellipse(cx,cy,1.6,1.6,0,0,Math.PI*2);c.fill();
+      centred(c,fuel?Math.round(value)+'%':Math.round(value),cx,cy+radius+4,P.cream);
     }
     hud(s,objects,trainer,ground) {
-      const c=this.c;c.save();c.translate(0,H);
-      const panel=window.RainbowAssets?.interfaceArt?.('panel'),plate=window.RainbowAssets?.interfaceArt?.('plate');
-      rect(c,0,0,W,HUD,'#3b281e');if(panel)c.drawImage(panel,0,0,W,HUD);
-      if(plate){c.drawImage(plate,5,6,114,44);c.drawImage(plate,184,5,266,48);c.drawImage(plate,519,6,116,60);}
-      else {rect(c,6,8,112,42,P.ink);rect(c,195,10,244,39,P.ink);rect(c,520,8,112,56,P.ink);}
-      text(c,'SCORE',16,17,P.gold);text(c,s[10]<0?'-'+String(-s[10]).padStart(5,'0'):String(s[10]).padStart(6,'0'),16,29,P.cream,2);
-      text(c,'LIVES',14,57,P.cream);text(c,trainer?'INF':s[9],42,56,P.gold,2);
-      text(c,'LVL',77,57,P.cream);text(c,s[18]+1,95,56,P.gold,2);
-      rect(c,201,11,233,36,'#314b50');
-      if(ground?.length)for(let x=0;x<231;x++) {
-        const y=34-Math.round(ground[Math.min(ground.length-1,Math.floor(x/231*ground.length))]/200*34);
-        rect(c,202+x,12+y,1,35-y,'#75965d');
+      const c=this.c,art=kind=>window.RainbowAssets?.interfaceArt?.(kind);c.save();c.translate(0,H);
+      const panel=art('panel');rect(c,0,0,W,HUD,'#3b281e');if(panel)c.drawImage(panel,0,0,W,HUD);
+      const score=art('score'),nav=art('map'),ammo=art('ammo');
+      if(score)c.drawImage(score,6,7,100,46);else rect(c,10,12,92,34,P.ink);
+      centred(c,'SCORE',56,22,P.gold);
+      const digits=s[10]<0?'-'+String(-s[10]).padStart(5,'0'):String(s[10]).padStart(6,'0');
+      centred(c,digits,56,32,P.cream,textWidth(digits,2)<=78?2:1);
+      text(c,'LIVES',14,64,P.cream);text(c,trainer?'INF':s[9],43,62,P.gold,2);
+      text(c,'LVL',74,64,P.cream);text(c,s[18]+1,92,62,P.gold,2);
+      if(nav)c.drawImage(nav,186,3,246,70);
+      c.save();c.beginPath();c.moveTo(MAP.x,MAP.y);c.lineTo(MAP.x+MAP.w,MAP.y);c.lineTo(MAP.x+MAP.w,MAP.y+MAP.h);c.lineTo(MAP.x,MAP.y+MAP.h);c.closePath();c.clip();
+      rect(c,MAP.x,MAP.y,MAP.w,MAP.h,'#263d43');
+      if(ground?.length)for(let x=0;x<MAP.w;x++){
+        const y=MAP.h-1-ground[Math.min(ground.length-1,Math.floor(x/MAP.w*ground.length))]/200*(MAP.h-2);
+        c.fillStyle='#70854c';c.fillRect(MAP.x+x,MAP.y+y,1,MAP.h-y);
       }
-      for(const r of objects)if([1,4,7,8,9,12].includes(r[0])) {
-        const point=mapPoint(r[2]+r[7]/2,r[3]-r[8]/2,s[3]);
+      const faction=objects.find(r=>r[0]===1&&r[10])?.[6]||1;
+      for(const r of objects)if([1,4,7,8,9,12].includes(r[0])){
+        const point=mapPoint(r[2]+r[7]/2,r[3]-r[8]/2,s[3]),y=point.y-H;
         const inactive=r[0]===4?r[1]!==5:r[0]===1?![1,6,8,9].includes(r[1]):r[0]===12?r[1]!==1:r[0]===9?r[1]!==5:false;
-        if(inactive){rect(c,point.x-1,point.y-H,3,1,'#b2c1b7');rect(c,point.x,point.y-H-1,1,3,'#526d78');}
-        else{const color=r[10]?P.gold:r[0]===1?P.red:r[0]===7||r[0]===8?P.white:r[0]===9?P.sand:r[6]===1?P.mint:P.red;rect(c,point.x-(r[10]?2:1),point.y-H,r[10]?5:r[0]===4?3:2,r[0]===1?3:2,color);}
+        if(inactive){rect(c,point.x-1,y,3,1,'#b2c1b7');rect(c,point.x,y-1,1,3,'#526d78');}
+        else {const color=r[10]?P.gold:r[0]===7||r[0]===8?P.white:r[0]===9?P.sand:r[6]===faction?P.mint:r[6]?P.red:P.white;rect(c,point.x-(r[10]?2:1),y,r[10]?5:r[0]===4?3:2,r[0]===1?3:2,color);}
       }
-      c.strokeStyle='#e2d7b5';c.lineWidth=.6;c.strokeRect(202+s[2]/s[3]*230,12,320/s[3]*230,35);
+      c.strokeStyle='#e2d7b5';c.lineWidth=.6;c.strokeRect(MAP.x+s[2]/s[3]*MAP.w,MAP.y+1,320/s[3]*MAP.w,MAP.h-2);c.restore();
+      for(const [x,label,color] of [[204,'YOU',P.gold],[245,'FRIEND',P.mint],[304,'ENEMY',P.red],[366,'BIRDS',P.white]]){rect(c,x,76,3,3,color);text(c,label,x+6,75,P.cream);}
       const wx=Math.max(0,Math.min((ground?.length||1)-1,Math.floor(s[4]+8)));
-      const speed=Math.max(0,s[11])*18,altitude=Math.max(0,s[5]-16-(ground?.[wx]||0))*10;
-      this.gauge(151,36,'speed',speed,240,'AIR','KMH');this.gauge(484,36,'altitude',altitude,2000,'ALT','M AGL');
-      this.canvas.dataset.airspeed=String(Math.round(speed));this.canvas.dataset.altitude=String(Math.round(altitude));
-      text(c,'FUEL',531,17,P.gold);rect(c,557,16,65,6,P.outline);rect(c,558,17,Math.max(0,Math.min(63,s[6]/9000*63)),4,P.mint);
-      text(c,'AMMO',531,31,P.cream);text(c,s[7],554,30,P.cream,2);text(c,'BOMB',586,31,P.cream);text(c,s[8],609,30,P.gold,2);
-      text(c,'HOME',531,47,P.cream);text(c,s[16]?'ON':s[4]<s[15]?'>':'<',558,47,P.gold);
-      rect(c,14,77,4,3,P.mint);text(c,'ALLY',22,76,P.cream);rect(c,47,77,4,3,P.red);text(c,'ENEMY',55,76,P.cream);
+      const speed=Math.max(0,s[11])*18/1.609344,altitude=Math.max(0,s[5]-16-(ground?.[wx]||0))*10*3.28084,fuel=Math.max(0,Math.min(100,s[6]/9000*100));
+      this.gauge(144,43,'speed',speed,200,'AIR','MPH');this.gauge(472,43,'altitude',altitude,6000,'ALT','FT AGL');this.gauge(542,40,'fuel',fuel,100,'FUEL','');
+      this.canvas.dataset.airspeed=String(Math.round(speed));this.canvas.dataset.airspeedUnit='MPH';this.canvas.dataset.altitude=String(Math.round(altitude));this.canvas.dataset.altitudeUnit='FT AGL';this.canvas.dataset.fuelPercent=String(Math.round(fuel));
+      this.canvas.dataset.mapWindow=[MAP.x,MAP.y,MAP.w,MAP.h].join(',');
+      if(ammo)c.drawImage(ammo,573,9,63,29);else rect(c,577,15,55,18,P.ink);
+      text(c,'AMMO',580,24,P.cream);text(c,trainer?'INF':s[7],628-textWidth(trainer?'INF':s[7]),24,P.gold);
+      centred(c,trainer?'BOMBS INF':'BOMBS',605,40,P.cream);
+      const bomb=art('bomb'),count=trainer?5:Math.max(0,Math.min(5,s[8]));
+      for(let i=0;i<5;i++){if(i<count){if(bomb)c.drawImage(bomb,575+i*12,48,9,20);else rect(c,577+i*12,50,5,16,P.gold);}else rect(c,578+i*12,49,3,1,'#7d6948');}
+      this.canvas.dataset.bombIcons=String(count);
+      const home=art('home');if(home)c.drawImage(home,517,77,13,13);text(c,'HOME',533,81,P.cream);text(c,s[17]?'ON':s[4]<s[15]?'>':'<',555,81,P.gold);
       const target=this.effects.filter(e=>e.type===6&&s[1]-e.tick<28).at(-1);
-      if(target){const label=target.size<0?'FRIENDLY TARGET HIT':'TARGET DESTROYED',color=target.size<0?P.red:P.gold;text(c,'> '+label+' <',234,71,color,2);this.canvas.dataset.notification=label;}
-      else {delete this.canvas.dataset.notification;if(s[12]===1)text(c,'MISSION COMPLETE',272,73,P.gold);else if(s[13]===3)text(c,'PLANE LOST',290,73,P.red);else if(s[16])text(c,'RETURNING TO BASE',267,73,P.cream);}
+      if(target){const label=target.size<0?'FRIENDLY TARGET HIT':'TARGET DESTROYED';centred(c,'> '+label+' <',310,84,target.size<0?P.red:P.gold,1.5);this.canvas.dataset.notification=label;}
+      else {delete this.canvas.dataset.notification;if(s[12]===1)centred(c,'MISSION COMPLETE',310,84,P.gold);else if(s[13]===3)centred(c,'PLANE LOST',310,84,P.red);else if(s[16])centred(c,'RETURNING TO BASE',310,84,P.cream);}
       c.restore();
     }
     demo() {
