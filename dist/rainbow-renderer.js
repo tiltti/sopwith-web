@@ -168,11 +168,23 @@
       if(art){
         // Mirrored distant tiles join continuously; the flight camera remains
         // native while scenery moves more slowly, at fractional coordinates.
-        rect(c,0,0,W,H,'#258eb5');
+        rect(c,0,0,W,H,['#258eb5','#597480','#283e4d'][this.mission||0]);
         const span=960,offset=camera*.12,first=Math.floor(offset/span);
         for(let i=first;i<=first+1;i++){
           c.save();c.translate(i*span-offset,0);
           if(i%2){c.translate(span,0);c.scale(-1,1);}c.drawImage(art,0,-105,span,H);c.restore();
+        }
+        // The original painting ended at y=295. Continue it with a real
+        // distant water surface all the way behind even the deepest ravine.
+        const water=window.RainbowAssets.sceneryArt('water'),waterTop=282;
+        if(water){
+          const drift=camera*.12+tick*.12,tileWidth=300,firstTile=Math.floor(drift/tileWidth);
+          for(let y=waterTop;y<H;y+=2){
+            c.globalAlpha=Math.min(1,(y-waterTop+2)/12);
+            for(let i=firstTile;i<=firstTile+3;i++)c.drawImage(water,(this.mission||0)*512,Math.min(510,(y-waterTop)*4),512,8,i*tileWidth-drift,y,tileWidth,2);
+          }
+          c.globalAlpha=1;
+          this.canvas.dataset.water=['coastal-inlet','icy-river','storm-lake'][this.mission||0];
         }
         if(!this.mission)for(let i=-1;i<4;i++){
           const x=i*260-((camera*.19+tick*.035)%260),index=((i+99)%3);
@@ -183,6 +195,17 @@
       }
       rect(c,0,0,W,H,'#4f9bd7');
       for(let i=-1;i<5;i++)cloud(c,i*210-(camera*.11%210),62+((i+5)%3)*39,1.05);
+    }
+    airstrip(scene,ground){
+      const c=this.c,art=window.RainbowAssets?.sceneryArt?.('water');if(!art||!ground?.length)return;
+      const home=scene[15],camera=scene[2],left=home-45,right=home+60;
+      for(let wx=Math.max(left,camera);wx<Math.min(right,camera+320);wx+=.5){
+        const i=Math.max(0,Math.min(ground.length-1,Math.floor(wx))),f=wx-Math.floor(wx);
+        const height=ground[i]*(1-f)+ground[Math.min(ground.length-1,i+1)]*f;
+        c.globalAlpha=Math.min(1,(wx-left)/5,(right-wx)/5)*.85;
+        c.drawImage(art,(this.mission||0)*512+((wx-left)*5%508),700,3,160,(wx-camera)*2,(199-height)*2-1,1.1,5);
+      }
+      c.globalAlpha=1;this.canvas.dataset.airstrip='grass-field';
     }
     terrain(ground,camera) {
       const c=this.c,soil=window.RainbowAssets?.sceneryArt?.(this.mission?'materials':'soil');
@@ -420,6 +443,14 @@
     foundation(r,camera,ground){
       if(!ground?.length||r[0]!==4||[3,4,5,6].includes(r[15]))return;
       const c=this.c,left=r[2],base=r[3]-r[8],sx=(left-camera)*2,top=(199-base)*2,width=r[7]*2;
+      const stone=window.RainbowAssets?.sceneryArt?.('materials');
+      if(stone){
+        let bottom=top;c.save();c.beginPath();c.moveTo(sx,top);c.lineTo(sx+width,top);
+        for(let x=r[7];x>=0;x--){const y=(199-ground[Math.max(0,Math.min(ground.length-1,Math.round(left+x)))])*2;bottom=Math.max(bottom,y);c.lineTo(sx+x*2,Math.max(top,y));}
+        c.closePath();c.clip();
+        if(bottom>top)c.drawImage(stone,768,0,768,512,sx,top,width,bottom-top+1);
+        c.restore();rect(c,sx,top,width,1.3,'#8b8571');return;
+      }
       for(let x=0;x<r[7];x++){
         const g=ground[Math.max(0,Math.min(ground.length-1,Math.round(left+x)))],bottom=(199-g)*2;
         if(bottom<=top)continue;
@@ -658,6 +689,7 @@
       }
       if(ground?.length)this.terrainWorld(ground,camera,tick);
       else this.terrain(scene.subarray(HEADER,HEADER+GROUND),camera);
+      this.airstrip(scene,ground);
       this.aim(scene,objects,ground);
       const aimVisible=this.canvas.dataset.aimX!==undefined;
       if(aimVisible&&!this.aimVisible)this.aimActivations++;

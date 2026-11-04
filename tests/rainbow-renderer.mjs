@@ -187,3 +187,12 @@ activeTarget[6]=2;calls.length=0;renderer.teamMark(activeTarget,100);assert.ok(c
 scene[18]=1;scene[1]++;renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.environment,'winter-valley');assert.equal(display.dataset.weather,undefined);
 scene[18]=2;scene[1]++;renderer.drawScene(scene,heap,false,null,ground);assert.equal(display.dataset.environment,'storm-city');assert.equal(display.dataset.weather,'rain-thunder');
 assert.deepEqual(ground,terrainCopy);console.log('British/Imperial German flag art and distinct winter/storm layers preserve terrain and collision data.');
+
+const waterTexture={width:1536,height:1024};scope.window.RainbowAssets.sceneryArt=()=>waterTexture;
+for(let mission=0;mission<3;mission++){
+  renderer.mission=mission;calls.length=0;renderer.background(925,30);
+  const water=calls.filter(x=>x[0]==='image'&&x.length===10&&x[2]===mission*512&&x[4]===512&&x[5]===8);
+  assert.ok(water.length>0&&water.some(x=>x[7]+x[9]>=400),'Distant painted water covers the complete ravine depth, down to the world edge.');
+}
+calls.length=0;renderer.airstrip(scene,ground);assert.equal(display.dataset.airstrip,'grass-field');assert.deepEqual(ground,terrainCopy);
+console.log('Painted water reaches the bottom of every environment and the grass airstrip follows terrain without changing it.');

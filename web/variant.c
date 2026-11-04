@@ -244,6 +244,29 @@ void WebVariant_TargetMask(OBJECTS *ob)
 {
     if(!enabled)return;
     int kind=WebVariant_ObjectKind(ob);
+    if(ob->ob_type==TARGET&&(kind==0||kind==1||kind==2||kind==7)){
+        /* Larger architecture has equally larger real collision geometry.
+         * movetarg restores the upstream symbol each tick; compensate its
+         * centring and keep the bottom fixed when installing the new mask. */
+        static struct {sopsym_t sym;const sopsym_t *source;int mission;} masks[256];
+        static unsigned char pixels[256][36*36];
+        static int used;
+        sopsym_t *source=ob->ob_symbol;
+        for(int i=0;i<used;i++)if(source==&masks[i].sym)return;
+        int mission=gamenum%3,w=kind==0?32:kind==1?(mission==2?26:34):kind==2?24:30;
+        int h=ob->ob_state!=STANDING?10:kind==0?22:kind==1?(mission==2?32:mission==1?23:32):24;
+        int slot=0;while(slot<used&&(masks[slot].source!=source||masks[slot].mission!=mission||masks[slot].sym.w!=w||masks[slot].sym.h!=h))slot++;
+        if(slot==used){
+            if(used==256)return;
+            masks[slot].source=source;masks[slot].mission=mission;
+            masks[slot].sym=(sopsym_t){.w=w,.h=h,.data=pixels[slot]};
+            for(int y=0;y<h;y++)for(int x=0;x<w;x++)pixels[slot][y*w+x]=source->data[(y*source->h/h)*source->w+x*source->w/w];
+            used++;
+        }
+        ob->ob_x=clamp_range(1,ob->ob_x+(source->w-w)/2,(int)currgame->gm_max_x-w-1);ob->ob_y+=h-source->h;
+        ob->ob_symbol=&masks[slot].sym;
+        return;
+    }
     if(kind!=20&&ob->ob_orient!=TARGET_TANK)return;
     if(kind==20)ob->ob_symbol=&gun_masks[ob->ob_state!=STANDING];
     const OBJECTS *aim=ob->ob_firing;
@@ -376,6 +399,7 @@ static void setup_level(void)
     /* Restore the continuous source landscape. The upstream initializer
      * flattens each target's footprint with abrupt vertical joins. */
     memcpy(ground,currgame->gm_ground,sizeof(*ground)*currgame->gm_max_x);
+    for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(ob->ob_type==TARGET){WebVariant_TargetMask(ob);insertx(ob,deletex(ob));}
     mission_landscape();
     lower_end_buildings();
     if(mission_width!=(int)currgame->gm_max_x){free(mission_ground);mission_width=currgame->gm_max_x;mission_ground=malloc(sizeof(*mission_ground)*mission_width);}

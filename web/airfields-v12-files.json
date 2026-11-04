@@ -1,0 +1,20 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-airfield-buildings-v2.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2410300,
+      "sha256": "bde05b5428dd54858a1b668be26ca1d1d32a2ef0fe8696906bd706b71d059701"
+    },
+    {
+      "path": "dist/assets/rainbow-water-airstrip-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2997768,
+      "sha256": "bdfd1ae1526c35c7124a29817332f4612636a2df503959b7cf67166b2ad6fc35"
+    }
+  ]
+}

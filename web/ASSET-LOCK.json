@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 17665,
-      "sha256": "3d184e1cdc16f24a735927b90258ef88775d151af5ea2a598d72450e732c38c1"
+      "bytes": 18835,
+      "sha256": "4bf5419a6febad6c579975ed8f0ace2537be520ab64e858d048d0c0597a159ab"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -208,6 +208,21 @@
       "sha256": "b83dd916f142b034726c2d55d9407b2ded95add8ed14690d1cce3e8770e17898"
     },
     {
+      "path": "dist/assets/fonts/patrick-hand/OFL.txt",
+      "bytes": 4376,
+      "sha256": "377f4f9c19e935228552478eb68cc2ed82910988a60ba60e2ac73b09f32d02d1"
+    },
+    {
+      "path": "dist/assets/fonts/patrick-hand/PatrickHand-Regular.ttf",
+      "bytes": 214772,
+      "sha256": "0f173b3e6cb6d1af25babf7f0057c5ac4ee11f9992b0469bb817e967ef4ad0fc"
+    },
+    {
+      "path": "dist/assets/fonts/patrick-hand/SOURCE.json",
+      "bytes": 569,
+      "sha256": "9f4682c4f32d40dfebca1d4544fb6755e406ee71ba9ddaad376b5fdb48f2fcd5"
+    },
+    {
       "path": "dist/assets/patrol-departure-v1.svg",
       "bytes": 3721,
       "sha256": "22f6af421203fb6169f69146676754535e388fae273d30834134c835b400ff35"
@@ -231,6 +246,11 @@
       "path": "dist/assets/rainbow-aircraft-roll-v1.png",
       "bytes": 2017945,
       "sha256": "8ae6631214960c0182c981048aff1e97d588197f9c424c3695e5feaea99017fe"
+    },
+    {
+      "path": "dist/assets/rainbow-airfield-buildings-v2.png",
+      "bytes": 2410300,
+      "sha256": "bde05b5428dd54858a1b668be26ca1d1d32a2ef0fe8696906bd706b71d059701"
     },
     {
       "path": "dist/assets/rainbow-clouds-v1.png",
@@ -346,6 +366,11 @@
       "path": "dist/assets/rainbow-turf-v1.png",
       "bytes": 1556515,
       "sha256": "f49a5bf9bd8e39fbe911901edfa6112bdaca50678121225fd7c920ec0aaf2658"
+    },
+    {
+      "path": "dist/assets/rainbow-water-airstrip-v1.png",
+      "bytes": 2997768,
+      "sha256": "bdfd1ae1526c35c7124a29817332f4612636a2df503959b7cf67166b2ad6fc35"
     },
     {
       "path": "dist/assets/rainbow-wing-badge-v1.png",

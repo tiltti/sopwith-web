@@ -186,11 +186,20 @@ await pageTests();
   console.log('End screen: winner/loser retain Rainbow, native game freezes once, and the score reaches the retry page.');
   const jumps=[];engine._web_test=action=>{jumps.push(action);tick++;if(action){inputMode=1;end=0;heap[12]=0;heap[18]=action-1;}else{inputMode=0;end=1;heap[12]=1;heap[25]=72;}};
   handlers.keydown(event('Digit3'));assert.equal(jumps.length,0,'Level shortcuts are inert outside trainer mode.');
-  scope.trainer(true);handlers.keydown(event('Digit3'));assert.deepEqual(jumps,[3]);frames.shift()();
-  handlers.keydown(event('KeyE'));assert.deepEqual(jumps,[3,0]);frames.shift()();
+  scope.trainer(true);handlers.keydown(event('Digit1'));assert.deepEqual(jumps,[1]);frames.shift()();
+  for(let mission=0;mission<2;mission++){
+    handlers.keydown(event('KeyE'));frames.shift()();
+    heap[25]=4;tick++;frames.shift()();
+    assert.equal(sent.filter(x=>x.type==='round-ended'&&x.victory).length,0);
+    // Native restart raises gamenum while the old plane still says WINNER.
+    heap[18]=mission+1;heap[25]=0;tick++;frames.shift()();
+    assert.equal(sent.filter(x=>x.type==='round-ended'&&x.victory).length,0,'E on missions 1/2 cannot award the campaign medal at the native restart boundary.');
+    inputMode=1;end=0;heap[12]=0;tick=1;frames.shift()();
+  }
+  assert.equal(heap[18],2);handlers.keydown(event('KeyE'));frames.shift()();
   heap[9]=3;heap[10]=500;heap[25]=4;tick++;frames.shift()();
   const victory=sent.filter(x=>x.type==='round-ended'&&x.victory);assert.equal(victory.length,1);assert.equal(victory[0].score,650);
   assert.equal(sent.filter(x=>x.type==='score-ready'&&x.victory).length,1);frames.shift()();assert.equal(sent.filter(x=>x.type==='score-ready'&&x.victory).length,1);
-  console.log('Trainer numbers/E are gated; mission-three departure freezes once and sends one campaign result including the native remaining-lives bonus.');
+  console.log('Trainer E advances 1→2→3 without early medals, including native boundary frames; mission-three departure freezes once and sends one campaign result including the native remaining-lives bonus.');
 
 }

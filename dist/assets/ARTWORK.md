@@ -248,3 +248,24 @@ immutable output hashes/dimensions are in `web/campaign-v11-prompts.json` and
 Transparency of the sprite sheets is preserved; runtime crops and world-space
 placement leave collision masks untouched. Original production artwork is
 provided with this GPL-2.0-or-later game. No paid-provider API/CLI was used.
+
+## Airfields and water (2026-11-04)
+
+Two original 1536×1024 built-in OpenAI imagegen outputs were displayed in chat
+and copied unchanged into this directory, preserving the building atlas alpha:
+
+- `rainbow-airfield-buildings-v2.png`: three open aircraft hangars, a coastal
+  manor, winter rail depot, city clock tower, brick factory and mountain mill.
+- `rainbow-water-airstrip-v1.png`: coastal, icy and stormy water tiles plus dry
+  dirt, packed snow and wet-gravel airstrip surfaces.
+
+Exact prompts, original project style references, output dimensions and hashes
+are in `web/airfields-v12-prompts.json` and `web/airfields-v12-files.json`.
+The game crops these immutable outputs at runtime. Larger architecture has
+matching enlarged native collision masks. Water is distant scenery behind the
+foreground terrain. Original art is provided with the GPL-2.0-or-later game;
+no commercial-game assets or paid-provider API/CLI workflow were used.
+
+In-game boards use unmodified **Patrick Hand**, Copyright 2010–2012 Patrick
+Wagesreiter, under SIL OFL 1.1. The font, license and source/hash receipt are
+in `fonts/patrick-hand/`; the title screen retains Press Start 2P.

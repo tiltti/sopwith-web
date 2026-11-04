@@ -108,6 +108,27 @@ int main(void){
     free(day);free(winter);
     puts("Trainer-gated level jumps create distinct winter valleys and storm mountains, preserving original runway heights.");
 
+    for(int mission=1;mission<=3;mission++){
+        WebVariant_Test(mission);int architecture=0;
+        for(OBJECTS *ob=objtop;ob;ob=ob->ob_next){
+            int kind=WebVariant_ObjectKind(ob);
+            if(ob->ob_type!=TARGET||(kind!=0&&kind!=1&&kind!=2&&kind!=7))continue;
+            int x=ob->ob_x,bottom=ob->ob_y-ob->ob_symbol->h,w=ob->ob_symbol->w;
+            assert(w>=24&&ob->ob_symbol->h>=22);architecture++;
+            for(int n=0;n<4;n++){++countmove;ob->ob_movef(ob);assert(ob->ob_x==x&&ob->ob_y-ob->ob_symbol->h==bottom&&ob->ob_symbol->w==w);}
+            /* Solid pixels beyond the old 16px footprint are real targets. */
+            int hit=0;unsigned char pixel=1;sopsym_t dot={.w=1,.h=1,.data=&pixel};
+            for(int y=0;y<ob->ob_symbol->h&&!hit;y++)for(int xx=16;xx<w;xx++)if(ob->ob_symbol->data[y*w+xx]){
+                OBJECTS bullet={.ob_type=SHOT,.ob_symbol=&dot,.ob_x=x+xx,.ob_y=ob->ob_y-y};
+                assert(CollisionTest(ob,&bullet));hit=1;break;
+            }
+            assert(hit);ob->ob_state=FINISHED;ob->ob_movef(ob);
+            assert(ob->ob_x==x&&ob->ob_y-ob->ob_symbol->h==bottom&&ob->ob_symbol->w==w);
+        }
+        assert(architecture>3);
+    }
+    puts("Larger architecture: real extended collision masks, stable centring on repeated native moves and grounded ruins in all three missions.");
+
     int impact=-1;
     for(int x=40;x<width-40;x++)if(currgame->gm_ground[x]>ground[x]+24){
         bool clear=true;for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(ob->ob_symbol&&ob->ob_type!=PLANE&&ob->ob_x<x+25&&ob->ob_x+ob->ob_symbol->w>x-25)clear=false;

@@ -117,3 +117,58 @@ body[data-campaign-complete="true"] #panel-scores .score-panel{width:54%;margin-
 #panel-flight .pixel-menu{max-width:48cqw;gap:1.6cqw}#panel-flight .pixel-toggle{background:#32281d;border-color:#a77c3d;color:#fff0c6}
 
 .difficulty-buttons .pixel-button{flex-direction:column;gap:.3cqw;justify-content:center}.difficulty-buttons small{margin-top:.3cqw}
+
+/* One squadron briefing board for every in-game menu; the title stays intact. */
+@font-face{font-family:PatrolChalk;src:url('assets/fonts/patrick-hand/PatrickHand-Regular.ttf') format('truetype');font-display:swap}
+.menu-backdrop,.menu-backdrop :is(button,input,select,p,td,th,dt,dd,label,span,small,a){font-family:PatrolChalk,'Trebuchet MS',sans-serif;letter-spacing:.025em;text-shadow:0 1px 1px #080c0c}
+:is(#paused,#complete,#loading,#error,#panel-help,#panel-settings,#panel-flight,#panel-scores) .pixel-panel{
+  border:2.4cqw solid transparent;border-image:url('assets/rainbow-scoreboard-frame-v1.png') 160 fill / 1 / 0 stretch;
+  background:none;box-shadow:none;color:#f4edcf;padding:1.5cqw 2.2cqw;font-size:2cqw;line-height:1.35;
+}
+:is(#paused,#complete,#loading,#error,#panel-help,#panel-settings,#panel-flight,#panel-scores) .pixel-panel:before{display:none}
+:is(#paused,#complete,#loading,#error,#panel-help,#panel-settings,#panel-flight,#panel-scores) .pixel-panel h2{
+  display:flex;align-items:center;justify-content:center;height:6.3cqw;margin:0 0 1cqw;padding:0;
+  font:700 2.5cqw/1.1 Georgia,'Times New Roman',serif;letter-spacing:.07em;color:#f1d59b;
+  background:url('assets/rainbow-scoreboard-parts-v1.png') 100% 79.01% / 200% 623.88% no-repeat;text-shadow:0 1px #fff2c344,0 -1px #100c08;
+}
+:is(#paused,#panel-help,#panel-settings,#panel-flight) .pixel-panel{width:68%}
+:is(#paused,#panel-help,#panel-settings,#panel-flight) .pixel-menu{max-width:50cqw;gap:1cqw;padding:0;margin:auto}
+:is(#paused,#complete,#loading,#error,#panel-help,#panel-settings,#panel-flight,#panel-scores) .pixel-panel .pixel-button{
+  display:inline-flex;align-items:center;justify-content:center;min-height:3.7cqw;margin:0;padding:.7cqw 1.3cqw;
+  border:1px solid #9e7b47;background:#302b22 url('assets/rainbow-scoreboard-parts-v1.png') 96.44% 23.76% / 216.21% 677.84% no-repeat;
+  color:#f3e9c4;box-shadow:0 2px 3px #0006;font-size:1.9cqw;line-height:1.2;text-align:center;text-shadow:0 1px #171811;
+}
+:is(#paused,#complete,#loading,#error,#panel-help,#panel-settings,#panel-flight,#panel-scores) .pixel-panel .pixel-button:is(:hover,:focus-visible,.selected,[aria-pressed=true]){color:#fff8de;outline:1px solid #ebc67d;outline-offset:2px;filter:brightness(1.16);transform:none}
+:is(#paused,#complete,#panel-help,#panel-settings,#panel-flight,#panel-scores) .pixel-panel .menu-link{font-size:1.65cqw;line-height:1.3;color:#e6d3ac;padding:.6cqw 1cqw;margin:0;text-align:center}
+.menu-backdrop .tiny-text,.menu-backdrop .pixel-panel .tiny-text{font-size:1.65cqw;line-height:1.3;margin:.7cqw 0;color:#d7d8c6}
+#panel-settings .settings-grid{max-width:53cqw;gap:1cqw}
+#panel-settings .settings-grid .level-setting{font-size:1.9cqw;color:#e9ddbe}
+#panel-settings .settings-grid .level-setting select,.score-modes select{font-family:PatrolChalk,sans-serif;font-size:1.8cqw;background:#202e2b;color:#f6efcf;border:1px solid #9c8152;padding:.6cqw}
+#panel-settings .settings-grid .pixel-toggle,#panel-flight .pixel-toggle{font-size:1.9cqw;line-height:1.2;padding:.7cqw 1cqw;background:#1d2925a6;border:1px solid #84795c;color:#eee9ce}
+.menu-backdrop .pixel-toggle input{width:1.5cqw;height:1.5cqw;min-width:12px;min-height:12px;border:1px solid #cebc8f;background:#1c2c29;box-shadow:none}
+.menu-backdrop .pixel-toggle input:checked{background:#cbb17d;box-shadow:inset 0 0 0 2px #26352d}
+#panel-flight .difficulty-buttons .pixel-button{min-height:7cqw}
+#panel-flight .difficulty-buttons .pixel-button[aria-pressed=true]:before{content:'✓';position:absolute;left:1cqw;top:1cqw;font:2cqw/1 PatrolChalk,sans-serif;color:#ffe7a8}
+#panel-flight .difficulty-buttons small{font:1.4cqw/1.1 PatrolChalk,sans-serif;letter-spacing:.02em}
+#panel-help .controls-list div{padding:.45cqw .7cqw;margin:.15cqw 0;background:none;border-bottom:1px dashed #a897704f}
+#panel-help .controls-list :is(dt,dd){font-size:1.9cqw;line-height:1.25;color:#e9e6d4}
+#panel-help .controls-list dd{color:#f7dc9f}
+#paused{align-items:center;justify-content:flex-start;padding:2.5cqw 4cqw}
+#paused .pause-panel{width:54%;text-align:center;overflow:auto}
+#paused .wing-heading{aspect-ratio:auto;width:auto;overflow:visible;margin:0}
+#paused .wing-heading img{display:none}
+#paused .wing-heading h2{position:static;transform:none;width:100%}
+#paused .pixel-button:before{display:none}
+#complete .debrief-heading{font-size:1.6cqw;letter-spacing:.08em}
+#complete #complete-score,#complete .rank-label{font-size:1.7cqw;margin:.3cqw .5cqw}
+#complete table,#leaderboard.score-panel table{font-family:PatrolChalk,sans-serif;font-size:1.9cqw;line-height:1.1}
+#complete tbody tr,#leaderboard.score-panel tbody tr{height:2.8cqw}
+#complete td,#leaderboard.score-panel td{padding:.3cqw .7cqw}
+#complete .initial-column .initial-char{font:2.5cqw/1 PatrolChalk,sans-serif}
+#complete .initial-column button{font-size:1.25cqw}
+#complete .initials-help,#complete #score-consent,#complete #arcade-score-status{font-size:1.45cqw;line-height:1.2}
+#complete .entry-actions{gap:1cqw}
+#leaderboard.score-panel .tiny-text{font-size:1.5cqw;line-height:1.2}
+#leaderboard .score-modes select{font-size:1.5cqw}
+.menu-backdrop .pixel-loader{height:.5cqw;background:repeating-linear-gradient(90deg,#dfc993 0 10px,transparent 10px 14px)}
+@media(max-width:700px){:is(#panel-help,#panel-settings,#panel-flight) .pixel-panel{width:88%}#panel-settings .settings-grid{max-width:70cqw}#paused .pause-panel{width:68%}.menu-backdrop .tiny-text,.menu-backdrop .pixel-panel .tiny-text{font-size:2cqw}#panel-help .controls-list :is(dt,dd){font-size:2.4cqw}#panel-settings .settings-grid .pixel-toggle,#panel-flight .pixel-toggle{font-size:2.3cqw}:is(#paused,#complete,#panel-help,#panel-settings,#panel-flight,#panel-scores) .pixel-panel .pixel-button{font-size:2.3cqw;min-height:4cqw}#complete table,#leaderboard.score-panel table{font-size:2.25cqw}}

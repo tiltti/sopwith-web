@@ -1,0 +1,17 @@
+{
+  "name": "Patrick Hand",
+  "author": "Patrick Wagesreiter",
+  "license": "OFL-1.1",
+  "files": [
+    {
+      "path": "PatrickHand-Regular.ttf",
+      "sha256": "0f173b3e6cb6d1af25babf7f0057c5ac4ee11f9992b0469bb817e967ef4ad0fc",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/patrickhand/PatrickHand-Regular.ttf"
+    },
+    {
+      "path": "OFL.txt",
+      "sha256": "377f4f9c19e935228552478eb68cc2ed82910988a60ba60e2ac73b09f32d02d1",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/patrickhand/OFL.txt"
+    }
+  ]
+}

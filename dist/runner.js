@@ -80,7 +80,7 @@
   function trainerAction(action){
     if(!trainerEnabled||params.get('edition')!=='rainbow'||!game||!Number.isInteger(action)||action<0||action>9)return;
     release();stagePaused=false;game._web_pause(paused?1:0);
-    if(action>0){stages=window.RainbowStages?new RainbowStages():null;resetMission();}
+    if(action>0){stages=window.RainbowStages?new RainbowStages():null;resetMission(action);}
     game._web_test?.(action);repaint=true;
   }
   window.addEventListener('keydown', event => {
@@ -146,7 +146,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261103-campaign4',
+      locateFile: name => 'engine/' + name + '?v=20261104-airfields1',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -180,7 +180,9 @@
       visualTimeline=window.RainbowTimeline?new RainbowTimeline():null;
       stages=window.RainbowStages?new RainbowStages():null;
       let renderedTick=-1,wasActive=false,endSent=false,snapshot,effects,ground,lastDisplay;
-      resetMission=()=>{renderedTick=-1;wasActive=false;endSent=false;snapshot=null;lastDisplay=null;scoreSent=false;
+      let campaignMission=Math.max(0,Number(params.get('level')||1)-1),winningMission=null;
+      resetMission=(level)=>{renderedTick=-1;wasActive=false;endSent=false;snapshot=null;lastDisplay=null;scoreSent=false;
+        campaignMission=level-1;winningMission=null;
         visualTimeline=window.RainbowTimeline?new RainbowTimeline():null;renderer.lastTick=Infinity;renderer.terrainCache=null;renderer.trail=[];renderer.departure=null;};
       let frameCount=0,metricAt=clock(),drawTotal=0;
       const draw = (now=clock()) => {
@@ -190,12 +192,16 @@
         if(active&&(tick!==renderedTick||!wasActive)) {
           const ptr=game._web_scene()>>>2;
           snapshot=game.HEAP32.slice(ptr,ptr+RainbowRenderer.LENGTH);
+          // swrestart increments gamenum before replacing the winning plane.
+          // Keep the departing mission latched through that boundary frame.
+          if(snapshot[12]===0){campaignMission=snapshot[18];winningMission=null;}
+          else if(snapshot[12]===1){winningMission??=campaignMission;snapshot[18]=winningMission;}
           const effectPtr=game._web_effects()>>>2;effects=game.HEAP32.slice(effectPtr,effectPtr+196);
           const groundPtr=snapshot[24]>>>2;ground=game.HEAP32.slice(groundPtr,groundPtr+snapshot[3]);
           visualTimeline?.push(snapshot,now);sampleMixer?.step(snapshot,effects);
           renderedTick=tick;
           if(snapshot[12]===2&&!endSent) {endSent=true;pause(true);send('round-ended',{score:snapshot[10]});}
-          if(snapshot[12]===1&&snapshot[18]>=2&&snapshot[25]<=4&&!endSent){
+          if(snapshot[12]===1&&winningMission===2&&snapshot[25]<=4&&!endSent){
             const score=snapshot[10]+25*snapshot[9]*(snapshot[9]+1)/2;
             endSent=scoreSent=true;pause(true);
             send('round-ended',{score,victory:true});

@@ -1,9 +1,10 @@
 <!doctype html><html lang="fi"><meta charset="utf-8"><title>Arcade UI fixture</title>
 <style>body{margin:0;background:#243b55;color:#fff2ce;font:14px monospace}nav{height:48px;display:flex;gap:20px;align-items:center;padding:0 20px}button{padding:8px}iframe{width:100%;height:calc(100vh - 48px);border:0;display:block}</style>
-<nav><span>Development-only end-screen fixture (silent music stub / local scores)</span><button id="seed">Seed 20 test scores</button><button id="end">Show rank 6</button><button id="low">Show rank 21</button><button id="music">Toggle music silently</button><span id="result"></span></nav>
+<nav><span>Development-only end-screen fixture (silent music stub / local scores)</span><button id="seed">Seed 20 test scores</button><button id="restore" hidden>Restore prior scores</button><button id="end">Show rank 6</button><button id="low">Show rank 21</button><button id="music">Toggle music silently</button><span id="result"></span></nav>
 <iframe id="app" src="../dist/rainbow.html" title="Production arcade UI"></iframe>
 <script>
 const app=document.getElementById('app');
+let previousScores;
 app.addEventListener('load',()=>{
  // Test-only media stub: production menu transitions run without speakers.
  app.contentWindow.Audio=class {
@@ -14,8 +15,14 @@ app.addEventListener('load',()=>{
 });
 document.getElementById('music').onclick=()=>app.contentDocument.getElementById('mute').click();
 document.getElementById('seed').onclick=()=>{
+ if(previousScores===undefined)previousScores=localStorage.getItem('sopwith.scores.rainbow.practice');document.getElementById('restore').hidden=false;
  localStorage.setItem('sopwith.scores.rainbow.practice',JSON.stringify(Array.from({length:20},(_,i)=>({nickname:'T'+String(i+1).padStart(2,'0'),score:(20-i)*1000,level:2,runId:'fixture-'+i,finished_at:i}))));
  app.contentDocument.getElementById('scores-refresh').click();document.getElementById('result').textContent='20 test scores seeded on this local fixture origin.';
+};
+document.getElementById('restore').onclick=()=>{
+ if(previousScores===undefined)return;
+ if(previousScores===null)localStorage.removeItem('sopwith.scores.rainbow.practice');else localStorage.setItem('sopwith.scores.rainbow.practice',previousScores);
+ app.contentDocument.getElementById('scores-refresh').click();document.getElementById('restore').hidden=true;document.getElementById('result').textContent='Previous local scores restored.';
 };
 function end(score){
  const w=app.contentWindow,d=app.contentDocument;

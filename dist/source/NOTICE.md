@@ -180,3 +180,14 @@ and the medal-ceremony background are original built-in OpenAI imagegen outputs.
 They use this project's own painted coast as a style reference. Unmodified
 production PNGs and exact prompts/hashes are distributed in `dist/assets/` and
 `web/campaign-v11-*.json` with the GPL-2.0-or-later game.
+
+## Airfields, water and briefing boards (2026-11-04)
+
+The two new original built-in imagegen atlases are documented in
+`web/airfields-v12-prompts.json`, `web/airfields-v12-files.json` and
+`dist/assets/ARTWORK.md`. Unmodified images are distributed with this
+GPL-2.0-or-later game. The briefing boards use Patrick Hand by Patrick
+Wagesreiter (Copyright 2010–2012), SIL Open Font License 1.1, from
+https://github.com/google/fonts/tree/main/ofl/patrickhand . The unmodified
+font, full license and source/hash record are in
+`dist/assets/fonts/patrick-hand/`. The title screen keeps its existing font.

@@ -1,3 +1,34 @@
+## Airfields, briefing boards and E transitions — 2026-11-04
+
+- All ten JavaScript suites pass. Runner coverage reproduces the exact native
+  boundary where gamenum increments while the old winning plane still exists:
+  E advances missions 1 and 2 without any campaign result, then emits one medal
+  result after mission 3. The departing mission is latched for rendering too.
+- A real browser run completed E → winter → E → storm → E → Badge of Honor.
+  Both intermediate states stayed playing/campaignComplete=false; only the
+  third stopped at the medal background and marked the trainer run unranked.
+- Native patrol checks verify the larger building masks, real bullet overlap
+  beyond the old 16-pixel footprint, stable centring across repeated target
+  moves and grounded ruins in all three missions. Target sorting and map-edge
+  bounds are preserved. Return-to-base passed 90/90 Rainbow scenarios; Classic
+  retains its known 28/30 baseline. Trainer and scene suites pass.
+- Browser review verified shared painted boards, hand-lettered Patrick Hand
+  body text and brass serif title plates for Settings, Flight Setup, Controls,
+  Pause and results. The title screen retains its previous presentation.
+  The ten-row initials board measured clientHeight == scrollHeight == 533px;
+  final top ten measured 463px with no scroll. Typing V12 at rank 6 worked.
+  Seeded fixture scores were restored to the prior state after review.
+- A paused scene from the actual mission-3 engine was rendered at the deepest
+  valley camera. Detailed lake water covers the entire old missing background
+  region; rubble retaining walls meet the hillside. Water and airstrip layers
+  leave the ground array unchanged. Texture/renderer regression covers all
+  three water palettes and bottom-edge coverage.
+- The two new immutable imagegen atlases were displayed in chat. Exact prompts,
+  dimensions and hashes: web/airfields-v12-prompts.json / airfields-v12-files.json.
+  Patrick Hand is bundled unmodified with OFL license and source/hash record.
+- All browser checks kept sound off with zero voices; no fullscreen transitions.
+  Proof JPEGs are in the parent research/validation folder, airfields-v12-*.
+
 ## Three-mission campaign / English menus — 2026-11-03
 
 - All ten JavaScript suites passed, including trainer-only number/E actions,
