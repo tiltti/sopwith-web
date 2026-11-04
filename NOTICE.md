@@ -191,3 +191,12 @@ Wagesreiter (Copyright 2010–2012), SIL Open Font License 1.1, from
 https://github.com/google/fonts/tree/main/ofl/patrickhand . The unmodified
 font, full license and source/hash record are in
 `dist/assets/fonts/patrick-hand/`. The title screen keeps its existing font.
+
+## Destruction and interface artwork (2026-11-04)
+
+Matching ruined architecture, eight brass sidebar buttons and six national
+flag mounting fixtures are original built-in imagegen outputs, distributed
+with this GPL-2.0-or-later game. Raw PNGs, exact prompts, hashes and runtime
+crop information are recorded in `dist/assets/ARTWORK.md` and
+`web/flight-destruction-v13-*.json`. This project's own images supplied the
+style/identity references; no third-party commercial-game art was bundled.

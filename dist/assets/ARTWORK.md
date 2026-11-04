@@ -269,3 +269,23 @@ no commercial-game assets or paid-provider API/CLI workflow were used.
 In-game boards use unmodified **Patrick Hand**, Copyright 2010–2012 Patrick
 Wagesreiter, under SIL OFL 1.1. The font, license and source/hash receipt are
 in `fonts/patrick-hand/`; the title screen retains Press Start 2P.
+
+## Destruction, mounted flags and sidebar (2026-11-04)
+
+Three original built-in OpenAI imagegen outputs were displayed in chat, copied
+unchanged and retain transparent alpha:
+
+- `rainbow-airfield-ruins-v1.png`: eight matching bombed-out buildings and
+  separate roof, brick, timber and metal fragments. Ruins keep the intact
+  footprint and ground baseline; debris rotates and lands on native terrain.
+- `rainbow-sidebar-buttons-v1.png`: eight brass/enamel pause, resume, sound,
+  manual, settings, fullscreen and hangar buttons. CSS crops the raw atlas.
+- `rainbow-mounted-flags-v1.png`: rooftop pole, angled wall staff and wall
+  banner, each in British Union Jack / Imperial German black-white-red colours.
+
+Exact prompts and output hashes/dimensions are in
+`web/flight-destruction-v13-prompts.json` and `flight-destruction-v13-files.json`.
+Only this project's own building/cockpit images were references. No commercial
+game assets or paid-provider API/CLI were used. Original art is distributed
+with the GPL-2.0-or-later game. All cropping/animation happens at runtime; the
+full generated PNGs are preserved unchanged.

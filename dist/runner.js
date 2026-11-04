@@ -146,7 +146,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261104-airfields1',
+      locateFile: name => 'engine/' + name + '?v=20261104-flight1',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -239,6 +239,7 @@
       canvas.dataset.ammo = String(game._web_read(7));
       canvas.dataset.crashes = String(game._web_read(8));
       canvas.dataset.planeState = String(game._web_read(5));
+      canvas.dataset.taxiing = String(game._web_read(12)===1);
       canvas.dataset.endStatus = String(game._web_read(9));
       if(!scoreSent && game._web_read(9)===2 && game._web_read(1)>=0) {
         scoreSent=true;

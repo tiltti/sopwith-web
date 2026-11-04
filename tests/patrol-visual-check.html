@@ -1,8 +1,9 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><base href="../dist/"><title>Rainbow mission and pilot checks</title>
-<style>body{margin:0;padding:16px;background:#19374b;color:#fff2ce;font:14px monospace}h1{font-size:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}figure{margin:0}canvas{display:block;width:100%;height:auto}figcaption{padding:8px 0}button{padding:8px;margin:4px;background:#f1ba43;color:#263b55;border:2px solid #ffed9b;font:inherit}#native{display:none}pre{white-space:pre-wrap}.solo .grid{display:block}.solo figure:not(:first-child){display:none}</style></head><body>
+<style>body{margin:0;padding:16px;background:#19374b;color:#fff2ce;font:14px monospace}h1{font-size:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}figure{margin:0}canvas{display:block;width:100%;height:auto}figcaption{padding:8px 0}button{padding:8px;margin:4px;background:#f1ba43;color:#263b55;border:2px solid #ffed9b;font:inherit}#native{display:none}pre{white-space:pre-wrap}.solo .grid{display:block;width:min(100%,calc((100dvh - 190px)*1.29032))}.solo figure:not(:first-child){display:none}</style></head><body>
 <h1>Development check — native scene, new mission art and pilot poses, audio off</h1>
 <button id="ready-two">READY LEVEL 2</button><button id="departure-next">DEPARTURE +2 SECONDS</button><button id="walk-next">WALK NEXT FRAME</button><button id="ready-next">BOARDING NEXT FRAME</button><button id="roll-next">FALL / BOMB NEXT FRAME</button><button id="stock">LOW FUEL / 2 BOMBS</button><button id="blast">EXPLOSION NEXT FRAME</button><button id="gauge">GAUGE A / B</button>
 <div class="grid"><figure><canvas id="ready"></canvas><figcaption>READY: the native clock is held before flight</figcaption></figure><figure><canvas id="departure"></canvas><figcaption>Mission complete: dedicated rear airframe recedes into the horizon</figcaption></figure><figure><canvas id="pilots"></canvas><figcaption>Open canopy, standing/armed and walking pilot — native object records</figcaption></figure><figure><canvas id="falling"></canvas><figcaption>Faction roll frames and bomb orientation, native motion samples copied for visual review</figcaption></figure></div>
+<button id="building-hit">BUILDING: FIRST BOMB</button><button id="building-burst">BUILDING: DESTROY</button><button id="building-next">DEBRIS NEXT FRAME</button>
 <pre id="status">Loading native game…</pre><canvas id="native"></canvas>
 <script src="engine/sopwith.js?v=20261103-campaign4"></script><script src="rainbow-assets.js?v=20261103-campaign4"></script><script src="rainbow-renderer.js?v=20261103-campaign4"></script>
 <script type="module">
@@ -12,10 +13,16 @@ try{
  const game=await createSopwith({canvas:document.getElementById('native'),locateFile:n=>'engine/'+n+'?v=20261103-campaign4',print(){},printErr:console.warn,setStatus(){}});
  game.FS.mkdirTree('/libsdl/SDL Sopwith');game._web_variant(1);game._web_sound(0);game.callMain(['-q','-s']);
  const poll=setInterval(()=>{
-  const ptr=game._web_scene()>>>2,source=game.HEAP32.slice(ptr,ptr+RainbowRenderer.LENGTH);if(!source[3])return;
+  const ptr=game._web_scene()>>>2,source=game.HEAP32.slice(ptr,ptr+RainbowRenderer.LENGTH);if(!source[3]||source[1]<2)return;
   clearInterval(poll);game._web_pause(1);const terrain=game.HEAP32.slice(source[24]>>>2,(source[24]>>>2)+source[3]);
   const ready=new RainbowRenderer(document.getElementById('ready'));ready.readyLevel=1;ready.readyProgress=.4;
   ready.drawScene(source,game.HEAPU8,false,null,terrain);
+  let buildingAt=348,distance=Infinity;for(let i=0;i<source[14];i++){const at=348+i*18;if(source[at]===4&&[0,1].includes(source[at+15])&&Math.abs(source[at+2]-source[4])<distance){buildingAt=at;distance=Math.abs(source[at+2]-source[4]);}}
+  let buildingScene,buildingEffects,buildingAge=0;
+  const buildingFrame=()=>{buildingScene[1]=1000+buildingAge;ready.readyLevel=null;ready.drawScene(buildingScene,game.HEAPU8,false,buildingEffects,terrain);document.getElementById('status').textContent='Render-only native scene copy: architecture age '+buildingAge+' / debris '+document.getElementById('ready').dataset.debris;};
+  document.getElementById('building-hit').onclick=()=>{buildingScene=source.slice();buildingAge=0;buildingScene[buildingAt+11]=12;buildingEffects=new Int32Array(196);buildingEffects.set([1,7000,1,6,7000,1000,9,source[buildingAt+2]+source[buildingAt+7]/2,source[buildingAt+3]-source[buildingAt+8]/2,source[buildingAt+7]]);buildingFrame();};
+  document.getElementById('building-burst').onclick=()=>{buildingScene=source.slice();buildingScene[buildingAt+1]=3;buildingScene[buildingAt+11]=0;buildingAge=0;buildingEffects=new Int32Array(196);const x=source[buildingAt+2]+source[buildingAt+7]/2,y=source[buildingAt+3]-source[buildingAt+8]/2;buildingEffects.set([1,7002,2,6,7001,1000,10,x,y,source[buildingAt+7],7002,1000,1,x,y,3]);buildingFrame();};
+  document.getElementById('building-next').onclick=()=>{if(!buildingScene)return;buildingAge+=2;buildingFrame();};
   const winning=source.slice();winning[12]=1;winning[1]=10;const departure=new RainbowRenderer(document.getElementById('departure'));
   departure.drawScene(winning,game.HEAPU8,false,null,terrain);let departureAge=12;
   const fly=()=>{winning[1]=10+departureAge;departure.drawScene(winning,game.HEAPU8,false,null,terrain);};fly();

@@ -8,6 +8,9 @@
 static double flight_speed;
 static int throttle,last_flight_tick=-1;
 static bool flight_dead,flight_ready;
+static bool ground_roll;
+static int low_speed_ticks;
+#define TAKEOFF_SPEED 5.4
 void WebVariant_MoveXY(OBJECTS *ob,int *x,int *y);
 #define gohome WebVariant_GoHome
 #define swauto WebVariant_Auto
@@ -30,20 +33,27 @@ void WebVariant_MoveXY(OBJECTS *ob,int *x,int *y);
 #undef aim
 #undef swrestart
 
-void WebVariant_ResetFlight(void){flight_speed=0;throttle=0;last_flight_tick=-1;flight_dead=flight_ready=false;}
+void WebVariant_ResetFlight(void){flight_speed=0;throttle=0;last_flight_tick=-1;flight_dead=flight_ready=ground_roll=false;low_speed_ticks=0;}
 int WebVariant_Throttle(void){return WebVariant_IsEnabled()?throttle*100/16:consoleplayer?consoleplayer->ob_accel*100/MAX_THROTTLE:0;}
 int WebVariant_Speed(void){return (int)round(flight_speed);}
+bool WebVariant_IsTaxiing(void){return WebVariant_IsEnabled()&&ground_roll;}
 bool moveplyr(OBJECTS *ob)
 {
     if(WebVariant_IsEnabled()&&ob==consoleplayer&&countmove!=last_flight_tick){
         if(countmove<last_flight_tick)WebVariant_ResetFlight();
-        if(!flight_ready){flight_speed=ob->ob_athome?0:ob->ob_speed;flight_ready=true;}
+        if(!flight_ready){ground_roll=ob->ob_athome&&ob->ob_speed==0;flight_speed=ground_roll?0:ob->ob_speed;flight_ready=true;}
+        if(ob->ob_athome&&ob->ob_speed==0&&!ground_roll){WebVariant_ResetFlight();flight_ready=ground_roll=true;}
         last_flight_tick=countmove;
         flight_dead=PlaneIsKilled(ob->ob_state);
         int command=latest_player_commands[ob->ob_plrnum][countmove%MAX_NET_LAG];
         if(!flight_dead&&ob->ob_endsts==PLAYING){
             if(command&K_ACCEL)throttle=imin(16,throttle+1);
             if(command&K_DEACC)throttle=imax(0,throttle-1);
+        }
+        if(ground_roll&&!ob->ob_home){
+            /* Elevator input cannot launch a parked or slowly taxiing plane. */
+            if(flight_speed<TAKEOFF_SPEED)latest_player_commands[ob->ob_plrnum][countmove%MAX_NET_LAG]&=~(K_FLAPU|K_FLAPD);
+            ob->ob_speed=imax(gminspeed,(int)round(flight_speed));
         }
     }
     bool visible=WebNative_MovePlayer(ob);
@@ -52,23 +62,38 @@ bool moveplyr(OBJECTS *ob)
 }
 void WebVariant_MoveXY(OBJECTS *ob,int *x,int *y)
 {
+    int taxi_floor=WebVariant_IsEnabled()&&ground&&currgame?ground[clamp_range(0,ob->ob_x+8,(int)currgame->gm_max_x-1)]:0;
     if(WebVariant_IsEnabled()&&ob==consoleplayer){
-        if(flight_dead&&ob->ob_athome&&ob->ob_speed==0)WebVariant_ResetFlight();
+        if(ob->ob_athome&&ob->ob_speed==0&&(!ground_roll||flight_dead)){WebVariant_ResetFlight();flight_ready=ground_roll=true;}
         if(ob->ob_endsts==PLAYING&&!ob->ob_home&&!ob->ob_goingsun
             &&(ob->ob_state==FLYING||ob->ob_state==WOUNDED)){
             static const int gravity[]={0,-1,-2,-3,-4,-3,-2,-1,0,1,2,3,4,3,2,1};
-            double target=throttle?gminspeed+throttle*.75+gravity[ob->ob_angle%16]*.6:gminspeed-1;
-            if(ob->ob_athome&&!throttle)target=0;
+            double target=ground_roll?throttle:throttle?2+throttle*.875+gravity[ob->ob_angle%16]*.7:1.2+gravity[ob->ob_angle%16]*.65;
             target=fmax(0,fmin(18,target));
             double change=target-flight_speed;
             flight_speed+=fmax(-.28,fmin(.24,change));
+            if(ground_roll&&flight_speed>=TAKEOFF_SPEED&&SIN(ob->ob_angle)>0)ground_roll=false;
+            if(ground_roll){
+                ob->ob_angle=ob->ob_orient?8:0;
+                ob->ob_symbol=&symbol_plane[0].sym[ob->ob_orient?4:0];
+                ob->ob_athome=flight_speed<.05;
+            }else{
+                double climbing=fmax(0,SIN(ob->ob_angle)/256.0);
+                double minimum=4.6+2.8*climbing+(ob->ob_state==WOUNDED?.4:0);
+                low_speed_ticks=flight_speed<minimum?low_speed_ticks+1:0;
+                if(low_speed_ticks>=6){stallpln(ob);flight_speed=0;low_speed_ticks=0;}
+            }
+            if(ob->ob_state==STALLED||ob->ob_state==WOUNDSTALL){movexy(ob,x,y);return;}
             setdxdy(ob,(int)round(flight_speed*COS(ob->ob_angle)),(int)round(flight_speed*SIN(ob->ob_angle)));
-            /* Keep native stall checks stable during the slower ground roll. */
-            bool runway=ob->ob_y<=ground[clamp_range(0,ob->ob_x+8,(int)currgame->gm_max_x-1)]+26;
-            ob->ob_speed=runway&&throttle?imax(gminspeed,(int)round(flight_speed)):(int)round(flight_speed);
+            ob->ob_speed=ground_roll?imax(gminspeed,(int)round(flight_speed)):(int)round(flight_speed);
         }else{flight_speed=ob->ob_speed;if(ob->ob_home)throttle=clamp_range(0,ob->ob_accel*4,16);}
     }
     movexy(ob,x,y);
+    if(WebVariant_IsEnabled()&&ob==consoleplayer&&ground_roll&&!ob->ob_home&&ob->ob_endsts==PLAYING&&ob->ob_state==FLYING){
+        int floor=ground[clamp_range(0,*x+8,(int)currgame->gm_max_x-1)];
+        if(abs(floor-taxi_floor)>3||abs(*x-ob->ob_original_ob->x)>95){ground_roll=false;ob->ob_athome=false;if(flight_speed<TAKEOFF_SPEED){stallpln(ob);flight_speed=0;}}
+        else {*y=ob->ob_y=floor+16;ob->ob_ly=0;updateobjpos(ob);}
+    }
     if(WebVariant_IsEnabled()&&ob==consoleplayer&&ob->ob_home&&!ob->ob_athome
         &&ob->ob_endsts==PLAYING&&(ob->ob_state==FLYING||ob->ob_state==WOUNDED)){
         /* Navigation uses coarse 100 ms decisions. Keep its airframe clear of

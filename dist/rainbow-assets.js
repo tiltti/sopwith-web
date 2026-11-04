@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),airfields=new Image(),water=new Image(),cache=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),airfields=new Image(),water=new Image(),ruins=new Image(),flags=new Image(),cache=new Map(),footprints=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -30,7 +30,7 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=25,okay=true;
+    let remaining=27,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
@@ -43,7 +43,7 @@
     cockpit.onload=()=>done(cockpit.width===1536&&cockpit.height===1024);
     details.onload=()=>done(details.width===1536&&details.height===1024);
     blasts.onload=()=>done(blasts.width===1536&&blasts.height===1024);
-    for(const img of [winter,storm,worldDetails,missionTargets,materials,airfields,water]){img.onload=()=>done(img.width===1536&&img.height===1024);img.onerror=()=>done(false);}
+    for(const img of [winter,storm,worldDetails,missionTargets,materials,airfields,water,ruins,flags]){img.onload=()=>done(img.width===1536&&img.height===1024);img.onerror=()=>done(false);}
     gauges.onload=()=>done(gauges.width===1536&&gauges.height===1024);
     instruments.onload=()=>done(instruments.width===1536&&instruments.height===1024);
     turf.onload=()=>done(turf.width===1536&&turf.height===1024);
@@ -54,6 +54,7 @@
     winter.onerror=storm.onerror=worldDetails.onerror=missionTargets.onerror=materials.onerror=gauges.onerror=details.onerror=blasts.onerror=instruments.onerror=turf.onerror=roll.onerror=scenery.onerror=clouds.onerror=soil.onerror=atlas.onerror=extras.onerror=cows.onerror=pilots.onerror=actors.onerror=departure.onerror=canopies.onerror=badge.onerror=cockpit.onerror=()=>done(false);
     winter.src='assets/rainbow-winter-scenery-v1.png';storm.src='assets/rainbow-storm-scenery-v1.png';worldDetails.src='assets/rainbow-world-details-v1.png';missionTargets.src='assets/rainbow-winter-city-targets-v1.png';materials.src='assets/rainbow-mission-materials-v1.png';
     airfields.src='assets/rainbow-airfield-buildings-v2.png';water.src='assets/rainbow-water-airstrip-v1.png';
+    ruins.src='assets/rainbow-airfield-ruins-v1.png';flags.src='assets/rainbow-mounted-flags-v1.png';
     gauges.src='assets/rainbow-gauge-layers-v1.png';
     details.src='assets/rainbow-dashboard-details-v3.png';blasts.src='assets/rainbow-explosions-v2.png';
     instruments.src='assets/rainbow-cockpit-instruments-v2.png';
@@ -83,10 +84,11 @@
       const bounds=[[10,200,365,218],[400,170,355,248],[780,125,365,293],[1160,220,370,198],[10,680,365,268],[400,600,355,348],[780,600,365,348],[1160,700,370,248]];
       sheet=missionTargets;crop=bounds[row+building];
     }
-    if(type===4&&state===5&&([0,1].includes(r[15])||r[15]===2&&mission===0||r[15]===7&&mission===2)){
+    if(type===4&&([0,1].includes(r[15])||r[15]===2&&mission===0||r[15]===7&&mission===2)){
       const cell=r[15]===0?mission:r[15]===1?[6,4,5][mission]:r[15]===2?3:7;
       const bounds=[[6,204,378,223],[384,161,384,266],[768,192,381,235],[1174,156,341,271],[8,702,376,236],[384,520,363,418],[774,593,367,345],[1161,681,365,257]];
-      sheet=airfields;crop=bounds[cell];
+      const destroyed=[[8,295,373,159],[390,278,374,176],[773,277,373,177],[1156,248,372,206],[7,787,374,189],[390,667,374,309],[773,720,373,256],[1156,790,373,186]];
+      sheet=state===5?airfields:ruins;crop=(state===5?bounds:destroyed)[cell];
     }
     let left=w,top=h,right=0,bottom=0;
     for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(heap[ptr+y*w+x]) {
@@ -94,7 +96,11 @@
     }
     if(right<=left||bottom<=top)return null;
     const bx=left*2+1,by=top*2+1,bw=(right-left)*2,bh=(bottom-top)*2;
-    if(rotating) {
+    const building=type===4&&[0,1,2,7].includes(r[15]),footKey=[mission,r[15],w,h].join(':');
+    if(building&&state!==5){
+      const dw=footprints.get(footKey)?.width??w*2-2,dh=dw*crop[3]/crop[2],dx=w+1-dw/2,dy=h*2+1-dh;
+      c.drawImage(sheet,...crop,dx,dy,dw,dh);out.artBounds={x:dx,y:dy,width:dw,height:dh};
+    }else if(rotating) {
       // Keep aircraft/missile dimensions constant through a turn. The native
       // mask's changing axis-aligned bounds must never rescale the artwork.
       const a=state===3&&type===1?0:-angle*Math.PI/8;
@@ -108,6 +114,7 @@
       if(type===8&&r[12]<0){c.translate(w*2+2,0);c.scale(-1,1);}
       const scale=Math.min(bw/crop[2],bh/crop[3]),dw=crop[2]*scale,dh=crop[3]*scale;
       c.drawImage(sheet,...crop,Math.round(bx+(bw-dw)/2),Math.round(by+bh-dh),Math.round(dw),Math.round(dh));
+      if(building){out.artBounds={x:Math.round(bx+(bw-dw)/2),y:Math.round(by+bh-dh),width:Math.round(dw),height:Math.round(dh)};footprints.set(footKey,out.artBounds);}
       if(type===4&&state===5&&r[6]&&[3,4,5,20].includes(r[15])){
         // Painted hull/shield panels belong to the unit, with the same
         // mint/red team colours used by the map and its ground pennant.
@@ -118,6 +125,11 @@
         if(r[6]===1)c.fillRect(px+pw*.25,py+ph*.45,pw*.5,.8);
         c.globalCompositeOperation='source-over';
       }
+    }
+    if(type===1&&c.getImageData){
+      const pixels=c.getImageData(0,0,out.width,out.height).data;let bottom=0;
+      for(let y=0;y<out.height;y++)for(let x=0;x<out.width;x++)if(pixels[(y*out.width+x)*4+3]>30)bottom=y+1;
+      out.contactY=bottom/DETAIL;
     }
     if(cache.size>700)cache.clear();cache.set(key,out);return out;
   }
@@ -209,5 +221,15 @@
     index=((index%6)+6)%6;const key='scenery:'+index;if(cache.has(key))return cache.get(key);
     const out=document.createElement('canvas'),crop=crops[index];out.width=crop[2];out.height=crop[3];out.getContext('2d').drawImage(clouds,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
   }
-  window.RainbowAssets={DETAIL,worldDetail,gaugeLayer,explosionPose,wreckPose,sceneryArt,pilotPose,pilotFrame,parachutePose,interfaceArt,departurePose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
+  function debrisPose(index){
+    if(!loaded)return null;index=((index%8)+8)%8;const key='debris:'+index;if(cache.has(key))return cache.get(key);
+    const crops=[[63,132,82,83],[842,101,97,46],[467,106,74,47],[1022,116,50,43],[587,161,46,58],[1229,114,64,37],[272,169,56,47],[1383,109,43,42]],crop=crops[index];
+    const out=document.createElement('canvas');out.width=crop[2];out.height=crop[3];out.getContext('2d').drawImage(ruins,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
+  }
+  function mountedFlag(style,faction){
+    if(!loaded)return null;style=Math.max(0,Math.min(2,style));const index=style+(faction===1?0:3),key='mount:'+index;if(cache.has(key))return cache.get(key);
+    const crop=[[72,30,401,445],[544,51,451,426],[1079,98,400,327],[73,534,401,448],[544,556,451,430],[1079,605,401,335]][index];
+    const out=document.createElement('canvas');out.width=crop[2];out.height=crop[3];out.getContext('2d').drawImage(flags,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
+  }
+  window.RainbowAssets={DETAIL,debrisPose,mountedFlag,worldDetail,gaugeLayer,explosionPose,wreckPose,sceneryArt,pilotPose,pilotFrame,parachutePose,interfaceArt,departurePose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
 })();

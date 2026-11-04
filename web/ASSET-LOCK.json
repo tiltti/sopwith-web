@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 18835,
-      "sha256": "4bf5419a6febad6c579975ed8f0ace2537be520ab64e858d048d0c0597a159ab"
+      "bytes": 19959,
+      "sha256": "66e6b33844c4ae44c3a30a23017f9f3027a211597b5af358e414235356f5b2b4"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -253,6 +253,11 @@
       "sha256": "bde05b5428dd54858a1b668be26ca1d1d32a2ef0fe8696906bd706b71d059701"
     },
     {
+      "path": "dist/assets/rainbow-airfield-ruins-v1.png",
+      "bytes": 2364135,
+      "sha256": "383aefa37e97162e70633e6a4ba3beaf76be7295684622359b162d411a4fe30c"
+    },
+    {
       "path": "dist/assets/rainbow-clouds-v1.png",
       "bytes": 1540760,
       "sha256": "14a639a5436764f9c8d41ed2eb01c75dc5d2aa087d47a862d79ed84750bc89f3"
@@ -318,6 +323,11 @@
       "sha256": "90a9a03b1f250c35502c9243f4331920bc3abcca2ac8802651a123e6c5ee428f"
     },
     {
+      "path": "dist/assets/rainbow-mounted-flags-v1.png",
+      "bytes": 2075412,
+      "sha256": "25c259d400ded4612c998a43b8a43304cec415dfea47e5ac51502751ed28e8f5"
+    },
+    {
       "path": "dist/assets/rainbow-parachute-sway-v4.png",
       "bytes": 2436849,
       "sha256": "5d06244fb0de3d613055fd31b6b0f55e9541db4aeace9a950878acf19edadb2f"
@@ -341,6 +351,11 @@
       "path": "dist/assets/rainbow-scoreboard-parts-v1.png",
       "bytes": 1172456,
       "sha256": "ab4ef6188f0c3480610b2a300735e347c247e8ad974a27bc7bd80ed905abe7fb"
+    },
+    {
+      "path": "dist/assets/rainbow-sidebar-buttons-v1.png",
+      "bytes": 2455240,
+      "sha256": "8c3cc67840e063d7cecc1265f61b2b3ff2a96b5c0733fcb9d62238797248133e"
     },
     {
       "path": "dist/assets/rainbow-soil-v1.png",

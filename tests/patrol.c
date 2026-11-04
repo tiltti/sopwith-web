@@ -16,6 +16,16 @@
 char *Vid_GetPrefPath(void){return strdup(WEB_TEST_PREF_PATH);}
 static void fresh(void){playmode=PLAYMODE_SINGLE;WebVariant_SetEnabled(false);gamenum=0;swinitlevel();WebVariant_SetEnabled(true);compplane=false;plyrplane=true;WebVariant_Apply(consoleplayer);}
 static OBJECTS *pilot(void){for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(WebVariant_ObjectKind(ob)==21)return ob;return NULL;}
+static OBJECTS *enemy_building(void){for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(ob->ob_type==TARGET&&ob->ob_state==STANDING&&ob->ob_faction!=consoleplayer->ob_faction&&(ob->ob_orient==TARGET_HANGAR||ob->ob_orient==TARGET_FACTORY))return ob;return NULL;}
+static void strike_building(OBJECTS *target,bool bomb){
+    OBJECTS *p=consoleplayer;p->ob_x=target->ob_x+60;p->ob_y=180;p->ob_athome=false;p->ob_state=FLYING;p->ob_bdelay=0;p->ob_rounds=200;
+    if(bomb)initbomb(p);else initshot(p,NULL);OBJECTS *weapon=objbot;
+    assert(weapon->ob_type==(bomb?BOMB:SHOT));
+    weapon->ob_x=target->ob_x+target->ob_symbol->w/2-weapon->ob_symbol->w/2;
+    weapon->ob_y=target->ob_y-target->ob_symbol->h/2+weapon->ob_symbol->h/2;
+    weapon->ob_life=10;insertx(weapon,deletex(weapon));assert(CollisionTest(target,weapon));
+    swcollsn();deallobj(weapon);++countmove;WebVariant_Apply(p);
+}
 static OBJECTS *eject(faction_t faction){
     fresh();OBJECTS *plane=planes[faction==FACTION_PLAYER1?0:1];plane->ob_faction=faction;plane->ob_x=plane->ob_original_ob->x+70;plane->ob_y=ground[plane->ob_x]+65;plane->ob_athome=false;
     plane->ob_state=FALLING;insertx(plane,deletex(plane));++countmove;WebVariant_Apply(consoleplayer);assert(pilot());return pilot();
@@ -129,6 +139,19 @@ int main(void){
     }
     puts("Larger architecture: real extended collision masks, stable centring on repeated native moves and grounded ruins in all three missions.");
 
+    for(int mixed=0;mixed<3;mixed++){
+        fresh();OBJECTS *target=enemy_building();assert(target);int x=target->ob_x,y=target->ob_y,h=target->ob_symbol->h,w=target->ob_symbol->w,score0=consoleplayer->ob_score.score;
+        assert(WebVariant_TargetHealth(target)==24);
+        if(mixed<2){strike_building(target,true);assert(target->ob_state==STANDING&&WebVariant_TargetHealth(target)==12&&consoleplayer->ob_score.score==score0);}
+        int shots=mixed==0?0:mixed==1?12:24;
+        if(!mixed)strike_building(target,true);
+        else for(int n=0;n<shots;n++){strike_building(target,false);if(n<shots-1)assert(target->ob_state==STANDING);}
+        assert(target->ob_state==FINISHED&&WebVariant_TargetHealth(target)==0&&consoleplayer->ob_score.score==score0+100);
+        for(int n=0;n<5;n++){target->ob_movef(target);assert(target->ob_x==x&&target->ob_y==y&&target->ob_symbol->h==h&&target->ob_symbol->w==w);}
+        int debris=0;const int *fx=WebVariant_Effects();for(int n=0;n<32;n++)debris+=fx[4+n*6+2]==10;assert(debris==1);
+    }
+    puts("Large-building damage: two bombs, one bomb plus twelve bullets, or twenty-four bullets; score once, one debris event and unchanged ruin footprint/top/bottom.");
+
     int impact=-1;
     for(int x=40;x<width-40;x++)if(currgame->gm_ground[x]>ground[x]+24){
         bool clear=true;for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(ob->ob_symbol&&ob->ob_type!=PLANE&&ob->ob_x<x+25&&ob->ob_x+ob->ob_symbol->w>x-25)clear=false;
@@ -144,7 +167,16 @@ int main(void){
     }
     puts("Ten real bomb/ground collisions below the original landscape never raise terrain; the first impact excavates a crater.");
 
-    fresh();WebVariant_SetEasy(true);p=consoleplayer;p->ob_x=300;p->ob_y=170;p->ob_athome=false;p->ob_speed=4;p->ob_accel=0;p->ob_angle=0;
+    fresh();p=consoleplayer;for(int n=0;n<(int)currgame->gm_max_x;n++)ground[n]=30;p->ob_y=46;
+    for(int n=0;n<14;n++){++countmove;latest_player_commands[p->ob_plrnum][countmove%MAX_NET_LAG]=(n==0?K_ACCEL:0)|K_FLAPU;moveplyr(p);assert(WebVariant_IsTaxiing()&&p->ob_y==46&&p->ob_state==FLYING);}
+    int rotation=0;for(int n=0;n<60;n++){++countmove;latest_player_commands[p->ob_plrnum][countmove%MAX_NET_LAG]=K_ACCEL|K_FLAPU;moveplyr(p);if(!WebVariant_IsTaxiing()){assert(WebVariant_Speed()>=5&&p->ob_y>46);rotation=1;break;}assert(p->ob_y==46);}
+    assert(rotation);
+    fresh();p=consoleplayer;p->ob_x=300;p->ob_y=50;p->ob_athome=false;p->ob_speed=6;p->ob_angle=3;
+    int stalled=0;for(int n=0;n<15;n++){++countmove;latest_player_commands[p->ob_plrnum][countmove%MAX_NET_LAG]=0;moveplyr(p);if(p->ob_state==STALLED){stalled=1;break;}}assert(stalled);
+    p->ob_y=170;int recovered=0;for(int n=0;n<40;n++){p->ob_angle=12;++countmove;latest_player_commands[p->ob_plrnum][countmove%MAX_NET_LAG]=K_ACCEL;moveplyr(p);if(p->ob_state==FLYING){recovered=1;break;}}assert(recovered);
+    puts("Flight envelope: elevator alone cannot take off below 60 mph; a powered ground roll rotates above the threshold; a slow climb stalls and nose-down power recovers.");
+
+    fresh();WebVariant_SetEasy(true);p=consoleplayer;p->ob_x=300;p->ob_y=170;p->ob_athome=false;p->ob_speed=6;p->ob_accel=0;p->ob_angle=0;
     setdxdy(p,4*256,0);insertx(p,deletex(p));
     int previous_speed=0;
     for(int n=0;n<90;n++){

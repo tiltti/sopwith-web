@@ -40,6 +40,8 @@ static unsigned char pilot_pixels[2][264];
 static sopsym_t pilot_masks[2];
 static GRNDTYPE *mission_ground;
 static int mission_width;
+static struct {OBJECTS *ob,*weapon;int health,tick;} building_damage[256];
+static int building_count;
 
 void WebVariant_SetEnabled(bool value)
 {
@@ -47,6 +49,7 @@ void WebVariant_SetEnabled(bool value)
     WebVariant_ResetFlight();
     easy_mode=false;player_was_dead=false;grace_until=0;fire_count=0;
     memset(pilots,0,sizeof(pilots));plane_count=0;
+    building_count=0;
     last_tick = -1;
     previous_count = 0;
     previous_bomb_count = 0;
@@ -254,13 +257,20 @@ void WebVariant_TargetMask(OBJECTS *ob)
         sopsym_t *source=ob->ob_symbol;
         for(int i=0;i<used;i++)if(source==&masks[i].sym)return;
         int mission=gamenum%3,w=kind==0?32:kind==1?(mission==2?26:34):kind==2?24:30;
-        int h=ob->ob_state!=STANDING?10:kind==0?22:kind==1?(mission==2?32:mission==1?23:32):24;
+        int h=kind==0?22:kind==1?(mission==2?32:mission==1?23:32):24;
         int slot=0;while(slot<used&&(masks[slot].source!=source||masks[slot].mission!=mission||masks[slot].sym.w!=w||masks[slot].sym.h!=h))slot++;
         if(slot==used){
             if(used==256)return;
             masks[slot].source=source;masks[slot].mission=mission;
             masks[slot].sym=(sopsym_t){.w=w,.h=h,.data=pixels[slot]};
             for(int y=0;y<h;y++)for(int x=0;x<w;x++)pixels[slot][y*w+x]=source->data[(y*source->h/h)*source->w+x*source->w/w];
+            if(ob->ob_state!=STANDING){
+                int first=source->h,last=0;
+                for(int y=0;y<source->h;y++)for(int x=0;x<source->w;x++)if(source->data[y*source->w+x]){first=imin(first,y);last=imax(last,y);}
+                double ratio=kind==0?(mission==0?.426:mission==1?.471:.475):kind==1?(mission==0?.686:mission==1?.505:.826):kind==2?.554:.5;
+                int height=clamp_range(1,(int)round(w*.875*ratio),h);
+                if(first<=last)for(int y=0;y<h;y++)for(int x=0;x<w;x++)pixels[slot][y*w+x]=y<h-height?0:source->data[(first+(y-h+height)*(last-first+1)/height)*source->w+x*source->w/w];
+            }
             used++;
         }
         ob->ob_x=clamp_range(1,ob->ob_x+(source->w-w)/2,(int)currgame->gm_max_x-w-1);ob->ob_y+=h-source->h;
@@ -272,6 +282,33 @@ void WebVariant_TargetMask(OBJECTS *ob)
     const OBJECTS *aim=ob->ob_firing;
     if(!aim&&consoleplayer&&consoleplayer->ob_faction!=ob->ob_faction)aim=consoleplayer;
     if(aim)ob->ob_angle=aim->ob_x<ob->ob_x?8:0;
+}
+static bool architecture(const OBJECTS *ob)
+{
+    if(!ob||ob->ob_type!=TARGET)return false;
+    int kind=WebVariant_ObjectKind(ob);return kind==0||kind==1||kind==2||kind==7;
+}
+int WebVariant_TargetHealth(const OBJECTS *ob)
+{
+    if(!enabled||!architecture(ob))return 0;
+    if(ob->ob_state!=STANDING)return 0;
+    for(int i=0;i<building_count;i++)if(building_damage[i].ob==ob)return building_damage[i].health;
+    return 24;
+}
+bool WebVariant_TargetSurvives(OBJECTS *ob,OBJECTS *weapon)
+{
+    if(!enabled||!architecture(ob)||ob->ob_state!=STANDING||!weapon)return false;
+    int amount=weapon->ob_type==SHOT?1:weapon->ob_type==BOMB||weapon->ob_type==MISSILE?12:0;
+    if(!amount)return false;
+    int slot=0;while(slot<building_count&&building_damage[slot].ob!=ob)slot++;
+    if(slot==building_count){if(building_count==256)return false;building_damage[slot].ob=ob;building_damage[slot].health=24;building_damage[slot].weapon=NULL;building_damage[slot].tick=-1;building_count++;}
+    if(building_damage[slot].weapon==weapon&&building_damage[slot].tick==countmove)return building_damage[slot].health>0;
+    building_damage[slot].weapon=weapon;building_damage[slot].tick=countmove;
+    building_damage[slot].health=imax(0,building_damage[slot].health-amount);
+    if(building_damage[slot].health>0){emit(9,ob,ob->ob_symbol->w);return true;}
+    /* The last bullet must pass the upstream level-dependent hit counter. */
+    if(weapon->ob_type==SHOT)ob->ob_hitcount=TARGHITCOUNT*(gamenum+1)+1;
+    return false;
 }
 void WebVariant_InitShot(OBJECTS *owner,OBJECTS *target)
 {
@@ -394,6 +431,7 @@ void WebVariant_Restart(void)
 static void setup_level(void)
 {
     level_ready=true;emplacement_count=0;
+    building_count=0;
     memset(pilots,0,sizeof(pilots));plane_count=0;
     grace_until=countmove+30;fire_count=0;player_was_dead=false;
     /* Restore the continuous source landscape. The upstream initializer
@@ -523,7 +561,7 @@ void WebVariant_Apply(OBJECTS *player)
         if (seen) continue;
         if (feathers) { emit(2, ob, ob->ob_type==FLOCK?6:1); continue; }
         if (cow) { emit(3, ob, 1); continue; }
-        if (destroyed) { emit(6, ob, ob->ob_faction==player->ob_faction?-1:ob->ob_type==TARGET?ob->ob_orient+1:20+ob->ob_type); continue; }
+        if (destroyed) { emit(6, ob, ob->ob_faction==player->ob_faction?-1:ob->ob_type==TARGET?ob->ob_orient+1:20+ob->ob_type);if(architecture(ob))emit(10,ob,ob->ob_symbol->w);continue; }
         OBJECTS *owner = impact ? ob : ob->ob_owner;
         if (!owner) continue;
         bool grouped = false;

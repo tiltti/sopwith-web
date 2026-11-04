@@ -4,9 +4,10 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="preload" as="image" href="assets/rainbow-debrief-v1.png"><link rel="preload" as="image" href="assets/rainbow-medal-ceremony-v1.png">
 <link rel="preload" as="image" href="assets/rainbow-scoreboard-frame-v1.png"><link rel="preload" as="image" href="assets/rainbow-scoreboard-parts-v1.png">
+<link rel="preload" as="image" href="assets/rainbow-sidebar-buttons-v1.png">
 <meta name="theme-color" content="#183449"><title>Rainbow Patrol — Sopwith Tribute</title>
 <meta name="description" content="Rainbow Patrol: a three-mission flying adventure inspired by Sopwith.">
-<link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261104-airfields1">
+<link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261104-flight1">
 </head>
 <body data-edition="rainbow" data-layout="arcade" data-game-state="idle">
 <main class="game-column arcade-root" aria-label="Rainbow Patrol">
@@ -68,7 +69,7 @@
     <section id="error" class="game-layer menu-backdrop" hidden><div class="pixel-panel"><h2>LOADING ERROR</h2><p id="error-text"></p><button id="retry" class="pixel-button green">TRY AGAIN</button><a href="./" class="menu-link">WEBSITE</a></div></section>
     <section id="panel-help" class="game-layer menu-backdrop auxiliary-panel" hidden><div class="pixel-panel"><h2>CONTROLS</h2><div id="ohjeet"><dl class="controls-list">
       <div><dt>THROTTLE + / −</dt><dd>X / Z</dd></div><div><dt>PITCH UP / DOWN</dt><dd>, / /</dd></div><div><dt>ROLL</dt><dd>.</dd></div><div><dt>MACHINE GUN</dt><dd>SPACE</dd></div><div><dt>BOMB SIGHT</dt><dd>HOLD B</dd></div><div><dt>DROP BOMB</dt><dd>RELEASE B</dd></div><div><dt>RETURN TO BASE</dt><dd>H</dd></div><div><dt>PAUSE / SOUND</dt><dd>P / S</dd></div>
-      </dl><p class="tiny-text">ARROW KEYS ALSO WORK.<br>YOUR BASE REPLENISHES SUPPLIES.</p></div><button data-close-panel class="pixel-button">BACK</button></div></section>
+      </dl><p class="tiny-text">ARROW KEYS ALSO WORK.<br>YOUR BASE REPLENISHES SUPPLIES.<br>TAKE OFF AT 60 MPH. SLOW CLIMBS STALL.</p></div><button data-close-panel class="pixel-button">BACK</button></div></section>
     <section id="panel-flight" class="game-layer menu-backdrop auxiliary-panel" hidden><div class="pixel-panel flight-setup"><h2>FLIGHT SETUP</h2><div class="pixel-menu">
       <p class="tiny-text">THREE MISSIONS · CHOOSE YOUR DIFFICULTY</p>
       <div class="difficulty-buttons"><button id="flight-easy" class="pixel-button" aria-pressed="false">EASY<small>NO GROUND RETURN FIRE</small></button><button id="flight-normal" class="pixel-button" aria-pressed="true">NORMAL<small>GROUND TARGETS FIRE BACK</small></button></div>
@@ -99,5 +100,5 @@
   <div class="sr-only" aria-live="polite"><span id="status-text">MAIN MENU</span><span id="mode-label">SINGLE PLAYER</span></div>
 </main>
 <noscript>JAVASCRIPT AND WEBASSEMBLY ARE REQUIRED.</noscript>
-<script src="i18n.js?v=20261104-airfields1"></script><script src="app.js?v=20261104-airfields1"></script><script src="title-audio.js?v=20261104-airfields1"></script><script src="rainbow-ui.js?v=20261104-airfields1"></script><script src="leaderboard.js?v=20261104-airfields1"></script>
+<script src="i18n.js?v=20261104-flight1"></script><script src="app.js?v=20261104-flight1"></script><script src="title-audio.js?v=20261104-flight1"></script><script src="rainbow-ui.js?v=20261104-flight1"></script><script src="leaderboard.js?v=20261104-flight1"></script>
 </body></html>

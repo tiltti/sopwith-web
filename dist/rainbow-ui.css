@@ -172,3 +172,11 @@ body[data-campaign-complete="true"] #panel-scores .score-panel{width:54%;margin-
 #leaderboard .score-modes select{font-size:1.5cqw}
 .menu-backdrop .pixel-loader{height:.5cqw;background:repeating-linear-gradient(90deg,#dfc993 0 10px,transparent 10px 14px)}
 @media(max-width:700px){:is(#panel-help,#panel-settings,#panel-flight) .pixel-panel{width:88%}#panel-settings .settings-grid{max-width:70cqw}#paused .pause-panel{width:68%}.menu-backdrop .tiny-text,.menu-backdrop .pixel-panel .tiny-text{font-size:2cqw}#panel-help .controls-list :is(dt,dd){font-size:2.4cqw}#panel-settings .settings-grid .pixel-toggle,#panel-flight .pixel-toggle{font-size:2.3cqw}:is(#paused,#complete,#panel-help,#panel-settings,#panel-flight,#panel-scores) .pixel-panel .pixel-button{font-size:2.3cqw;min-height:4cqw}#complete table,#leaderboard.score-panel table{font-size:2.25cqw}}
+
+/* Painted brass/enamel control sprites, with accessible live labels retained. */
+.arcade-rail .pixel-icon,.arcade-rail #mute[aria-pressed=false]{border:0;box-shadow:none;background-color:transparent;background-image:url('assets/rainbow-sidebar-buttons-v1.png');background-size:400% 266.666667%;background-repeat:no-repeat;text-shadow:none;font-size:0}
+.arcade-rail .pixel-icon:after{display:none}.arcade-rail .pixel-icon>*{visibility:hidden}.arcade-rail .pixel-icon:active{transform:translateY(1px);box-shadow:none}
+.arcade-rail #pause{background-position:0% 13.75%}body[data-game-state=paused] .arcade-rail #pause{background-position:33.333333% 13.75%}
+.arcade-rail #mute[aria-pressed=false]{background-position:66.666667% 13.75%}.arcade-rail #mute[aria-pressed=true]{background-position:100% 13.75%}
+.arcade-rail [data-open-panel=help]{background-position:0% 88.75%}.arcade-rail [data-open-panel=settings]{background-position:33.333333% 88.75%}
+.arcade-rail #fullscreen{background-position:66.666667% 88.75%}.arcade-rail .site-exit{background-position:100% 88.75%}

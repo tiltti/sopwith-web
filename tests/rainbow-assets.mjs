@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 const sources=[],draws=[],rotations=[],panels=[];
-class Image {width=1254;height=1254;set src(value){if(/pilot-walk-v3|departure|parachute-sway|wing-badge|cockpit|scenery|clouds|soil|aircraft-roll|turf|instruments|explosions|dashboard-details|gauge-layers|winter-scenery|storm-scenery|world-details|winter-city-targets|mission-materials|airfield-buildings|water-airstrip/.test(value)){this.width=1536;this.height=1024;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
+class Image {width=1254;height=1254;set src(value){if(/pilot-walk-v3|departure|parachute-sway|wing-badge|cockpit|scenery|clouds|soil|aircraft-roll|turf|instruments|explosions|dashboard-details|gauge-layers|winter-scenery|storm-scenery|world-details|winter-city-targets|mission-materials|airfield-buildings|water-airstrip|airfield-ruins|mounted-flags/.test(value)){this.width=1536;this.height=1024;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
 const scope={window:{},Image,document:{createElement:()=>({getContext:()=>({
   drawImage(...args){draws.push(args);},fillRect(...args){panels.push([...args,this.fillStyle]);},translate(){},rotate(a){rotations.push(a);},scale(){}})})}};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-assets.js',import.meta.url),'utf8'),scope);
 const assets=scope.window.RainbowAssets;
 assert.equal(sources.length,0,'The classic edition must not fetch the Rainbow atlas.');
-await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,25);
+await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,27);
 const record=new Int32Array(18);record[1]=5;record[6]=1;record[7]=record[8]=16;
 const cases=[[1,0,0],[4,0,4],[4,1,5],[4,2,7],[4,3,6],[4,4,8],[4,5,9],[4,6,16],[4,7,10],[4,18,11],[4,19,17],[9,0,2],[12,0,12],[2,0,13],[10,0,21],[11,0,22]];
 for(const [type,kind,frame] of cases){record[0]=type;record[15]=kind;assert.equal(assets.frameFor(record),frame);}
@@ -74,3 +74,14 @@ console.log("Measured dial, ornamental pointer and transparent glass layers are 
 
 const worldDetails=Array.from({length:8},(_,i)=>assets.worldDetail(i));assert.equal(new Set(worldDetails).size,8);assert.ok(worldDetails.every(p=>p.width>300&&p.height>200));
 assert.notEqual(assets.sceneryArt("winter"),assets.sceneryArt("storm"));console.log("Winter/storm scenery, separate terrain materials, eight fossil/flag/ruin props loaded.");
+
+const architecture=new Int32Array(18);architecture[0]=4;architecture[1]=5;architecture[6]=1;architecture[7]=32;architecture[8]=22;architecture[15]=0;
+const buildingMask=new Uint8Array(32*22).fill(1);
+const whole=assets.sprite(architecture,buildingMask);architecture[1]=3;
+const ruined=assets.sprite(architecture,buildingMask);
+assert.equal(whole.artBounds.width,ruined.artBounds.width,'A ruin keeps the visible intact footprint.');
+assert.equal(whole.artBounds.y+whole.artBounds.height,ruined.artBounds.y+ruined.artBounds.height,'The visible foot stays anchored through destruction.');
+assert.ok(ruined.artBounds.height<whole.artBounds.height&&ruined.artBounds.height>whole.artBounds.height*.4,'Dedicated ruins retain structure above the surface.');
+assert.equal(new Set(Array.from({length:8},(_,i)=>assets.debrisPose(i))).size,8);
+assert.equal(new Set([1,2].flatMap(f=>[0,1,2].map(s=>assets.mountedFlag(s,f)))).size,6);
+console.log('Dedicated same-footprint ruins, eight debris cutouts and six distinct national flag mountings verified.');

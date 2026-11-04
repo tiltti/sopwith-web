@@ -117,6 +117,7 @@ EMSCRIPTEN_KEEPALIVE int web_read(int field)
         case 9: return consoleplayer->ob_endsts;
         case 10: return consoleplayer->ob_score.score;
         case 11: return gamenum;
+        case 12: return WebVariant_IsTaxiing();
         default: return -1;
     }
 }

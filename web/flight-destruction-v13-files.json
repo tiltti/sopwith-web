@@ -1,0 +1,27 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-airfield-ruins-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2364135,
+      "sha256": "383aefa37e97162e70633e6a4ba3beaf76be7295684622359b162d411a4fe30c"
+    },
+    {
+      "path": "dist/assets/rainbow-sidebar-buttons-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2455240,
+      "sha256": "8c3cc67840e063d7cecc1265f61b2b3ff2a96b5c0733fcb9d62238797248133e"
+    },
+    {
+      "path": "dist/assets/rainbow-mounted-flags-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2075412,
+      "sha256": "25c259d400ded4612c998a43b8a43304cec415dfea47e5ac51502751ed28e8f5"
+    }
+  ]
+}

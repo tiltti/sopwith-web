@@ -1,3 +1,31 @@
+## Flight envelope, building damage and painted controls — 2026-11-04
+
+- All ten JavaScript suites pass. Native patrol, trainer/rules and read-only
+  scene suites pass. Return-to-base passes 90/90 Rainbow scenarios; Classic
+  retains its known 28/30 baseline. The vendored engine source is unchanged.
+- Native collision tests verify that a large building survives one bomb and
+  falls to the second, or to one bomb plus twelve bullets, or twenty-four
+  bullets. Scoring and the architecture debris event occur once. Intact and
+  ruined native boxes retain their position, dimensions and grounded base.
+- Real browser flight stayed on the runway with elevator input and no power,
+  took off at about 67 MPH, and sustained 89 MPH level flight at partial power.
+  A continuous slow-climb run entered native STALLED state at y=150, below the
+  y=200 ceiling, without a crash. Native tests also verify nose-down/power
+  recovery and that slow taxiing cannot lift off.
+- A render fixture copied a paused native building into first-hit and ruin
+  states. Review confirmed roof smoke, 32 textured rotating fragments at age 8,
+  grounded same-width wreckage at age 24, and terrain contact for debris.
+  Renderer regression covers fragment rotation, landing, clipping and expiry.
+- Browser review verified painted sidebar buttons, physical roof/wall/banner
+  flag mounts and aircraft wheel/tail contact during the initial ground roll.
+  Live accessible button labels remain intact. All checks kept sound off with
+  zero voices and made no fullscreen transitions.
+- Three new immutable imagegen atlases were displayed in chat. Exact prompts,
+  dimensions and hashes: web/flight-destruction-v13-prompts.json and
+  web/flight-destruction-v13-files.json. Release verification checks the closed
+  roster of 84 assets and byte-matching corresponding source archive.
+- Proof JPEGs: parent research/validation/destruction-v13-{burst,ruin,stall}.jpg.
+
 ## Airfields, briefing boards and E transitions — 2026-11-04
 
 - All ten JavaScript suites pass. Runner coverage reproduces the exact native

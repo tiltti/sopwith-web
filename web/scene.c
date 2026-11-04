@@ -65,7 +65,7 @@ EMSCRIPTEN_KEEPALIVE const int *web_scene(void)
         r[7] = ob->ob_symbol->w; r[8] = ob->ob_symbol->h;
         r[9] = (int)(uintptr_t)ob->ob_symbol->data;
         r[10] = ob == consoleplayer;
-        r[11] = ob->ob_life;
+        r[11] = ob->ob_type==TARGET&&WebVariant_IsEnabled()?WebVariant_TargetHealth(ob):ob->ob_life;
         r[12] = ob->ob_dx; r[13] = ob->ob_dy;
         r[14] = ob->ob_clr;
         r[15] = WebVariant_ObjectKind(ob);

@@ -196,3 +196,12 @@ for(let mission=0;mission<3;mission++){
 }
 calls.length=0;renderer.airstrip(scene,ground);assert.equal(display.dataset.airstrip,'grass-field');assert.deepEqual(ground,terrainCopy);
 console.log('Painted water reaches the bottom of every environment and the grass airstrip follows terrain without changing it.');
+
+scope.window.RainbowAssets.debrisPose=()=>({width:82,height:83});
+const debrisEffects=new Int32Array(196);debrisEffects.set([1,10000,1,6,10000,2000,10,160,80,32]);
+renderer.readEffects(debrisEffects,2000);calls.length=0;renderer.drawEffects(100,2002,ground);
+assert.equal(display.dataset.debris,'32');assert.ok(calls.some(x=>x[0]==='clip'));
+const burst=renderer.effects.find(e=>e.type===10);renderer.drawEffects(100,2034,ground);
+assert.ok(burst.fragments.every(f=>f.landed),'Debris falls onto the real terrain before fading.');
+renderer.readEffects(debrisEffects,2036);renderer.drawEffects(100,2036,ground);assert.equal(display.dataset.debris,'0');
+console.log('Thirty-two textured ballistic fragments rotate, settle on terrain, stay clipped above the cockpit and expire.');

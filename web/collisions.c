@@ -28,6 +28,7 @@ void swcollsn(void)
         if(WebVariant_ObjectKind(killed[i])==21)WebVariant_PilotHit(killed[i],killer[i]);
         else {
             OBJECTS *victim=killed[i];
+            if(WebVariant_TargetSurvives(victim,killer[i]))continue;
             bool crater_hit=!killer[i]&&(victim->ob_type==BOMB||victim->ob_type==MISSILE
                 ||(victim->ob_type==PLANE&&victim->ob_state!=CRASHED&&victim->ob_endsts!=WINNER
                     &&(victim->ob_state==FALLING||victim->ob_state<FINISHED)));
