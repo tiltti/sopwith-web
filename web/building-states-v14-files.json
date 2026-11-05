@@ -1,0 +1,20 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-buildings-damaged-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2885684,
+      "sha256": "cc5540a52fd84c9fd02cc19d9e4a6cf8f890779c6959b081210b83c52df4e3fa"
+    },
+    {
+      "path": "dist/assets/rainbow-small-building-ruins-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1765387,
+      "sha256": "559a033f231f0192e4cb760245c15e0bcdbbd9171a0110f5bc101ba63a5f0d87"
+    }
+  ]
+}

@@ -1,3 +1,26 @@
+## Three-state building artwork — 2026-11-05
+
+- All ten JavaScript suites and the native patrol collision suite pass. The
+  latter still verifies two bombs / one bomb plus twelve bullets / twenty-four
+  bullets, scoring once, and stable native ruin geometry. No C or WASM change.
+- Asset regression checks all twelve mission/architecture combinations have
+  separate intact, one-bomb damaged and destroyed rasters. Health 13–24 reuses
+  intact art; health 1–12 reuses middle art. Crossing the half-health boundary
+  invalidates the sprite cache, and new intact records recover the intact art.
+  Every state keeps its visible width, horizontal position and foundation.
+- The browser gallery renders 36 previews from native-based masks. Optional
+  kinds not placed in the stock target roster use an intact native architecture
+  mask only in this render fixture. Manor and crane comparisons were reviewed.
+- The normal scene fixture reports 13 intact / 1 damaged after its first-bomb
+  preview, then 13 intact / 1 ruined and 32 debris pieces at destruction age 24.
+  These scene copies check presentation; actual hit accounting is covered by
+  the native collision suite. No audio output or fullscreen was used.
+- Two original transparent imagegen PNGs were shown in chat and preserved
+  unchanged. Exact prompts/hashes: web/building-states-v14-*.json. The closed
+  release roster contains 86 files, with matching corresponding source.
+- Proof JPEGs: parent research/validation/building-states-v14-{manor,game-hit,
+  game-ruin}.jpg. The standalone comparison is tests/building-states.html.
+
 ## Flight envelope, building damage and painted controls — 2026-11-04
 
 - All ten JavaScript suites pass. Native patrol, trainer/rules and read-only

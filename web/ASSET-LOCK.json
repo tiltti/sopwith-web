@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 19959,
-      "sha256": "66e6b33844c4ae44c3a30a23017f9f3027a211597b5af358e414235356f5b2b4"
+      "bytes": 21145,
+      "sha256": "38cea9167da37d720964e5ce50c036849c7dcdf3077cb4c1a6fa1105994da510"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -258,6 +258,11 @@
       "sha256": "383aefa37e97162e70633e6a4ba3beaf76be7295684622359b162d411a4fe30c"
     },
     {
+      "path": "dist/assets/rainbow-buildings-damaged-v1.png",
+      "bytes": 2885684,
+      "sha256": "cc5540a52fd84c9fd02cc19d9e4a6cf8f890779c6959b081210b83c52df4e3fa"
+    },
+    {
       "path": "dist/assets/rainbow-clouds-v1.png",
       "bytes": 1540760,
       "sha256": "14a639a5436764f9c8d41ed2eb01c75dc5d2aa087d47a862d79ed84750bc89f3"
@@ -356,6 +361,11 @@
       "path": "dist/assets/rainbow-sidebar-buttons-v1.png",
       "bytes": 2455240,
       "sha256": "8c3cc67840e063d7cecc1265f61b2b3ff2a96b5c0733fcb9d62238797248133e"
+    },
+    {
+      "path": "dist/assets/rainbow-small-building-ruins-v1.png",
+      "bytes": 1765387,
+      "sha256": "559a033f231f0192e4cb760245c15e0bcdbbd9171a0110f5bc101ba63a5f0d87"
     },
     {
       "path": "dist/assets/rainbow-soil-v1.png",

@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><base href="../dist/"><title>Rainbow building damage states</title>
+<style>body{margin:0;padding:24px;background:#19374b;color:#fff2ce;font:16px system-ui}h1{font:700 24px Georgia}select{padding:8px;background:#fff2ce;color:#19374b}label{margin-left:24px}.states{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:1150px}.states figure{margin:0;background:#d6e2df;border:2px solid #af8b48;color:#19374b}.states canvas{width:100%;height:auto;display:block}.states figcaption{text-align:center;padding:10px;font-weight:bold}section[hidden]{display:none}#native{display:none}#status{max-width:1100px}</style></head><body>
+<h1>Rainbow Patrol — three-state architecture</h1>
+<select id="building" aria-label="Building"></select><label><input id="all" type="checkbox"> Show all buildings</label>
+<p>Same footprint and foundation: intact → one bomb → destroyed.</p><main id="previews"></main><p id="status">Loading native masks and artwork…</p><canvas id="native"></canvas>
+<script src="engine/sopwith.js?v=20261104-damage1"></script><script src="rainbow-assets.js?v=20261104-damage1"></script>
+<script type="module">
+try{
+ await RainbowAssets.ready;
+ const game=await createSopwith({canvas:document.getElementById('native'),locateFile:n=>'engine/'+n+'?v=20261104-damage1',print(){},printErr:console.warn,setStatus(){}});
+ game.FS.mkdirTree('/libsdl/SDL Sopwith');game._web_variant(1);game._web_sound(0);game._web_trainer(1);game.callMain(['-q','-s']);
+ const menu=document.getElementById('building'),root=document.getElementById('previews');
+ const names=[['Coast hangar','Brick factory','Coastal manor','Field tent'],['Winter hangar','Rail depot','Supply shed','Winter cottage'],['Brick hangar','Clock tower','Crane workshop','Mountain watermill']];
+ const poll=setInterval(async()=>{
+  const p=game._web_scene()>>>2;if(game.HEAP32[p+1]<2)return;clearInterval(poll);game._web_pause(1);
+  try{
+  for(let mission=0;mission<3;mission++){
+   game._web_trainer(1);game._web_test(mission+1);game._web_pause(0);await new Promise(resolve=>setTimeout(resolve,300));game._web_pause(1);
+   const ptr=game._web_scene()>>>2,source=game.HEAP32.slice(ptr,ptr+4956);
+   for(const [order,kind] of [0,1,2,7].entries()){
+    let native;for(let i=0;i<source[14];i++){const r=source.slice(348+i*18,366+i*18);if(r[0]===4&&r[15]===kind&&r[1]===5){native=r;break;}}
+    // Not every optional visual kind is placed in the stock target roster.
+    // For those art previews only, reuse an intact native architecture mask.
+    if(!native)for(let i=0;i<source[14];i++){const r=source.slice(348+i*18,366+i*18);if(r[0]===4&&[0,1,2].includes(r[15])&&r[1]===5){native=r;native[15]=kind;break;}}
+    if(!native)throw Error('Missing native architecture mask '+mission+'/'+kind);
+    const row=document.createElement('section'),index=mission*4+order;row.dataset.index=index;
+    const h=document.createElement('h2');h.textContent=names[mission][order];row.append(h);const grid=document.createElement('div');grid.className='states';row.append(grid);
+    const intact=RainbowAssets.sprite(native,game.HEAPU8,mission),scale=Math.min(300/(intact.artBounds.width*3),140/(intact.artBounds.height*3)),foot=(intact.artBounds.y+intact.artBounds.height)*3;
+    for(let stage=0;stage<3;stage++){
+     const r=native.slice();r[1]=stage===2?3:5;r[11]=[24,12,0][stage];const sprite=RainbowAssets.sprite(r,game.HEAPU8,mission);
+     const figure=document.createElement('figure'),canvas=document.createElement('canvas');canvas.width=340;canvas.height=180;canvas.dataset.stage=sprite.damageStage;
+     const c=canvas.getContext('2d');c.fillStyle='#73977d';c.fillRect(0,161,340,2);c.drawImage(sprite,(340-sprite.width*scale)/2,160-foot*scale,sprite.width*scale,sprite.height*scale);
+     const caption=document.createElement('figcaption');caption.textContent=['INTACT · 0 HITS','DAMAGED · 1 BOMB','DESTROYED · 2 BOMBS'][stage];figure.append(canvas,caption);grid.append(figure);
+    }
+    root.append(row);const option=document.createElement('option');option.value=index;option.textContent='Mission '+(mission+1)+' — '+names[mission][order];menu.append(option);
+   }
+  }
+  const show=()=>root.querySelectorAll('section').forEach(row=>row.hidden=!document.getElementById('all').checked&&row.dataset.index!==menu.value);
+  menu.value='2';menu.onchange=show;document.getElementById('all').onchange=show;show();
+  document.getElementById('status').textContent='PASS: 12 architecture variants, 36 raster previews, native-based masks, shared foundation. Render-only copies; audio off.';
+  }catch(e){document.getElementById('status').textContent='FAIL: '+e;}
+ },50);
+}catch(e){document.getElementById('status').textContent='FAIL: '+e;}
+</script></body></html>

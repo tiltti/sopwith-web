@@ -1,0 +1,24 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "date": "2026-11-05",
+  "assets": [
+    {
+      "path": "dist/assets/rainbow-buildings-damaged-v1.png",
+      "prompt": "Use case: precise-object-edit. Asset type: production 2D game sprite atlas, the MIDDLE damage state after one bomb hit. Edit/reference image 1 is this game's own eight-building intact atlas; reference image 2 supplies additional winter and city buildings; reference image 3 supplies the canvas field tent. Create a new genuinely transparent PNG 1536x1536, EXACTLY FOUR columns THREE rows, twelve cells384x512. Each sprite has a common ground baseline y450 in its row (450,962,1474), clear gutters at least12px, and fits wholly inside its cell. Preserve each building's recognizable architecture, colours, view angle, overall horizontal footprint and approximately its standing height. Change ONLY its damage state: unmistakably HIT BUT STILL STANDING, missing roof sections exposing rafters, a large blasted wall hole with jagged bricks or torn canvas, shattered windows, soot, displaced tiles, modest scattered rubble at the foundation. About a third of its structure damaged; enough remains to be recognizable and operational. This is visibly intermediate between intact and completely collapsed, NOT just darkened or recoloured. Keep one major side intact. No smoke or flames, flags, poles, writing, labels, shadows outside the object or ground plane. Painterly high-detail Amiga adventure-game art matching references, no coarse pixel art. Reading order MUST be: row1 1 timber/canvas aircraft hangar, 2 snowy timber hangar, 3 redbrick arched aircraft hangar, 4 pale stone manor with green shutters; row2 5 snowy brick rail depot, 6 tall civic clock-tower building (partly blasted but clock and tower still upright), 7 twin-chimney redbrick factory (both chimneys remain), 8 mountain stone watermill with damaged wheel; row3 9 tan canvas field tent with split roof flap and crates (from reference3 tent), 10 snowy pale plaster cottage with green door/shutters (reference2 top-row second), 11 snowy wooden supply shed with crates (reference2 top-row fourth), 12 bombed city industrial crane/workshop (reference2 lower-row fourth; still has its crane structure standing with an additional obvious hit). Rows1+2 are exact corresponding identities/layout of image1; row3 contains the four additional targets. No extra or duplicate buildings. Retain real transparent alpha, not a checkerboard painting.",
+      "references": [
+        "dist/assets/rainbow-airfield-buildings-v2.png",
+        "dist/assets/rainbow-winter-city-targets-v1.png",
+        "dist/assets/rainbow-sprites-v1.png"
+      ]
+    },
+    {
+      "path": "dist/assets/rainbow-small-building-ruins-v1.png",
+      "prompt": "Use case: precise-object-edit. Asset type: final DESTROYED-state sprites for four buildings in a painted side-scrolling aviation game. References are this project's own original building/target sheets and their new middle-damage atlas. Create genuinely transparent PNG1536x1024, exactly TWO columns TWO rows, cells768x512. EXACTLY FOUR isolated grounded ruins, at baseline y450 top row and y962 lower row. Keep each ruin inside x40..728 relative to its cell, with generous clean transparent gutters. Reading order: 1 a totally collapsed tan canvas military field tent, broken poles and crates, torn canvas heap (reference original sprites' tent, middle-damage atlas row3col1); 2 a collapsed snow-covered pale plaster cottage with green door/shutters, only low broken walls with rubble and sections of orange roof, recognizable doorway (middle-damage atlas row3col2); 3 a collapsed snowy wooden supply shed with scattered broken crates and beams, caved-in roof (middle-damage atlas row3col3); 4 devastated industrial crane/workshop, crane fallen sideways among broken masonry and twisted steel, no tall complete upright crane (middle-damage atlas row3col4). These are AFTER TWO BOMBS, clearly COMPLETELY DESTROYED and much lower than the middle damage version; keep the original building's horizontal footprint, with rubble grounded at the same foundation line. Retain only 20\u201340% of standing height. Detailed painterly Amiga adventure-game art, natural earthy/copper colours, matching references. No scenery, base plate, smoke, flames, people, flags, writing, labels, or floating fragments. Preserve true transparent alpha, no fake checkerboard.",
+      "references": [
+        "dist/assets/rainbow-winter-city-targets-v1.png",
+        "dist/assets/rainbow-sprites-v1.png",
+        "dist/assets/rainbow-buildings-damaged-v1.png"
+      ]
+    }
+  ]
+}

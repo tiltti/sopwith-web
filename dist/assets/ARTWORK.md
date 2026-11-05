@@ -289,3 +289,24 @@ Only this project's own building/cockpit images were references. No commercial
 game assets or paid-provider API/CLI were used. Original art is distributed
 with the GPL-2.0-or-later game. All cropping/animation happens at runtime; the
 full generated PNGs are preserved unchanged.
+
+## Three-state architecture (2026-11-05)
+
+Two original built-in OpenAI imagegen outputs were displayed in chat and copied
+unchanged with their transparent alpha:
+
+- `rainbow-buildings-damaged-v1.png`: twelve recognizable still-standing
+  one-bomb states, with missing roof sections, blasted walls and broken windows.
+  These match every architecture/mission combination, including the field
+  tent, winter cottage, snowy supply shed and city crane workshop.
+- `rainbow-small-building-ruins-v1.png`: four matching fully collapsed final
+  states for those smaller targets. The previous eight airfield ruins remain
+  in use for the larger architecture.
+
+Exact prompts, own-project image references, dimensions and immutable hashes
+are in `web/building-states-v14-prompts.json` and `building-states-v14-files.json`.
+Runtime selects intact art above half health, damaged art after one bomb (or
+twelve bullets), and final ruins at destruction. All three keep the same
+visible width and foundation. Cropping happens at runtime; raw PNGs are retained
+unchanged. Original art is distributed with the GPL-2.0-or-later game. No
+commercial-game artwork or paid-provider API/CLI workflow was used.

@@ -205,3 +205,10 @@ const burst=renderer.effects.find(e=>e.type===10);renderer.drawEffects(100,2034,
 assert.ok(burst.fragments.every(f=>f.landed),'Debris falls onto the real terrain before fading.');
 renderer.readEffects(debrisEffects,2036);renderer.drawEffects(100,2036,ground);assert.equal(display.dataset.debris,'0');
 console.log('Thirty-two textured ballistic fragments rotate, settle on terrain, stay clipped above the cockpit and expire.');
+
+const damageScene=scene.slice();damageScene[14]=3;
+for(let i=0;i<3;i++)damageScene.set([4,i===2?3:5,150+i*30,80,0,0,2,2,2,16,0,[24,12,0][i],0,0,2,[0,1,2][i],100+i,0],r+i*18);
+const damageBefore=damageScene.slice();renderer.drawScene(damageScene,heap,false,null,ground);
+assert.equal(display.dataset.buildingsIntact,'1');assert.equal(display.dataset.buildingsDamaged,'1');assert.equal(display.dataset.buildingsRuined,'1');
+assert.deepEqual(damageScene,damageBefore,'The renderer observes health without modifying native targets.');
+console.log('Intact, one-hit and destroyed architecture remain separate observable render states.');

@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 const sources=[],draws=[],rotations=[],panels=[];
-class Image {width=1254;height=1254;set src(value){if(/pilot-walk-v3|departure|parachute-sway|wing-badge|cockpit|scenery|clouds|soil|aircraft-roll|turf|instruments|explosions|dashboard-details|gauge-layers|winter-scenery|storm-scenery|world-details|winter-city-targets|mission-materials|airfield-buildings|water-airstrip|airfield-ruins|mounted-flags/.test(value)){this.width=1536;this.height=1024;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
-const scope={window:{},Image,document:{createElement:()=>({getContext:()=>({
-  drawImage(...args){draws.push(args);},fillRect(...args){panels.push([...args,this.fillStyle]);},translate(){},rotate(a){rotations.push(a);},scale(){}})})}};
+class Image {width=1254;height=1254;set src(value){this.source=value;if(/pilot-walk-v3|departure|parachute-sway|wing-badge|cockpit|scenery|clouds|soil|aircraft-roll|turf|instruments|explosions|dashboard-details|gauge-layers|winter-scenery|storm-scenery|world-details|winter-city-targets|mission-materials|airfield-buildings|water-airstrip|airfield-ruins|mounted-flags|buildings-damaged|small-building-ruins/.test(value)){this.width=1536;this.height=1024;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
+const scope={window:{},Image,document:{createElement:()=>{const out={};out.getContext=()=>({
+  drawImage(...args){out.lastDraw=args;draws.push(args);},fillRect(...args){panels.push([...args,this.fillStyle]);},translate(){},rotate(a){rotations.push(a);},scale(){}});return out;}}};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-assets.js',import.meta.url),'utf8'),scope);
 const assets=scope.window.RainbowAssets;
 assert.equal(sources.length,0,'The classic edition must not fetch the Rainbow atlas.');
-await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,27);
+await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,29);
 const record=new Int32Array(18);record[1]=5;record[6]=1;record[7]=record[8]=16;
 const cases=[[1,0,0],[4,0,4],[4,1,5],[4,2,7],[4,3,6],[4,4,8],[4,5,9],[4,6,16],[4,7,10],[4,18,11],[4,19,17],[9,0,2],[12,0,12],[2,0,13],[10,0,21],[11,0,22]];
 for(const [type,kind,frame] of cases){record[0]=type;record[15]=kind;assert.equal(assets.frameFor(record),frame);}
@@ -85,3 +85,31 @@ assert.ok(ruined.artBounds.height<whole.artBounds.height&&ruined.artBounds.heigh
 assert.equal(new Set(Array.from({length:8},(_,i)=>assets.debrisPose(i))).size,8);
 assert.equal(new Set([1,2].flatMap(f=>[0,1,2].map(s=>assets.mountedFlag(s,f)))).size,6);
 console.log('Dedicated same-footprint ruins, eight debris cutouts and six distinct national flag mountings verified.');
+
+// Every architecture identity has a genuine middle raster, without changing
+// the native standing state or its collision pixels. Cache by damage phase,
+// not by each individual machine-gun hit.
+const nativeBefore=buildingMask.slice(),artIdentities=new Set();
+for(let mission=0;mission<3;mission++)for(const kind of [0,1,2,7]){
+ architecture[1]=5;architecture[11]=24;architecture[15]=kind;
+ const intact=assets.sprite(architecture,buildingMask,mission);
+ architecture[11]=13;assert.equal(assets.sprite(architecture,buildingMask,mission),intact);
+ architecture[11]=12;const hit=assets.sprite(architecture,buildingMask,mission),hitDraw=hit.lastDraw;
+ assert.notEqual(hit,intact,'The first bomb must invalidate the standing sprite cache.');
+ assert.match(hitDraw[0].source,/buildings-damaged-v1/,'One-hit art comes from a dedicated damaged raster.');
+ artIdentities.add(hitDraw.slice(1,5).join(','));
+ architecture[11]=1;assert.equal(assets.sprite(architecture,buildingMask,mission),hit,'Subsequent bullets reuse the same middle state.');
+ architecture[1]=3;architecture[11]=0;const wreck=assets.sprite(architecture,buildingMask,mission),wreckDraw=wreck.lastDraw;
+ assert.match(wreckDraw[0].source,/ruins-v1/,'The second bomb selects dedicated final wreckage.');
+ for(const image of [hit,wreck]){
+  assert.equal(image.artBounds.width,intact.artBounds.width);
+  assert.equal(image.artBounds.x,intact.artBounds.x);
+  assert.ok(Math.abs(image.artBounds.y+image.artBounds.height-intact.artBounds.y-intact.artBounds.height)<1e-8,'All three states share a foundation.');
+ }
+ assert.deepEqual([intact.damageStage,hit.damageStage,wreck.damageStage],[0,1,2]);
+ assert.ok(wreck.artBounds.height<hit.artBounds.height,'Final rubble is lower than the still-standing damaged building.');
+ architecture[1]=5;architecture[11]=24;assert.equal(assets.sprite(architecture,buildingMask,mission),intact,'A new intact record cannot retain its damaged cached image.');
+ assert.deepEqual(buildingMask,nativeBefore);
+}
+assert.equal(artIdentities.size,12,'All twelve mission/building combinations have separate damage artwork.');
+console.log('All twelve building identities: intact → one bomb → destroyed, phase cache, unchanged width/foundation and collision data verified.');

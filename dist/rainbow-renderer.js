@@ -740,6 +740,10 @@
       this.canvas.dataset.artwork=window.RainbowAssets?.loaded?'amiga':'native';
       this.canvas.dataset.tick=String(tick);
       this.canvas.dataset.objects=String(objects.length);
+      const buildings=objects.filter(r=>r[0]===4&&[0,1,2,7].includes(r[15]));
+      this.canvas.dataset.buildingsIntact=String(buildings.filter(r=>r[1]===5&&(r[11]>12||r[11]<=0)).length);
+      this.canvas.dataset.buildingsDamaged=String(buildings.filter(r=>r[1]===5&&r[11]>0&&r[11]<=12).length);
+      this.canvas.dataset.buildingsRuined=String(buildings.filter(r=>r[1]!==5).length);
       this.canvas.dataset.bombsInAir=String(objects.filter(r=>r[0]===2).length);
       this.canvas.dataset.effects=String(this.effects.length);
       this.canvas.dataset.framebuffer=`${this.canvas.width}x${this.canvas.height}`;

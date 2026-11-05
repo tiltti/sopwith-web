@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),airfields=new Image(),water=new Image(),ruins=new Image(),flags=new Image(),cache=new Map(),footprints=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),airfields=new Image(),water=new Image(),ruins=new Image(),flags=new Image(),damaged=new Image(),extraRuins=new Image(),cache=new Map(),footprints=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -11,6 +11,9 @@
     [16,633,529,197],[622,691,295,110],[1060,624,162,206],[1447,586,261,249]];
   const defenseFrames=[[46,62,451,376],[576,65,431,375],[1066,205,449,244]];
   const cowFrames=[[39,172,542,455],[670,266,532,361],[25,879,583,214],[641,915,593,183]];
+  // Middle-state building identities: the eight airfield cells, then field
+  // tent, winter cottage, winter supply shed and city crane workshop.
+  const damageFrames=[[6,90,378,233],[398,45,361,278],[773,85,354,237],[1157,54,369,269],[10,475,376,238],[408,328,341,385],[771,391,364,322],[1158,473,367,240],[16,808,359,187],[391,755,355,240],[761,817,359,179],[1135,766,392,229]];
   let loaded=false;
   function frameFor(r) {
     const [type,state,,,,orient,faction]=r;
@@ -30,7 +33,7 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=27,okay=true;
+    let remaining=29,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
@@ -43,7 +46,7 @@
     cockpit.onload=()=>done(cockpit.width===1536&&cockpit.height===1024);
     details.onload=()=>done(details.width===1536&&details.height===1024);
     blasts.onload=()=>done(blasts.width===1536&&blasts.height===1024);
-    for(const img of [winter,storm,worldDetails,missionTargets,materials,airfields,water,ruins,flags]){img.onload=()=>done(img.width===1536&&img.height===1024);img.onerror=()=>done(false);}
+    for(const img of [winter,storm,worldDetails,missionTargets,materials,airfields,water,ruins,flags,damaged,extraRuins]){img.onload=()=>done(img.width===1536&&img.height===1024);img.onerror=()=>done(false);}
     gauges.onload=()=>done(gauges.width===1536&&gauges.height===1024);
     instruments.onload=()=>done(instruments.width===1536&&instruments.height===1024);
     turf.onload=()=>done(turf.width===1536&&turf.height===1024);
@@ -55,6 +58,7 @@
     winter.src='assets/rainbow-winter-scenery-v1.png';storm.src='assets/rainbow-storm-scenery-v1.png';worldDetails.src='assets/rainbow-world-details-v1.png';missionTargets.src='assets/rainbow-winter-city-targets-v1.png';materials.src='assets/rainbow-mission-materials-v1.png';
     airfields.src='assets/rainbow-airfield-buildings-v2.png';water.src='assets/rainbow-water-airstrip-v1.png';
     ruins.src='assets/rainbow-airfield-ruins-v1.png';flags.src='assets/rainbow-mounted-flags-v1.png';
+    damaged.src='assets/rainbow-buildings-damaged-v1.png';extraRuins.src='assets/rainbow-small-building-ruins-v1.png';
     gauges.src='assets/rainbow-gauge-layers-v1.png';
     details.src='assets/rainbow-dashboard-details-v3.png';blasts.src='assets/rainbow-explosions-v2.png';
     instruments.src='assets/rainbow-cockpit-instruments-v2.png';
@@ -71,7 +75,10 @@
     if(!loaded){load();return null;}
     const index=frameFor(r),[type,state,,,,orient,,w,h,ptr]=r,angle=Math.round(r[4]*8)/8;
     if(index<0||w<1||h<1||w>256||h>256||ptr<0||ptr+w*h>heap.length)return null;
-    const key=[mission,index,type,state,angle,orient,r[6],w,h,ptr,r[12]<0].join(':');
+    const building=type===4&&[0,1,2,7].includes(r[15]);
+    const damageStage=building?(state!==5?2:r[11]>0&&r[11]<=12?1:0):0;
+    const buildingCell=!building?-1:r[15]===0?mission:r[15]===1?[6,4,5][mission]:r[15]===2?[3,10,11][mission]:[8,9,7][mission];
+    const key=[mission,index,type,state,damageStage,buildingCell,angle,orient,r[6],w,h,ptr,r[12]<0].join(':');
     if(cache.has(key))return cache.get(key);
     const out=document.createElement('canvas');
     const rotating=type===1||type===10,worldSize=type===1?46:type===10?30:0;
@@ -90,15 +97,19 @@
       const destroyed=[[8,295,373,159],[390,278,374,176],[773,277,373,177],[1156,248,372,206],[7,787,374,189],[390,667,374,309],[773,720,373,256],[1156,790,373,186]];
       sheet=state===5?airfields:ruins;crop=(state===5?bounds:destroyed)[cell];
     }
+    if(building&&damageStage===2&&buildingCell>=8){
+      const bounds=[[43,306,686,148],[789,281,705,173],[44,809,682,150],[779,755,716,204]];
+      sheet=extraRuins;crop=bounds[buildingCell-8];
+    }
     let left=w,top=h,right=0,bottom=0;
     for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(heap[ptr+y*w+x]) {
       left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x+1);bottom=Math.max(bottom,y+1);
     }
     if(right<=left||bottom<=top)return null;
     const bx=left*2+1,by=top*2+1,bw=(right-left)*2,bh=(bottom-top)*2;
-    const building=type===4&&[0,1,2,7].includes(r[15]),footKey=[mission,r[15],w,h].join(':');
+    const footKey=[mission,r[15],w,h].join(':');
     if(building&&state!==5){
-      const dw=footprints.get(footKey)?.width??w*2-2,dh=dw*crop[3]/crop[2],dx=w+1-dw/2,dy=h*2+1-dh;
+      const intact=footprints.get(footKey),dw=intact?.width??w*2-2,dh=dw*crop[3]/crop[2],dx=intact?.x??w+1-dw/2,dy=(intact?intact.y+intact.height:h*2+1)-dh;
       c.drawImage(sheet,...crop,dx,dy,dw,dh);out.artBounds={x:dx,y:dy,width:dw,height:dh};
     }else if(rotating) {
       // Keep aircraft/missile dimensions constant through a turn. The native
@@ -113,8 +124,12 @@
     } else {
       if(type===8&&r[12]<0){c.translate(w*2+2,0);c.scale(-1,1);}
       const scale=Math.min(bw/crop[2],bh/crop[3]),dw=crop[2]*scale,dh=crop[3]*scale;
-      c.drawImage(sheet,...crop,Math.round(bx+(bw-dw)/2),Math.round(by+bh-dh),Math.round(dw),Math.round(dh));
-      if(building){out.artBounds={x:Math.round(bx+(bw-dw)/2),y:Math.round(by+bh-dh),width:Math.round(dw),height:Math.round(dh)};footprints.set(footKey,out.artBounds);}
+      const bounds={x:Math.round(bx+(bw-dw)/2),y:Math.round(by+bh-dh),width:Math.round(dw),height:Math.round(dh)};
+      if(building){
+        footprints.set(footKey,bounds);out.artBounds=bounds;
+        if(damageStage===1){const hit=damageFrames[buildingCell],height=Math.min(bounds.height,bounds.width*hit[3]/hit[2]);out.artBounds={...bounds,y:bounds.y+bounds.height-height,height};sheet=damaged;crop=hit;}
+        const b=out.artBounds;c.drawImage(sheet,...crop,b.x,b.y,b.width,b.height);
+      }else c.drawImage(sheet,...crop,bounds.x,bounds.y,bounds.width,bounds.height);
       if(type===4&&state===5&&r[6]&&[3,4,5,20].includes(r[15])){
         // Painted hull/shield panels belong to the unit, with the same
         // mint/red team colours used by the map and its ground pennant.
@@ -126,6 +141,7 @@
         c.globalCompositeOperation='source-over';
       }
     }
+    if(building)out.damageStage=damageStage;
     if(type===1&&c.getImageData){
       const pixels=c.getImageData(0,0,out.width,out.height).data;let bottom=0;
       for(let y=0;y<out.height;y++)for(let x=0;x<out.width;x++)if(pixels[(y*out.width+x)*4+3]>30)bottom=y+1;

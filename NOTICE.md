@@ -200,3 +200,11 @@ with this GPL-2.0-or-later game. Raw PNGs, exact prompts, hashes and runtime
 crop information are recorded in `dist/assets/ARTWORK.md` and
 `web/flight-destruction-v13-*.json`. This project's own images supplied the
 style/identity references; no third-party commercial-game art was bundled.
+
+## Three-state building artwork (2026-11-05)
+
+The twelve intermediate damaged buildings and four additional collapsed ruins
+are original built-in OpenAI imagegen outputs based on this project's own art.
+Unmodified PNGs, exact prompts and integrity records are distributed in
+`dist/assets/`, `web/building-states-v14-prompts.json` and
+`web/building-states-v14-files.json` with this GPL-2.0-or-later game.
