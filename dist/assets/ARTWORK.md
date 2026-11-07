@@ -266,9 +266,10 @@ matching enlarged native collision masks. Water is distant scenery behind the
 foreground terrain. Original art is provided with the GPL-2.0-or-later game;
 no commercial-game assets or paid-provider API/CLI workflow were used.
 
-In-game boards use unmodified **Patrick Hand**, Copyright 2010–2012 Patrick
+Earlier in-game boards used unmodified **Patrick Hand**, Copyright 2010–2012 Patrick
 Wagesreiter, under SIL OFL 1.1. The font, license and source/hash receipt are
-in `fonts/patrick-hand/`; the title screen retains Press Start 2P.
+in `fonts/patrick-hand/` for historical source preservation. Current Rainbow
+lettering is documented below.
 
 ## Destruction, mounted flags and sidebar (2026-11-04)
 
@@ -310,3 +311,33 @@ twelve bullets), and final ruins at destruction. All three keep the same
 visible width and foundation. Cropping happens at runtime; raw PNGs are retained
 unchanged. Original art is distributed with the GPL-2.0-or-later game. No
 commercial-game artwork or paid-provider API/CLI workflow was used.
+
+## Chalk lettering, shared classroom and mission station (2026-11-07)
+
+All new images were generated with built-in OpenAI imagegen, shown in chat,
+and copied unchanged. Raw PNG dimensions/hashes and exact prompts are in
+`web/typography-v15-files.json` and `web/typography-v15-prompts.json`.
+
+- `rainbow-chalk-glyphs-v1.png`: the original dry-chalk capital/punctuation
+  atlas plus eight handwritten alternate capitals.
+- `rainbow-engraved-glyphs-v1.png`: original antique Roman lettering and
+  mechanical-counter figures for brass/enamel plaques and instruments.
+- `rainbow-slate-v1.png`: subtle erased slate behind live menu text.
+- `rainbow-classroom-v1.png`: one shared physical board, instructor and student
+  pilot. Live controls use a projective transform into that board's corners.
+- `rainbow-mission-station-v2.png`: the approved hangar console with the small
+  fake-sky display behind the simulator seat replaced by timber. The background
+  omits its pilot figures so the separate sprites can restore and animate them.
+- `rainbow-pilot-selection-v1.png`: rookie and ace, each with three matching
+  attention/salute frames; runtime uses raw cell crops, without editing the PNG.
+
+The original concept reference and earlier approved hangar composition are in
+`web/art-reference/`. Mission preview JPGs are unchanged local captures of this
+project's own coast, winter and storm scenes; the SVG runtime crops their view.
+
+`fonts/patrol/PatrolChalk-Regular.woff2` and `PatrolEngraved-Regular.woff2`
+contain alpha-contour outlines traced from the corresponding original PNGs,
+including chalk gaps. `scripts/build_patrol_fonts.py` is their editable source
+with pinned dependencies; `web/patrol-fonts-v15.json` records derived hashes.
+These fonts and original artwork are distributed with the GPL-2.0-or-later game.
+No paid provider/API/CLI or third-party commercial-game files were used.

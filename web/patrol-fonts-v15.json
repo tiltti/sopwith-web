@@ -1,0 +1,83 @@
+{
+  "tool": "scripts/build_patrol_fonts.py",
+  "files": [
+    {
+      "path": "dist/assets/fonts/patrol/PatrolChalk-Regular.woff2",
+      "bytes": 9644,
+      "sha256": "2c0e417f225308f044abd1a3bc1ce8ca3ce1ab43aa19719ed37117f59b067765",
+      "glyphCount": 66,
+      "source": "dist/assets/rainbow-chalk-glyphs-v1.png",
+      "bands": [
+        [
+          26,
+          127
+        ],
+        [
+          165,
+          260
+        ],
+        [
+          297,
+          399
+        ],
+        [
+          429,
+          522
+        ],
+        [
+          555,
+          644
+        ],
+        [
+          668,
+          763
+        ],
+        [
+          785,
+          876
+        ],
+        [
+          901,
+          1000
+        ]
+      ]
+    },
+    {
+      "path": "dist/assets/fonts/patrol/PatrolEngraved-Regular.woff2",
+      "bytes": 6904,
+      "sha256": "4427c24632949f6dc6f8ae1cac9fca4af381af67eac2dc615af9f3f998647651",
+      "glyphCount": 58,
+      "source": "dist/assets/rainbow-engraved-glyphs-v1.png",
+      "bands": [
+        [
+          41,
+          135
+        ],
+        [
+          192,
+          288
+        ],
+        [
+          339,
+          449
+        ],
+        [
+          483,
+          578
+        ],
+        [
+          620,
+          714
+        ],
+        [
+          749,
+          858
+        ],
+        [
+          889,
+          990
+        ]
+      ]
+    }
+  ]
+}

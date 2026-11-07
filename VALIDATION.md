@@ -1,3 +1,30 @@
+## Chalk menus and shared mission/classroom scenes — 2026-11-07
+
+- Original glyph PNGs are preserved unchanged. Both generated WOFF2 fonts have
+  nonempty Latin/digit outlines, matching lowercase maps and tabular figures;
+  Chalk has contextual handwritten variants. Their hashes are locked.
+- The new layout test maps all four live-text corners onto the single classroom
+  slate exactly in three geometries, checks bounded score fitting, and validates
+  both WOFF2 headers. The existing control/renderer suites remain applicable.
+- In-app browser, 1280×720, sound off: Controls text and Back fit the same board
+  seen by the instructor/student; no second panel. Mission 3/Normal has working
+  actual-landscape preview, ground-fire switch, pilot salute/selected marker,
+  optional aircraft and Start/Back inside the physical console. The small fake
+  sky display behind the seat is gone; real hangar windows remain.
+- Trainer off resets to mission 1 and disables mission arrows; trainer on allows
+  all three. Difficulty and ground fire stay synchronized. Settings contains
+  sight, sound, display and trainer controls, with flight choices in Mission Setup.
+- The local arcade fixture seeded 20 disposable scores: rank-6 and rank-21
+  initials entry each showed 10 rows with clientHeight=scrollHeight=495; the
+  final top-10 board measured 432/432. Character typing advanced correctly and
+  all save/skip/navigation actions stayed visible. Original local scores were
+  restored; no fixture score was saved or sent to the public site.
+- No audio output or fullscreen transition was used. Own browser proof JPEGs
+  are in parent research/review-2026-11-07/ui-v15-{controls,mission,initials,top10}.jpg.
+- Corresponding game/artwork and audio sources are separate byte-matched tar
+  downloads, each below GitHub's 100 MiB file limit. No C/game-rule changes or
+  copilot implementation are included in this interface revision.
+
 ## Three-state building artwork — 2026-11-05
 
 - All ten JavaScript suites and the native patrol collision suite pass. The

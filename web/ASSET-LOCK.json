@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "date": "2026-11-03",
+  "date": "2026-11-07",
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 21145,
-      "sha256": "38cea9167da37d720964e5ce50c036849c7dcdf3077cb4c1a6fa1105994da510"
+      "bytes": 23085,
+      "sha256": "e042b2884d58910c8c5b1d027a0253fd608289f7e0f5c66a737abed733bde40f"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -223,6 +223,21 @@
       "sha256": "9f4682c4f32d40dfebca1d4544fb6755e406ee71ba9ddaad376b5fdb48f2fcd5"
     },
     {
+      "path": "dist/assets/fonts/patrol/PatrolChalk-Regular.woff2",
+      "bytes": 9644,
+      "sha256": "2c0e417f225308f044abd1a3bc1ce8ca3ce1ab43aa19719ed37117f59b067765"
+    },
+    {
+      "path": "dist/assets/fonts/patrol/PatrolEngraved-Regular.woff2",
+      "bytes": 6904,
+      "sha256": "4427c24632949f6dc6f8ae1cac9fca4af381af67eac2dc615af9f3f998647651"
+    },
+    {
+      "path": "dist/assets/fonts/patrol/README.txt",
+      "bytes": 410,
+      "sha256": "4e232aab1799f28063d122a74aeee7c1a1c3fd37f0a9d7c2dd21067e98792cf0"
+    },
+    {
       "path": "dist/assets/patrol-departure-v1.svg",
       "bytes": 3721,
       "sha256": "22f6af421203fb6169f69146676754535e388fae273d30834134c835b400ff35"
@@ -261,6 +276,16 @@
       "path": "dist/assets/rainbow-buildings-damaged-v1.png",
       "bytes": 2885684,
       "sha256": "cc5540a52fd84c9fd02cc19d9e4a6cf8f890779c6959b081210b83c52df4e3fa"
+    },
+    {
+      "path": "dist/assets/rainbow-chalk-glyphs-v1.png",
+      "bytes": 1667526,
+      "sha256": "18e17ded5c018d114676c787dbde0fff40ec5f74e7be92b975b189cedca6f2f7"
+    },
+    {
+      "path": "dist/assets/rainbow-classroom-v1.png",
+      "bytes": 3016783,
+      "sha256": "eb7fc2569dba93d4ab6550f723f81f9ad78eab36a7cd476db3bd97ccc3881884"
     },
     {
       "path": "dist/assets/rainbow-clouds-v1.png",
@@ -303,6 +328,11 @@
       "sha256": "6e59ada24db0e61063b58d22385fe0c003d049b62d57fde0ba383811f90459d9"
     },
     {
+      "path": "dist/assets/rainbow-engraved-glyphs-v1.png",
+      "bytes": 1496068,
+      "sha256": "d3eda52525b33260e552915e4ff8df49883a1b826e13e32731e14d350dacf76e"
+    },
+    {
       "path": "dist/assets/rainbow-explosions-v2.png",
       "bytes": 2055106,
       "sha256": "90427312f7c8fe744814afd74b7c7e3481ad590301ba48cdc60e34f58bc7ae16"
@@ -328,6 +358,11 @@
       "sha256": "90a9a03b1f250c35502c9243f4331920bc3abcca2ac8802651a123e6c5ee428f"
     },
     {
+      "path": "dist/assets/rainbow-mission-station-v2.png",
+      "bytes": 2892897,
+      "sha256": "03a369214480513fef41f945b62f85d9cb02f29e38c488b5507744601131f328"
+    },
+    {
       "path": "dist/assets/rainbow-mounted-flags-v1.png",
       "bytes": 2075412,
       "sha256": "25c259d400ded4612c998a43b8a43304cec415dfea47e5ac51502751ed28e8f5"
@@ -338,9 +373,29 @@
       "sha256": "5d06244fb0de3d613055fd31b6b0f55e9541db4aeace9a950878acf19edadb2f"
     },
     {
+      "path": "dist/assets/rainbow-pilot-selection-v1.png",
+      "bytes": 1997436,
+      "sha256": "98ed259fe202dadccd80effbdbdafb5cbfcc40e8d0a62c981b8a125532d7174d"
+    },
+    {
       "path": "dist/assets/rainbow-pilot-walk-v3.png",
       "bytes": 1994471,
       "sha256": "291a84e6142cb0bf68d02e5f3c9c1d567b28c5811fa56908f6cab86998b2a955"
+    },
+    {
+      "path": "dist/assets/rainbow-preview-coast-v1.jpg",
+      "bytes": 139965,
+      "sha256": "bd28a24a7754bd8ad2b7425844bf307e486d4ed7f24c883d5fd6832ddce5dbd4"
+    },
+    {
+      "path": "dist/assets/rainbow-preview-storm-v1.jpg",
+      "bytes": 136308,
+      "sha256": "52a2c2a3df501c43347b5ef454fd77b7062a822199831bd931d8611525a2dcda"
+    },
+    {
+      "path": "dist/assets/rainbow-preview-winter-v1.jpg",
+      "bytes": 140112,
+      "sha256": "ec7ebe83787ccdfd3c655d43b652ed0503107a7dbbc224cc65ccbbc2e536a9bf"
     },
     {
       "path": "dist/assets/rainbow-scenery-v1.png",
@@ -361,6 +416,11 @@
       "path": "dist/assets/rainbow-sidebar-buttons-v1.png",
       "bytes": 2455240,
       "sha256": "8c3cc67840e063d7cecc1265f61b2b3ff2a96b5c0733fcb9d62238797248133e"
+    },
+    {
+      "path": "dist/assets/rainbow-slate-v1.png",
+      "bytes": 2220957,
+      "sha256": "1ad7ced9d1e97e39fab3be209393792ca233ac7de4af7d5f96c6b81583c6e7c6"
     },
     {
       "path": "dist/assets/rainbow-small-building-ruins-v1.png",

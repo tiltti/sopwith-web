@@ -1,0 +1,56 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "date": "2026-11-07",
+  "assets": [
+    {
+      "path": "dist/assets/rainbow-chalk-glyphs-v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: production GLYPH SPRITE ATLAS for this game's custom chalk typeface. STYLE REFERENCE: supplied approved chalkboard UI only; reproduce the letter stroke character, do NOT render the board, scenery, or words. Genuine transparent PNG1536x1024, precisely EIGHT columns EIGHT rows of equal192x128 cells. ONE standalone glyph centered in EACH cell; white/chalk only; no backdrop, labels, grid lines, shadows or decorative elements. Every main capital about76px high, baseline94px in its row, fits x32..160 relative to cell; no glyph touching adjacent cell. Hand-printed adult airfield chalk capitals, slightly condensed and angled, naturally imperfect hand shapes, rough granular broken dry-chalk edges and some internal gaps with varying pressure, NOT smooth comic handwriting, NOT Comic Sans/Patrick Hand, NOT fine thin outlines. Readable strokes5-9px at this size. EXACT glyph order (spaces separate cells, punctuation is the glyph itself): row1 A B C D E F G H ; row2 I J K L M N O P ; row3 Q R S T U V W X ; row4 Y Z 0 1 2 3 4 5 ; row5 6 7 8 9 . , : ; ; row6 + - / ( ) ? ! % ; row7 < > = [ ] ' & # ; row8 A E M N O R S T. The final row repeats the named capitals in visibly DIFFERENT natural handwritten variants, preserving identity. Dots/commas sit at the correct lower baseline; other punctuation correctly centered. Keep alphabet and numerals unambiguous, especially I/1 and O/0. No captions. Preserve true transparent alpha.",
+      "references": [
+        "web/art-reference/controls-chalk-proposal.png"
+      ]
+    },
+    {
+      "path": "dist/assets/rainbow-engraved-glyphs-v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: production GLYPH SPRITE ATLAS for the game's custom engraved aviation lettering typeface. STYLE REFERENCE supplied own approved board heading/enamel plaque. Render glyph silhouettes only, no plaques. Genuine transparent1536x1024 PNG, precisely EIGHT columns SEVEN rows in a regular grid192px wide by146px high, one isolated glyph per cell. Main capitals approx82px high, baseline110px relative to each row. Light ivory/white solid strokes on transparent alpha, slightly worn ink-break detail, readable narrow antique ROMAN serif capitals with thick and thin carved strokes, quiet aviation-instrument elegance, not modern Georgia, not comic lettering, not ornamental circus lettering. Each glyph stays in x26..166. Exact order row1 A B C D E F G H ; row2 I J K L M N O P ; row3 Q R S T U V W X ; row4 Y Z 0 1 2 3 4 5 ; row5 6 7 8 9 . , : ; ; row6 + - / ( ) ? ! % ; row7 < > = [ ] ' & #. Digits should be particularly clear for old mechanical score counters. Punctuation at its natural vertical position. Do not print any explanatory labels or separators, no grid, shadows, metal surface, scenery or background. Do not merge neighbouring glyphs. Preserve actual transparent alpha.",
+      "references": [
+        "web/art-reference/controls-chalk-proposal.png"
+      ]
+    },
+    {
+      "path": "dist/assets/rainbow-classroom-v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: finished BACKGROUND SPRITE for the existing painted aviation adventure Controls screen. Reference1 approved board style; reference2 own airfield illustration style. A warm period pilot-training CLASSROOM inside a timber airfield building, seen from behind a seated student pilot as if the player shares the student's viewpoint. ONE AND ONLY ONE large black-green slate CHALKBOARD on the left half of the scene, angled gently in perspective and still easy to read: its OUTER approximate corners on the1536x1024 canvas are(75,90),(920,150),(925,860),(75,900). Plain thin warm oak frame with small brass corners, NO heading plaque and absolutely NO WRITING on it; a few faint erased chalk smudges only. This one blank board will receive live game controls in perspective later, so preserve a large calm flat writable surface. The student pilot, aviator cap and goggles and leather jacket, is seen mostly FROM BEHIND at a school desk in the lower RIGHT foreground, facing this same board and studying it. The instructor stands to the RIGHT of the SAME board, holding a short pointer directed toward its blank left-side writing area, wearing a vintage pilot-training uniform. A small wooden biplane model on the student's desk, warm side window, subdued maps/wood panelling in the background; NO SECOND BOARD, NO screen or diagram panel elsewhere, no legible text. Keep both pilot and instructor entirely right of x930 so the controls overlay never covers them. Keep the whole single board visible and uncropped; gentle perspective only. Rich hand-painted adventure-game/Amiga illustration detail matching this project's original art, not photoreal, not coarse pixels, no modern tech, no neon. Wide full scene1536x1024, opaque background. The layout must clearly read as one shared board for PLAYER AND PILOT.",
+      "references": [
+        "web/art-reference/controls-chalk-proposal.png",
+        "dist/assets/rainbow-debrief-v1.png"
+      ]
+    },
+    {
+      "path": "dist/assets/rainbow-slate-v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: seamless background texture for the accepted painted aviation-game chalkboard UI. Reference is the approved own chalkboard. Render ONLY a flat straight-on square dark green-black slate surface: extremely subtle granular slate texture, broad softly erased chalk dust wipes, sparse faint chalk ghosts that contain NO discernible letters or numbers. Keep the entire field dark and low contrast so off-white live lettering reads clearly. Natural matte worn classroom slate, no woodgrain, no frame, no border, no light vignette, no objects, no text, no chalk pieces. Tileable edges, hand-painted fine detail matching original game assets, opaque1024x1024PNG.",
+      "references": [
+        "web/art-reference/controls-chalk-proposal.png"
+      ]
+    },
+    {
+      "path": "web/art-reference/mission-station-v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: finished game background for a vintage MISSION SETUP screen, same painted aviation-adventure art as this project's supplied reference. Inside a timber aircraft HANGAR, warm daylight, a red/cream biplane parked in the back, old flight-school simulator machinery. Wide1536x1024 opaquePNG. The LEFT approx44 percent of the image is occupied by one tall narrow front-facing vintage simulator CONTROL CONSOLE, a framed dark charcoal-enamel/bakelite flat rectangular face with aged brass trim, bolts, leather edging, mechanically credible side levers and a few SMALL antique gauges along its very top and side border. The main console face inside x65..640 y110..920 is EMPTY and very dark, reserved for live HTML mission options and a preview image: absolutely no text, numbers, diagrams, built-in controls or gauges inside that central rectangle. It is visually part of the simulator, not a floating modern menu or chalkboard. Two distinct pilot characters stand in the RIGHT half, clear of the console: a keen young ROOKIE in simple leather flight jacket/cap, no medals, around x850..1070, and a confident seasoned ACE with worn goggles, scarf, subtle service ribbons and a relaxed stance around x1180..1430. Both face slightly toward player/console, full faces visible, consistent anatomy, friendly restrained expressions. They look like the same squadron's pilots at different experience levels. Natural timber, engine parts, aviation tools, warm brass, dark bakelite; a little steampunk mechanical charm grounded in early aviation, no fantasy gears everywhere, no modern displays or neon. Keep the two pilots' faces and bodies comfortably inside the image and the central console face broad enough to read controls. Same painterly high-detail Amiga-adventure sprite/illustration language as the supplied own art. No lettering, labels, watermark or extra UI panels.",
+      "references": [
+        "dist/assets/rainbow-debrief-v1.png"
+      ]
+    },
+    {
+      "path": "dist/assets/rainbow-mission-station-v2.png",
+      "prompt": "Use case: precise-object-edit. EDIT TARGET: supplied own approved Mission Setup hangar background. Preserve exact1536x1024 composition, console, hangar, biplane, light, workshop props and drawing style. Make ONLY these changes: (1) remove the little implausible simulated blue-sky screen/view inside the circular simulator mechanism behind its seat (approximately x730..915 y300..490); replace it with physically plausible dark timber/leather simulator structure and ordinary hangar detail. It must no longer look like a display or projected sky. Preserve the real big hangar windows and the large empty dark console face on the LEFT exactly. (2) remove ONLY the two standing pilot figures on the right, cleanly revealing the underlying floor, biplane and engine/workbench background. They will be restored in precisely this area as separately animated sprite figures, so no new objects should fill their standing places. Change absolutely nothing else. Same full-size opaque original painted game art, no text or labels.",
+      "references": [
+        "web/art-reference/mission-station-v1.png"
+      ]
+    },
+    {
+      "path": "dist/assets/rainbow-pilot-selection-v1.png",
+      "prompt": "Use case: precise-object-edit. Asset type: transparent game CHARACTER ANIMATION SPRITE SHEET derived from the supplied own approved hangar/pilot image. Preserve the exact identities/clothes/proportions of the two standing pilots: the young clean-shaven smiling rookie, and the experienced moustached ace with goggles, cream scarf and service ribbons. Genuine transparent1536x1024PNG, exactly THREE columns TWO rows, each cell512x512, SIX fully isolated full-body figures. Top row rookie; bottom row ace. Columns are three consecutive frames: 1 relaxed neutral, 2 coming to attention with right hand rising to salute, 3 standing upright in a modest military salute. Rookie/ace each face slightly left toward the player as in reference, and remain same face, age, height and garment colours through their three frames. Feet grounded at y492 in each row; head around y35, body centered at x256 in its cell; slim human proportions, each entire figure fits x110..400. Both boots complete. Hands stay within cells and no frame overlaps. This is one short selection animation, NOT a walk cycle. Same warm painted Amiga-adventure sprite detail as reference, no coarse block pixels. Lighting and anatomy consistent through frames. No console, floor, scenery, shadow ground plane, text, frame borders, extra people or props. Retain true transparent alpha.",
+      "references": [
+        "web/art-reference/mission-station-v1.png"
+      ]
+    }
+  ]
+}

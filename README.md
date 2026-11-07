@@ -16,7 +16,7 @@ The collection homepage links two separately playable editions:
   SDL/CGA renderer, two palettes and original PC-speaker sound.
 - **[Sopwith: Rainbow Patrol](https://tiltti.github.io/sopwith-web/rainbow.html)**:
   a separate, screen-filling Amiga-inspired arcade edition. A painted splash,
-  pixel-font menus and three-character high-score entry surround a higher-detail
+  original chalkboard/brass lettering and three-character high-score entry surround a higher-detail
   renderer with a smooth camera, illustrated sprites and a dedicated bottom HUD.
 
 The hub and info pages are separate from the game. Changing editions stops the
@@ -65,7 +65,7 @@ Rainbow-only integration rules are in `web/variant.c`:
   retains mint/red team markers.
 - The campaign has three different landscapes: coast, winter valleys and
   mountainous storm city. Easy ground defenses stay quiet; Normal fires back
-  from mission one. Enemy aircraft are a separate optional extra in Flight Setup.
+  from mission one. Enemy aircraft are a separate optional extra in Mission Setup.
   Completing the third mission ends at the medal ceremony and Badge of Honor board.
 
 
@@ -75,8 +75,11 @@ the top-ten high-score list with qualifying submitted local runs highlighted.
 Entry shows the provisional rank even below tenth place. The pause/settings
 screens use the game's own style. Fullscreen transitions do not pause the game
 through a transient visibility event; changing tabs normally still does.
-The splash menu has a FULLSCREEN toggle. PLAY opens Flight Setup, with Easy/Normal
-and optional enemy aircraft before START FLIGHT. The website and game UI are
+The splash menu has a FULLSCREEN toggle. PLAY opens Mission Setup: actual landscape previews, objectives, Rookie/Easy and
+Ace/Normal pilots, ground fire and optional enemy aircraft before START FLIGHT.
+The selected pilot briefly salutes. Controls share one perspective-mapped classroom
+board with the student pilot and instructor. Settings keeps audio, display, sight
+and trainer controls; starting-mission selection stays trainer-only. The website and game UI are
 English-only; old stored language preferences are ignored.
 Sound controls use matching speaker-on/muted SVG images on the splash, rail and
 settings screen, with a visible on/off label and a gold enabled state.
@@ -104,8 +107,9 @@ loudness-normalized excerpt and stronger mix gain. Disabled
 aircraft descend with fire/smoke, crash audio and an occasional burning parachute
 bailout. Bird/flock hits have grouped squawks and feather sprays. Classic retains its PC-speaker audio.
 
-`dist/assets/ARTWORK.md` records all full imagegen PNGs and prompts. The arcade
-font is Press Start 2P under OFL 1.1. Provenance/licenses are in `NOTICE.md` and
+`dist/assets/ARTWORK.md` records all full imagegen PNGs and prompts. The live Rainbow
+menus/HUD use original Patrol Chalk and Patrol Engraved WOFF2 fonts under GPL v2+.
+The older Press Start 2P and Patrick Hand assets remain with their OFL 1.1 notices. Provenance/licenses are in `NOTICE.md` and
 `dist/assets/`; `web/ASSET-LOCK.json` locks the complete asset roster. RETRY,
 Rainbow Islands and Amiga-era games are references; none of their files is bundled.
 WebGL or Three.js is not required for this measured 2D path. Further flight-model changes and new obstacle courses can be explored separately.
@@ -170,8 +174,17 @@ python3 scripts/build.py
 
 Use a Python 3.10+ executable explicitly if the system `python3` is older.
 The compiler, SDK and caches remain inside `.tools/`, which is ignored by Git.
-The build emits `dist/engine/sopwith.js`, `dist/engine/sopwith.wasm` and the
-complete corresponding source archive at `dist/source/sopwith-web-source.tar.gz`.
+The build emits `dist/engine/sopwith.js`, `dist/engine/sopwith.wasm` and two
+matching source downloads: `dist/source/sopwith-web-source.tar.gz` (all game,
+integration and artwork sources) and `dist/source/sopwith-web-audio-source.tar.gz`
+(recordings, adaptations and audio license/source records). Extract both into
+the same directory; together they form the complete source/media tree. Each
+part stays below GitHub's 100 MiB file limit.
+
+The checked-in original WOFF2 fonts need no build dependency. To regenerate
+them from the unchanged glyph PNGs, create a local virtual environment, install
+`scripts/typography-requirements.txt` there, then run `scripts/build_patrol_fonts.py`
+using that environment's Python. `web/patrol-fonts-v15.json` records their hashes.
 
 ## Play locally
 
@@ -269,7 +282,7 @@ in that edition while retaining the classic mode and original author credits.
 
 Copy the contents of `dist/` onto an HTTPS static host, preserving relative
 paths. Serve `.wasm` as `application/wasm`. This supports installation under
-a subdirectory such as `/play/` on sopwith.org. Ship the source archive,
+a subdirectory such as `/play/` on sopwith.org. Ship both source archives,
 license and credits together with the game.
 
 GitHub Pages hosts the public version. No external account or login is needed

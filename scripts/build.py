@@ -47,7 +47,8 @@ def main():
     shutil.copyfile(ROOT / "NOTICE.md", OUTPUT / "source/NOTICE.md")
     for notice in (ROOT / "licenses").glob("*.txt"):
         shutil.copyfile(notice, OUTPUT / "source" / notice.name)
-    # Distribute the complete corresponding game source and build integration.
+    # Keep each downloadable part below GitHub's 100 MiB per-file limit.
+    # Both extract into the same tree; no media is omitted from the sources.
     with tarfile.open(OUTPUT / "source/sopwith-web-source.tar.gz", "w:gz") as bundle:
         for name in ("third_party/sdl-sopwith", "web", "server", "scripts", "tests", "licenses", ".github",
                      "README.md", "COPYING.md", "LICENSE", "NOTICE.md", "VALIDATION.md"):
@@ -57,9 +58,12 @@ def main():
             if path.is_file() and path.suffix in (".html", ".js", ".css", ".svg", ".json"):
                 bundle.add(path, arcname="sopwith-web/dist/" + path.name)
         if (OUTPUT / "assets").exists():
-            bundle.add(OUTPUT / "assets", arcname="sopwith-web/dist/assets")
-    print("Packaged complete source archive." if source_only else
-          "Built dist/engine/sopwith.wasm and complete source archive.")
+            bundle.add(OUTPUT / "assets", arcname="sopwith-web/dist/assets",
+                       filter=lambda info: None if info.name.startswith("sopwith-web/dist/assets/audio") else info)
+    with tarfile.open(OUTPUT / "source/sopwith-web-audio-source.tar.gz", "w:gz") as bundle:
+        bundle.add(OUTPUT / "assets/audio", arcname="sopwith-web/dist/assets/audio")
+    print("Packaged complete source and audio archives." if source_only else
+          "Built dist/engine/sopwith.wasm and complete source/audio archives.")
 
 if __name__ == "__main__":
     main()

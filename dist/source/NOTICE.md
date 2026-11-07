@@ -186,11 +186,12 @@ production PNGs and exact prompts/hashes are distributed in `dist/assets/` and
 The two new original built-in imagegen atlases are documented in
 `web/airfields-v12-prompts.json`, `web/airfields-v12-files.json` and
 `dist/assets/ARTWORK.md`. Unmodified images are distributed with this
-GPL-2.0-or-later game. The briefing boards use Patrick Hand by Patrick
+GPL-2.0-or-later game. Earlier briefing boards used Patrick Hand by Patrick
 Wagesreiter (Copyright 2010–2012), SIL Open Font License 1.1, from
 https://github.com/google/fonts/tree/main/ofl/patrickhand . The unmodified
 font, full license and source/hash record are in
-`dist/assets/fonts/patrick-hand/`. The title screen keeps its existing font.
+`dist/assets/fonts/patrick-hand/`. The font is retained for historical sources;
+current Rainbow menus use the original fonts described below.
 
 ## Destruction and interface artwork (2026-11-04)
 
@@ -208,3 +209,25 @@ are original built-in OpenAI imagegen outputs based on this project's own art.
 Unmodified PNGs, exact prompts and integrity records are distributed in
 `dist/assets/`, `web/building-states-v14-prompts.json` and
 `web/building-states-v14-files.json` with this GPL-2.0-or-later game.
+
+## Original lettering, classroom and mission station (2026-11-07)
+
+Patrol Chalk and Patrol Engraved are original image-derived fonts distributed
+with this GPL-2.0-or-later game, not third-party font modifications. The built-in
+OpenAI imagegen glyph atlases are preserved unchanged; the corresponding
+font-building code, pinned dependencies and WOFF2 hashes are in
+`scripts/build_patrol_fonts.py`, `scripts/typography-requirements.txt` and
+`web/patrol-fonts-v15.json`. Chalk includes natural contextual capital variants;
+both have fixed-width digits. Lowercase text maps to the matching capital art.
+
+The single-board classroom, slate texture, hangar simulator and six pilot
+selection poses are original built-in imagegen artwork. The small simulated
+sky display behind the seat was removed; real hangar windows remain. Exact
+prompts and raw PNG integrity records are in `web/typography-v15-*.json`; own
+concept references are included in `web/art-reference/`. Mission previews are
+unchanged captures of this project's own live game, cropped by the runtime SVG.
+No commercial-game imagery is distributed.
+
+Corresponding sources are split into `sopwith-web-source.tar.gz` and
+`sopwith-web-audio-source.tar.gz`, both extracting into `sopwith-web/`. The
+audio part retains all media and its original attribution/license records.

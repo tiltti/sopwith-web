@@ -1,0 +1,55 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-chalk-glyphs-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1667526,
+      "sha256": "18e17ded5c018d114676c787dbde0fff40ec5f74e7be92b975b189cedca6f2f7"
+    },
+    {
+      "path": "dist/assets/rainbow-engraved-glyphs-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1496068,
+      "sha256": "d3eda52525b33260e552915e4ff8df49883a1b826e13e32731e14d350dacf76e"
+    },
+    {
+      "path": "dist/assets/rainbow-classroom-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3016783,
+      "sha256": "eb7fc2569dba93d4ab6550f723f81f9ad78eab36a7cd476db3bd97ccc3881884"
+    },
+    {
+      "path": "dist/assets/rainbow-slate-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 2220957,
+      "sha256": "1ad7ced9d1e97e39fab3be209393792ca233ac7de4af7d5f96c6b81583c6e7c6"
+    },
+    {
+      "path": "web/art-reference/mission-station-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3305351,
+      "sha256": "346e292c6f5f7ce1742a156e7c26d9ff0a2de75263130dfa90f4b2c24ee32586"
+    },
+    {
+      "path": "dist/assets/rainbow-mission-station-v2.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2892897,
+      "sha256": "03a369214480513fef41f945b62f85d9cb02f29e38c488b5507744601131f328"
+    },
+    {
+      "path": "dist/assets/rainbow-pilot-selection-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1997436,
+      "sha256": "98ed259fe202dadccd80effbdbdafb5cbfcc40e8d0a62c981b8a125532d7174d"
+    }
+  ]
+}

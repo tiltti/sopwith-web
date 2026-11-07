@@ -91,11 +91,11 @@
   const MAP={x:201,y:19,w:216,h:45};
   function mapPoint(x,y,width) {return {x:MAP.x+1+Math.max(0,Math.min(1,x/width))*(MAP.w-2),y:H+MAP.y+MAP.h-1-Math.max(0,Math.min(199,y))/199*(MAP.h-2)};}
   function textWidth(str,scale=1){return Math.max(0,[...String(str).toUpperCase()].reduce((n,ch)=>n+((FONT[ch]||FONT[' '])[0].length+1)*scale,0)-scale);}
-  function centred(c,str,x,y,color=P.cream,scale=1){text(c,str,x-textWidth(str,scale)/2,y,color,scale);}
+  function centred(c,str,x,y,color=P.cream,scale=1){hudType(c,str,x,y,{size:scale*7,color,align:'center',width:W-40});}
 
   function hudType(c,str,x,y,{size=7,color=P.cream,align='left',width,serif=false}={}){
-    str=String(str);c.save();c.font=`bold ${size}px ${serif?'Georgia,serif':'"Courier New",monospace'}`;
-    if(width){const measured=c.measureText(str).width;if(measured>width)c.font=`bold ${size*width/measured}px ${serif?'Georgia,serif':'"Courier New",monospace'}`;}
+    str=String(str);c.save();c.font=`${size}px "Patrol Engraved",Georgia,serif`;
+    if(width){const measured=c.measureText(str).width;if(measured>width)c.font=`${size*width/measured}px "Patrol Engraved",Georgia,serif`;}
     c.fillStyle=color;c.textAlign=align;c.textBaseline='top';c.fillText(str,x,y);c.restore();
   }
   const SINE=[0,98,181,237,256,237,181,98,0,-98,-181,-237,-256,-237,-181,-98];
@@ -592,8 +592,8 @@
     flightBadge(title,subtitle,y=45){
       const c=this.c,badge=window.RainbowAssets?.interfaceArt?.('badge'),w=340,h=w*600/1512;
       if(badge)c.drawImage(badge,(W-w)/2,y,w,h);
-      hudType(c,title,W/2,y+h*.48,{size:9.5,color:P.cream,align:'center',serif:true});
-      hudType(c,subtitle,W/2,y+h*.615,{size:6,color:P.gold,align:'center'});
+      hudType(c,title,W/2,y+h*.48,{size:14,color:P.cream,align:'center',serif:true,width:155});
+      hudType(c,subtitle,W/2,y+h*.615,{size:8.5,color:P.gold,align:'center',width:156});
     }
     weather(camera,time){
       if(this.mission!==2)return;
@@ -736,7 +736,7 @@
       // Native low-altitude collision geometry is preserved all the way down
       // to the original bottom edge; the information strip lives below the world.
       this.hud(scene,objects,trainer,ground);
-      this.canvas.dataset.renderer='rainbow';
+      this.canvas.dataset.renderer='rainbow';this.canvas.dataset.lettering='original-engraved';
       this.canvas.dataset.artwork=window.RainbowAssets?.loaded?'amiga':'native';
       this.canvas.dataset.tick=String(tick);
       this.canvas.dataset.objects=String(objects.length);
@@ -816,10 +816,10 @@
       const target=this.effects.filter(e=>e.type===6&&s[1]-e.tick<28).at(-1);
       const stalled=[6,9].includes(s[13]),minimum=4.6+2.8*Math.max(0,Math.sin(s[19]*Math.PI/8));
       this.canvas.dataset.flightCondition=s[13]===3?'crashed':s[13]===4?'falling':stalled?'stall':altitude<10?'taxi':s[11]<minimum?'low-airspeed':'flying';
-      if(stalled){hudType(c,'STALL : LOWER NOSE + THROTTLE',310,84,{size:6,color:P.red,align:'center',width:205});this.canvas.dataset.notification='STALL';}
-      else if(s[12]===0&&[1,8].includes(s[13])&&altitude>50&&s[11]<minimum){hudType(c,'AIRSPEED LOW : ADD POWER',310,84,{size:6,color:P.gold,align:'center',width:205});this.canvas.dataset.notification='AIRSPEED LOW';}
-      else if(target){const label=target.size<0?'FRIENDLY TARGET HIT':'TARGET DESTROYED';centred(c,'> '+label+' <',310,84,target.size<0?P.red:P.gold,1.5);this.canvas.dataset.notification=label;}
-      else {delete this.canvas.dataset.notification;if(s[12]===1)centred(c,'MISSION COMPLETE',310,84,P.gold);else if(s[13]===3)centred(c,'PLANE LOST',310,84,P.red);else if(s[16])centred(c,'RETURNING TO BASE',310,84,P.cream);}
+      if(stalled){hudType(c,'STALL : LOWER NOSE + THROTTLE',310,80,{size:6.5,color:P.red,align:'center',width:205});this.canvas.dataset.notification='STALL';}
+      else if(s[12]===0&&[1,8].includes(s[13])&&altitude>50&&s[11]<minimum){hudType(c,'AIRSPEED LOW : ADD POWER',310,80,{size:6.5,color:P.gold,align:'center',width:205});this.canvas.dataset.notification='AIRSPEED LOW';}
+      else if(target){const label=target.size<0?'FRIENDLY TARGET HIT':'TARGET DESTROYED';hudType(c,label,310,80,{size:7,color:target.size<0?P.red:P.gold,align:'center',width:205});this.canvas.dataset.notification=label;}
+      else {delete this.canvas.dataset.notification;if(s[12]===1)hudType(c,'MISSION COMPLETE',310,80,{size:6.5,color:P.gold,align:'center',width:205});else if(s[13]===3)hudType(c,'PLANE LOST',310,80,{size:6.5,color:P.red,align:'center',width:205});else if(s[16])hudType(c,'RETURNING TO BASE',310,80,{size:6.5,color:P.cream,align:'center',width:205});}
       c.restore();
     }
     demo() {

@@ -5,7 +5,7 @@
   const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   function menuItems() {
     const root=panel?$('panel-'+panel):!$('launch').hidden?$('launch'):!$('paused').hidden?$('paused'):null;
-    return root?[...root.querySelectorAll('.pixel-menu button,.pixel-menu a')].filter(el=>!el.hidden&&!el.disabled):[];
+    return root?[...root.querySelectorAll('.pixel-menu button,.pixel-menu a,.pixel-menu input[type=checkbox],.pixel-menu select:not([hidden])')].filter(el=>!el.hidden&&!el.disabled):[];
   }
   function select(index,focus=false) {
     items=menuItems();if(!items.length)return;
@@ -24,15 +24,65 @@
     if(wasPlaying)$('pause').click();
     closePanel();resumeAfterPanel=wasPlaying;panel=name;$('panel-'+name).hidden=false;
     $('launch').inert=true;$('paused').inert=true;$('complete').inert=true;
+    if(name==='flight')renderMission();scheduleLayout();
     if(name==='scores'){
       const ended=document.body.dataset.gameState==='ended';
       $('scores-new-flight').hidden=$('scores-main-menu').hidden=!ended;$('scores-back').hidden=ended;
     }
-    const first=$('panel-'+name).querySelector('button,input,select');first?.focus({preventScroll:true});
+    const first=$('panel-'+name).querySelector('button:not([disabled]),input:not([disabled]),select:not([hidden]):not([disabled])');first?.focus({preventScroll:true});
     select(0);
   }
+  const missionInfo=[
+    {name:'1 · COAST',image:'rainbow-preview-coast-v1.jpg',objective:'Clear enemy depots and defenses along the sunny coast.'},
+    {name:'2 · WINTER VALLEY',image:'rainbow-preview-winter-v1.jpg',objective:'Follow the snowy valleys and destroy the enemy rail depots.'},
+    {name:'3 · STORM CITY',image:'rainbow-preview-storm-v1.jpg',objective:'Clear the enemy defenses in the storm-hit mountain city.'}
+  ];
+  let previousPilot=null,layoutPending=false;
+  function renderMission(){
+    const level=$('start-level'),index=Math.max(0,Math.min(2,Number(level.value)-1)),info=missionInfo[index],value=$('difficulty-select').value==='easy'?'easy':'normal';
+    $('mission-name').textContent=info.name;$('mission-objective').textContent=info.objective;
+    $('mission-preview-image').setAttribute('href','assets/'+info.image);$('mission-preview').setAttribute('aria-label',info.name+' mission landscape');
+    $('mission-prev').disabled=$('mission-next').disabled=level.disabled;
+    $('mission-training').textContent=level.disabled?'RANKED CAMPAIGN · STARTS AT MISSION 1':'TRAINER · UNRANKED FLIGHT';
+    $('ground-fire-toggle').setAttribute('aria-pressed',String(value==='normal'));$('ground-fire-state').textContent=value==='normal'?'ON':'OFF';
+    $('panel-flight').dataset.selectedPilot=value;
+    for(const actor of document.querySelectorAll('.pilot-actor')){
+      const active=actor.dataset.pilot===value;actor.classList.toggle('selected',active);
+      if(active&&previousPilot!==value){actor.classList.remove('saluting');void actor.offsetWidth;actor.classList.add('saluting');}
+      if(!active)actor.classList.remove('saluting');
+    }
+    previousPilot=value;
+  }
+  function fitControls(){
+    const room=$('panel-help'),surface=room.querySelector('.controls-surface'),w=room.clientWidth,h=room.clientHeight;if(!w||!h)return;
+    const points=[[94,114],[854,190],[856,644],[94,670]].map(([x,y])=>[x/1536*w,y/1024*h]);
+    surface.style.transform='matrix3d('+PatrolLayout.quadMatrix(760,620,points).join(',')+')';room.dataset.board='shared-perspective';
+  }
+  function fitScores(){
+    for(const element of [$('leaderboard'),$('complete').querySelector('.entry-board')]){
+      if(!element?.clientHeight)continue;element.style.setProperty('--score-scale','1');let scale=1;
+      for(let attempt=0;attempt<6;attempt++){
+        const next=PatrolLayout.scoreScale(scale,element.clientHeight,element.scrollHeight);if(next===scale)break;
+        scale=next;element.style.setProperty('--score-scale',String(scale));
+      }
+      element.dataset.fit=String(element.scrollHeight<=element.clientHeight+1);
+    }
+  }
+  function scheduleLayout(){if(layoutPending)return;layoutPending=true;requestAnimationFrame(()=>{layoutPending=false;fitControls();fitScores();});}
+  for(const change of [-1,1])$('mission-'+(change<0?'prev':'next')).addEventListener('click',()=>{
+    const level=$('start-level');if(level.disabled)return;level.value=String((Number(level.value)-1+change+3)%3+1);level.dispatchEvent(new Event('change'));
+  });
+  $('start-level').addEventListener('change',renderMission);
+  $('ground-fire-toggle').addEventListener('click',()=>{const level=$('difficulty-select');level.value=level.value==='easy'?'normal':'easy';level.dispatchEvent(new Event('change'));});
+  for(const actor of document.querySelectorAll('.pilot-actor'))actor.addEventListener('animationend',()=>actor.classList.remove('saluting'));
+  new MutationObserver(renderMission).observe($('settings-trainer'),{attributes:true,attributeFilter:['aria-pressed']});
+  new ResizeObserver(scheduleLayout).observe($('screen'));
+  const boardChanges=new MutationObserver(scheduleLayout);
+  for(const id of ['scores-rows','entry-scores-rows','score-form','arcade-score-status'])boardChanges.observe($(id),{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['hidden']});
+  document.fonts?.ready.then(scheduleLayout);window.addEventListener('resize',scheduleLayout);
+  window.addEventListener('sopwith-initials',scheduleLayout);window.addEventListener('sopwith-layer',scheduleLayout);
   const difficulty=$('difficulty-select');
-  const syncDifficulty=()=>{for(const value of ['easy','normal'])$('flight-'+value).setAttribute('aria-pressed',String(difficulty.value===value));};
+  const syncDifficulty=()=>{for(const value of ['easy','normal'])$('flight-'+value).setAttribute('aria-pressed',String(difficulty.value===value));renderMission();};
   for(const value of ['easy','normal'])$('flight-'+value).addEventListener('click',()=>{difficulty.value=value;difficulty.dispatchEvent(new Event('change'));syncDifficulty();});
   difficulty.addEventListener('change',syncDifficulty);syncDifficulty();
   document.querySelectorAll('[data-open-panel]').forEach(button=>button.addEventListener('click',()=>openPanel(button.dataset.openPanel)));
@@ -46,7 +96,7 @@
   $('settings-sound').addEventListener('click',()=>{$('mute').click();syncSettings();});
   function syncSettings() {
     const muted=$('mute').getAttribute('aria-pressed')==='true';
-    $('settings-sound-label').textContent='ÄÄNET: '+(muted?'POIS':'PÄÄLLÄ');
+    $('settings-sound-label').textContent='SOUND '+(muted?'OFF':'ON');
     $('settings-sound-icon').src='assets/sound-'+(muted?'off':'on')+'.svg';
     $('settings-sound').setAttribute('aria-pressed',String(!muted));
   }
@@ -90,9 +140,9 @@
       }
     }
     if(panel&&event.code==='Escape'){event.preventDefault();event.stopImmediatePropagation();const end=panel==='scores'&&document.body.dataset.gameState==='ended';closePanel();if(end)$('restart').click();return;}
-    if(['INPUT','SELECT','TEXTAREA'].includes(event.target.tagName))return;
+    if(event.target.tagName==='SELECT'||event.target.tagName==='TEXTAREA'||event.target.tagName==='INPUT'&&event.target.type!=='checkbox')return;
     items=menuItems();if(!items.length)return;
-    if(event.target.tagName==='BUTTON'){
+    if(event.target.tagName==='BUTTON'||event.target.type==='checkbox'){
       const focused=items.indexOf(event.target);if(focused<0)return;selection=focused;
     }
     if(['ArrowUp','ArrowDown','Enter','Space'].includes(event.code)) {
