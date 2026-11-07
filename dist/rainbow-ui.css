@@ -37,8 +37,12 @@
 .score-panel tbody tr,.entry-board tbody tr{background:transparent var(--honor-row,none) center/100% 100% no-repeat}
 .score-panel tbody tr:nth-child(even),.entry-board tbody tr:nth-child(even){background-image:var(--honor-aged,none)}
 .score-panel tbody tr.current,.entry-board tbody tr.current{background-image:var(--honor-current,none)}
-.score-panel td,.entry-board td{color:#f4e3c1;text-shadow:0 1px 1px #221007,0 -1px #452310}
+/* A dark recessed cut, upper groove shadow and a fine lower metal lip.
+ * Keep this treatment on the bronze, not the lettering on the timber. */
+.score-panel h2,.entry-board h2,.score-panel td,.entry-board td,.entry-board .initial-char{color:#27150c;text-shadow:0 -.7px .3px #100602c7,0 1px .3px #ffdc9cbd}
 .score-panel td:first-child,.entry-board td:first-child{padding-left:calc(2.5*var(--sf))}
 .score-panel td:last-child,.entry-board td:last-child{padding-right:calc(2.5*var(--sf))}
-.score-panel tr.current td,.entry-board tr.current td{color:#2d1b0f;text-shadow:0 1px #ffe0a480,0 -1px #9d642e}
-.entry-board .current td:first-child:before{color:#3a2111}
+.score-panel tr.current td,.entry-board tr.current td{color:#211108;text-shadow:0 -.7px .3px #140902bf,0 1px .3px #ffe6b6d9}
+.entry-board .initial-column .initial-char{background:none}
+.entry-board .initial-column.active .initial-char{color:#211108;border-color:#613414;text-shadow:0 -.7px .3px #140902bf,0 1px .3px #ffe6b6d9}
+.entry-board .current td:first-child:before{color:inherit}

@@ -1,3 +1,15 @@
+## Recessed bronze lettering — 2026-11-07
+
+- Honor-board headers, ranks, initials, scores and levels use dark cut-in
+  lettering with a fine upper groove shadow and a lower reflected metal lip.
+  The polished current-player row uses the same recessed treatment. The live
+  initials editor has no separate tile behind its letters. Timber labels and
+  the underlying original PNGs are unchanged; this is a CSS-only visual change.
+- Browser 1280×720, sound off and windowed: all ten rows and actions fit.
+  Rank-6 entry accepted ACE inline, with clientHeight=scrollHeight=495.
+  Disposable local scores were restored and no fixture result was saved.
+  Proof: parent research/review-2026-11-07/engraving-v18-initials.jpg.
+
 ## Bronze honors, classroom layout and edge craters — 2026-11-07
 
 - A single original transparent bronze-plaque atlas supplies the blank header,
