@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 const sources=[],draws=[],rotations=[],panels=[];
-class Image {width=1254;height=1254;set src(value){this.source=value;if(/pilot-walk-v3|departure|parachute-sway|wing-badge|cockpit|scenery|clouds|soil|aircraft-roll|turf|instruments|explosions|dashboard-details|gauge-layers|winter-scenery|storm-scenery|world-details|winter-city-targets|mission-materials|airfield-buildings|water-airstrip|airfield-ruins|mounted-flags|buildings-damaged|small-building-ruins/.test(value)){this.width=1536;this.height=1024;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
+class Image {width=1254;height=1254;set src(value){this.source=value;if(/pilot-walk-v3|departure|parachute-sway|wing-badge|cockpit|scenery|clouds|soil|aircraft-roll|turf|instruments|explosions|dashboard-details|gauge-layers|winter-scenery|storm-scenery|world-details|winter-city-targets|mission-materials|airfield-buildings|water-airstrip|airfield-ruins|mounted-flags|buildings-damaged|small-building-ruins|city-relics|winter-relics/.test(value)){this.width=1536;this.height=1024;}else if(value.includes('defense')){this.width=1536;this.height=1024;}else if(value.includes('extras')){this.width=1774;this.height=887;}sources.push(value);queueMicrotask(()=>this.onload());}}
 const scope={window:{},Image,document:{createElement:()=>{const out={};out.getContext=()=>({
   drawImage(...args){out.lastDraw=args;draws.push(args);},fillRect(...args){panels.push([...args,this.fillStyle]);},translate(){},rotate(a){rotations.push(a);},scale(){}});return out;}}};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-assets.js',import.meta.url),'utf8'),scope);
 const assets=scope.window.RainbowAssets;
 assert.equal(sources.length,0,'The classic edition must not fetch the Rainbow atlas.');
-await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,29);
+await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,31);
 const record=new Int32Array(18);record[1]=5;record[6]=1;record[7]=record[8]=16;
 const cases=[[1,0,0],[4,0,4],[4,1,5],[4,2,7],[4,3,6],[4,4,8],[4,5,9],[4,6,16],[4,7,10],[4,18,11],[4,19,17],[9,0,2],[12,0,12],[2,0,13],[10,0,21],[11,0,22]];
 for(const [type,kind,frame] of cases){record[0]=type;record[15]=kind;assert.equal(assets.frameFor(record),frame);}
@@ -113,3 +113,11 @@ for(let mission=0;mission<3;mission++)for(const kind of [0,1,2,7]){
 }
 assert.equal(artIdentities.size,12,'All twelve mission/building combinations have separate damage artwork.');
 console.log('All twelve building identities: intact → one bomb → destroyed, phase cache, unchanged width/foundation and collision data verified.');
+
+assert.notEqual(assets.buriedRelic(1,0),assets.buriedRelic(2,0),'Winter discoveries and industrial city relics are separate atlases.');
+const alpha=new Uint8ClampedArray(90*60*4);for(let x=0;x<90;x++)for(let y=20+Math.floor(x/10);y<60;y++)alpha[(y*90+x)*4+3]=255;
+const roofArt={width:90,height:60,artBounds:{x:1,y:1,width:28,height:18},getContext:()=>({getImageData:()=>({data:alpha})})};
+const attachment=assets.flagAnchor(roofArt,0,true),px=Math.round(attachment.x*3),py=Math.round(attachment.y*3);
+assert.ok(alpha[(py*90+px)*4+3]>160,'The mast foot touches actual opaque roof pixels, including a sloping roof, rather than floating above an assumed bounding box.');
+assert.equal(assets.flagAnchor(roofArt,0,true),attachment,'The image-specific attachment is cached.');
+console.log('Flag mount: measured roof alpha anchors the mast on the real sprite surface.');

@@ -20,3 +20,10 @@
 @media(prefers-reduced-motion:reduce){.pilot-actor.selected{background-position-x:100%}}
 
 .mission-preview svg{display:block;width:100%;height:100%}
+/* A folded mission sheet, drawn from the genuine native mission roster. */
+.mission-picker{padding:4px 8px;border:1px solid #ad8d53;background:#292a21;box-shadow:inset 0 0 0 2px #131b15}
+.mission-preview{height:calc(9.2*var(--u));background:#d1c39b;border:4px ridge #a98a52;filter:none;box-shadow:inset 0 0 12px #66533566}
+.briefing-title{font:18px 'Patrol Engraved',serif;fill:#443d2b;letter-spacing:2px}.briefing-legend{font:12px 'Patrol Engraved',serif;fill:#524936}
+.mission-console .difficulty-briefing{font:calc(1.05*var(--u))/1.3 var(--engraved);color:#d7c49b;text-align:left;margin:0;min-height:calc(4.1*var(--u))}
+.score-modes{gap:5px}.score-modes select{flex:1;min-width:0;max-width:42%;font-size:calc(1.1*var(--sf))}
+.mission-console.pixel-panel{height:71.5%}

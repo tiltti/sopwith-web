@@ -22,9 +22,17 @@ void WebVariant_CowMask(OBJECTS *cow);
 bool WebVariant_GroundFire(void);
 void WebVariant_Crater(int left,const GRNDTYPE before[8]);
 void WebVariant_ResetFlight(void);
+/* Optional Rainbow escort; 0 off, 1 parked, 2 launch, 3 follow,
+ * 4 engage, 5 return, 6 lost. No second human player is registered. */
+void WebWingman_Configure(bool enabled);
+void WebWingman_ResetLevel(void);
+void WebWingman_Apply(OBJECTS *player);
+bool WebWingman_Is(const OBJECTS *ob);
+int WebWingman_Status(void);
 int WebVariant_Throttle(void);
 int WebVariant_Speed(void);
 bool WebVariant_IsTaxiing(void);
+bool WebVariant_IsTurning(void);
 bool WebVariant_TargetSurvives(OBJECTS *target,OBJECTS *weapon);
 int WebVariant_TargetHealth(const OBJECTS *target);
 void WebVariant_Test(int action);

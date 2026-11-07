@@ -55,6 +55,10 @@ jobs:
           python scripts/test_patrol.py
           python scripts/test_scene.py
           python scripts/test_home.py
+          python scripts/test_wingman.py
+          python scripts/test_video.py
+          SOPWITH_SANITIZE=1 python scripts/test_wingman.py
+          python scripts/prepare_briefings.py
 
       - name: Build game and corresponding source archive
         run: python scripts/build.py

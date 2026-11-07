@@ -37,13 +37,26 @@
     {name:'2 · WINTER VALLEY',image:'rainbow-preview-winter-v1.jpg',objective:'Follow the snowy valleys and destroy the enemy rail depots.'},
     {name:'3 · STORM CITY',image:'rainbow-preview-storm-v1.jpg',objective:'Clear the enemy defenses in the storm-hit mountain city.'}
   ];
-  let previousPilot=null,layoutPending=false;
+  let previousPilot=null,layoutPending=false,briefings=null;
+  const svg=(tag,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [name,value] of Object.entries(attrs))el.setAttribute(name,String(value));return el;};
+  function drawBriefing(index){
+    const chart=briefings?.missions?.[index];if(!chart)return;
+    const x=world=>20+world/chart.width*560,y=height=>148-height/200*100;
+    $('mission-profile').setAttribute('d','M20 160 '+chart.ground.map((h,i)=>(i?'L':'L')+(20+i/99*560)+' '+y(h)).join(' ')+' L580 160 Z');
+    $('mission-target-marks').replaceChildren(...chart.targets.map(([wx,wy,kind])=>svg(kind===20?'rect':'circle',kind===20?{x:x(wx)-3,y:y(wy)-3,width:6,height:6}:{cx:x(wx),cy:y(wy),r:[0,1,2,7].includes(kind)?7:4})));
+    const homeX=x(chart.home),homeY=y(chart.ground[Math.round(chart.home/chart.width*99)]);
+    $('mission-base-mark').replaceChildren(svg('path',{d:`M${homeX-6} ${homeY} L${homeX} ${homeY-8} L${homeX+6} ${homeY} Z`}),svg('path',{d:`M${homeX} ${homeY-8} V${homeY-22} h11 l-3 4 h-8`,fill:'none'}));
+    $('mission-route').setAttribute('d',`M${homeX} ${homeY-25} Q300 34 550 70`);
+  }
+  fetch('mission-briefings.json').then(r=>r.json()).then(data=>{if(data.version===1){briefings=data;renderMission();}}).catch(()=>{});
   function renderMission(){
     const level=$('start-level'),index=Math.max(0,Math.min(2,Number(level.value)-1)),info=missionInfo[index],value=$('difficulty-select').value==='easy'?'easy':'normal';
     $('mission-name').textContent=info.name;$('mission-objective').textContent=info.objective;
+    drawBriefing(index);
+    $('difficulty-briefing').textContent=value==='easy'?'ROOKIE: ground guns stay quiet. Optional enemy aircraft have shorter range, slower fire and spawn protection. Same flight model.':'ACE: ground guns and enemy pilots fire back from mission 1. Optional enemy aircraft use full range and fire rate. Same flight model.';
     $('mission-preview-image').setAttribute('href','assets/'+info.image);$('mission-preview').setAttribute('aria-label',info.name+' mission landscape');
     $('mission-prev').disabled=$('mission-next').disabled=level.disabled;
-    $('mission-training').textContent=level.disabled?'RANKED CAMPAIGN · STARTS AT MISSION 1':'TRAINER · UNRANKED FLIGHT';
+    $('mission-training').textContent=!level.disabled?'TRAINER · UNRANKED FLIGHT':$('ai-wingman').checked?'WINGMAN · SEPARATE LOCAL SCOREBOARD':'RANKED CAMPAIGN · STARTS AT MISSION 1';
     $('ground-fire-toggle').setAttribute('aria-pressed',String(value==='normal'));$('ground-fire-state').textContent=value==='normal'?'ON':'OFF';
     $('panel-flight').dataset.selectedPilot=value;
     for(const actor of document.querySelectorAll('.pilot-actor')){
@@ -73,6 +86,7 @@
     const level=$('start-level');if(level.disabled)return;level.value=String((Number(level.value)-1+change+3)%3+1);level.dispatchEvent(new Event('change'));
   });
   $('start-level').addEventListener('change',renderMission);
+  $('ai-wingman').addEventListener('change',renderMission);
   $('ground-fire-toggle').addEventListener('click',()=>{const level=$('difficulty-select');level.value=level.value==='easy'?'normal':'easy';level.dispatchEvent(new Event('change'));});
   for(const actor of document.querySelectorAll('.pilot-actor'))actor.addEventListener('animationend',()=>actor.classList.remove('saluting'));
   new MutationObserver(renderMission).observe($('settings-trainer'),{attributes:true,attributeFilter:['aria-pressed']});

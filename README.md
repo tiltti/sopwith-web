@@ -37,7 +37,12 @@ plus a separate 96-pixel instrument strip, rendered at 3× detail. Higher-detail
 atlas crops remain intact instead of first reducing them to a 34-pixel sprite.
 Terrain strips are cached and slide smoothly. The original source landscape is
 restored under buildings; foundations bridge slopes instead of cutting abrupt
-platforms. Vehicles follow the slope. Cow collision masks are scaled with the art. The map plots true world altitude,
+platforms. Vehicles follow the slope. Cow collision masks are scaled with the art. The analog altimeter uses a traditional 0–9 face with separate hundreds and
+thousands hands and a numeric FT AGL readout. The airspeed dial marks nominal
+level-flight stall speed (52 MPH) and takeoff (60 MPH); climbs can stall sooner.
+Winter adds subtle frost to the cockpit; storm missions use warm night lighting,
+animated rain, visible lightning and delayed original synthesized thunder.
+The map plots true world altitude,
 birds and ground objects below the flight area; no instruments hide targets.
 The highest buildings at both map ends now sit on smoothly lowered hillsides,
 leaving at least 32 native pixels of space above their roofs. Central airfields
@@ -77,7 +82,9 @@ screens use the game's own style. Fullscreen transitions do not pause the game
 through a transient visibility event; changing tabs normally still does.
 The splash menu has a FULLSCREEN toggle. PLAY opens Mission Setup: actual landscape previews, objectives, Rookie/Easy and
 Ace/Normal pilots, ground fire and optional enemy aircraft before START FLIGHT.
-The selected pilot briefly salutes. Controls share one perspective-mapped classroom
+The selected pilot briefly salutes. The framed paper briefing charts use
+actual native terrain profiles, home positions and hostile target locations.
+A short Rookie/Ace summary explains return fire and enemy firing behaviour. Controls share one perspective-mapped classroom
 board with the student pilot and instructor. Settings keeps audio, display, sight
 and trainer controls; starting-mission selection stays trainer-only. The website and game UI are
 English-only; old stored language preferences are ignored.
@@ -113,6 +120,26 @@ The older Press Start 2P and Patrick Hand assets remain with their OFL 1.1 notic
 `dist/assets/`; `web/ASSET-LOCK.json` locks the complete asset roster. RETRY,
 Rainbow Islands and Amiga-era games are references; none of their files is bundled.
 WebGL or Three.js is not required for this measured 2D path. Further flight-model changes and new obstacle courses can be explored separately.
+
+## Optional AI wingman
+
+Enable **AI WINGMAN** in Mission Setup. A separate friendly aircraft (mint “2”)
+waits for takeoff, rolls out after a short delay, joins behind/above the player,
+and engages nearby hostile aircraft. It returns when the player heads home,
+lands, crashes or completes the mission, or when its own supplies run low.
+It takes normal hostile/terrain damage and uses the existing crash/bailout art.
+Friendly formation contacts and escort friendly fire cannot harm the player.
+A base visit/new player aircraft restores a lost escort; trainer replenishes
+the escort's supplies too. The first version escorts against aircraft; it does
+not bomb ground targets. Human player two remains future work.
+
+Wingman results have a separate **local** scoreboard, selected with SOLO/WINGMAN.
+They never enter solo or shared-score submissions. Each crew still has separate
+Easy/Normal and single-player/air-combat boards.
+
+Rainbow automatically turns back before either world edge, using a short
+climbing arc without an artificial boundary stall. Storm City's airfield has
+a gently graded departure corridor before its mountain/city terrain.
 
 ## Art-direction studies
 
@@ -158,7 +185,9 @@ player account or email required. See `server/README.md` for the API and limits.
 The vendored upstream directory is unchanged. The new browser integration is
 in `web/`, `scripts/` and the top-level files in
 `dist/`. The bridge supplies browser input, pause, trainer controls and a timer that excludes
-paused time. All new integration files are also GPL v2 or later.
+paused time. All new integration files are also GPL v2 or later. `web/video.c` clips Rainbow
+sprites and pixels to the native framebuffer: fast upward flight must not
+read/write outside the old SDL image. Classic delegates to its original raster.
 
 ## Build
 

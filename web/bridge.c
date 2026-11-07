@@ -51,6 +51,7 @@ EMSCRIPTEN_KEEPALIVE void web_variant(int enabled)
     WebVariant_SetEnabled(enabled != 0);
 }
 EMSCRIPTEN_KEEPALIVE void web_easy(int enabled){WebVariant_SetEasy(enabled!=0);}
+EMSCRIPTEN_KEEPALIVE void web_wingman(int enabled){WebWingman_Configure(enabled!=0);}
 EMSCRIPTEN_KEEPALIVE void web_test(int action){WebVariant_Test(action);}
 
 EMSCRIPTEN_KEEPALIVE const int *web_effects(void)

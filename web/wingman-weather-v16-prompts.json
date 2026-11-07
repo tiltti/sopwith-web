@@ -1,0 +1,20 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "date": "2026-11-07",
+  "assets": [
+    {
+      "path": "dist/assets/rainbow-city-relics-v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: ORIGINAL production 2D game sprite atlas of buried industrial-city relics for the underground cross-section of Rainbow Patrol's stormy mountain-city mission. Style reference: this project's own supplied world-details sheet; match its warm richly painted Amiga adventure illustration quality, but create DIFFERENT non-dinosaur objects. Genuine transparent PNG1536x1024, EXACTLY FOUR columns TWO rows, each cell384x512. Eight isolated side-view shallow underground discoveries, common ground baseline y420 relative to each row, each fits cell x22..362,y150..438, clear transparent gutters. Reading order: (1) broken redbrick Victorian drainage arch and old pipe; (2) half-buried rusted steam railway wheel with short broken rail; (3) shattered workshop gears and small anvil among brick fragments; (4) broken old wooden biplane wing ribs, torn fabric and a cracked propeller hub; (5) riveted iron water pipe elbow and weathered valve wheel; (6) low ruined cellar arch with dusty bottles and crockery; (7) bent old bridge girder and masonry blocks; (8) abandoned timber supply crates, a battered metal can and a coil of old cable. Weathered ochre earth clumps and dark grey small stones partly cling to each discovery, but no complete landscape or broad base plate. All are compact horizontal side-view sprite clusters meant to be embedded below terrain, no floating pieces. Restrained rusty brown, desaturated blue-grey, old timber, red brick, muted brass; no bright flags. No dinosaurs, skeletons, mummies, people, letters, writing, label, panels, outlines, grid or backdrop. Preserve true transparent alpha; do not paint checkerboard. Same original game-art style as reference, no commercial assets.",
+      "references": [
+        "dist/assets/rainbow-world-details-v1.png"
+      ]
+    },
+    {
+      "path": "dist/assets/rainbow-winter-relics-v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: ORIGINAL production 2D game sprite atlas of buried winter-valley discoveries for Rainbow Patrol's snow mission underground soil cross-section. Style reference supplied is this project's own painted world-detail sprites, match richly detailed Amiga adventure-game illustration. Create genuinely transparent PNG1536x1024, EXACTLY FOUR columns TWO rows, eight isolated shallow horizontal sprite clusters each in384x512cell, common baseline y420 relative to each row, clean gutters, entire object within x20..364 y150..440. Reading order: (1) ancient mammoth tusks and a SMALL partial skull in dark stones and icy soil, no full animal; (2) old reindeer antlers and smooth glacial pebbles; (3) pale blue quartz crystals and cracked icy boulders; (4) broken antique timber snow sledge with rusty iron runners, half buried; (5) fossilized ancient pine trunk with visible rings and roots, clinging ice; (6) an ammonite and fern impressions in slate among frost-edged stone fragments; (7) low ruined old stone cellar arch with icicles and a fallen timber beam; (8) old iron pickaxe and oil lantern beside a weathered mountaineer supply crate. Small ice crusts/snow pockets on upper edges and cold earth clinging at bottom, but no full ground plane or large backdrop. Muted silver-blue, dark brown, ivory bone, weathered timber and stone. Match reference painterly sprite detail, no thick pixel outline, photorealism, dinosaurs, mummies, people, letters, labels, frame or grid. Transparent alpha around every separate object, never painted checkerboard. No commercial-game assets.",
+      "references": [
+        "dist/assets/rainbow-world-details-v1.png"
+      ]
+    }
+  ]
+}

@@ -212,3 +212,9 @@ const damageBefore=damageScene.slice();renderer.drawScene(damageScene,heap,false
 assert.equal(display.dataset.buildingsIntact,'1');assert.equal(display.dataset.buildingsDamaged,'1');assert.equal(display.dataset.buildingsRuined,'1');
 assert.deepEqual(damageScene,damageBefore,'The renderer observes health without modifying native targets.');
 console.log('Intact, one-hit and destroyed architecture remain separate observable render states.');
+
+renderer.mission=1;renderer.hud(scene,[],false,ground);assert.equal(display.dataset.cockpitClimate,'frost');
+assert.equal(display.dataset.speedMarks,'stall-52-takeoff-60');assert.equal(display.dataset.altimeter,'two-hand-hundreds-thousands');
+renderer.mission=2;renderer.hud(scene,[],false,ground);assert.equal(display.dataset.cockpitClimate,'night-lit');
+renderer.weather(0,72.2);assert.equal(display.dataset.lightning,'true');renderer.weather(0,80);assert.equal(display.dataset.lightning,undefined);
+console.log('Weather instruments: winter frost/night lighting, nominal stall/takeoff marks, traditional two-hand altitude dial and bounded lightning verified.');

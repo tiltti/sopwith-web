@@ -69,6 +69,8 @@ EMSCRIPTEN_KEEPALIVE const int *web_scene(void)
         r[12] = ob->ob_dx; r[13] = ob->ob_dy;
         r[14] = ob->ob_clr;
         r[15] = WebVariant_ObjectKind(ob);
+        if(ob==consoleplayer&&WebVariant_IsTurning())r[15]=23;
+        if(r[15]==22)r[14]=WebWingman_Status();
         if(r[15]==21&&ob->ob_firing)r[14]|=2;
         r[16] = (int)(uintptr_t)ob;
         r[17] = ob->ob_owner == consoleplayer ? 1 : !ob->ob_owner ? 0

@@ -1,3 +1,35 @@
+## AI escort, weather and flight boundaries — 2026-11-07
+
+- All eleven JavaScript suites and six native test scripts pass. Escort tests
+  cover all three missions, real native hostile-shot creation, friendly safety,
+  retreat, normal falling, eight trainer level jumps and 4000 actual move/
+  collision steps. A separate local crew leaderboard test preserves solo data.
+- Both world edges reverse an outward flying aircraft in bounded native steps
+  without a wall clamp or automatic stall. The storm departure corridor stays
+  within five native height pixels of its original runway for the first 180.
+- Native return-home audit remains 90/90 for Rainbow. The unchanged Classic
+  path retains its earlier 28/30 baseline. Vendored upstream files are unchanged.
+- The previous unbounded SDL top-edge sprite draw corrupted the framebuffer
+  and could break the next trainer restart. Browser WebAssembly AddressSanitizer
+  reproduced a heap-buffer-overflow before the fix. The new video adapter clips
+  all edges; a real 320×200 guard-buffer test covers negative/offscreen pixels,
+  single-pixel sprites and large symbols. Ordinary Classic drawing delegates
+  to the original code. A new ASan browser flight reached FORMATION at 179 MPH
+  and 100 native pixels of ground clearance without a new sanitizer error.
+  Native macOS ASan/SDL startup timed out; the WebAssembly sanitizer was used
+  for local diagnosis instead. Linux CI also runs the native ASan escort test.
+- Browser 1280×720, sound off: the expanded briefing console fits 498/498, shows
+  genuine native terrain/target chart, Rookie/Ace effects and AI wingman switch.
+  The winter flight renders its own discoveries, frost, surface-mounted flags,
+  nominal 52/60 MPH marks, two-hand FT AGL altimeter and wing-shaped takeoff hint.
+- New render tests check frost/night cockpit modes and lightning expiry. Flag
+  attachment samples real roof alpha; chart validation covers three distinct
+  native profiles. Audio tests cover the new 2.8-second synthesized thunder
+  cue in the existing bounded voice mixer, with no audio before opt-in.
+- New city/winter PNG atlases were shown and preserved unchanged. Exact prompts
+  and hashes are in web/wingman-weather-v16-*.json. No sound or fullscreen
+  output was used in this revision's browser checks.
+
 ## Chalk menus and shared mission/classroom scenes — 2026-11-07
 
 - Original glyph PNGs are preserved unchanged. Both generated WOFF2 fonts have

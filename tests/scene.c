@@ -15,6 +15,8 @@ playmode_t playmode;
 
 bool WebVariant_IsEnabled(void){return false;}
 int WebVariant_Speed(void){return 0;}
+bool WebVariant_IsTurning(void){return false;}
+int WebWingman_Status(void){return 0;}
 int WebVariant_Throttle(void){return 0;}
 int WebVariant_TargetHealth(const OBJECTS *ob){(void)ob;return 0;}
 int WebVariant_ObjectKind(const OBJECTS *ob){return ob->ob_original_ob?ob->ob_original_ob->orient:0;}

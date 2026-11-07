@@ -46,3 +46,12 @@ assert.equal(storage.get('sopwith.scores.rainbow.practice'),saved,'Existing norm
 get('scores-difficulty').value='normal';get('scores-difficulty').listeners.change();await settle();
 assert.equal(get('scores-rows').children[0].children[1].textContent,'T01');
 console.log('Difficulty boards: easy and normal stay separate; existing normal data and filters are preserved.');
+
+get('game').src='runner.html?mode=practice&difficulty=normal&wingman=1&run=wingman-run';message({type:'ready'});await settle();
+get('score-name').value='ACE';message({type:'score-ready',score:50000,level:3,ticks:1000,trainerUsed:false});await settle();
+assert.equal(get('entry-rank').textContent,'SIJOITUS: 1');
+await get('score-form').listeners.submit({preventDefault(){}});
+assert.equal(JSON.parse(storage.get('sopwith.scores.rainbow.practice.wingman'))[0].score,50000);
+assert.equal(storage.get('sopwith.scores.rainbow.practice'),saved,'Escort assistance never enters the solo board.');
+get('scores-crew').value='solo';get('scores-crew').listeners.change();await settle();assert.equal(get('scores-rows').children[0].children[1].textContent,'T01');
+console.log('Wingman results persist on a separate local board; crew filtering preserves solo scores.');

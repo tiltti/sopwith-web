@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),airfields=new Image(),water=new Image(),ruins=new Image(),flags=new Image(),damaged=new Image(),extraRuins=new Image(),cache=new Map(),footprints=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),airfields=new Image(),water=new Image(),ruins=new Image(),flags=new Image(),damaged=new Image(),extraRuins=new Image(),cityRelics=new Image(),winterRelics=new Image(),cache=new Map(),footprints=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -33,7 +33,7 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=29,okay=true;
+    let remaining=31,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
@@ -46,7 +46,7 @@
     cockpit.onload=()=>done(cockpit.width===1536&&cockpit.height===1024);
     details.onload=()=>done(details.width===1536&&details.height===1024);
     blasts.onload=()=>done(blasts.width===1536&&blasts.height===1024);
-    for(const img of [winter,storm,worldDetails,missionTargets,materials,airfields,water,ruins,flags,damaged,extraRuins]){img.onload=()=>done(img.width===1536&&img.height===1024);img.onerror=()=>done(false);}
+    for(const img of [winter,storm,worldDetails,missionTargets,materials,airfields,water,ruins,flags,damaged,extraRuins,cityRelics,winterRelics]){img.onload=()=>done(img.width===1536&&img.height===1024);img.onerror=()=>done(false);}
     gauges.onload=()=>done(gauges.width===1536&&gauges.height===1024);
     instruments.onload=()=>done(instruments.width===1536&&instruments.height===1024);
     turf.onload=()=>done(turf.width===1536&&turf.height===1024);
@@ -58,7 +58,7 @@
     winter.src='assets/rainbow-winter-scenery-v1.png';storm.src='assets/rainbow-storm-scenery-v1.png';worldDetails.src='assets/rainbow-world-details-v1.png';missionTargets.src='assets/rainbow-winter-city-targets-v1.png';materials.src='assets/rainbow-mission-materials-v1.png';
     airfields.src='assets/rainbow-airfield-buildings-v2.png';water.src='assets/rainbow-water-airstrip-v1.png';
     ruins.src='assets/rainbow-airfield-ruins-v1.png';flags.src='assets/rainbow-mounted-flags-v1.png';
-    damaged.src='assets/rainbow-buildings-damaged-v1.png';extraRuins.src='assets/rainbow-small-building-ruins-v1.png';
+    damaged.src='assets/rainbow-buildings-damaged-v1.png';extraRuins.src='assets/rainbow-small-building-ruins-v1.png';cityRelics.src='assets/rainbow-city-relics-v1.png';winterRelics.src='assets/rainbow-winter-relics-v1.png';
     gauges.src='assets/rainbow-gauge-layers-v1.png';
     details.src='assets/rainbow-dashboard-details-v3.png';blasts.src='assets/rainbow-explosions-v2.png';
     instruments.src='assets/rainbow-cockpit-instruments-v2.png';
@@ -245,7 +245,32 @@
   function mountedFlag(style,faction){
     if(!loaded)return null;style=Math.max(0,Math.min(2,style));const index=style+(faction===1?0:3),key='mount:'+index;if(cache.has(key))return cache.get(key);
     const crop=[[72,30,401,445],[544,51,451,426],[1079,98,400,327],[73,534,401,448],[544,556,451,430],[1079,605,401,335]][index];
-    const out=document.createElement('canvas');out.width=crop[2];out.height=crop[3];out.getContext('2d').drawImage(flags,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
+    const out=document.createElement('canvas');out.width=crop[2];out.height=crop[3];out.getContext('2d').drawImage(flags,...crop,0,0,out.width,out.height);out.mountAnchor=style===0?{x:.183,y:.99}:style===1?{x:.04,y:.92}:{x:.5,y:.1};cache.set(key,out);return out;
   }
-  window.RainbowAssets={DETAIL,debrisPose,mountedFlag,worldDetail,gaugeLayer,explosionPose,wreckPose,sceneryArt,pilotPose,pilotFrame,parachutePose,interfaceArt,departurePose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
+  function buriedRelic(mission,index){
+    if(!loaded)return null;if(!mission)return worldDetail(index%4);
+    index=((index%8)+8)%8;const key=`relic:${mission}:${index}`;if(cache.has(key))return cache.get(key);
+    const out=document.createElement('canvas');out.width=384;out.height=310;
+    out.getContext('2d').drawImage(mission===1?winterRelics:cityRelics,index%4*384,Math.floor(index/4)*512+135,384,310,0,0,384,310);cache.set(key,out);return out;
+  }
+  function flagAnchor(art,style,building){
+    if(!art)return null;art.flagAnchors ||= {};const key=style+':'+building;if(art.flagAnchors[key])return art.flagAnchors[key];
+    const b=art.artBounds||{x:1,y:1,width:art.width/DETAIL-2,height:art.height/DETAIL-2};
+    let x=b.x+b.width*(style===2?.5:style===0?.28:.22),y=b.y+b.height*(style===2?.44:.62);
+    const context=art.getContext('2d');
+    if(context.getImageData){
+      const data=context.getImageData(0,0,art.width,art.height).data,px=Math.max(1,Math.min(art.width-2,Math.round(x*DETAIL)));
+      if(style===0){
+        for(let row=0;row<art.height-2;row++)if([0,1,2].every(d=>data[((row+d)*art.width+px)*4+3]>160)){y=(row+2)/DETAIL;break;}
+      }else{
+        let nearest=Infinity;
+        for(let row=0;row<art.height;row++)for(let col=0;col<art.width;col++)if(data[(row*art.width+col)*4+3]>190){
+          const distance=(col/DETAIL-x)**2+(row/DETAIL-y)**2;if(distance<nearest){nearest=distance;art.flagAnchors[key]={x:col/DETAIL,y:row/DETAIL};}
+        }
+        if(art.flagAnchors[key])return art.flagAnchors[key];
+      }
+    }
+    return art.flagAnchors[key]={x,y};
+  }
+  window.RainbowAssets={DETAIL,buriedRelic,flagAnchor,debrisPose,mountedFlag,worldDetail,gaugeLayer,explosionPose,wreckPose,sceneryArt,pilotPose,pilotFrame,parachutePose,interfaceArt,departurePose,get ready(){return load();},sprite,cowPose,frameFor,get loaded(){return loaded;}};
 })();

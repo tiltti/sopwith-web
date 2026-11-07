@@ -46,6 +46,7 @@ static int building_count;
 void WebVariant_SetEnabled(bool value)
 {
     enabled = value;level_ready=false;emplacement_count=0;
+    WebWingman_Configure(false);
     WebVariant_ResetFlight();
     easy_mode=false;player_was_dead=false;grace_until=0;fire_count=0;
     memset(pilots,0,sizeof(pilots));plane_count=0;
@@ -127,6 +128,7 @@ void WebVariant_ShellImpact(OBJECTS *ob)
 int WebVariant_ObjectKind(const OBJECTS *ob)
 {
     if(!ob)return 0;
+    if(enabled&&WebWingman_Is(ob))return 22;
     if(enabled)for(int i=0;i<64;i++)if(pilots[i].ob==ob)return 21;
     if(enabled)for(int i=0;i<emplacement_count;i++)if(emplacements[i]==ob)return 20;
     return ob->ob_original_ob?ob->ob_original_ob->orient:0;
@@ -140,6 +142,20 @@ static const OBJECTS *weapon_owner(const OBJECTS *ob)
 bool WebVariant_CanCollide(const OBJECTS *a,const OBJECTS *b)
 {
     if(!enabled)return true;
+    /* Escort formation and its own weapons must never punish the player
+     * for the AI's steering. Hostile weapons and terrain still hit it. */
+    const OBJECTS *wa=weapon_owner(a),*wb=weapon_owner(b);
+    if((WebWingman_Is(a)&&b->ob_type==PLANE&&a->ob_faction==b->ob_faction)
+        ||(WebWingman_Is(b)&&a->ob_type==PLANE&&a->ob_faction==b->ob_faction))return false;
+    if((WebWingman_Is(wa)&&wa!=a&&b->ob_faction==wa->ob_faction)
+        ||(WebWingman_Is(wb)&&wb!=b&&a->ob_faction==wb->ob_faction))return false;
+    if((WebWingman_Is(a)&&wb&&wb!=b&&wb->ob_faction==a->ob_faction)
+        ||(WebWingman_Is(b)&&wa&&wa!=a&&wa->ob_faction==b->ob_faction))return false;
+    const OBJECTS *escort=WebWingman_Is(a)?a:WebWingman_Is(b)?b:NULL;
+    const OBJECTS *near=escort==a?b:a;
+    if(escort&&near->ob_type==TARGET&&near->ob_faction==escort->ob_faction&&escort->ob_original_ob
+        &&abs(escort->ob_x-escort->ob_original_ob->x)<110
+        &&(escort->ob_athome||escort->ob_y-ground[escort->ob_x+8]<30))return false;
     /* Native bombs have no young-shot exemption. A rapid salvo can collide
      * with itself, the gun or its releasing plane before clearing the rack. */
     if(a->ob_type==BOMB||b->ob_type==BOMB){
@@ -167,7 +183,7 @@ void WebVariant_PilotHit(OBJECTS *ob,OBJECTS *weapon)
     if(!enabled||!ob||ob->ob_state==FINISHED||!weapon)return;
     bool airborne=ob->ob_state==FALLING;
     int score=0;
-    if(weapon_owner(weapon)==consoleplayer){
+    if(weapon_owner(weapon)==consoleplayer||WebWingman_Is(weapon_owner(weapon))){
         score=airborne?-1000:ob->ob_faction==consoleplayer->ob_faction?-500:100;
         consoleplayer->ob_score.score+=score;
     }
@@ -391,6 +407,17 @@ static void mission_landscape(void)
         }
         ground[x]=(GRNDTYPE)round(height*(1-keep)+currgame->gm_ground[x]*keep);
     }
+    if(mission==2&&consoleplayer){
+        /* A full runway and gentle departure corridor before the city hills.
+         * Preserve the original parking/landing pad and blend continuously. */
+        int home=consoleplayer->ob_original_ob->x+8,base=currgame->gm_ground[home];
+        for(int x=imax(1,home-350);x<imin(width-1,home+350);x++){
+            double d=abs(x-home);if(d<48)continue;
+            double t=fmax(0,fmin(1,(d-185)/165));t=t*t*(3-2*t);
+            double departure=base+fmax(0,fmin(4,(d-65)*.032));
+            ground[x]=(GRNDTYPE)round(departure*(1-t)+ground[x]*t);
+        }
+    }
 }
 void WebVariant_Crater(int left,const GRNDTYPE before[8])
 {
@@ -505,7 +532,8 @@ void WebVariant_Apply(OBJECTS *player)
     if (player->ob_endsts == PLAYING && player->ob_bdelay > 1) player->ob_bdelay = 1;
     if (countmove == last_tick) return;
     if (countmove < last_tick){previous_count = previous_bomb_count = previous_shot_count = bomb_requests = 0;level_ready=false;}
-    if(!level_ready)setup_level();
+    if(!level_ready){WebWingman_ResetLevel();setup_level();}
+    WebWingman_Apply(player);
     bool alive=player->ob_state==FLYING||player->ob_state==STALLED||player->ob_state==WOUNDED||player->ob_state==WOUNDSTALL;
     if(alive&&player_was_dead)grace_until=countmove+30;
     player_was_dead=!alive;

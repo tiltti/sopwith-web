@@ -7,7 +7,7 @@
 <link rel="preload" as="image" href="assets/rainbow-sidebar-buttons-v1.png">
 <meta name="theme-color" content="#183449"><title>Rainbow Patrol — Sopwith Tribute</title>
 <meta name="description" content="Rainbow Patrol: a three-mission flying adventure inspired by Sopwith.">
-<link rel="preload" as="image" href="assets/rainbow-classroom-v1.png"><link rel="stylesheet" href="patrol-fonts.css?v=20261107-ui1"><link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261107-ui1">
+<link rel="preload" as="image" href="assets/rainbow-classroom-v1.png"><link rel="stylesheet" href="patrol-fonts.css?v=20261107-wing3"><link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261107-wing3">
 </head>
 <body data-edition="rainbow" data-layout="arcade" data-game-state="idle">
 <main class="game-column arcade-root" aria-label="Rainbow Patrol">
@@ -75,11 +75,13 @@
       <div class="mission-console pixel-panel"><h2>MISSION SETUP</h2><div class="pixel-menu">
         <div class="mission-picker"><button id="mission-prev" type="button" aria-label="Previous mission">‹</button><span id="mission-name">1 · COAST</span><button id="mission-next" type="button" aria-label="Next mission">›</button></div>
         <select id="start-level" hidden aria-label="Starting mission"><option value="1">1 · COAST</option><option value="2">2 · WINTER VALLEY</option><option value="3">3 · STORM CITY</option></select>
-        <div id="mission-preview" class="mission-preview" role="img" aria-label="Coast mission preview"><svg viewBox="220 280 900 295" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><image id="mission-preview-image" href="assets/rainbow-preview-coast-v1.jpg" width="1280" height="720"/></svg></div><p id="mission-objective" class="mission-objective">Clear the enemy depots and defenses along the coast.</p>
+        <div id="mission-preview" class="mission-preview" role="img" aria-label="Coast mission briefing"><svg viewBox="0 0 600 190" aria-hidden="true"><defs><clipPath id="briefing-crop"><rect width="600" height="190"/></clipPath></defs><g clip-path="url(#briefing-crop)"><image id="mission-preview-image" href="assets/rainbow-preview-coast-v1.jpg" width="600" height="338" y="-145" opacity=".13"/><path id="mission-profile" fill="#637064" fill-opacity=".28" stroke="#465143" stroke-width="2"/><g id="mission-target-marks" fill="none" stroke="#9c3c30" stroke-width="2"/><path id="mission-route" stroke="#76603b" stroke-dasharray="7 5" fill="none"/><g id="mission-base-mark" stroke="#2f594c" fill="#456c54"/><text x="16" y="24" class="briefing-title">MISSION BRIEFING</text><text x="16" y="177" class="briefing-legend">GREEN: BASE · RED: ENEMY DEFENCES</text></g></svg></div><p id="mission-objective" class="mission-objective">Clear the enemy depots and defenses along the coast.</p>
         <div class="difficulty-buttons"><button id="flight-easy" class="pixel-button" aria-pressed="false"><span>ROOKIE</span><small>EASY</small></button><button id="flight-normal" class="pixel-button" aria-pressed="true"><span>ACE</span><small>NORMAL</small></button></div>
+        <p id="difficulty-briefing" class="difficulty-briefing">ACE: ground guns and enemy pilots fire back from mission 1. Full enemy aircraft range and fire rate.</p>
         <select id="difficulty-select" hidden aria-label="Difficulty"><option value="normal">NORMAL</option><option value="easy">EASY</option></select>
         <div class="combat-switches"><button id="ground-fire-toggle" type="button" class="pixel-toggle" aria-pressed="true"><span class="switch-lever" aria-hidden="true"></span><span>GROUND FIRE</span><strong id="ground-fire-state">ON</strong></button>
-        <label class="pixel-toggle"><input type="checkbox" id="enemy-aircraft"><span>ENEMY AIRCRAFT</span></label></div>
+        <label class="pixel-toggle"><input type="checkbox" id="enemy-aircraft"><span>ENEMY AIRCRAFT</span></label>
+        <label class="pixel-toggle"><input type="checkbox" id="ai-wingman" title="Follows your aircraft and engages enemy planes. Returns to base with you."><span>AI WINGMAN</span></label></div>
         <p id="mission-training" class="tiny-text">TRAINER · UNRANKED FLIGHT</p>
         <div class="mission-actions"><button id="start" class="pixel-button green">START FLIGHT</button><button data-close-panel class="pixel-button">BACK</button></div>
       </div></div>
@@ -94,7 +96,7 @@
     </div><select id="palette" hidden aria-label="Classic palette"><option value="0">CGA</option></select></div></section>
     <section id="panel-scores" class="game-layer menu-backdrop auxiliary-panel" hidden><div id="leaderboard" class="pixel-panel score-panel">
       <h2 id="arcade-scores-title">HIGH SCORES</h2><p id="scores-scope" class="tiny-text">SCORES IN THIS BROWSER</p>
-      <div class="score-modes"><label for="scores-mode" class="sr-only">Scoreboard game mode</label><select id="scores-mode"><option value="practice">SINGLE PLAYER</option><option value="combat">AIR COMBAT</option></select><select id="scores-difficulty" aria-label="Scoreboard difficulty"><option value="normal">NORMAL</option><option value="easy">EASY</option></select><button id="scores-refresh" class="pixel-icon" aria-label="Refresh scores">↻</button></div>
+      <div class="score-modes"><label for="scores-mode" class="sr-only">Scoreboard game mode</label><select id="scores-mode"><option value="practice">SINGLE PLAYER</option><option value="combat">AIR COMBAT</option></select><select id="scores-difficulty" aria-label="Scoreboard difficulty"><option value="normal">NORMAL</option><option value="easy">EASY</option></select><select id="scores-crew" aria-label="Scoreboard crew"><option value="solo">SOLO</option><option value="wingman">WINGMAN</option></select><button id="scores-refresh" class="pixel-icon" aria-label="Refresh scores">↻</button></div>
       <table><thead><tr><th>#</th><th>NAME</th><th>SCORE</th><th>LVL</th></tr></thead><tbody id="scores-rows"></tbody></table><p id="scores-status" class="tiny-text" role="status"></p>
       <div class="score-end-actions"><button id="scores-new-flight" class="pixel-button green" hidden>NEW FLIGHT</button><button id="scores-main-menu" class="pixel-button" hidden>MAIN MENU</button><button id="scores-back" data-close-panel class="pixel-button green">BACK</button></div>
     </div></section>
@@ -104,5 +106,5 @@
   <div class="sr-only" aria-live="polite"><span id="status-text">MAIN MENU</span><span id="mode-label">SINGLE PLAYER</span></div>
 </main>
 <noscript>JAVASCRIPT AND WEBASSEMBLY ARE REQUIRED.</noscript>
-<script src="patrol-layout.js?v=20261107-ui1"></script><script src="i18n.js?v=20261107-ui1"></script><script src="app.js?v=20261107-ui1"></script><script src="title-audio.js?v=20261107-ui1"></script><script src="rainbow-ui.js?v=20261107-ui1"></script><script src="leaderboard.js?v=20261107-ui1"></script>
+<script src="patrol-layout.js?v=20261107-wing3"></script><script src="i18n.js?v=20261107-wing3"></script><script src="app.js?v=20261107-wing3"></script><script src="title-audio.js?v=20261107-wing3"></script><script src="rainbow-ui.js?v=20261107-wing3"></script><script src="leaderboard.js?v=20261107-wing3"></script>
 </body></html>

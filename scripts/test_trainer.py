@@ -3,6 +3,7 @@
 """Run real C game rules headlessly; requires a native SDL2 development package."""
 from pathlib import Path
 import os
+import shutil
 import shlex
 import subprocess
 import tempfile
@@ -11,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "third_party/sdl-sopwith/src"
 
 
-def main(test_source="trainer.c"):
+def main(test_source="trainer.c", artifact=None):
     output = ROOT / "build"
     output.mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="trainer-test-", dir=output) as directory:
@@ -19,22 +20,28 @@ def main(test_source="trainer.c"):
         prefs = temporary / "prefs"
         prefs.mkdir()
         flags = ["-std=gnu11", "-DSDL_MAIN_HANDLED", "-I" + str(ROOT / "web"), "-I" + str(SRC)]
+        if os.environ.get("SOPWITH_SANITIZE"):
+            flags += ["-fsanitize=address", "-fno-omit-frame-pointer", "-g"]
         cflags = shlex.split(subprocess.check_output(["pkg-config", "--cflags", "sdl2"], text=True))
         libs = shlex.split(subprocess.check_output(["pkg-config", "--libs", "sdl2"], text=True))
         compiler = os.environ.get("CC", "cc")
         video_object = temporary / "video.o"
         subprocess.run([compiler, *flags, *cflags, "-DVid_GetPrefPath=Native_Vid_GetPrefPath",
                         "-c", str(SRC / "sdl/video.c"), "-o", str(video_object)], check=True)
-        sources = sorted(p for p in SRC.glob("*.c") if p.name not in ("swmove.c", "swcollsn.c"))
+        sources = sorted(p for p in SRC.glob("*.c") if p.name not in ("swmove.c", "swcollsn.c", "video.c"))
         sources += [SRC / "sdl" / name for name in ("pcsound.c", "timer.c", "controller.c")]
-        sources += [ROOT / "web/trainer.c", ROOT / "web/variant.c", ROOT / "web/move.c", ROOT / "web/collisions.c", ROOT / "tests" / test_source]
+        sources += [ROOT / "web/trainer.c", ROOT / "web/variant.c", ROOT / "web/move.c", ROOT / "web/collisions.c", ROOT / "web/video.c", ROOT / "tests" / test_source]
         binary = temporary / "trainer-test"
         subprocess.run([compiler, *flags, *cflags, '-DWEB_TEST_PREF_PATH="' + str(prefs) + '/"',
                         *map(str, sources), str(video_object), *libs, "-lm", "-o", str(binary)], check=True)
         env = os.environ.copy()
         env["SDL_VIDEODRIVER"] = "dummy"
         env["SDL_AUDIODRIVER"] = "dummy"
+        if os.environ.get("SOPWITH_SANITIZE"):
+            env["ASAN_OPTIONS"] = "detect_leaks=0"
         subprocess.run([str(binary)], env=env, check=True, timeout=30)
+        if artifact:
+            shutil.copyfile(prefs / "briefings.json", artifact)
 
 
 if __name__ == "__main__":

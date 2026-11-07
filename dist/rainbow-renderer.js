@@ -226,7 +226,7 @@
         for(let cell=Math.floor(camera/150)-1;cell<(camera+ground.length)/150+1;cell++){
           const seed=Math.imul(cell+131,92821)>>>0,wx=cell*150+20+seed%65,i=Math.floor(wx-camera);
           if(i<0||i>=ground.length)continue;
-          const fossil=window.RainbowAssets?.worldDetail?.(seed%4),w=48+seed%27;
+          const fossil=window.RainbowAssets?.buriedRelic?.(this.mission||0,seed%8)||window.RainbowAssets?.worldDetail?.(seed%4),w=48+seed%27;
           const origin=this.geologyGround?.[Math.max(0,Math.min(this.geologyGround.length-1,wx))]??ground[i];
           const y=Math.min(H-42,(199-origin)*2+27+(seed>>>3)%80);
           if(fossil){c.save();c.globalAlpha=.8;c.drawImage(fossil,i*2-w/2,y,w,w*fossil.height/fossil.width);c.restore();}
@@ -486,14 +486,16 @@
       if(r[0]!==4||r[1]!==5||!r[6]||r[15]===6)return;
       const c=this.c,x=(r[2]-camera)*2-9,base=(199-r[3]+r[8])*2;
       const building=[0,1,2,7].includes(r[15]),style=r[15]===0?0:r[15]===1?2:1;
-      const fixture=window.RainbowAssets?.mountedFlag?.(building?style:0,r[6]);
+      const fixture=window.RainbowAssets?.mountedFlag?.(style,r[6]);
       if(fixture){
         const b=artwork?.artBounds||{x:1,y:1,width:r[7]*2,height:r[8]*2},dw=artwork?.worldWidth??r[7]*2+2,dh=artwork?.worldHeight??r[8]*2+2;
         const left=(r[2]-camera)*2+r[7]-dw/2+b.x,top=(199-r[3])*2+r[8]-dh/2+b.y;
         const width=building?Math.max(10,Math.min(15,b.width*.24)):9,height=width*fixture.height/fixture.width;
-        const fx=style===2&&building?left+b.width*.5-width*.5:building?left+b.width*(style===0?.16:.74)-width*.05:x+5;
-        const fy=building?style===2?top+b.height*.5:top+b.height*(style===0?.26:.55)-height:base-height-2;
-        c.drawImage(fixture,fx,fy,width,height);this.canvas.dataset.flagMount='roof-wall-banner';return;
+        const anchor=window.RainbowAssets.flagAnchor?.(artwork,style,building),mount=fixture.mountAnchor||{x:.18,y:1};
+        const originX=(r[2]-camera)*2+r[7]-dw/2,originY=(199-r[3])*2+r[8]-dh/2;
+        const ax=anchor?.x??b.x+b.width*.28,ay=anchor?.y??b.y+b.height*.6;
+        const fx=originX+ax-mount.x*width,fy=originY+ay-mount.y*height;
+        c.drawImage(fixture,fx,fy,width,height);this.canvas.dataset.flagMount='surface-anchored';return;
       }
       const flag=window.RainbowAssets?.worldDetail?.(r[6]===1?4:5);
       if(flag)c.drawImage(flag,x,base-18,18,18*flag.height/flag.width);
@@ -596,6 +598,7 @@
       hudType(c,subtitle,W/2,y+h*.615,{size:8.5,color:P.gold,align:'center',width:156});
     }
     weather(camera,time){
+      delete this.canvas.dataset.lightning;
       if(this.mission!==2)return;
       const c=this.c;c.save();c.beginPath();c.moveTo(0,0);c.lineTo(W,0);c.lineTo(W,H);c.lineTo(0,H);c.closePath();c.clip();
       c.globalAlpha=.12;rect(c,0,0,W,H,'#122440');c.globalAlpha=.35;
@@ -604,7 +607,15 @@
         polygon(c,[[x,y],[x+1,y],[x-5,y+13],[x-6,y+13]],'#a6c5df');
       }
       const flash=((time%150)+150)%150;
-      if(flash>=72&&flash<74){c.globalAlpha=(74-flash)*.045;rect(c,0,0,W,H,'#c7d8f3');}
+      if(flash>=70&&flash<74){
+        const cycle=Math.floor(time/150),x=100+(cycle*137)%430;
+        c.globalAlpha=flash<71?.24:flash<72?.08:flash<72.8?.30:.06;rect(c,0,0,W,H,'#d8e6ff');
+        c.globalAlpha=flash<71.2||flash>=72&&flash<73?.85:.25;
+        const points=[[x,0],[x-14,35],[x+6,33],[x-24,79],[x-5,72],[x-42,134]];
+        for(let i=1;i<points.length;i++){const [a,b]=[points[i-1],points[i]];polygon(c,[[a[0]-1.5,a[1]],[a[0]+1.5,a[1]],[b[0]+.5,b[1]],[b[0]-.5,b[1]]],'#f1f6ff');}
+        polygon(c,[[x-17,64],[x+8,85],[x+1,82],[x+24,118],[x+11,96]],'#dcecff');
+        this.canvas.dataset.lightning='true';
+      }else delete this.canvas.dataset.lightning;
       c.restore();this.canvas.dataset.weather='rain-thunder';
     }
     drawReady(){
@@ -613,8 +624,7 @@
         this.flightBadge('READY PLAYER 1','LEVEL '+this.readyLevel+'   '+(this.readyLives??5)+' LIVES LEFT',45);
         this.canvas.dataset.readyLevel=String(this.readyLevel);this.canvas.dataset.readyLives=String(this.readyLives??5);
       }else if(this.takeoffHint){
-        const c=this.c;
-        for(const [label,y,scale,color] of [['INCREASE THROTTLE TO TAKE OFF',116,2,P.gold],['X / RIGHT ARROW : INCREASE THROTTLE',135,1,P.cream],['COMMA / UP ARROW : LIFT THE NOSE AT 60 MPH',147,1,P.cream]]){centred(c,label,321,y+1,P.ink,scale);centred(c,label,320,y,color,scale);}
+        this.flightBadge('ADD THROTTLE','X / RIGHT · UP AT 60 MPH',80);
         this.canvas.dataset.takeoffHint='true';
       }
     }
@@ -716,7 +726,8 @@
         if(type===4){this.teamMark(r,camera,sprite);if(r[11]>0&&r[11]<=12&&[0,1,2,7].includes(r[15])&&this.smokeBrush){c.save();c.globalAlpha=.35;for(let p=0;p<3;p++){const t=(time+p*4)%16,s=5+t*.7;c.drawImage(this.smokeBrush,sx+w-s/2+Math.sin(t*.4)*2,sy-t*2-s/2,s,s);}c.restore();}}
         if(type===1)this.drawPlaneFire(r,camera,time);
         if(type===1 && r[10]===0 && r[1]!==3) {
-          rect(c,sx+w-1,sy-6,3,2,P.redShade);rect(c,sx+w,sy-7,1,4,P.redShade);
+          if(r[15]===22)hudType(c,'2',sx+w,sy-8,{size:7,color:P.mint,align:'center'});
+          else {rect(c,sx+w-1,sy-6,3,2,P.redShade);rect(c,sx+w,sy-7,1,4,P.redShade);}
         }
       }
       if(ground?.length)this.terrainWorld(ground,camera,tick);
@@ -751,25 +762,36 @@
     }
     gauge(cx,cy,kind,value,max,label,unit){
       const c=this.c,layer=kind=>window.RainbowAssets?.gaugeLayer?.(kind),ivory=this.gaugeStyle==='ivory',fuel=kind==='fuel',radius=fuel?27:37;
-      const face=layer(ivory?'ivory':'dark'),ink=ivory?'#392c23':P.cream,diameter=radius*2.24;
+      const face=layer(ivory?'ivory':'dark'),ink=ivory?'#392c23':this.mission===2?'#f6ce83':P.cream,diameter=radius*2.24,alt=kind==='altitude';
       if(face)c.drawImage(face,cx-diameter/2,cy-diameter/2,diameter,diameter);
       else {c.fillStyle=P.ink;c.beginPath();c.ellipse(cx,cy,radius,radius,0,0,Math.PI*2);c.fill();}
-      const steps=fuel?8:kind==='altitude'?24:20,major=4,outer=fuel?19:27,labels=fuel?12.5:20;
+      const steps=fuel?8:alt?50:20,major=alt?5:4,outer=fuel?19:27,labels=fuel?12.5:20;
       for(let i=0;i<=steps;i++){
-        const a=(135+i/steps*270)*Math.PI/180,dx=Math.cos(a),dy=Math.sin(a),inner=outer-(i%major===0?4:2);
+        if(alt&&i===steps)continue;
+        const a=((alt?-90:135)+i/steps*(alt?360:270))*Math.PI/180,dx=Math.cos(a),dy=Math.sin(a),inner=outer-(i%major===0?4:2);
         polygon(c,[[cx+dx*inner-dy*.25,cy+dy*inner+dx*.25],[cx+dx*outer-dy*.25,cy+dy*outer+dx*.25],[cx+dx*outer+dy*.25,cy+dy*outer-dx*.25],[cx+dx*inner+dy*.25,cy+dy*inner-dx*.25]],ink);
-        if(i%major===0){const n=Math.round(i/steps*max),t=fuel?(i===0?'E':i===steps?'F':'1/2'):String(n);hudType(c,t,cx+dx*labels,cy+dy*labels-3,{size:fuel?5.2:kind==='altitude'?4.8:5.7,color:ink,align:'center',serif:true});}
+        if(i%major===0){const n=alt?i/5:Math.round(i/steps*max),t=fuel?(i===0?'E':i===steps?'F':'1/2'):String(n);hudType(c,t,cx+dx*labels,cy+dy*labels-3,{size:fuel?5.2:alt?5.7:5.7,color:ink,align:'center',serif:true});}
+      }
+      if(kind==='speed'){
+        for(let n=0;n<52;n+=2){const a=(135+n/max*270)*Math.PI/180,b=(135+(n+2)/max*270)*Math.PI/180;polygon(c,[[cx+Math.cos(a)*29,cy+Math.sin(a)*29],[cx+Math.cos(b)*29,cy+Math.sin(b)*29],[cx+Math.cos(b)*30.5,cy+Math.sin(b)*30.5],[cx+Math.cos(a)*30.5,cy+Math.sin(a)*30.5]],'#ba6857');}
+        const a=(135+60/max*270)*Math.PI/180,dx=Math.cos(a),dy=Math.sin(a);polygon(c,[[cx+dx*26,cy+dy*26],[cx+dx*32-dy*2,cy+dy*32+dx*2],[cx+dx*32+dy*2,cy+dy*32-dx*2]],'#80bca7');
+        hudType(c,'VS 52 · TO 60',cx,cy+16,{size:3.8,color:ink,align:'center',width:44});this.canvas.dataset.speedMarks='stall-52-takeoff-60';
       }
       hudType(c,label,cx,cy-9,{size:fuel?5:6,color:ivory?'#725026':P.gold,align:'center',serif:true});if(unit)hudType(c,unit,cx,cy+8,{size:5.2,color:ink,align:'center',serif:true});
-      const a=(135+Math.max(0,Math.min(1,value/max))*270)*Math.PI/180,hand=layer(ivory?'blue':'brass');
+      const a=(alt?-90+((value%1000+1000)%1000)/1000*360:135+Math.max(0,Math.min(1,value/max))*270)*Math.PI/180,hand=layer(ivory?'blue':'brass');
+      if(alt&&hand){c.save();c.translate(cx,cy);c.rotate((-90+((value%10000+10000)%10000)/10000*360)*Math.PI/180+Math.PI/2);c.drawImage(hand,-radius*.48,-radius*.48,radius*.96,radius*.96);c.restore();this.canvas.dataset.altimeter='two-hand-hundreds-thousands';}
       if(hand){c.save();c.translate(cx,cy);c.rotate(a+Math.PI/2);c.drawImage(hand,-radius*.8,-radius*.8,radius*1.6,radius*1.6);c.restore();}
       else{const dx=Math.cos(a),dy=Math.sin(a);polygon(c,[[cx-dy,cy+dx],[cx+dx*radius*.65,cy+dy*radius*.65],[cx+dy,cy-dx]],P.gold);}
       const glass=layer('glass');if(glass){c.save();c.globalAlpha=.7;c.drawImage(glass,cx-diameter/2,cy-diameter/2,diameter,diameter);c.restore();}
-      hudType(c,fuel?Math.round(value)+'%':Math.round(value),cx,cy+radius+4,{size:6,align:'center'});
+      hudType(c,fuel?Math.round(value)+'%':alt?String(Math.round(value)).padStart(4,'0')+' FT':Math.round(value),cx,cy+radius+4,{size:6,align:'center'});
     }
     hud(s,objects,trainer,ground) {
       const c=this.c,art=kind=>window.RainbowAssets?.interfaceArt?.(kind);c.save();c.translate(0,H);
       const panel=art('panel');rect(c,0,0,W,HUD,'#3b281e');if(panel)c.drawImage(panel,0,0,W,HUD);
+      if(this.mission===2){
+        c.globalAlpha=.54;rect(c,0,0,W,HUD,'#0a182a');c.globalAlpha=1;
+        for(const x of [144,472,542]){const glow=c.createRadialGradient(x,10,1,x,30,52);glow.addColorStop(0,'rgba(247,166,62,.28)');glow.addColorStop(1,'rgba(247,166,62,0)');c.fillStyle=glow;c.fillRect(x-52,0,104,90);}
+      }
       const score=art('score'),nav=art('map'),ammo=art('counter');
       if(score)c.drawImage(score,6,7,100,46);else rect(c,10,12,92,34,P.ink);
       hudType(c,'SCORE',56,21,{size:6,color:P.gold,align:'center',serif:true});
@@ -818,8 +840,21 @@
       this.canvas.dataset.flightCondition=s[13]===3?'crashed':s[13]===4?'falling':stalled?'stall':altitude<10?'taxi':s[11]<minimum?'low-airspeed':'flying';
       if(stalled){hudType(c,'STALL : LOWER NOSE + THROTTLE',310,80,{size:6.5,color:P.red,align:'center',width:205});this.canvas.dataset.notification='STALL';}
       else if(s[12]===0&&[1,8].includes(s[13])&&altitude>50&&s[11]<minimum){hudType(c,'AIRSPEED LOW : ADD POWER',310,80,{size:6.5,color:P.gold,align:'center',width:205});this.canvas.dataset.notification='AIRSPEED LOW';}
-      else if(target){const label=target.size<0?'FRIENDLY TARGET HIT':'TARGET DESTROYED';hudType(c,label,310,80,{size:7,color:target.size<0?P.red:P.gold,align:'center',width:205});this.canvas.dataset.notification=label;}
+      else if(target){const building=[1,2,3,8].includes(Math.abs(target.size)),label=target.size<0?'FRIENDLY TARGET HIT':building?'BUILDING DESTROYED':'TARGET DESTROYED';hudType(c,label,310,80,{size:7,color:target.size<0?P.red:P.gold,align:'center',width:205});this.canvas.dataset.notification=label;}
       else {delete this.canvas.dataset.notification;if(s[12]===1)hudType(c,'MISSION COMPLETE',310,80,{size:6.5,color:P.gold,align:'center',width:205});else if(s[13]===3)hudType(c,'PLANE LOST',310,80,{size:6.5,color:P.red,align:'center',width:205});else if(s[16])hudType(c,'RETURNING TO BASE',310,80,{size:6.5,color:P.cream,align:'center',width:205});}
+      const escort=objects.find(r=>r[15]===22),separation=escort?Math.hypot(escort[2]-s[4],escort[3]-s[5]):0;
+      this.canvas.dataset.wingman=escort?escort[14]===3&&separation>110?'JOINING':['OFF','WAITING','TAKEOFF','FORMATION','ENGAGING','RETURNING','LOST'][escort[14]]||'FORMATION':'OFF';
+      this.canvas.dataset.wingmanSeparation=String(Math.round(separation));
+      if(escort)hudType(c,'2 '+this.canvas.dataset.wingman,420,88,{size:4.5,color:P.mint,align:'right',width:100});
+      if(objects.some(r=>r[10]&&r[15]===23))hudType(c,'TURNING BACK',310,80,{size:6.5,color:P.gold,align:'center',width:205});
+      if(this.mission===1){
+        for(let i=0;i<60;i++){
+          const x=(i*113)%W,y=i%3===0?1:HUD-2,w=2+(i%4);
+          c.globalAlpha=.24+(i%3)*.08;polygon(c,[[x-w,y],[x,y+(y<10?1:-1)*(3+i%5)],[x+w,y],[x+1,y+(y<10?-2:2)]],'#d6eff3');
+        }c.globalAlpha=1;
+        for(const x of [144,472,542]){c.globalAlpha=.16;polygon(c,[[x-23,20],[x-15,15],[x-7,17],[x-18,27],[x-29,32]],'#e1f4f7');c.globalAlpha=1;}
+      }
+      this.canvas.dataset.cockpitClimate=['clear','frost','night-lit'][this.mission||0];
       c.restore();
     }
     demo() {

@@ -1,0 +1,20 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-city-relics-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2344354,
+      "sha256": "90ce9159722b432b306879b428540e4e609db7d16eb0f1765fd7f5e8bc6b86bc"
+    },
+    {
+      "path": "dist/assets/rainbow-winter-relics-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2218497,
+      "sha256": "dc0faf3c573fcb611a36d0adf458277119d6089ff9a9f96514bf8f837a3f209f"
+    }
+  ]
+}

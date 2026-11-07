@@ -341,3 +341,26 @@ including chalk gaps. `scripts/build_patrol_fonts.py` is their editable source
 with pinned dependencies; `web/patrol-fonts-v15.json` records derived hashes.
 These fonts and original artwork are distributed with the GPL-2.0-or-later game.
 No paid provider/API/CLI or third-party commercial-game files were used.
+
+## Climate-specific buried discoveries (2026-11-07)
+
+`rainbow-winter-relics-v1.png` has eight frost-edged discoveries: mammoth tusks,
+antlers, quartz, an antique sledge, ancient pine, slate fossils, a cellar arch
+and old climbing tools. `rainbow-city-relics-v1.png` has eight buried industrial
+ruins: drains, a railway wheel, workshop gears, broken biplane structure, water
+pipes, a cellar, iron girder and supply crates. Winter/storm use their own atlas;
+coast retains its original fossils. Four-by-two cell crops happen at runtime.
+
+Both original built-in imagegen PNGs were shown in chat and preserved unchanged
+with real alpha. This project's own `rainbow-world-details-v1.png` supplied the
+style reference. Exact prompts and output hashes are in
+`web/wingman-weather-v16-prompts.json` and `wingman-weather-v16-files.json`.
+The art is distributed with the GPL-2.0-or-later game; no commercial-game files
+or paid-provider API/CLI workflow were used.
+
+Flags now anchor their fixture to measured opaque roof/facade pixels in each
+prepared sprite. No extra flag texture was generated. Winter frost and night
+lamps are original Canvas layers over the unchanged brass/wood instrument art;
+the dial markings, dual altimeter hands and glass remain separate live layers.
+The briefing chart is live SVG on a paper-colour face, generated from native
+terrain/target records; it is not a replacement gameplay screenshot.

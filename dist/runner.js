@@ -146,7 +146,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261107-ui1',
+      locateFile: name => 'engine/' + name + '?v=20261107-wing3',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -168,6 +168,7 @@
     window.sopwith = game;
     game._web_variant(params.get('edition') === 'rainbow' ? 1 : 0);
     game._web_easy?.(params.get('edition')==='rainbow'&&params.get('difficulty')==='easy'?1:0);
+    game._web_wingman?.(params.get('edition')==='rainbow'&&params.get('wingman')==='1'?1:0);
     game._web_trainer(trainerEnabled ? 1 : 0);
     if(params.get('edition')==='rainbow'&&window.RainbowAudio)sampleMixer=new RainbowAudio({startup:params.get('muted')==='0'});
     if (params.get('edition') === 'rainbow' && window.RainbowRenderer) {

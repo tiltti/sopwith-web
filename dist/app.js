@@ -8,6 +8,7 @@
   const trainerToggle = edition === 'rainbow' ? $('settings-trainer') : null;
   const difficultySelect=edition==='rainbow'?$('difficulty-select'):null;
   const enemyAircraft=edition==='rainbow'?$('enemy-aircraft'):null;
+  const wingman=edition==='rainbow'?$('ai-wingman'):null;
   const keys = { ArrowUp:54, Comma:54, ArrowDown:56, Slash:56, ArrowRight:27, KeyX:27, ArrowLeft:29, KeyZ:29, Period:55, KeyB:5, Space:44, KeyH:11, KeyS:22 };
   let state = 'idle', muted = true, bootTimer, mode = 'practice';
   let inputMode = 0, trainerEnabled = edition==='rainbow';
@@ -62,7 +63,7 @@
     $('loading-text').textContent = 'Ladataan peliä…';
     $('mode-label').textContent = mode === 'combat' ? '/ ILMATAISTELU' : edition==='rainbow'?'/ YKSINPELI':'/ HARJOITTELU';
     frame.hidden = false;
-    const levelQuery=startLevel?'&level='+(trainerEnabled&&['1','2','3'].includes(startLevel.value)?startLevel.value:'1')+'&difficulty='+(difficultySelect?.value==='easy'?'easy':'normal'):'';
+    const levelQuery=startLevel?'&level='+(trainerEnabled&&['1','2','3'].includes(startLevel.value)?startLevel.value:'1')+'&difficulty='+(difficultySelect?.value==='easy'?'easy':'normal')+'&wingman='+(wingman?.checked?'1':'0'):'';
     frame.src = `runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&trainer=${trainerEnabled ? 1 : 0}&edition=${edition}&aim=${aimToggle?.checked === false ? 0 : 1}&run=${Date.now()}${levelQuery}`;
     clearTimeout(bootTimer);
     bootTimer = setTimeout(() => fail('Pelin lataaminen kesti liian kauan. Tarkista yhteys ja yritä uudelleen.'), 45000);
@@ -136,6 +137,7 @@
   }
   trainerToggle?.addEventListener('click',()=>window.trainer(!trainerEnabled));syncTrainer();
   if(enemyAircraft){enemyAircraft.checked=loadPref('rainbow.enemy-aircraft','0')==='1';enemyAircraft.addEventListener('change',()=>savePref('rainbow.enemy-aircraft',enemyAircraft.checked?'1':'0'));}
+  if(wingman){wingman.checked=loadPref('rainbow.ai-wingman','0')==='1';wingman.addEventListener('change',()=>savePref('rainbow.ai-wingman',wingman.checked?'1':'0'));}
   if(difficultySelect){
     difficultySelect.value=loadPref('rainbow.difficulty','normal')==='easy'?'easy':'normal';
     difficultySelect.addEventListener('change',()=>savePref('rainbow.difficulty',difficultySelect.value));

@@ -65,6 +65,8 @@
         return clunk+sine(1600*Math.exp(-t*.7)+220+12*Math.sin(t*32))*Math.min(1,t/.025)*Math.max(0,1-t/3.2)*.42;
       });
       make('cannon',.85,(t,n,sine)=>(n*.55+sine(100*Math.exp(-t*12)+42)*.65)*Math.exp(-t*7)*Math.min(1,t/.003));
+      let rumble=0;
+      make('thunder',2.8,(t,n,sine)=>{rumble=rumble*.94+n*.06;return (rumble*3+sine(43+9*Math.sin(t*3))*.15)*Math.min(1,t/.03)*Math.exp(-t*1.1)*(1+.35*Math.sin(t*14));});
     }
     play(channel,name,{gain=.2,rate=1,pan=0,duration,loop=false,priority=0}={}) {
       if(!this.enabled||!this.buffers[name])return null;
@@ -119,7 +121,7 @@
           engine.source.playbackRate.setTargetAtTime(Math.min(1.5,.64+throttle*.4+speed*.18+descent*.012),this.context.currentTime,.2);
           engine.gain.gain.setTargetAtTime(scene[17]?.065:Math.min(.16,.065+throttle*.055+speed*.025+descent*.0015),this.context.currentTime,.2);
         }
-        if(scene[18]%3===2&&tick%150===74)this.play('fx','boom',{gain:.14,rate:.5,priority:0});
+        if(scene[18]%3===2&&tick%150===77)this.play('fx','thunder',{gain:.3,rate:1,pan:Math.sin(Math.floor(tick/150)*2)*.5,priority:1});
       } else this.stop('engine');
       if(audible) {
         let shot=null;

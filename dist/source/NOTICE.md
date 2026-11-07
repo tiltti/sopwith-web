@@ -231,3 +231,13 @@ No commercial-game imagery is distributed.
 Corresponding sources are split into `sopwith-web-source.tar.gz` and
 `sopwith-web-audio-source.tar.gz`, both extracting into `sopwith-web/`. The
 audio part retains all media and its original attribution/license records.
+
+## Winter and city discoveries (2026-11-07)
+
+The eight winter discoveries and eight buried city/industrial relics are
+original built-in OpenAI imagegen artwork, distributed with this GPL-2.0-or-later
+game. Only this project's own world-detail sheet was used as a style reference.
+Unchanged PNGs are in `dist/assets/rainbow-{winter,city}-relics-v1.png`; exact
+prompts, dimensions and hashes are in `web/wingman-weather-v16-*.json`.
+Thunder is an additional original synthesized cue in `dist/rainbow-audio.js`,
+not a new third-party recording.

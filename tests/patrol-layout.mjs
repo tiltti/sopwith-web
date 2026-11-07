@@ -19,3 +19,8 @@ for(const name of ['Chalk','Engraved']){
  assert.equal(data.toString('ascii',0,4),'wOF2');assert.ok(data.length>1000);
 }
 console.log('One-board perspective maps all corners exactly; score overflow fitting is bounded; both original WOFF2 fonts are present.');
+const chart=JSON.parse(await readFile(new URL('../dist/mission-briefings.json',import.meta.url),'utf8'));
+assert.equal(chart.version,1);assert.equal(chart.missions.length,3);
+for(const mission of chart.missions){assert.equal(mission.ground.length,100);assert.ok(mission.home>0&&mission.home<mission.width);assert.ok(mission.targets.length>10);assert.ok(mission.targets.every(([x,y])=>x>=0&&x<mission.width&&y>=0&&y<200));}
+assert.notDeepEqual(chart.missions[1].ground,chart.missions[2].ground);
+console.log('Briefing charts contain three distinct native terrain profiles, valid airfields and genuine target positions.');

@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 23085,
-      "sha256": "e042b2884d58910c8c5b1d027a0253fd608289f7e0f5c66a737abed733bde40f"
+      "bytes": 24498,
+      "sha256": "a0c0ee5c5d31d940f30f396ef59ed20abb882cb36ad7801c901271613c52ad9c"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -283,6 +283,11 @@
       "sha256": "18e17ded5c018d114676c787dbde0fff40ec5f74e7be92b975b189cedca6f2f7"
     },
     {
+      "path": "dist/assets/rainbow-city-relics-v1.png",
+      "bytes": 2344354,
+      "sha256": "90ce9159722b432b306879b428540e4e609db7d16eb0f1765fd7f5e8bc6b86bc"
+    },
+    {
       "path": "dist/assets/rainbow-classroom-v1.png",
       "bytes": 3016783,
       "sha256": "eb7fc2569dba93d4ab6550f723f81f9ad78eab36a7cd476db3bd97ccc3881884"
@@ -466,6 +471,11 @@
       "path": "dist/assets/rainbow-winter-city-targets-v1.png",
       "bytes": 2151340,
       "sha256": "7e97faf5e8a611704690fc3be0f38cdcc3c75647423a24c4d74fae99d2da146d"
+    },
+    {
+      "path": "dist/assets/rainbow-winter-relics-v1.png",
+      "bytes": 2218497,
+      "sha256": "dc0faf3c573fcb611a36d0adf458277119d6089ff9a9f96514bf8f837a3f209f"
     },
     {
       "path": "dist/assets/rainbow-winter-scenery-v1.png",
