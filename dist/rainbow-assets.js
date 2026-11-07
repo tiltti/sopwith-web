@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),airfields=new Image(),water=new Image(),ruins=new Image(),flags=new Image(),damaged=new Image(),extraRuins=new Image(),cityRelics=new Image(),winterRelics=new Image(),cache=new Map(),footprints=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),airfields=new Image(),water=new Image(),ruins=new Image(),flags=new Image(),damaged=new Image(),extraRuins=new Image(),cityRelics=new Image(),winterRelics=new Image(),throttleArt=new Image(),cache=new Map(),footprints=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -33,7 +33,7 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=31,okay=true;
+    let remaining=32,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
@@ -47,6 +47,8 @@
     details.onload=()=>done(details.width===1536&&details.height===1024);
     blasts.onload=()=>done(blasts.width===1536&&blasts.height===1024);
     for(const img of [winter,storm,worldDetails,missionTargets,materials,airfields,water,ruins,flags,damaged,extraRuins,cityRelics,winterRelics]){img.onload=()=>done(img.width===1536&&img.height===1024);img.onerror=()=>done(false);}
+    throttleArt.onload=()=>done(throttleArt.width===1536&&throttleArt.height===1024);throttleArt.onerror=()=>done(false);
+    throttleArt.src='assets/rainbow-throttle-lever-v1.png';
     gauges.onload=()=>done(gauges.width===1536&&gauges.height===1024);
     instruments.onload=()=>done(instruments.width===1536&&instruments.height===1024);
     turf.onload=()=>done(turf.width===1536&&turf.height===1024);
@@ -189,7 +191,9 @@
     const pieces={fuel:[[22,20,460,450],56,56],map:[[526,101,488,281],246,62],score:[[1047,112,467,267],100,46],bomb:[[153,538,207,464],9,20],ammo:[[520,647,491,194],64,28],home:[[1074,541,415,419],14,14]};
     const detailPieces={lives:[[18,177,352,195],55,23],level:[[439,178,280,194],34,23],counter:[[786,177,352,195],54,27],bombRack:[[1171,180,351,183],55,30],you:[[15,714,356,93],33,9],friend:[[399,714,356,93],48,9],enemy:[[783,714,356,93],46,9],birds:[[1167,714,356,93],46,9]};
     let sheet,crop,w,h;
-    if(detailPieces[kind]){[crop,w,h]=detailPieces[kind];sheet=details;}
+    if(kind==='throttleBase'){sheet=throttleArt;crop=[34,430,1173,266];w=92;h=14;}
+    else if(kind==='throttleLever'){sheet=throttleArt;crop=[1269,216,195,430];w=7;h=15.44;}
+    else if(detailPieces[kind]){[crop,w,h]=detailPieces[kind];sheet=details;}
     else if(pieces[kind]){[crop,w,h]=pieces[kind];sheet=instruments;}
     else [sheet,crop,w,h]=kind==='badge'?[badge,[12,200,1512,600],360,360*600/1512]
       :kind==='panel'?[cockpit,[0,0,1536,512],640,96]
@@ -197,7 +201,7 @@
       :[cockpit,[kind==='altitude'?536:24,524,459,468],56,56];
     const out=document.createElement('canvas');out.worldWidth=w;out.worldHeight=h;out.width=Math.ceil(w*DETAIL);out.height=Math.ceil(h*DETAIL);
     const context=out.getContext('2d');
-    if(['panel','map','score','lives','level','counter','bombRack'].includes(kind)){
+    if(['panel','map','score','lives','level','counter','bombRack','throttleBase'].includes(kind)){
       // Uniformly scaled corner pieces keep rivets circular. Only the wood
       // and straight border centres stretch to the cockpit's wide aspect.
       const [sx,sy,sw,sh]=crop,edge=Math.min(sw,sh)*.24,scale=out.height/sh,pad=edge*scale;

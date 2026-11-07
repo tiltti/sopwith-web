@@ -40,6 +40,7 @@ void WebVariant_MoveXY(OBJECTS *ob,int *x,int *y);
 void WebVariant_ResetFlight(void){flight_speed=0;throttle=0;last_flight_tick=-1;flight_dead=flight_ready=ground_roll=edge_turn=false;low_speed_ticks=0;}
 int WebVariant_Throttle(void){return WebVariant_IsEnabled()?throttle*100/16:consoleplayer?consoleplayer->ob_accel*100/MAX_THROTTLE:0;}
 int WebVariant_Speed(void){return (int)round(flight_speed);}
+int WebVariant_SpeedMilli(void){return (int)round(flight_speed*1000);}
 bool WebVariant_IsTaxiing(void){return WebVariant_IsEnabled()&&ground_roll;}
 bool WebVariant_IsTurning(void){return WebVariant_IsEnabled()&&edge_turn;}
 bool moveplyr(OBJECTS *ob)
@@ -74,7 +75,12 @@ void WebVariant_MoveXY(OBJECTS *ob,int *x,int *y)
         if(ob->ob_endsts==PLAYING&&!ob->ob_home&&!ob->ob_goingsun
             &&(ob->ob_state==FLYING||ob->ob_state==WOUNDED)){
             static const int gravity[]={0,-1,-2,-3,-4,-3,-2,-1,0,1,2,3,4,3,2,1};
-            double target=ground_roll?throttle:throttle?2+throttle*.875+gravity[ob->ob_angle%16]*.7:1.2+gravity[ob->ob_angle%16]*.65;
+            /* At idle a descent trades altitude for airspeed. The old idle
+             * target stayed below stall even in a vertical dive, and its
+             * separate power branch would make a tiny throttle increase
+             * reduce speed. Blend both continuously; retain full-power pace. */
+            double power=throttle/16.0,g=gravity[ob->ob_angle%16];
+            double target=ground_roll?throttle:2.8+13.2*power+g*(g>0?2.0-1.3*power:.7);
             target=fmax(0,fmin(18,target));
             double change=target-flight_speed;
             flight_speed+=fmax(-.28,fmin(.24,change));

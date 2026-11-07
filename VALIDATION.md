@@ -1,3 +1,27 @@
+## Pause shelter, throttle and flight review — 2026-11-07
+
+- Original pause/background and transparent throttle-control PNGs are shown
+  and preserved unchanged; prompts/hashes are in web/pause-flight-v20-*.json.
+  Local silent/windowed 1280×720: the pause slate fits 341/341, with the pilot
+  visible head to boots. Resume/P freeze and restore the real simulation.
+  The cockpit shows a sliding grip instead of the old bar/percentage, and a
+  held X moved it to about half power on the actual game canvas. Proofs:
+  parent research/review-2026-11-07/{pause-v20-local,throttle-v20-local}.jpg.
+- The prior idle descent equilibrium was below the level stall threshold even
+  in a vertical dive. The new power/angle blend permits idle glides and gives
+  steeper descents greater speed, without a discontinuity at the first power
+  step. Full-power level target, dive cap, takeoff threshold, climb stalls and
+  original stall recovery remain. Real native tests hold all four downward
+  angles for 60 ticks, compare their settled speeds and all 17 throttle detents
+  in a dive; no tested detent slows the plane as power increases.
+- Fractional speed now reaches the Float64 display snapshot through a new
+  read-only bridge field; the native Int32 scene ABI is unchanged. The runner
+  test verifies 6.25 rather than a rounded whole speed. Throttle rendering
+  checks IDLE/half/FULL travel and absence of a digital throttle percentage.
+- The existing launch/low-speed-climb/recovery tests pass. Return-to-base
+  remains 90/90 Rainbow and the unchanged 28/30 Classic baseline. Escort
+  formation/combat, both edge impacts and 4000 native stress steps pass.
+
 ## Settings workshop — 2026-11-07
 
 - The original workshop PNG is preserved unchanged, with prompt and hash in

@@ -195,5 +195,21 @@ int main(void){
     for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(ob->ob_type==TARGET)assert(ob->ob_state!=STANDING);
     WebTrainer_SetEnabled(false);
     puts("Sixteen throttle steps accelerate smoothly beyond the old maximum, half throttle sustains lower speed, trainer E clears targets and starts native departure.");
+    /* Hold altitude only to isolate the flight envelope from terrain/ceiling
+     * collisions while still executing the actual native player move. */
+    int last_glide_speed=20000;
+    for(int angle=12;angle<=15;angle++){
+        fresh();p=consoleplayer;p->ob_x=1200;p->ob_y=170;p->ob_athome=false;p->ob_speed=6;p->ob_angle=angle;
+        for(int n=0;n<60;n++){p->ob_x=1200;p->ob_y=170;p->ob_angle=angle;++countmove;latest_player_commands[p->ob_plrnum][countmove%MAX_NET_LAG]=0;moveplyr(p);assert(p->ob_state==FLYING);if(n==0&&angle==12)assert(WebVariant_SpeedMilli()>6000&&WebVariant_SpeedMilli()<7000);}
+        assert(WebVariant_Throttle()==0&&WebVariant_SpeedMilli()>=4800);
+        assert(WebVariant_SpeedMilli()<last_glide_speed);last_glide_speed=WebVariant_SpeedMilli();
+    }
+    int last_dive_speed=0;
+    for(int setting=0;setting<=16;setting++){
+        fresh();p=consoleplayer;p->ob_x=1200;p->ob_y=170;p->ob_athome=false;p->ob_speed=6;p->ob_angle=14;
+        for(int n=0;n<100;n++){p->ob_x=1200;p->ob_y=170;p->ob_angle=14;++countmove;latest_player_commands[p->ob_plrnum][countmove%MAX_NET_LAG]=n<setting?K_ACCEL:0;moveplyr(p);assert(p->ob_state==FLYING);}
+        assert(WebVariant_SpeedMilli()>=last_dive_speed);last_dive_speed=WebVariant_SpeedMilli();
+    }
+    puts("Idle descents glide above stall; deeper dives gather airspeed. Every throttle detent increases settled dive speed, including the transition out of idle.");
     return 0;
 }

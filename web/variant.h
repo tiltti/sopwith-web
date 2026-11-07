@@ -31,6 +31,7 @@ bool WebWingman_Is(const OBJECTS *ob);
 int WebWingman_Status(void);
 int WebVariant_Throttle(void);
 int WebVariant_Speed(void);
+int WebVariant_SpeedMilli(void);
 bool WebVariant_IsTaxiing(void);
 bool WebVariant_IsTurning(void);
 bool WebVariant_TargetSurvives(OBJECTS *target,OBJECTS *weapon);

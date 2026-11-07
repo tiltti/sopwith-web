@@ -144,6 +144,18 @@ Rainbow automatically turns back before either world edge, using a short
 climbing arc without an artificial boundary stall. Storm City's airfield has
 a gently graded departure corridor before its mountain/city terrain.
 
+## Manual flight and cockpit throttle
+
+X/Z moves a mechanical brass/bakelite throttle through sixteen power settings.
+Takeoff still needs about 60 MPH; a slow climb can stall and recovery requires
+lowering the nose and adding power. Idle descents now exchange altitude for
+speed, including a stable shallow glide. Power blends continuously out of idle
+so adding a little throttle cannot slow a settled dive. Full-power level speed,
+the dive cap and original pitch/roll controls are retained. The display gets
+fractional speed through read-only `web_read(13)` (native units ×1000), avoiding
+the previous whole-unit steps without changing the integer scene ABI.
+Pause has its own shelter scene, with controls on the left-hand physical slate.
+
 ## Art-direction studies
 
 [Compare A/B/C](https://tiltti.github.io/sopwith-web/look-lab.html) renders the

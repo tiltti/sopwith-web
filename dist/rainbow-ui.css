@@ -47,6 +47,14 @@
 .entry-board .initial-column.active .initial-char{color:#211108;border-color:#613414;text-shadow:0 -.7px .3px #140902bf,0 1px .3px #ffe6b6d9}
 .entry-board .current td:first-child:before{color:inherit}
 /* Settings belongs to the ground crew's workshop, on its left-hand slate. */
+.pause-room{background:#463421 url('assets/rainbow-pause-rest-v1.png') 0 0 / 100% 100% no-repeat;overflow:hidden}
+#paused{padding:0}
+#paused .pause-panel{position:absolute;left:8%;top:20%;width:34%;height:49%;max-height:none;padding:0;border:0;background:none;overflow:hidden}
+#paused h2{min-height:0;justify-content:flex-start;margin:0 0 calc(2*var(--u));padding:0;background:none;color:#e6e3cc;font:clamp(22px,calc(3.1*var(--u)),42px)/1.1 var(--chalk);text-shadow:none}
+#paused .pixel-menu{gap:calc(1.5*var(--u))}
+#paused .pixel-button{min-height:calc(4.4*var(--u));font-size:clamp(13px,calc(1.7*var(--u)),24px)}
+#paused .menu-link{font-size:clamp(11px,calc(1.3*var(--u)),18px);margin-top:calc(.5*var(--u))}
+@media(max-width:700px) and (orientation:portrait){.pause-room{background-size:auto 100%;background-position:left center}#paused .pause-panel{left:15%;width:73%}#paused .pixel-menu{gap:9px}#paused .pixel-button{min-height:34px}}
 .workshop-room{background:#392d20 url('assets/rainbow-settings-workshop-v1.png') 0 0 / 100% 100% no-repeat;overflow:hidden}
 .settings-console.pixel-panel{position:absolute;left:7.7%;top:12.5%;width:33.8%;height:72%;max-height:none;padding:0;border:0;background:none;text-align:left;overflow:hidden}
 .settings-console h2{justify-content:flex-start;min-height:0;margin:0 0 calc(2*var(--u));padding:0;background:none;color:#e6e3cc;font:clamp(20px,calc(3.1*var(--u)),42px)/1.1 var(--chalk);text-shadow:none}

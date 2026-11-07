@@ -142,10 +142,10 @@ await pageTests();
     FS:{mkdir(){},mount(){},syncfs(initial,cb){cb(null);},mkdirTree(){},
       analyzePath(){return {exists:false};},writeFile(){},readFile(){return '';}}
     ,_web_variant(){},_web_trainer(){},_web_palette(){},_web_key(){},_web_sound(){},
-    _web_bomb:x=>bombChanges.push(x),_web_input_mode:()=>inputMode,_web_read:n=>n===9?end:n===0?tick:160,
+    _web_bomb:x=>bombChanges.push(x),_web_input_mode:()=>inputMode,_web_read:n=>n===9?end:n===0?tick:n===13?6250:160,
     _web_scene:()=>0,_web_effects:()=>20000,_web_pause:x=>pauseChanges.push(x),callMain(){}};
   const parent={postMessage:msg=>sent.push(msg)};
-  class Renderer{static LENGTH=4444;drawScene(s){aimFrames.push(this.bombHeld);return s[3]>0;}}
+  class Renderer{static LENGTH=4444;drawScene(s){assert.equal(s[11],6.25,'Fractional native airspeed reaches the display without integer rounding.');aimFrames.push(this.bombHeld);return s[3]>0;}}
   const scope={document:{getElementById:id=>id==='canvas'?normal:display},
     location:{origin,search:'?edition=rainbow&muted=1'},parent,URLSearchParams,
     createSopwith:async()=>engine,RainbowRenderer:Renderer,console,

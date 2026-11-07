@@ -120,6 +120,10 @@ console.log('Ground contact on hills, audio-only reactions and compact READY tex
 scene[11]=8;scene[4]=152;scene[5]=100;renderer.hud(scene,[],false,ground);
 assert.equal(display.dataset.airspeed,'89');assert.equal(display.dataset.altitude,'1444');
 console.log('Cockpit instruments use native speed and height above the current terrain.');
+const leverPositions=[];
+for(const throttle of [0,50,100]){scene[27]=throttle;calls.length=0;renderer.hud(scene,[],false,ground);leverPositions.push(Number(display.dataset.throttleLeverX));assert.equal(display.dataset.throttleControl,'mechanical-lever');assert.ok(!calls.some(c=>c[0]==='type'&&/^\d+%$/.test(c[1])&&c[2]<110),'Throttle has no digital percentage in the left control.');}
+assert.ok(leverPositions[0]<leverPositions[1]&&leverPositions[1]<leverPositions[2]);
+console.log('Mechanical throttle travels from IDLE through half power to FULL without a digital bar/percentage.');
 
 const bomb=new Int32Array([2,1,160,120,0,0,1,4,8,16,0,5,4,-2,0,0,4321,1]);
 const releasePlane=new Int32Array([1,1,154,126,0,0,1,16,16,16,1,9000,4,0,0,0,1234,0]);

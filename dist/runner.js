@@ -146,7 +146,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261107-honor1',
+      locateFile: name => 'engine/' + name + '?v=20261107-flight20',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -193,7 +193,8 @@
         const tick=game._web_read(0);
         if(active&&(tick!==renderedTick||!wasActive)) {
           const ptr=game._web_scene()>>>2;
-          snapshot=game.HEAP32.slice(ptr,ptr+RainbowRenderer.LENGTH);
+          snapshot=Float64Array.from(game.HEAP32.subarray(ptr,ptr+RainbowRenderer.LENGTH));
+          const speedMilli=game._web_read(13);if(speedMilli>=0)snapshot[11]=speedMilli/1000;
           // swrestart increments gamenum before replacing the winning plane.
           // Keep the departing mission latched through that boundary frame.
           if(snapshot[12]===0){campaignMission=snapshot[18];winningMission=null;}

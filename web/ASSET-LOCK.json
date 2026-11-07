@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 26503,
-      "sha256": "c3e0a20b2a0d7420b995f55ed18ef631b611a8aa7a87634cd5d578980f990b3c"
+      "bytes": 27698,
+      "sha256": "fcd6da19893604bef3dbce60e719cca42d10b8d7b858cadf77c7b1f050af4e22"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -383,6 +383,11 @@
       "sha256": "5d06244fb0de3d613055fd31b6b0f55e9541db4aeace9a950878acf19edadb2f"
     },
     {
+      "path": "dist/assets/rainbow-pause-rest-v1.png",
+      "bytes": 3006558,
+      "sha256": "12fe91789d0bc3435934f304ad13d982e1bb58457da5156e9a88a904454e563b"
+    },
+    {
       "path": "dist/assets/rainbow-pilot-selection-v1.png",
       "bytes": 1997436,
       "sha256": "98ed259fe202dadccd80effbdbdafb5cbfcc40e8d0a62c981b8a125532d7174d"
@@ -461,6 +466,11 @@
       "path": "dist/assets/rainbow-storm-scenery-v1.png",
       "bytes": 2212767,
       "sha256": "f6c85ae5c0700cc5828b4e854c53b10cedc96610999d4c7138b850af4ab7875e"
+    },
+    {
+      "path": "dist/assets/rainbow-throttle-lever-v1.png",
+      "bytes": 1603442,
+      "sha256": "284a6abf2df6c5439d0ed36990c6915c0adacd3904b89d6c141c6bd954b70c5b"
     },
     {
       "path": "dist/assets/rainbow-turf-v1.png",

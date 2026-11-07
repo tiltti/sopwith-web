@@ -1,0 +1,20 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-pause-rest-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3006558,
+      "sha256": "12fe91789d0bc3435934f304ad13d982e1bb58457da5156e9a88a904454e563b"
+    },
+    {
+      "path": "dist/assets/rainbow-throttle-lever-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1603442,
+      "sha256": "284a6abf2df6c5439d0ed36990c6915c0adacd3904b89d6c141c6bd954b70c5b"
+    }
+  ]
+}

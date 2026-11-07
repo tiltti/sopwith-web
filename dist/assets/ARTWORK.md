@@ -398,3 +398,23 @@ Patrol Engraved fonts and original button sprites remain live UI layers.
 Corresponding sources now have separate code, two balanced raster-art parts
 and audio downloads. Extract all four into one directory to restore the
 complete tree; every original art PNG remains in the distributed sources.
+
+## Pause shelter and mechanical throttle (2026-11-07)
+
+Both full 1536×1024 built-in imagegen PNGs were shown in chat and copied
+unchanged. `rainbow-pause-rest-v1.png` is a sunset airfield rest shelter with
+one blank slate on the left and a standing pilot at right. The actual pause
+controls are live HTML on that slate, without a second panel covering him.
+
+`rainbow-throttle-lever-v1.png` is a transparent original control-parts atlas.
+The brass rail uses `[34,430,1173,266]`; the grip/collar/short-stem crop is
+`[1269,216,195,430]` (the longer raw stem remains in the unchanged PNG).
+The rail's straight centers stretch while corners/rivets keep uniform scale.
+The separate grip travels along it from IDLE to FULL, driven by the existing
+16-step native throttle, with no percentage or digital bar. X/Z still control
+it. The nearby score/lives pieces move slightly upward to leave a clear lane.
+Both pieces and the live engraved labels remain clipped inside the cockpit.
+
+Prompts, dimensions and SHA-256 receipts are in `web/pause-flight-v20-*.json`.
+No provider API/CLI, borrowed commercial-game imagery or new external audio
+was used. The art is distributed with the GPL-2.0-or-later game.

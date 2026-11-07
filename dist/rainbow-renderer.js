@@ -793,13 +793,13 @@
         for(const x of [144,472,542]){const glow=c.createRadialGradient(x,10,1,x,30,52);glow.addColorStop(0,'rgba(247,166,62,.28)');glow.addColorStop(1,'rgba(247,166,62,0)');c.fillStyle=glow;c.fillRect(x-52,0,104,90);}
       }
       const score=art('score'),nav=art('map'),ammo=art('counter');
-      if(score)c.drawImage(score,6,7,100,46);else rect(c,10,12,92,34,P.ink);
-      hudType(c,'SCORE',56,21,{size:6,color:P.gold,align:'center',serif:true});
+      if(score)c.drawImage(score,6,3,100,46);else rect(c,10,8,92,34,P.ink);
+      hudType(c,'SCORE',56,17,{size:6,color:P.gold,align:'center',serif:true});
       const digits=s[10]<0?'-'+String(-s[10]).padStart(5,'0'):String(s[10]).padStart(6,'0');
-      hudType(c,digits,56,31,{size:12,align:'center',width:78});
-      const lives=art('lives'),level=art('level');if(lives)c.drawImage(lives,10,56,55,23);if(level)c.drawImage(level,70,56,34,23);
-      hudType(c,'LIVES',16,65,{size:5.8,serif:true});hudType(c,trainer?'INF':s[9],49,61,{size:11,color:P.gold,align:'center',width:19});
-      hudType(c,'LVL',75,65,{size:5.5,serif:true});hudType(c,s[18]+1,95,61,{size:11,color:P.gold,align:'center',width:11});
+      hudType(c,digits,56,27,{size:12,align:'center',width:78});
+      const lives=art('lives'),level=art('level');if(lives)c.drawImage(lives,10,49,55,23);if(level)c.drawImage(level,70,49,34,23);
+      hudType(c,'LIVES',16,58,{size:5.8,serif:true});hudType(c,trainer?'INF':s[9],49,54,{size:11,color:P.gold,align:'center',width:19});
+      hudType(c,'LVL',75,58,{size:5.5,serif:true});hudType(c,s[18]+1,95,54,{size:11,color:P.gold,align:'center',width:11});
       if(nav)c.drawImage(nav,186,3,246,70);
       c.save();c.beginPath();for(const [i,[x,y]] of [[MAP.x+3,MAP.y],[MAP.x+MAP.w-3,MAP.y],[MAP.x+MAP.w,MAP.y+3],[MAP.x+MAP.w,MAP.y+MAP.h-3],[MAP.x+MAP.w-3,MAP.y+MAP.h],[MAP.x+3,MAP.y+MAP.h],[MAP.x,MAP.y+MAP.h-3],[MAP.x,MAP.y+3]].entries())i?c.lineTo(x,y):c.moveTo(x,y);c.closePath();c.clip();
       rect(c,MAP.x,MAP.y,MAP.w,MAP.h,'#263d43');
@@ -823,8 +823,14 @@
       this.gauge(144,43,'speed',this.instrumentSpeed,200,'AIR','MPH');this.gauge(472,43,'altitude',altitude,6000,'ALT','FT AGL');this.gauge(542,40,'fuel',fuel,100,'FUEL','');
       this.canvas.dataset.airspeed=String(Math.round(speed));this.canvas.dataset.airspeedUnit='MPH';this.canvas.dataset.altitude=String(Math.round(altitude));this.canvas.dataset.altitudeUnit='FT AGL';this.canvas.dataset.fuelPercent=String(Math.round(fuel));
       this.canvas.dataset.pitch=String(s[19]*22.5);this.canvas.dataset.clearance=String(s[5]-16-(ground?.[wx]||0));
-      const throttle=Math.max(0,Math.min(100,s[27]||0));hudType(c,'THR',14,85,{size:5.8,serif:true});hudType(c,Math.round(throttle)+'%',103,85,{size:5.8,align:'right',width:19});
-      for(let i=0;i<16;i++)rect(c,37+i*2.3,85,1.6,5,i<throttle/100*16?P.gold:'#634d30');this.canvas.dataset.throttle=String(Math.round(throttle));
+      const throttle=Math.max(0,Math.min(100,s[27]||0)),leverX=35+throttle*.46;
+      const throttleBase=art('throttleBase'),throttleLever=art('throttleLever');
+      if(throttleBase)c.drawImage(throttleBase,12,81,92,14);
+      else {rect(c,12,81,92,14,'#a57c40');rect(c,32,87,50,2,'#2e2117');}
+      hudType(c,'IDLE',17,85,{size:4.8,color:'#302116',serif:true});hudType(c,'FULL',99,85,{size:4.8,color:'#302116',align:'right',serif:true});
+      if(throttleLever)c.drawImage(throttleLever,leverX-3.5,73,7,15.44);
+      else {rect(c,leverX-1,80,2,9,P.gold);rect(c,leverX-3,73,6,8,'#21180f');}
+      this.canvas.dataset.throttle=String(Math.round(throttle));this.canvas.dataset.throttleControl='mechanical-lever';this.canvas.dataset.throttleLeverX=String(leverX);
       this.canvas.dataset.mapWindow=[MAP.x,MAP.y,MAP.w,MAP.h].join(',');
       if(ammo)c.drawImage(ammo,574,10,54,27);else rect(c,578,15,45,18,P.ink);
       hudType(c,'AMMO',580,23,{size:5.8,serif:true});hudType(c,trainer?'INF':s[7],623,23,{size:6,color:P.gold,align:'right',width:17});

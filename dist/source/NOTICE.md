@@ -260,3 +260,12 @@ preserved unchanged and distributed with this GPL-2.0-or-later game. The
 ground-crew workshop has one blank slate on the left, where real settings
 controls are drawn, and a mechanic/radio/biplane scene on the right. Exact
 prompt and raw integrity receipt: `web/settings-workshop-v19-*.json`.
+
+## Pause shelter and mechanical throttle (2026-11-07)
+
+`rainbow-pause-rest-v1.png` and `rainbow-throttle-lever-v1.png` are original
+built-in OpenAI imagegen artwork, copied unchanged and distributed with this
+GPL-2.0-or-later game. The pause shelter has an empty slate at left and a
+standing pilot at right. The transparent control sheet supplies a brass guide
+plate and separate bakelite-grip lever, animated by the real throttle setting.
+Exact prompts and raw integrity receipts: `web/pause-flight-v20-*.json`.
