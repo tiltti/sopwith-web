@@ -1,8 +1,29 @@
+## Bronze honors, classroom layout and edge craters — 2026-11-07
+
+- A single original transparent bronze-plaque atlas supplies the blank header,
+  regular, aged and current-player rows. Live engraved initials/score/level
+  remain editable. The original PNG is unchanged, with prompt/hash receipts in
+  web/honor-ui-v17-*.json and the corresponding source archive.
+- Local browser 1280×720, sound off: the top ten and inline rank-6 initials
+  fit the timber honor board with save/skip/navigation visible and the pilot
+  clear on the right. Temporary fixture scores were restored, never submitted.
+  Controls text ends before the instructor's hand; Back is a sibling of the
+  writing plane, positioned outside the physical slate on the lower-left floor.
+  Proofs: parent research/review-2026-11-07/{honor-v17-initials,
+  honor-v17-top10,controls-v17-final}.jpg.
+- Linux CI for the previous revision caught an eight-column native crater
+  crossing the terrain array's right edge. The Rainbow wrapper now bounds
+  ground-mask probes and shifts the native crater center inward before its
+  write, then restores the object's position. The unchanged Classic path still
+  delegates to upstream. Direct bomb and falling-aircraft impacts at both
+  world edges and the 4000-step escort stress test pass locally. Native Linux
+  AddressSanitizer remains a required CI check, not bypassed.
+
 ## AI escort, weather and flight boundaries — 2026-11-07
 
 - All eleven JavaScript suites and six native test scripts pass. Escort tests
   cover all three missions, real native hostile-shot creation, friendly safety,
-  retreat, normal falling, eight trainer level jumps and 4000 actual move/
+  retreat, normal falling, repeated trainer level jumps and 4000 actual move/
   collision steps. A separate local crew leaderboard test preserves solo data.
 - Both world edges reverse an outward flying aircraft in bounded native steps
   without a wall clamp or automatic stall. The storm departure corridor stays

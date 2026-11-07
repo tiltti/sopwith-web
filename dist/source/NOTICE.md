@@ -241,3 +241,12 @@ Unchanged PNGs are in `dist/assets/rainbow-{winter,city}-relics-v1.png`; exact
 prompts, dimensions and hashes are in `web/wingman-weather-v16-*.json`.
 Thunder is an additional original synthesized cue in `dist/rainbow-audio.js`,
 not a new third-party recording.
+
+## Bronze honor-board plaques (2026-11-07)
+
+The blank bronze row/header plaques in `rainbow-honor-plates-v1.png` are
+original built-in OpenAI imagegen artwork based on this project's own
+scoreboard-parts style reference. The unchanged transparent PNG, exact prompt
+and integrity record are included under `dist/assets/` and
+`web/honor-ui-v17-*.json`, with the GPL-2.0-or-later game. Initials, scores
+and levels use the original Patrol Engraved font as separate live text.

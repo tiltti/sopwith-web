@@ -1,0 +1,13 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "date": "2026-11-07",
+  "assets": [
+    {
+      "path": "dist/assets/rainbow-honor-plates-v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: ORIGINAL production UI sprite atlas of antique BRONZE honor-board plaques for Rainbow Patrol, matching the supplied own timber/brass interface material style. Create genuine transparent PNG1536x1024. EXACTLY FOUR separate full-width horizontal strips, one centered in each256px-high row, with generous transparent gaps and x24..1512 safe edges. No lettering whatsoever; live engraved names/scores are added later. Row1 at y82..174: one EXTREMELY LONG THIN bronze NAMEPLATE, about1488x92 pixels, flat warm aged copper-bronze face, subtle hammered/brushed metal, small cast bevel, discreet darker screws near both ends, lots of calm EMPTY flat bronze in the middle; not black enamel or chalk. Row2 at y338..430: the same dimensions and silhouette, a slightly brighter polished bronze/gold current-player nameplate, elegant highlighted rim, still calm empty central bronze. Row3 at y558..722: wider/taller header plaque1488x164, dark aged bronze face with raised bronze scroll/aviator-wing tips at the far ends, narrow softly bevelled rim and corner rivets, blank central writing area. Row4 at y850..942: same very long thin dimensions as row1, darker patinated bronze row with small end rivets, subtle oxidation at the outer edges. Keep each strip absolutely straight on, symmetrical, orthographic, matching common left/right edges. Natural rubbed metal, engraved letter-ready surfaces, original richly painted Amiga adventure-game UI art, readable not shiny plastic or modern gradients. No timber backing, no black rectangles, no chalkboard, no names, numbers, initials, letters, fake text, emblems in the middle, column dividers or scenery. These are empty metal nameplates, one for each champion/score. Preserve actual alpha around every strip, no painted checkerboard.",
+      "references": [
+        "dist/assets/rainbow-scoreboard-parts-v1.png"
+      ]
+    }
+  ]
+}

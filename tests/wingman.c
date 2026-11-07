@@ -50,6 +50,15 @@ int main(void){
   for(int t=0;t<18;t++){latest_player_commands[p->ob_plrnum][countmove%MAX_NET_LAG]=K_ACCEL;swmove();WebVariant_Apply(p);assert(p->ob_x>0&&p->ob_x<(int)currgame->gm_max_x-16);assert(p->ob_state==FLYING&&p->ob_y<MAX_Y);}
   assert(side?p->ob_dx<0:p->ob_dx>0);
  }
+ for(int side=0;side<2;side++)for(int bomb=0;bomb<2;bomb++){
+  fresh(2,false);p=consoleplayer;OBJECTS *impact=p;
+  if(bomb){p->ob_bdelay=0;initbomb(p);impact=objbot;}
+  impact->ob_x=side?currgame->gm_max_x-10:0;impact->ob_y=ground[clamp_range(0,impact->ob_x+4,(int)currgame->gm_max_x-1)]-1;
+  if(!bomb){impact->ob_state=FALLING;impact->ob_athome=false;}
+  insertx(impact,deletex(impact));swcollsn();
+  assert(bomb?impact->ob_life<0:impact->ob_state==CRASHED);
+ }
+ puts("Real bomb and aircraft ground impacts at both world edges keep their eight-column crater inside the terrain array.");
  puts("Both map edges reverse an outward aircraft in a bounded flying arc without stalling or a wall clamp.");
  puts("Escort: optional, separate AI aircraft, delayed departure, live formation in all three terrains, real hostile shots, friendly safety, return and native falling verified.");
  puts("Storm departure: first 180 world pixels remain a gentle open corridor.");
@@ -61,6 +70,6 @@ int main(void){
   if(t%500==45||t%500==46)latest_player_commands[p->ob_plrnum][countmove%MAX_NET_LAG]|=K_FLAPD;
   swmove();swcollsn();WebTrainer_Apply(p);WebVariant_Apply(p);
  }
- puts("4000 real move/collision steps, repeated aircraft losses and eight trainer level jumps preserve the escort lifecycle.");
+ puts("4000 real move/collision steps, repeated aircraft losses and repeated trainer level jumps preserve the escort lifecycle.");
  return 0;
 }

@@ -1,0 +1,13 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-honor-plates-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2236484,
+      "sha256": "873680345e71514b5dc2dd6dfb0a3aa0cdd9202e2c5305b5f9d89ce179cde770"
+    }
+  ]
+}

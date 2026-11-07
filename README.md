@@ -116,6 +116,9 @@ bailout. Bird/flock hits have grouped squawks and feather sprays. Classic retain
 
 `dist/assets/ARTWORK.md` records all full imagegen PNGs and prompts. The live Rainbow
 menus/HUD use original Patrol Chalk and Patrol Engraved WOFF2 fonts under GPL v2+.
+Honor boards use engraved bronze nameplates mounted on timber, with a polished
+row for the current score. Controls shares the classroom's physical slate;
+the Back control is outside the board and text stays clear of the instructor.
 The older Press Start 2P and Patrick Hand assets remain with their OFL 1.1 notices. Provenance/licenses are in `NOTICE.md` and
 `dist/assets/`; `web/ASSET-LOCK.json` locks the complete asset roster. RETRY,
 Rainbow Islands and Amiga-era games are references; none of their files is bundled.

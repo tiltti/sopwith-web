@@ -38,6 +38,16 @@
     {name:'3 · STORM CITY',image:'rainbow-preview-storm-v1.jpg',objective:'Clear the enemy defenses in the storm-hit mountain city.'}
   ];
   let previousPilot=null,layoutPending=false,briefings=null;
+  const honorAtlas=new Image();
+  honorAtlas.onload=()=>{
+    for(const [kind,crop] of Object.entries({row:[46,110,1444,103],current:[46,344,1444,103],header:[18,547,1500,190],aged:[46,843,1444,103]})){
+      const canvas=document.createElement('canvas');canvas.width=crop[2];canvas.height=crop[3];canvas.getContext('2d').drawImage(honorAtlas,...crop,0,0,canvas.width,canvas.height);
+      $('screen').style.setProperty('--honor-'+kind,'url("'+canvas.toDataURL()+'")');
+    }
+    $('screen').dataset.honorArt='original-bronze';scheduleLayout();
+  };
+  honorAtlas.src='assets/rainbow-honor-plates-v1.png';
+
   const svg=(tag,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [name,value] of Object.entries(attrs))el.setAttribute(name,String(value));return el;};
   function drawBriefing(index){
     const chart=briefings?.missions?.[index];if(!chart)return;

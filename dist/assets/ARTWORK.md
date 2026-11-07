@@ -364,3 +364,21 @@ lamps are original Canvas layers over the unchanged brass/wood instrument art;
 the dial markings, dual altimeter hands and glass remain separate live layers.
 The briefing chart is live SVG on a paper-colour face, generated from native
 terrain/target records; it is not a replacement gameplay screenshot.
+
+## Bronze honor-board plaques (2026-11-07)
+
+`rainbow-honor-plates-v1.png` is an original transparent 1536×1024 built-in
+OpenAI imagegen output, shown in chat and preserved unchanged. The project's
+own scoreboard-parts atlas supplied the material/style reference. The new
+atlas has no baked lettering: live Patrol Engraved text puts each champion's
+initials, score and level on a bronze nameplate over a timber backing.
+The currently entered score has a brighter polished plate. The winged bronze
+header and alternating aged rows keep all ten records and navigation visible.
+
+Runtime source rectangles `[x,y,width,height]` are regular `[46,110,1444,103]`,
+highlight `[46,344,1444,103]`, header `[18,547,1500,190]` and aged
+`[46,843,1444,103]`. Canvas crops preserve the raw PNG and its transparency.
+Exact prompt and integrity receipt: `web/honor-ui-v17-prompts.json` and
+`web/honor-ui-v17-files.json`. These original plaques are distributed with
+the GPL-2.0-or-later game. The classroom keeps one shared slate; its Back
+control is now separate on the floor, outside the writing surface.
