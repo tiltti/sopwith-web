@@ -1,3 +1,18 @@
+## Settings workshop — 2026-11-07
+
+- The original workshop PNG is preserved unchanged, with prompt and hash in
+  web/settings-workshop-v19-*.json. The one physical slate on the left contains
+  all real settings controls. The mechanic, radio and aircraft remain visible
+  on the right; Back is below the slate, outside the controls' text surface.
+- Local 1280×720 browser, sound off/windowed: all five controls and hints fit
+  (clientHeight=scrollHeight=501). Trainer defaults on. Settings still uses
+  the existing control IDs/event handlers; flight choices remain in Mission
+  Setup. Proof: parent research/review-2026-11-07/settings-v19-desktop.jpg.
+- The growing raw artwork is now split into two balanced source archives,
+  with game/code and audio in their own parts. Release validation byte-checks
+  every locked asset across all four downloads and enforces the 100 MiB cap
+  separately. No source image or recording was omitted.
+
 ## Recessed bronze lettering — 2026-11-07
 
 - Honor-board headers, ranks, initials, scores and levels use dark cut-in

@@ -7,7 +7,7 @@
 <link rel="preload" as="image" href="assets/rainbow-sidebar-buttons-v1.png">
 <meta name="theme-color" content="#183449"><title>Rainbow Patrol — Sopwith Tribute</title>
 <meta name="description" content="Rainbow Patrol: a three-mission flying adventure inspired by Sopwith.">
-<link rel="preload" as="image" href="assets/rainbow-classroom-v1.png"><link rel="stylesheet" href="patrol-fonts.css?v=20261107-honor1"><link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261107-engrave1">
+<link rel="preload" as="image" href="assets/rainbow-classroom-v1.png"><link rel="stylesheet" href="patrol-fonts.css?v=20261107-honor1"><link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261107-workshop1">
 </head>
 <body data-edition="rainbow" data-layout="arcade" data-game-state="idle">
 <main class="game-column arcade-root" aria-label="Rainbow Patrol">
@@ -86,14 +86,14 @@
         <div class="mission-actions"><button id="start" class="pixel-button green">START FLIGHT</button><button data-close-panel class="pixel-button">BACK</button></div>
       </div></div>
     </section>
-    <section id="panel-settings" class="game-layer menu-backdrop auxiliary-panel" hidden><div class="pixel-panel"><h2>SETTINGS</h2><div class="pixel-menu settings-grid">
+    <section id="panel-settings" class="game-layer workshop-room auxiliary-panel" hidden aria-label="Workshop settings"><div class="pixel-panel settings-console"><h2>SETTINGS</h2><div class="pixel-menu settings-grid">
       <button id="settings-sound" class="pixel-button" aria-pressed="false"><img id="settings-sound-icon" class="speaker-icon" src="assets/sound-off.svg" alt="" aria-hidden="true"><span id="settings-sound-label">SOUND OFF</span></button>
       <button id="settings-trainer" class="pixel-button" aria-pressed="false" data-playtest-only title="Unlimited lives, bombs, ammunition and fuel. Crashes remain normal. Unranked runs.">TRAINER (TEST): ON</button>
       <label class="pixel-toggle"><input type="checkbox" id="aim-toggle" checked><span>BOMB SIGHT</span></label>
       <button id="touch-toggle" class="pixel-button" aria-pressed="false">TOUCH CONTROLS</button>
-      <button id="settings-fullscreen" class="pixel-button">FULLSCREEN</button><button data-close-panel class="pixel-button green">BACK</button>
-      <p class="tiny-text settings-wide">TRAINER: 1–9 CHANGES MISSION · E CLEARS IT.<br>CHOOSE YOUR MISSION AND OPPONENTS IN MISSION SETUP.</p>
-    </div><select id="palette" hidden aria-label="Classic palette"><option value="0">CGA</option></select></div></section>
+      <button id="settings-fullscreen" class="pixel-button">FULLSCREEN</button>
+      <p class="tiny-text settings-wide">TRAINER: 1–9 MISSION · E CLEAR.<br>FLIGHT OPTIONS: MISSION SETUP.</p>
+    </div><select id="palette" hidden aria-label="Classic palette"><option value="0">CGA</option></select></div><div class="pixel-menu settings-actions"><button data-close-panel class="pixel-button" aria-label="Back from settings">BACK</button></div></section>
     <section id="panel-scores" class="game-layer menu-backdrop auxiliary-panel" hidden><div id="leaderboard" class="pixel-panel score-panel">
       <h2 id="arcade-scores-title">HIGH SCORES</h2><p id="scores-scope" class="tiny-text">SCORES IN THIS BROWSER</p>
       <div class="score-modes"><label for="scores-mode" class="sr-only">Scoreboard game mode</label><select id="scores-mode"><option value="practice">SINGLE PLAYER</option><option value="combat">AIR COMBAT</option></select><select id="scores-difficulty" aria-label="Scoreboard difficulty"><option value="normal">NORMAL</option><option value="easy">EASY</option></select><select id="scores-crew" aria-label="Scoreboard crew"><option value="solo">SOLO</option><option value="wingman">WINGMAN</option></select><button id="scores-refresh" class="pixel-icon" aria-label="Refresh scores">↻</button></div>

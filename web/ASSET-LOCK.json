@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 25587,
-      "sha256": "501809d2de3aaccd56b4204ee65c42175b7551dba772aaa82804d7e3904bfc28"
+      "bytes": 26503,
+      "sha256": "c3e0a20b2a0d7420b995f55ed18ef631b611a8aa7a87634cd5d578980f990b3c"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -421,6 +421,11 @@
       "path": "dist/assets/rainbow-scoreboard-parts-v1.png",
       "bytes": 1172456,
       "sha256": "ab4ef6188f0c3480610b2a300735e347c247e8ad974a27bc7bd80ed905abe7fb"
+    },
+    {
+      "path": "dist/assets/rainbow-settings-workshop-v1.png",
+      "bytes": 2784177,
+      "sha256": "1992ce7695c29e74d4864163ecbdae52330f5ca14339cfe0e82fcad416a1b3e5"
     },
     {
       "path": "dist/assets/rainbow-sidebar-buttons-v1.png",

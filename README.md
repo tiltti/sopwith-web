@@ -206,12 +206,14 @@ python3 scripts/build.py
 
 Use a Python 3.10+ executable explicitly if the system `python3` is older.
 The compiler, SDK and caches remain inside `.tools/`, which is ignored by Git.
-The build emits `dist/engine/sopwith.js`, `dist/engine/sopwith.wasm` and two
-matching source downloads: `dist/source/sopwith-web-source.tar.gz` (all game,
-integration and artwork sources) and `dist/source/sopwith-web-audio-source.tar.gz`
-(recordings, adaptations and audio license/source records). Extract both into
-the same directory; together they form the complete source/media tree. Each
-part stays below GitHub's 100 MiB file limit.
+The build emits `dist/engine/sopwith.js`, `dist/engine/sopwith.wasm` and four
+matching source downloads in `dist/source/`: `sopwith-web-source.tar.gz`
+(game, integration, fonts, prompts and asset records),
+`sopwith-web-artwork-1.tar.gz` and `sopwith-web-artwork-2.tar.gz` (all original
+raster artwork, balanced between two parts), and
+`sopwith-web-audio-source.tar.gz` (recordings, adaptations and audio licenses).
+Extract all four into the same directory; together they form the complete
+source/media tree. Each part stays below GitHub's 100 MiB file limit.
 
 The checked-in original WOFF2 fonts need no build dependency. To regenerate
 them from the unchanged glyph PNGs, create a local virtual environment, install
@@ -314,7 +316,7 @@ in that edition while retaining the classic mode and original author credits.
 
 Copy the contents of `dist/` onto an HTTPS static host, preserving relative
 paths. Serve `.wasm` as `application/wasm`. This supports installation under
-a subdirectory such as `/play/` on sopwith.org. Ship both source archives,
+a subdirectory such as `/play/` on sopwith.org. Ship all four source archives,
 license and credits together with the game.
 
 GitHub Pages hosts the public version. No external account or login is needed

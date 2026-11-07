@@ -10,6 +10,7 @@ import re
 import hashlib
 import json
 import tarfile
+from contextlib import ExitStack
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -58,7 +59,7 @@ def main():
         assert (sound.getnchannels(), sound.getframerate(), sound.getsampwidth()) == (1,22050,2)
         assert sound.getnframes()/sound.getframerate() == metadata["sampleDurationSeconds"]
     assert not any("sound_of_a_falling" in name or "dive-game-preview" in name for name in actual)
-    art_records = [record for name in ("score-cockpit-v09", "effects-dashboard-v10", "campaign-v11", "airfields-v12", "flight-destruction-v13", "building-states-v14", "typography-v15", "wingman-weather-v16", "honor-ui-v17")
+    art_records = [record for name in ("score-cockpit-v09", "effects-dashboard-v10", "campaign-v11", "airfields-v12", "flight-destruction-v13", "building-states-v14", "typography-v15", "wingman-weather-v16", "honor-ui-v17", "settings-workshop-v19")
                    for record in json.loads((ROOT / f"web/{name}-files.json").read_text())["files"]]
     for record in art_records:
         data=(ROOT / record["path"]).read_bytes()
@@ -70,10 +71,16 @@ def main():
         assert data[:4]==b'wOF2' and len(data)==record['bytes'] and hashlib.sha256(data).hexdigest()==record['sha256']
     archive = DIST / "source/sopwith-web-source.tar.gz"
     audio_archive = DIST / "source/sopwith-web-audio-source.tar.gz"
-    for path in (archive,audio_archive):
+    art_archives = [DIST / f'source/sopwith-web-artwork-{i}.tar.gz' for i in (1, 2)]
+    for path in (archive,audio_archive,*art_archives):
         assert path.stat().st_size < 100*1024*1024, f"Source part exceeds GitHub file limit: {path}"
-    with tarfile.open(archive, "r:gz") as bundle, tarfile.open(audio_archive, "r:gz") as audio_bundle:
-        for relative in ("web/honor-ui-v17-files.json", "web/honor-ui-v17-prompts.json", "web/video.c", "tests/video-bounds.c", "scripts/test_video.py", "tests/wingman.c", "scripts/test_wingman.py", "tests/briefings.c", "scripts/prepare_briefings.py", "dist/mission-briefings.json", "web/wingman-weather-v16-files.json", "web/wingman-weather-v16-prompts.json", "dist/index.html", "dist/patrol-fonts.css", "dist/patrol-layout.js", "scripts/build_patrol_fonts.py", "scripts/typography-requirements.txt", "tests/patrol-layout.mjs", "web/patrol-fonts-v15.json", "web/typography-v15-prompts.json", "web/typography-v15-files.json", "web/art-reference/controls-chalk-proposal.png", "web/art-reference/mission-station-v1.png", "web/building-states-v14-prompts.json", "web/building-states-v14-files.json", "web/flight-destruction-v13-prompts.json", "web/flight-destruction-v13-files.json", "web/airfields-v12-prompts.json", "web/airfields-v12-files.json", "web/campaign-v11-prompts.json", "web/campaign-v11-files.json", "web/effects-dashboard-v10-prompts.json", "web/effects-dashboard-v10-files.json", "web/score-cockpit-v09-prompts.json", "web/score-cockpit-v09-files.json", "scripts/prepare_user_dive.py", "web/user-dive-source.json", "web/flight-art-v08-prompts.json", "web/flight-art-v08-files.json", "web/environment-v08-prompts.json", "web/aircraft-roll-v08-prompt.json", "tests/audio-offline-check.html", "web/bridge.c", "web/trainer.c", "web/collisions.c", "web/pilot-walk-v3-generation.json", "dist/rainbow-stages.js", "tests/patrol.c", "tests/rainbow-stages.mjs", "scripts/prepare_patrol_art.py", "scripts/prepare_audio_v06.py", "scripts/test_patrol.py", "web/RELEASE-CHECKLIST.md", "dist/i18n.js", "tests/i18n.mjs", "server/drizzle/0001_combat_difficulty.sql", "server/db/schema.ts", "scripts/build.py", "LICENSE", "NOTICE.md",
+    with ExitStack() as stack:
+        bundle = stack.enter_context(tarfile.open(archive, 'r:gz'))
+        audio_bundle = stack.enter_context(tarfile.open(audio_archive, 'r:gz'))
+        art_members = {member.name:part for path in art_archives
+                       for part in [stack.enter_context(tarfile.open(path, 'r:gz'))]
+                       for member in part.getmembers() if member.isfile()}
+        for relative in ("web/settings-workshop-v19-files.json", "web/settings-workshop-v19-prompts.json", "web/honor-ui-v17-files.json", "web/honor-ui-v17-prompts.json", "web/video.c", "tests/video-bounds.c", "scripts/test_video.py", "tests/wingman.c", "scripts/test_wingman.py", "tests/briefings.c", "scripts/prepare_briefings.py", "dist/mission-briefings.json", "web/wingman-weather-v16-files.json", "web/wingman-weather-v16-prompts.json", "dist/index.html", "dist/patrol-fonts.css", "dist/patrol-layout.js", "scripts/build_patrol_fonts.py", "scripts/typography-requirements.txt", "tests/patrol-layout.mjs", "web/patrol-fonts-v15.json", "web/typography-v15-prompts.json", "web/typography-v15-files.json", "web/art-reference/controls-chalk-proposal.png", "web/art-reference/mission-station-v1.png", "web/building-states-v14-prompts.json", "web/building-states-v14-files.json", "web/flight-destruction-v13-prompts.json", "web/flight-destruction-v13-files.json", "web/airfields-v12-prompts.json", "web/airfields-v12-files.json", "web/campaign-v11-prompts.json", "web/campaign-v11-files.json", "web/effects-dashboard-v10-prompts.json", "web/effects-dashboard-v10-files.json", "web/score-cockpit-v09-prompts.json", "web/score-cockpit-v09-files.json", "scripts/prepare_user_dive.py", "web/user-dive-source.json", "web/flight-art-v08-prompts.json", "web/flight-art-v08-files.json", "web/environment-v08-prompts.json", "web/aircraft-roll-v08-prompt.json", "tests/audio-offline-check.html", "web/bridge.c", "web/trainer.c", "web/collisions.c", "web/pilot-walk-v3-generation.json", "dist/rainbow-stages.js", "tests/patrol.c", "tests/rainbow-stages.mjs", "scripts/prepare_patrol_art.py", "scripts/prepare_audio_v06.py", "scripts/test_patrol.py", "web/RELEASE-CHECKLIST.md", "dist/i18n.js", "tests/i18n.mjs", "server/drizzle/0001_combat_difficulty.sql", "server/db/schema.ts", "scripts/build.py", "LICENSE", "NOTICE.md",
                          "dist/look-lab.html", "dist/look-lab.js", "dist/look-lab.css", "dist/title-audio.js", "tests/title-audio.mjs", "tests/leaderboard-ui.mjs", "scripts/prepare_audio_v05.py", "web/move.c", "tests/home.c", "scripts/test_home.py", "dist/rainbow-ui.css", "dist/rainbow-ui.js", "dist/rainbow-timeline.js", "tests/rainbow-timeline.mjs",
                          "web/scene.c", "web/scene.h", "web/variant.c", "web/variant.h", "tests/scene.c", "tests/rainbow-renderer.mjs", "scripts/test_scene.py",
                          "third_party/sdl-sopwith/src/swmain.c", "dist/app.js", "dist/runner.js", "dist/info.html",
@@ -82,7 +89,7 @@ def main():
                          "dist/rainbow-assets.js", "dist/rainbow-audio.js", "web/ASSET-LOCK.json", "web/audio-sources.json",
                          "scripts/prepare_audio.py", "tests/rainbow-assets.mjs", "tests/rainbow-audio.mjs",
                          *(item["path"] for item in roster)):
-            source = audio_bundle if relative.startswith("dist/assets/audio/") else bundle
+            source = audio_bundle if relative.startswith("dist/assets/audio/") else art_members.get('sopwith-web/' + relative, bundle)
             member = source.extractfile("sopwith-web/" + relative)
             assert member is not None and member.read() == (ROOT / relative).read_bytes(), \
                 f"Source archive does not match the working source: {relative}"

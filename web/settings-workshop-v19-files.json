@@ -1,0 +1,13 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-settings-workshop-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 2784177,
+      "sha256": "1992ce7695c29e74d4864163ecbdae52330f5ca14339cfe0e82fcad416a1b3e5"
+    }
+  ]
+}

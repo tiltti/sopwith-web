@@ -228,9 +228,11 @@ concept references are included in `web/art-reference/`. Mission previews are
 unchanged captures of this project's own live game, cropped by the runtime SVG.
 No commercial-game imagery is distributed.
 
-Corresponding sources are split into `sopwith-web-source.tar.gz` and
-`sopwith-web-audio-source.tar.gz`, both extracting into `sopwith-web/`. The
-audio part retains all media and its original attribution/license records.
+Corresponding sources are split into `sopwith-web-source.tar.gz`,
+`sopwith-web-artwork-1.tar.gz`, `sopwith-web-artwork-2.tar.gz` and
+`sopwith-web-audio-source.tar.gz`, all extracting into `sopwith-web/`.
+The artwork parts retain original raster images; the audio part retains all
+recordings/adaptations and their original attribution/license records.
 
 ## Winter and city discoveries (2026-11-07)
 
@@ -250,3 +252,11 @@ scoreboard-parts style reference. The unchanged transparent PNG, exact prompt
 and integrity record are included under `dist/assets/` and
 `web/honor-ui-v17-*.json`, with the GPL-2.0-or-later game. Initials, scores
 and levels use the original Patrol Engraved font as separate live text.
+
+## Settings workshop (2026-11-07)
+
+`rainbow-settings-workshop-v1.png` is original built-in OpenAI imagegen art,
+preserved unchanged and distributed with this GPL-2.0-or-later game. The
+ground-crew workshop has one blank slate on the left, where real settings
+controls are drawn, and a mechanic/radio/biplane scene on the right. Exact
+prompt and raw integrity receipt: `web/settings-workshop-v19-*.json`.

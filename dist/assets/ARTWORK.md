@@ -382,3 +382,19 @@ Exact prompt and integrity receipt: `web/honor-ui-v17-prompts.json` and
 `web/honor-ui-v17-files.json`. These original plaques are distributed with
 the GPL-2.0-or-later game. The classroom keeps one shared slate; its Back
 control is now separate on the floor, outside the writing surface.
+
+## Settings workshop (2026-11-07)
+
+`rainbow-settings-workshop-v1.png` is an original 1536×1024 built-in imagegen
+background, shown in chat and copied unchanged. Its one empty slate occupies
+the left side. Real settings controls fit inside that writing area; Back is
+below it. A mechanic checks an earpiece beside a timber radio box, tools and
+the biplane on the right. The image contains no baked UI text or buttons.
+The full prompt and PNG hash/dimensions are in
+`web/settings-workshop-v19-prompts.json` and `settings-workshop-v19-files.json`.
+No new font or borrowed game art was used. The existing Patrol Chalk and
+Patrol Engraved fonts and original button sprites remain live UI layers.
+
+Corresponding sources now have separate code, two balanced raster-art parts
+and audio downloads. Extract all four into one directory to restore the
+complete tree; every original art PNG remains in the distributed sources.

@@ -48,7 +48,15 @@ def main():
     for notice in (ROOT / "licenses").glob("*.txt"):
         shutil.copyfile(notice, OUTPUT / "source" / notice.name)
     # Keep each downloadable part below GitHub's 100 MiB per-file limit.
-    # Both extract into the same tree; no media is omitted from the sources.
+    # All four extract into the same tree; no media is omitted from sources.
+    # Balance original raster art across two parts, leaving room for new art.
+    artwork = [p for p in (OUTPUT / 'assets').rglob('*')
+               if p.is_file() and p.suffix.lower() in ('.png', '.jpg', '.jpeg')]
+    art_parts, art_sizes = [[], []], [0, 0]
+    for path in sorted(artwork, key=lambda p: (-p.stat().st_size, p.as_posix())):
+        part = min(range(2), key=lambda i: art_sizes[i])
+        art_parts[part].append(path)
+        art_sizes[part] += path.stat().st_size
     with tarfile.open(OUTPUT / "source/sopwith-web-source.tar.gz", "w:gz") as bundle:
         for name in ("third_party/sdl-sopwith", "web", "server", "scripts", "tests", "licenses", ".github",
                      "README.md", "COPYING.md", "LICENSE", "NOTICE.md", "VALIDATION.md"):
@@ -59,11 +67,18 @@ def main():
                 bundle.add(path, arcname="sopwith-web/dist/" + path.name)
         if (OUTPUT / "assets").exists():
             bundle.add(OUTPUT / "assets", arcname="sopwith-web/dist/assets",
-                       filter=lambda info: None if info.name.startswith("sopwith-web/dist/assets/audio") else info)
+                       filter=lambda info: None if info.name.startswith("sopwith-web/dist/assets/audio")
+                       or (info.isfile() and Path(info.name).suffix.lower() in ('.png', '.jpg', '.jpeg')) else info)
+    for index, paths in enumerate(art_parts, 1):
+        with tarfile.open(OUTPUT / f'source/sopwith-web-artwork-{index}.tar.gz', 'w:gz') as bundle:
+            for path in sorted(paths):
+                bundle.add(path, arcname='sopwith-web/' + path.relative_to(ROOT).as_posix())
+            bundle.add(ROOT / 'NOTICE.md', arcname='sopwith-web/NOTICE.md')
+            bundle.add(OUTPUT / 'assets/ARTWORK.md', arcname='sopwith-web/dist/assets/ARTWORK.md')
     with tarfile.open(OUTPUT / "source/sopwith-web-audio-source.tar.gz", "w:gz") as bundle:
         bundle.add(OUTPUT / "assets/audio", arcname="sopwith-web/dist/assets/audio")
-    print("Packaged complete source and audio archives." if source_only else
-          "Built dist/engine/sopwith.wasm and complete source/audio archives.")
+    print("Packaged complete code, artwork and audio archives." if source_only else
+          "Built dist/engine/sopwith.wasm and complete code/artwork/audio archives.")
 
 if __name__ == "__main__":
     main()
