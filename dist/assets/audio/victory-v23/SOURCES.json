@@ -1,0 +1,30 @@
+{
+  "acquired": "2026-11-08",
+  "title": "Victory Fanfare",
+  "author": "humanoide9000 / Luis Humanoide",
+  "sourceUrl": "https://freesound.org/people/humanoide9000/sounds/466133/",
+  "downloadUrl": "https://cdn.freesound.org/previews/466/466133_4361321-hq.mp3",
+  "license": "CC-BY-4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "licenseText": "../../../source/CC-BY-4.0.txt",
+  "original": "original/victory-fanfare-hq.mp3",
+  "sourceFormat": "Freesound official HQ MP3 preview, 44.1 kHz stereo; not the login-only original WAV",
+  "output": "victory.wav",
+  "changes": "Trim 0.20..9.80 s, pitch-preserving 1.4x tempo, -16 LUFS/-1.5 dBTP normalization, 15 ms attack/400 ms tail fades, stereo PCM16 at 32 kHz; <=6.85 s to fit the existing 7.2 s departure. No music layered over it.",
+  "ffmpegFilters": "atrim=start=0.20:end=9.80,asetpts=PTS-STARTPTS,atempo=1.4,loudnorm=I=-16:TP=-1.5:LRA=9,afade=t=in:d=0.015,afade=t=out:st=6.45:d=0.4",
+  "files": [
+    {
+      "path": "original/victory-fanfare-hq.mp3",
+      "bytes": 245799,
+      "sha256": "d99a915cf6adc87949b939259fd053deaa6d62659a781926a89be3e33375d249"
+    },
+    {
+      "path": "victory.wav",
+      "bytes": 872470,
+      "sha256": "766c666ac3aaf776a14da15bb49a47a8fd7744cb5bbffc100081e5cdcb63f86c",
+      "channels": 2,
+      "rate": 32000,
+      "seconds": 6.8155625
+    }
+  ]
+}

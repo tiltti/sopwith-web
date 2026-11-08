@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
-let created=0,fetched=0,started=0,stopped=0;
+let created=0,fetched=0,started=0,stopped=0;const fetchedUrls=[];
 const param=()=>({value:0,setValueAtTime(){},setTargetAtTime(value){this.value=value;},exponentialRampToValueAtTime(){}});
 function node(){return {connect(){},disconnect(){},gain:param(),frequency:param(),pan:param()};}
 class Context {
@@ -13,12 +13,13 @@ class Context {
   async decodeAudioData(){return {duration:1};}
   async suspend(){this.state='suspended';}async resume(){this.state='running';}
 }
-const scope={window:{AudioContext:Context,fetch:async()=>{fetched++;return {ok:true,arrayBuffer:async()=>new ArrayBuffer(1)};}},console};
+const scope={window:{AudioContext:Context,fetch:async url=>{fetched++;fetchedUrls.push(url);return {ok:true,arrayBuffer:async()=>new ArrayBuffer(1)};}},console};
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-audio.js',import.meta.url),'utf8'),scope);
 const mixer=new scope.window.RainbowAudio();
 assert.equal(created,0,'No audio context exists before explicit sound enable.');
 await mixer.setEnabled(false);assert.equal(fetched,0);
 await mixer.setEnabled(true);assert.equal(created,1);assert.equal(fetched,13);assert.equal(mixer.status,'samples');
+assert.equal(fetchedUrls.filter(url=>url.includes('victory-v23/victory.wav')).length,1,'The new recorded fanfare replaces the old layered victory mix.');
 assert.equal(Object.keys(mixer.buffers).length,16,'Thirteen samples and three original synthesized cues load.');
 const scene=new Int32Array(5000);scene[1]=10;scene[3]=2000;scene[8]=5;scene[11]=5;scene[13]=1;scene[14]=1;
 scene.set([3,0,170,100,0,0,1,1,1,0,0,9,12,0,1,0,123,1],348);
@@ -79,6 +80,7 @@ emit(7,-1000);assert.equal(mixer.voices.get('fx').name,'argh');
 mixer.stop('fx');emit(8,-1000);assert.equal(mixer.voices.get('fx').name,'himmel');
 scene[1]++;scene[12]=1;const beforeVictory=started;mixer.step(scene,effects);
 assert.equal(mixer.voices.size,1);assert.equal(mixer.voices.get('jingle').name,'victory');
+assert.equal(mixer.voices.get('jingle').source.loop,false,'The recorded victory cue plays once, without looping.');
 scene[1]++;mixer.step(scene,effects);assert.equal(started,beforeVictory+1,'The level fanfare/march starts only once.');
 await mixer.setEnabled(false);await mixer.setEnabled(true);scene[1]++;mixer.step(scene,effects);assert.equal(mixer.voices.size,0,'Unmuting does not replay a consumed victory.');
 console.log('One-shot dive/crash handoff, separate human/German pilot reactions, once-per-level victory music and silent-win dedup verified.');

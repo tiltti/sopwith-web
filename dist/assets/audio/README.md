@@ -72,7 +72,7 @@ files, exact source URLs, licenses, conversion details and SHA-256 in
   low-passed at 7 kHz. Original OGG retained.
 
 The game mixer has five bounded slots, with the friendly-target warning separate
-from gunfire. The current version loads thirteen samples and synthesizes two cues. Splash music uses a
+from gunfire. The current version loads thirteen samples and synthesizes three cues. Splash music uses a
 single opt-in HTML audio player and stops before play. The same CC0 War Theme
 returns on the initials/high-score debrief at gain 0.13 (splash: 0.17), continues
 through score saving, and stops on a new flight, mute or tab hiding. Startup plays once for
@@ -93,10 +93,28 @@ Regenerate from retained sources with `python scripts/prepare_audio_v05.py`
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The modified
 Himmel sample retains that license. EQ/dynamics, silence trimming, mono
 conversion and 22050 Hz resampling are recorded in `patrol-v06/SOURCES.json`;
-original pitch is preserved. The victory fanfare/march is a 7.8-second mix of
+original pitch is preserved. The earlier victory fanfare/march is a 7.8-second mix of
 the existing gchoc and Spring Spring CC0 recordings. Rebuild using
 `scripts/prepare_audio_v06.py`. The earlier synthesized dive has been replaced by the user-created sample
 documented below; it is not a recording of a specific aircraft. All playback remains opt-in.
+
+## Recorded victory fanfare (2026-11-08)
+
+**Victory Fanfare** by **humanoide9000 / Luis Humanoide**,
+[Freesound 466133](https://freesound.org/people/humanoide9000/sounds/466133/),
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), replaces the earlier
+layered mix during each successful mission departure. The retained source is
+the official HQ MP3 preview (44.1 kHz stereo), not the login-only original WAV.
+The game adaptation remains CC BY 4.0.
+
+Processing: trim 0.20–9.80 s, pitch-preserving 1.4x tempo, loudness normalization
+to -16 LUFS / -1.5 dBTP, 15 ms attack and 400 ms tail fades, stereo PCM16 at
+32 kHz. The resulting 6.816-second cue fits the unchanged 7.2-second departure
+without clipping its musical ending. No other music is mixed into it.
+It plays once per victory; mute, pause and a new flight stop it. Source bytes,
+transformation details and SHA-256 hashes: `victory-v23/SOURCES.json`.
+Rebuild offline with `python3 scripts/prepare_victory_v23.py` (ffmpeg required).
+Full CC BY 4.0 text is distributed at `../../source/CC-BY-4.0.txt`.
 
 ## User-created falling aircraft sample (2026-11-02)
 
@@ -115,4 +133,4 @@ never loops/restarts at sample end, and hands off to an impact on ground contact
 Mute consumes falls silently. Exact hashes and contributor provenance:
 `web/user-dive-source.json`; processing: `scripts/prepare_user_dive.py`.
 The mixer currently decodes thirteen samples (twelve local WAV URLs plus the
-embedded sample) and generates two cues. Sound remains off on first launch.
+embedded sample) and generates three cues. Sound remains off on first launch.

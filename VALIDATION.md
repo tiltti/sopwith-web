@@ -1,3 +1,20 @@
+## Recorded victory fanfare — 2026-11-08
+
+- Replaced the runtime victory cue with humanoide9000 / Luis Humanoide's
+  CC BY 4.0 Victory Fanfare, acquired from the official Freesound HQ MP3
+  preview. The original WAV requires login; the retained MP3 is explicitly
+  identified in the source receipt. Source SHA-256, transformations and
+  per-file hashes accompany the adapted stereo PCM16 / 32000 Hz WAV.
+- The 6.8155625-second output fits the native 72-tick (7.2 s) departure.
+  Pitch-preserving tempo change keeps the phrase together. Short fades and
+  loudness normalization replace the older layered fanfare/march mix.
+- Audio/controls/title tests pass: selected file, one-shot win, silent wins,
+  mute/resume dedup, five-voice limit and campaign transitions are retained.
+- Real browser OfflineAudioContext decode/render passes without a speaker
+  context: 13 samples + 3 cues, stereo victory 6.816 s, mixed peak 0.213,
+  no audio after 7.2 s. Proof: parent research/review-2026-11-08/
+  audio-v23-offline.jpg. Actual game sound remains off by default.
+
 ## Selected title, refueling startup and winter AA — 2026-11-08
 
 - Three Fronts is the ordinary default in both static HTML and the bounded

@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><base href="../dist/"><title>Silent audio decoder check</title><style>body{background:#19374b;color:#fff2ce;font:18px monospace;padding:30px}button{font:inherit;padding:12px}</style><h1>Audio decoding — no speaker output</h1><button id="check">Validate silently</button><pre id="result">Ready. Uses OfflineAudioContext only.</pre><script src="rainbow-audio.js"></script><script>
 class SilentContext{
- constructor(){this.offline=new OfflineAudioContext(1,22050*5,22050);this.state='running';}
+ constructor(){this.offline=new OfflineAudioContext(1,22050*8,22050);this.state='running';}
  get currentTime(){return this.offline.currentTime}get destination(){return this.offline.destination}
  createGain(){return this.offline.createGain()}createBiquadFilter(){return this.offline.createBiquadFilter()}createStereoPanner(){return this.offline.createStereoPanner()}
  createBuffer(...a){return this.offline.createBuffer(...a)}createBufferSource(){return this.offline.createBufferSource()}decodeAudioData(...a){return this.offline.decodeAudioData(...a)}
@@ -12,7 +12,14 @@ document.getElementById('check').onclick=async()=>{
  const s=new Int32Array(5000);s.set([3,1,100,2000]);s[14]=1;s[13]=4;s.set([1,4,170,120,12,0,1,16,16,0,1,20,0,-8,1,0,567,1],348);
  mixer.step(s,null);const v=mixer.voices.get('mechanical');if(v?.name!=='dive'||v.source.loop)throw Error('Not a one-shot dive');v.source.onended();s[1]++;mixer.step(s,null);if(mixer.voices.has('mechanical'))throw Error('Replayed');
  s[1]++;s[349]=3;mixer.step(s,null);if(mixer.voices.get('mechanical')?.name!=='blast')throw Error('Crash handoff failed');await mixer.setEnabled(false);
- document.getElementById('result').textContent='PASS: all 13 samples + 2 cues decoded; user dive is 4 seconds / mono / 22050 Hz; one-shot completion and crash handoff verified. No speaker context created.';
+ const victory=new RainbowAudio({AudioContext:SilentContext});await victory.setEnabled(true);
+ const vb=victory.buffers.victory;if(vb.numberOfChannels!==2||vb.duration<6.7||vb.duration>6.85)throw Error('Victory format/duration');
+ const win=s.slice();win[1]++;win[12]=1;victory.step(win,null);const cue=victory.voices.get('jingle');
+ if(cue?.name!=='victory'||cue.source.loop)throw Error('Victory trigger');
+ const rendered=await victory.context.offline.startRendering(),samples=rendered.getChannelData(0);
+ let peak=0,tail=0;for(let i=0;i<samples.length;i++){peak=Math.max(peak,Math.abs(samples[i]));if(i>7.2*22050)tail=Math.max(tail,Math.abs(samples[i]));}
+ if(peak<.005||peak>.31||tail>.0001)throw Error('Victory mix level/tail '+peak+'/'+tail);
+ document.getElementById('result').textContent='PASS: all 13 samples + 3 cues decoded; user dive one-shot/crash handoff verified. New recorded stereo victory: '+vb.duration.toFixed(3)+' s, mixed peak '+peak.toFixed(3)+', silence before next mission. No speaker context created.';
  }catch(e){document.getElementById('result').textContent='FAIL: '+e;}
 };
 </script></html>

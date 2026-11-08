@@ -133,10 +133,22 @@ conversion; original pitch is retained. The adaptation remains CC BY-SA 4.0.
 License and author links are in `licenses/CC-BY-SA-4.0.txt` and deployed `source/`.
 Source metadata and original bytes are retained in `assets/audio/patrol-v06/`.
 
-The victory mix combines the previously credited CC0 Trumpet Fanfare and War
+The earlier victory mix combines the previously credited CC0 Trumpet Fanfare and War
 Theme v2, with bounded excerpts, gain mixing and fades. The earlier dive sound was an
 original procedural cue, replaced in the current update below. Complete processing and hashes:
 `dist/assets/audio/patrol-v06/SOURCES.json`, `scripts/prepare_audio_v06.py`.
+
+## Recorded victory fanfare (2026-11-08)
+
+Current mission-clear music: **Victory Fanfare**, by **humanoide9000 / Luis
+Humanoide**, [Freesound sound 466133](https://freesound.org/people/humanoide9000/sounds/466133/),
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Acquired from the
+official HQ MP3 preview; this is not the login-only original WAV. The adapted
+stereo WAV preserves pitch, trims silence/reverb, speeds the tempo by 1.4x,
+normalizes loudness and applies short fades to fit the existing 7.2-second
+departure. It retains CC BY 4.0. Original source bytes, processing and hashes:
+`dist/assets/audio/victory-v23/`, `scripts/prepare_victory_v23.py`.
+Full license text: `licenses/CC-BY-4.0.txt`, also deployed in `dist/source/`.
 
 ## Painted flight update (2026-11-02)
 

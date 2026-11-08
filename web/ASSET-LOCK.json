@@ -14,8 +14,8 @@
     },
     {
       "path": "dist/assets/audio/README.md",
-      "bytes": 7185,
-      "sha256": "da601c56b622ec2962a881f6145caf4bb04db7f564957fdac4accbed78ec8310"
+      "bytes": 8264,
+      "sha256": "452d02c5aab1b93f122691649ee85a10d5bed9c823bfc9d584ce4f462e06ace5"
     },
     {
       "path": "dist/assets/audio/SOURCES.json",
@@ -186,6 +186,21 @@
       "path": "dist/assets/audio/patrol-v06/victory.wav",
       "bytes": 344058,
       "sha256": "50a054a82c57c1867ce8d4446c13a61726699d024b2747ea8c3bd27b7b76331e"
+    },
+    {
+      "path": "dist/assets/audio/victory-v23/SOURCES.json",
+      "bytes": 1368,
+      "sha256": "3dbd71a4912764c505841145ce235d172c9a85aa439db56a9f01db3d80a2c76b"
+    },
+    {
+      "path": "dist/assets/audio/victory-v23/original/victory-fanfare-hq.mp3",
+      "bytes": 245799,
+      "sha256": "d99a915cf6adc87949b939259fd053deaa6d62659a781926a89be3e33375d249"
+    },
+    {
+      "path": "dist/assets/audio/victory-v23/victory.wav",
+      "bytes": 872470,
+      "sha256": "766c666ac3aaf776a14da15bb49a47a8fd7744cb5bbffc100081e5cdcb63f86c"
     },
     {
       "path": "dist/assets/classic-cover.svg",

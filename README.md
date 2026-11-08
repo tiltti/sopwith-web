@@ -23,6 +23,11 @@ The hub and info pages are separate from the game. Changing editions stops the
 previous game. Audio starts disabled on every page load and can be enabled with
 the sound button or S during flight. It never starts automatically.
 
+Mission-clear music uses a recorded orchestral **Victory Fanfare** by
+humanoide9000 / Luis Humanoide (CC BY 4.0), adapted to a 6.816-second stereo
+WAV that fits the departure. Source, license and transformations are retained
+in `dist/assets/audio/victory-v23/`.
+
 ## Rainbow Patrol renderer and variant rules
 
 `web/scene.c` exports a read-only native snapshot: ABI v3 has a 28-integer header,
