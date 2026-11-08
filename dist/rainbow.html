@@ -7,7 +7,7 @@
 <link rel="preload" as="image" href="assets/rainbow-sidebar-buttons-v1.png">
 <meta name="theme-color" content="#183449"><title>Rainbow Patrol — Sopwith Tribute</title>
 <meta name="description" content="Rainbow Patrol: a three-mission flying adventure inspired by Sopwith.">
-<link rel="preload" as="image" href="assets/rainbow-classroom-v1.png"><link rel="stylesheet" href="patrol-fonts.css?v=20261107-flight20"><link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261107-flight20">
+<link rel="preload" as="image" href="assets/rainbow-classroom-v1.png"><link rel="stylesheet" href="patrol-fonts.css?v=20261107-flight20"><link rel="icon" href="assets/tribute-mark.svg"><link rel="stylesheet" href="rainbow-ui.css?v=20261108-splash21">
 </head>
 <body data-edition="rainbow" data-layout="arcade" data-game-state="idle">
 <main class="game-column arcade-root" aria-label="Rainbow Patrol">
@@ -28,10 +28,9 @@
         <button class="menu-link" data-open-panel="help">CONTROLS</button>
         <button class="menu-link" data-open-panel="scores">HIGH SCORES</button>
         <button class="menu-link" data-open-panel="settings">SETTINGS</button>
-        <button id="title-fullscreen" class="menu-link" aria-pressed="false">FULLSCREEN</button>
       </div>
       <p class="press-fire">↑ ↓ SELECT · SPACE / ENTER</p>
-      <button id="title-sound" class="title-sound" aria-pressed="false"><img id="title-sound-icon" class="speaker-icon" src="assets/sound-off.svg" alt="" aria-hidden="true"><span id="title-sound-label">SOUND OFF</span></button>
+      <div class="title-tools"><button id="title-fullscreen" class="title-fullscreen" aria-pressed="false" aria-label="FULLSCREEN" title="Fullscreen"><svg width="23" height="23" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" fill="none" stroke="currentColor" stroke-width="2"/></svg><span class="sr-only">FULLSCREEN</span></button><button id="title-sound" class="title-sound" aria-pressed="false"><img id="title-sound-icon" class="speaker-icon" src="assets/sound-off.svg" alt="" aria-hidden="true"><span id="title-sound-label">SOUND OFF</span></button></div>
       <a class="title-exit" href="./">← SOPWITH TRIBUTE</a>
       <fieldset hidden><legend>Pelitila</legend><input type="radio" name="mode" value="practice" checked><input type="radio" name="mode" value="combat"></fieldset>
     </section>
@@ -106,5 +105,5 @@
   <div class="sr-only" aria-live="polite"><span id="status-text">MAIN MENU</span><span id="mode-label">SINGLE PLAYER</span></div>
 </main>
 <noscript>JAVASCRIPT AND WEBASSEMBLY ARE REQUIRED.</noscript>
-<script src="patrol-layout.js?v=20261107-flight20"></script><script src="i18n.js?v=20261107-flight20"></script><script src="app.js?v=20261107-flight20"></script><script src="title-audio.js?v=20261107-flight20"></script><script src="rainbow-ui.js?v=20261107-flight20"></script><script src="leaderboard.js?v=20261107-flight20"></script>
+<script src="splash-options.js?v=20261108-splash21"></script><script src="patrol-layout.js?v=20261107-flight20"></script><script src="i18n.js?v=20261107-flight20"></script><script src="app.js?v=20261108-splash21"></script><script src="title-audio.js?v=20261107-flight20"></script><script src="rainbow-ui.js?v=20261108-splash21"></script><script src="leaderboard.js?v=20261107-flight20"></script>
 </body></html>

@@ -116,6 +116,12 @@ async function pageTests() {
   while(animationFrames.length)animationFrames.shift()();
   documentHandlers.visibilitychange();assert.equal(pauses(),beforeFullscreen+1,'Normal tab hiding still pauses.');
   scope.document.hidden=false;get('resume').listeners.click();
+  scope.document.fullscreenElement={};documentHandlers.fullscreenchange();
+  assert.equal(get('title-fullscreen').lastElementChild.textContent,'WINDOWED');assert.equal(get('title-fullscreen')['aria-pressed'],'true');
+  assert.equal(get('settings-fullscreen').textContent,'WINDOWED');assert.equal(get('settings-fullscreen')['aria-pressed'],'true');
+  scope.document.fullscreenElement=null;documentHandlers.fullscreenchange();
+  assert.equal(get('title-fullscreen').lastElementChild.textContent,'FULLSCREEN');assert.equal(get('title-fullscreen')['aria-pressed'],'false');
+  assert.equal(get('settings-fullscreen').textContent,'FULLSCREEN');assert.equal(get('settings-fullscreen')['aria-pressed'],'false');
   message({type:'round-ended',score:250});
   assert.equal(get('complete').hidden,false);
   assert.equal(get('complete-score').textContent,'Pisteet: 250');

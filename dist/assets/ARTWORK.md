@@ -418,3 +418,24 @@ Both pieces and the live engraved labels remain clipped inside the cockpit.
 Prompts, dimensions and SHA-256 receipts are in `web/pause-flight-v20-*.json`.
 No provider API/CLI, borrowed commercial-game imagery or new external audio
 was used. The art is distributed with the GPL-2.0-or-later game.
+
+## Title alternatives (2026-11-08)
+
+Two new full 1536×1024 built-in imagegen PNGs were shown in chat and copied
+unchanged. B, `rainbow-splash-airfield-v2.png`, shows a sunny coastal airfield,
+the main biplane, friendly wingman, hangar crew, cow and distant ground defenses.
+C, `rainbow-splash-campaign-v3.png`, combines coast, winter valley and storm
+city, with a following aircraft and distant parachutist. Both have original
+sculpted Rainbow Patrol title emblems and quiet lower-right areas for live UI.
+`web/splash-v21-prompts.json` retains the exact prompts; `splash-v21-files.json`
+records original dimensions, bytes and SHA-256 hashes. No external references,
+commercial-game graphics or paid-provider API/CLI were used.
+
+`splash-lab.html` compares A/B/C with menu placement and provides links to
+try each artwork in the actual game. The source PNG is never altered to bake
+menu text into it. Optional `?splash=airfield` / `?splash=campaign` requests
+select only those local images, without storing a preference. The original
+`rainbow-splash-v1.png` remains the ordinary launch default pending selection.
+The fullscreen utility is next to sound at top-right, outside the four-item
+game list; it reuses the existing fullscreen action rather than creating a
+second display setting.

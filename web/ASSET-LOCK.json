@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "date": "2026-11-07",
+  "date": "2026-11-08",
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 27698,
-      "sha256": "fcd6da19893604bef3dbce60e719cca42d10b8d7b858cadf77c7b1f050af4e22"
+      "bytes": 28986,
+      "sha256": "4b830874ee660349ba20dcadcc51b7f77f041692115ac1fa869af186f977aea6"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -451,6 +451,16 @@
       "path": "dist/assets/rainbow-soil-v1.png",
       "bytes": 3405588,
       "sha256": "1df20743e831f013e0930512d095547047adf41d4d0c262400429e4f397b72cd"
+    },
+    {
+      "path": "dist/assets/rainbow-splash-airfield-v2.png",
+      "bytes": 3410995,
+      "sha256": "ae987c4cf16b65e9c335b981db9a594e8da08f873fec92e8fd3086057f41241f"
+    },
+    {
+      "path": "dist/assets/rainbow-splash-campaign-v3.png",
+      "bytes": 3215026,
+      "sha256": "23140e1bfda9ddfc86ac12b5f5d99132f676f02cdfeb8016f46b8b532ccc9c2a"
     },
     {
       "path": "dist/assets/rainbow-splash-v1.png",

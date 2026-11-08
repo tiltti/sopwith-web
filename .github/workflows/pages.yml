@@ -51,6 +51,7 @@ jobs:
           node tests/leaderboard.mjs
           node tests/leaderboard-ui.mjs
           node tests/patrol-layout.mjs
+          node tests/splash-options.mjs
           python scripts/test_trainer.py
           python scripts/test_patrol.py
           python scripts/test_scene.py
@@ -78,6 +79,8 @@ jobs:
           node --check dist/look-lab.js
           node --check dist/leaderboard.js
           node --check dist/patrol-layout.js
+          node --check dist/splash-options.js
+          node --check dist/splash-lab.js
           python scripts/verify_release.py
 
       - name: Configure GitHub Pages

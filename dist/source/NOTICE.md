@@ -269,3 +269,13 @@ GPL-2.0-or-later game. The pause shelter has an empty slate at left and a
 standing pilot at right. The transparent control sheet supplies a brass guide
 plate and separate bakelite-grip lever, animated by the real throttle setting.
 Exact prompts and raw integrity receipts: `web/pause-flight-v20-*.json`.
+
+## Alternative title artwork (2026-11-08)
+
+`rainbow-splash-airfield-v2.png` and `rainbow-splash-campaign-v3.png` are
+original built-in OpenAI imagegen outputs, preserved unchanged with this
+GPL-2.0-or-later game. They depict the game's airfield/escort and its three
+mission climates, with original Rainbow Patrol lettering and aviator emblems.
+Exact prompts, dimensions and hashes: `web/splash-v21-*.json`. No commercial
+game artwork or logo is bundled. The existing splash remains the default;
+the alternatives are available through the artwork comparison page.

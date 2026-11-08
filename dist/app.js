@@ -118,16 +118,22 @@
   });
   const fullscreenLabel = () => {
     const active=!!(document.fullscreenElement || document.webkitFullscreenElement);
-    const label=active ? 'Poistu koko näytöstä' : 'Koko näyttö';
+    const label=edition==='rainbow'?(active?'EXIT FULLSCREEN':'FULLSCREEN'):(active?'Poistu koko näytöstä':'Koko näyttö');
     $('fullscreen').lastElementChild.textContent=label;$('fullscreen').setAttribute('aria-label',label);
     if(edition==='rainbow'&&$('title-fullscreen')){
-      $('title-fullscreen').textContent=active?'Ikkunatila':'Koko näyttö';
+      $('title-fullscreen').lastElementChild.textContent=active?'WINDOWED':'FULLSCREEN';
       $('title-fullscreen').setAttribute('aria-pressed',String(active));
       $('title-fullscreen').setAttribute('aria-label',label);
+    }
+    if(edition==='rainbow'&&$('settings-fullscreen')){
+      $('settings-fullscreen').textContent=active?'WINDOWED':'FULLSCREEN';
+      $('settings-fullscreen').setAttribute('aria-pressed',String(active));
+      $('settings-fullscreen').setAttribute('aria-label',label);
     }
   };
   document.addEventListener('fullscreenchange', fullscreenLabel);
   document.addEventListener('webkitfullscreenchange', fullscreenLabel);
+  if(edition==='rainbow')fullscreenLabel();
   $('palette').value = loadPref('palette', '0');
   if (!$('palette').value) $('palette').value = '0';
   $('palette').addEventListener('change', () => { savePref('palette', $('palette').value); post('palette', { value:Number($('palette').value) }); });

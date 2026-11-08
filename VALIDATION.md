@@ -1,3 +1,22 @@
+## Title-art alternatives and fullscreen placement — 2026-11-08
+
+- Both new 1536×1024 title PNGs were displayed and preserved unchanged, with
+  exact prompts and hash receipts in web/splash-v21-*.json. The original A
+  asset/default is retained. The comparison page shows B/C with menu placement
+  and links to explicit local-art previews in the actual game.
+- Local 1280×720, silent/windowed: B's four-item list fits its dark canvas area;
+  C's list fits the storm shadows. The actual C title screen preserves the
+  logo and hero aircraft, with sound/fullscreen at top-right and the website
+  link at lower-left. DOM checks confirm four main-list buttons, fullscreen
+  outside that list, and the expected C image. No fullscreen was requested.
+  Proofs: parent research/review-2026-11-08/splash-{b,c}-local.jpg and
+  splash-c-game-local.jpg.
+- The splash-choice test keeps an ordinary launch on A and rejects invalid,
+  inherited-property and external-image choices. The browser-controls test
+  checks shared title/Settings FULLSCREEN→WINDOWED state updates and retains
+  the existing protection against fullscreen transitions pausing the aircraft.
+  No engine/game-rule or audio change is part of this revision.
+
 ## Pause shelter, throttle and flight review — 2026-11-07
 
 - Original pause/background and transparent throttle-control PNGs are shown

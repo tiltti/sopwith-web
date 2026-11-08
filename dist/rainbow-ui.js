@@ -1,6 +1,7 @@
 // Standalone arcade menus and three-character initials. GPL-2.0-or-later.
 (() => {
   const $=id=>document.getElementById(id),panels=['help','settings','scores','flight'];
+  if(window.PatrolSplash){const key=PatrolSplash.fromSearch(location.search);$('screen').dataset.splash=key;document.querySelector('.splash-art').src='assets/'+PatrolSplash.options[key].image;}
   let panel=null,selection=0,cursor=0,items=[],resumeAfterPanel=false;
   const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   function menuItems() {
