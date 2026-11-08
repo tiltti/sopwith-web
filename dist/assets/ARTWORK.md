@@ -434,8 +434,24 @@ commercial-game graphics or paid-provider API/CLI were used.
 `splash-lab.html` compares A/B/C with menu placement and provides links to
 try each artwork in the actual game. The source PNG is never altered to bake
 menu text into it. Optional `?splash=airfield` / `?splash=campaign` requests
-select only those local images, without storing a preference. The original
-`rainbow-splash-v1.png` remains the ordinary launch default pending selection.
+select only those local images, without storing a preference. The selected
+ordinary launch default is now Three Fronts; `?splash=current` still explicitly
+shows the original `rainbow-splash-v1.png` for comparison.
 The fullscreen utility is next to sound at top-right, outside the four-item
 game list; it reuses the existing fullscreen action rather than creating a
 second display setting.
+
+## Refueling/loading splash (2026-11-08)
+
+`rainbow-loading-refuel-v1.png` is a full original 1536×1024 built-in imagegen
+output, displayed in chat and copied unchanged. A parked coral/cream biplane
+is refueled by hand pump while ground crew and a pilot hurry around it. The
+propeller is stopped. The dark lower-left supply-chest canvas holds live HTML
+startup text and an indeterminate loading bar, without a central dialog or
+baked lettering. The image is preloaded from the title page and used during
+the real startup interval; no extra game-start delay was introduced.
+
+Prompt, dimensions and original SHA-256 hash are in `web/launch-v22-*.json`.
+This is original GPL-2.0-or-later project artwork with no third-party source
+images or new audio. The selected Three Fronts title art also appears on the
+site's game card; all earlier title PNGs remain unchanged in the sources.

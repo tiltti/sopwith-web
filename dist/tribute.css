@@ -30,4 +30,4 @@
 
 @media(max-width:600px){.rainbow-page .screen:not(.in-flight){height:auto;aspect-ratio:8/6.8;background:#529fe1}.rainbow-splash-screen .rainbow-splash{height:auto;object-fit:contain}.rainbow-page .rainbow-splash-screen .launch-content{bottom:5%;width:92%}.rainbow-page .rainbow-splash-screen .mode-picker label>span{padding-left:24px;min-height:28px;display:flex;align-items:center}.rainbow-page .rainbow-splash-screen .primary{min-height:44px;font-size:10px}.rainbow-page .rainbow-splash-screen .screen-credit{bottom:1%}}
 
-.edition-card .card-copy{display:flex;flex:1;flex-direction:column}.edition-card .edition-meta{margin-top:auto}.edition-card .edition-art{flex:none}.edition-card:first-child .edition-art>img{image-rendering:auto}
+.edition-card .card-copy{display:flex;flex:1;flex-direction:column}.edition-card .edition-meta{margin-top:auto}.edition-card .edition-art{flex:none}.edition-card:first-child .edition-art>img{image-rendering:auto;object-position:center top}

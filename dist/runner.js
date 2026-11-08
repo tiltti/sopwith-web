@@ -146,7 +146,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261107-flight20',
+      locateFile: name => 'engine/' + name + '?v=20261108-launch22',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),

@@ -1,0 +1,7 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Loading artwork review — production markup, no game delay</title><link rel="stylesheet" href="../dist/patrol-fonts.css"><link rel="stylesheet" href="../dist/rainbow-ui.css">
+<body data-edition="rainbow" data-layout="arcade" data-game-state="loading"><main class="arcade-root"><div class="arcade-stage-wrap"><div id="screen" class="screen in-flight"></div></div></main>
+<script type="module">
+// Review the real loading layer without slowing the actual game startup.
+const source=new DOMParser().parseFromString(await (await fetch('../dist/rainbow.html')).text(),'text/html');
+const loading=source.getElementById('loading');loading.hidden=false;loading.querySelector('#loading-text').textContent='Loading game…';document.getElementById('screen').append(loading);
+</script></body></html>

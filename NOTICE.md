@@ -277,5 +277,13 @@ original built-in OpenAI imagegen outputs, preserved unchanged with this
 GPL-2.0-or-later game. They depict the game's airfield/escort and its three
 mission climates, with original Rainbow Patrol lettering and aviator emblems.
 Exact prompts, dimensions and hashes: `web/splash-v21-*.json`. No commercial
-game artwork or logo is bundled. The existing splash remains the default;
-the alternatives are available through the artwork comparison page.
+game artwork or logo is bundled. Three Fronts is the selected default;
+the earlier art remains available through the artwork comparison page.
+
+## Refueling/loading splash (2026-11-08)
+
+`rainbow-loading-refuel-v1.png` is original built-in OpenAI imagegen artwork,
+copied unchanged and distributed with this GPL-2.0-or-later game. It depicts
+ground crew hand-pumping fuel into the parked biplane while its pilot hurries
+to depart. The live startup heading/status/bar are separate HTML elements.
+Exact prompt and PNG integrity receipt: `web/launch-v22-*.json`.

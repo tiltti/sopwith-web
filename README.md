@@ -159,11 +159,17 @@ Pause has its own shelter scene, with controls on the left-hand physical slate.
 ## Art-direction studies
 
 [Compare title artwork A/B/C](https://tiltti.github.io/sopwith-web/splash-lab.html).
-The original splash stays the default. Airfield and Three Fronts can be tried
-in the real game with `?splash=airfield` and `?splash=campaign`; the choice is
-not stored. Fullscreen remains accessible before takeoff as a top-right icon
+Three Fronts is the selected default, also used on the home-page game card.
+The earlier art can be tried with `?splash=current` and `?splash=airfield`;
+the optional choice is not stored. Startup has a separate ground-crew refueling
+illustration, with live loading status on its quiet lower-left canvas area.
+Fullscreen remains accessible before takeoff as a top-right icon
 beside sound, outside the four-item game list. Settings provides the same
 toggle during play, and both controls reflect the actual fullscreen state.
+
+Winter hostile AA is placed beyond the player's departure/approach corridor.
+The first added hill gun moves farther ahead, keeping the same target count
+and real collision/fire/map location. The other mission rosters are retained.
 
 [Compare A/B/C](https://tiltti.github.io/sopwith-web/look-lab.html) renders the
 same composed scene at three environment pixel/detail levels. It includes

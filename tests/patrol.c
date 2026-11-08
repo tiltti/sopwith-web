@@ -111,6 +111,12 @@ int main(void){
     WebTrainer_SetEnabled(true);WebVariant_SetEasy(true);
     int width=currgame->gm_max_x;GRNDTYPE *day=malloc(width*sizeof(*day)),*winter=malloc(width*sizeof(*winter));
     memcpy(day,ground,width*sizeof(*day));WebVariant_Test(2);assert(gamenum==1);memcpy(winter,ground,width*sizeof(*winter));
+    int winter_home=consoleplayer->ob_original_ob->x+8,forward_guns=0;
+    for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(WebVariant_ObjectKind(ob)==20&&ob->ob_faction!=consoleplayer->ob_faction){
+        assert(ob->ob_x+16<=winter_home-200||ob->ob_x>=winter_home+270);
+        if(ob->ob_x>=winter_home+270&&ob->ob_x<winter_home+650)forward_guns++;
+    }
+    assert(forward_guns>0);puts("Winter hostile AA stays outside the departure/approach corridor and remains present farther ahead.");
     WebVariant_Test(3);assert(gamenum==2);int changed_winter=0,changed_city=0,low=200,high=0;
     for(int x=0;x<width;x++){changed_winter+=day[x]!=winter[x];changed_city+=winter[x]!=ground[x];if(x>10&&x<width-10){low=imin(low,ground[x]);high=imax(high,ground[x]);}}
     assert(changed_winter>width/2&&changed_city>width/2&&high-low>90);

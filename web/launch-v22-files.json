@@ -1,0 +1,13 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "rawOutputsPreserved": true,
+  "files": [
+    {
+      "path": "dist/assets/rainbow-loading-refuel-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3322099,
+      "sha256": "fb5f9448232cb238fbde61e809a22f3558392edb9f15a84cc8c81162936c0467"
+    }
+  ]
+}

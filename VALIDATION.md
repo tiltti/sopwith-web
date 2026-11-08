@@ -1,3 +1,27 @@
+## Selected title, refueling startup and winter AA — 2026-11-08
+
+- Three Fronts is the ordinary default in both static HTML and the bounded
+  query helper, avoiding a flash of the earlier art. The original remains an
+  explicit `?splash=current` preview; the comparison links and labels match.
+  Default/invalid/external-key fallback tests now expect the selected artwork.
+- The original refueling PNG is shown and unchanged, with exact prompt/hash
+  in web/launch-v22-*.json. It is preloaded. The real loading layer uses a small
+  status/bar on the lower-left canvas area, with no central modal. A dedicated
+  review fixture clones production markup/CSS without slowing actual startup.
+  Silent/windowed local 1280×720: status fits 359×63, and fast boot reaches the
+  normal winter READY stage. Proofs: parent research/review-2026-11-08/
+  loading-v22-preview.jpg and winter-v22-local.jpg.
+- Winter's hostile AA at native x=1400 moves to x=1580, with y recalculated
+  from the real terrain. No hostile AA overlaps the reserved home-center
+  interval [-200,+270]; placement searches outward while keeping native
+  obstacle/runway clearance. Native tests retain guns farther ahead. The
+  hostile target count remains 31; coast/storm target rosters are byte-equal
+  to their previous JSON records. The briefing chart is regenerated.
+- Native patrol tests, 90/90 Rainbow return-home cases and the 4000-step
+  escort test pass. Classic retains its known 28/30 return-home baseline.
+  New guards apply only to winter hostile added AA; the source engine files
+  remain unchanged. Sound and fullscreen were not enabled in browser review.
+
 ## Title-art alternatives and fullscreen placement — 2026-11-08
 
 - Both new 1536×1024 title PNGs were displayed and preserved unchanged, with

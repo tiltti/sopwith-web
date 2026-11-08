@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 28986,
-      "sha256": "4b830874ee660349ba20dcadcc51b7f77f041692115ac1fa869af186f977aea6"
+      "bytes": 29926,
+      "sha256": "ac87f9d52dd7a2d9c1bf17c86b6e33cc4f107736eeaf25b66453c97507cb5d0f"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -356,6 +356,11 @@
       "path": "dist/assets/rainbow-honor-plates-v1.png",
       "bytes": 2236484,
       "sha256": "873680345e71514b5dc2dd6dfb0a3aa0cdd9202e2c5305b5f9d89ce179cde770"
+    },
+    {
+      "path": "dist/assets/rainbow-loading-refuel-v1.png",
+      "bytes": 3322099,
+      "sha256": "fb5f9448232cb238fbde61e809a22f3558392edb9f15a84cc8c81162936c0467"
     },
     {
       "path": "dist/assets/rainbow-medal-ceremony-v1.png",

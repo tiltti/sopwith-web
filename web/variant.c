@@ -355,9 +355,26 @@ static bool emplacement_clear(int x)
     }
     return true;
 }
+static bool winter_departure_conflict(int x,faction_t faction)
+{
+    if(gamenum%3!=1||!consoleplayer||!consoleplayer->ob_original_ob||faction==consoleplayer->ob_faction)return false;
+    int home=consoleplayer->ob_original_ob->x+8;
+    return x+16>home-200&&x<home+270;
+}
 static void add_emplacement(int x,faction_t faction)
 {
-    if(emplacement_count>=24||!emplacement_clear(x))return;
+    if(emplacement_count>=24)return;
+    /* Winter's first generated hill gun used to sit just past the grass
+     * strip. Keep hostile AA beyond a real departure/approach corridor,
+     * moving the actual target outwards instead of hiding its artwork. */
+    if(winter_departure_conflict(x,faction)){
+        int home=consoleplayer->ob_original_ob->x+8,direction=x>=home?1:-1;
+        int edge=direction>0?home+270:home-216;bool placed=false;
+        for(int offset=0;offset<=320;offset+=32){int candidate=edge+direction*offset;
+            if(emplacement_clear(candidate)){x=candidate;placed=true;break;}}
+        if(!placed)return;
+    }
+    if(!emplacement_clear(x))return;
     int base=0;
     for(int n=x;n<x+16;n++)base=imax(base,ground[n]);
     if(base+16>MAX_Y-32)return;
