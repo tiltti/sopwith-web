@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="../dist/"><title>Aircraft livery comparison</title><style>body{margin:0;background:#4e86b1;color:#fff2ce;font:24px Georgia;display:flex;align-items:center;justify-content:center;min-height:100vh;gap:50px}figure{margin:0;text-align:center}canvas{display:block;width:360px;height:360px;image-rendering:auto}figcaption{padding:10px}</style><script src="rainbow-assets.js"></script><script>
+addEventListener('load',async()=>{
+ await RainbowAssets.ready;
+ const heap=new Uint8Array(256).fill(1),r=new Int32Array(18);r[0]=r[1]=r[6]=1;r[7]=r[8]=16;
+ for(const [kind,label] of [[0,'YOUR AIRCRAFT'],[22,'AI WINGMAN']]){
+  r[15]=kind;const image=RainbowAssets.sprite(r,heap),figure=document.createElement('figure'),canvas=document.createElement('canvas'),caption=document.createElement('figcaption');
+  canvas.width=canvas.height=720;canvas.getContext('2d').drawImage(image,0,0,720,720);caption.textContent=label;figure.append(canvas,caption);document.body.append(figure);
+ }
+});
+</script></html>

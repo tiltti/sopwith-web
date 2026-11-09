@@ -134,3 +134,17 @@ Mute consumes falls silently. Exact hashes and contributor provenance:
 `web/user-dive-source.json`; processing: `scripts/prepare_user_dive.py`.
 The mixer currently decodes thirteen samples (twelve local WAV URLs plus the
 embedded sample) and generates three cues. Sound remains off on first launch.
+
+## Enemy pilot AAARGH (2026-11-09)
+
+**HaelDB — Male Grunt/Yelling sounds / 3yell9.wav**, selected under the
+[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) option offered on
+[OpenGameArt](https://opengameart.org/content/male-gruntyelling-sounds).
+The retained original is a real WAV from `yelling sounds.zip`, not a preview
+conversion. The game uses a 1.68-second mono PCM16 / 32 kHz adaptation: trim
+0.32–2.00 seconds, 80 Hz high-pass / 7.5 kHz low-pass, -13 LUFS / -1.5 dBTP
+normalization and 12/150 ms edge fades. Original pitch/tempo are preserved.
+It replaces spoken Himmel only; the friendly pilot's existing cue is retained.
+The old Himmel files retain their prior attribution and license as archives.
+Rebuild offline: `python3 scripts/prepare_pilot_v24.py`. Original WAV, closed
+file hashes, source URL and source archive SHA-256: `pilot-v24/SOURCES.json`.

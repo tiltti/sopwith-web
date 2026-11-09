@@ -9,6 +9,7 @@ class SilentContext{
 document.getElementById('check').onclick=async()=>{
  try{const mixer=new RainbowAudio({AudioContext:SilentContext});await mixer.setEnabled(true);if(mixer.status!=='samples')throw Error(mixer.status);
  const b=mixer.buffers.dive;if(Math.abs(b.duration-4)>.001||b.numberOfChannels!==1)throw Error('Wrong sample format');
+ const yell=mixer.buffers.himmel;if(Math.abs(yell.duration-1.68)>.002||yell.numberOfChannels!==1)throw Error('Wrong replacement yell');
  const s=new Int32Array(5000);s.set([3,1,100,2000]);s[14]=1;s[13]=4;s.set([1,4,170,120,12,0,1,16,16,0,1,20,0,-8,1,0,567,1],348);
  mixer.step(s,null);const v=mixer.voices.get('mechanical');if(v?.name!=='dive'||v.source.loop)throw Error('Not a one-shot dive');v.source.onended();s[1]++;mixer.step(s,null);if(mixer.voices.has('mechanical'))throw Error('Replayed');
  s[1]++;s[349]=3;mixer.step(s,null);if(mixer.voices.get('mechanical')?.name!=='blast')throw Error('Crash handoff failed');await mixer.setEnabled(false);
@@ -19,7 +20,7 @@ document.getElementById('check').onclick=async()=>{
  const rendered=await victory.context.offline.startRendering(),samples=rendered.getChannelData(0);
  let peak=0,tail=0;for(let i=0;i<samples.length;i++){peak=Math.max(peak,Math.abs(samples[i]));if(i>7.2*22050)tail=Math.max(tail,Math.abs(samples[i]));}
  if(peak<.005||peak>.31||tail>.0001)throw Error('Victory mix level/tail '+peak+'/'+tail);
- document.getElementById('result').textContent='PASS: all 13 samples + 3 cues decoded; user dive one-shot/crash handoff verified. New recorded stereo victory: '+vb.duration.toFixed(3)+' s, mixed peak '+peak.toFixed(3)+', silence before next mission. No speaker context created.';
+ document.getElementById('result').textContent='PASS: all 13 samples + 3 cues decoded; replacement AAARGH WAV '+yell.duration.toFixed(3)+' s / mono; dive one-shot/crash handoff verified. Stereo victory '+vb.duration.toFixed(3)+' s, mixed peak '+peak.toFixed(3)+', silence before next mission. No speaker context created.';
  }catch(e){document.getElementById('result').textContent='FAIL: '+e;}
 };
 </script></html>

@@ -15,6 +15,7 @@
 static bool enabled;
 static bool easy_mode,player_was_dead;
 static int grace_until,fire_count;
+static int spawn_until;
 static struct {OBJECTS *owner;int tick;} fire_times[128];
 static int last_tick = -1;
 static int effects[WEB_EFFECT_HEADER + WEB_EFFECT_CAPACITY * WEB_EFFECT_STRIDE] = {1,0,0,WEB_EFFECT_STRIDE};
@@ -48,7 +49,7 @@ void WebVariant_SetEnabled(bool value)
     enabled = value;level_ready=false;emplacement_count=0;
     WebWingman_Configure(false);
     WebVariant_ResetFlight();
-    easy_mode=false;player_was_dead=false;grace_until=0;fire_count=0;
+    easy_mode=false;player_was_dead=false;grace_until=spawn_until=0;fire_count=0;
     memset(pilots,0,sizeof(pilots));plane_count=0;
     building_count=0;
     last_tick = -1;
@@ -139,9 +140,27 @@ static const OBJECTS *weapon_owner(const OBJECTS *ob)
     for(int n=0;ob&&ob->ob_owner&&ob->ob_owner!=ob&&n<4;n++)ob=ob->ob_owner;
     return ob;
 }
+void WebVariant_ProtectSpawn(OBJECTS *plane)
+{
+    if(!enabled||plane!=consoleplayer||!plane->ob_original_ob)return;
+    spawn_until=countmove+100; /* Ten seconds of simulation, excluding pause/READY. */
+    grace_until=imax(grace_until,spawn_until);
+    /* A crashed aircraft can excavate its own next spawn. Restore only the
+     * player's prepared strip, before native initplyr measures its height. */
+    if(ground&&mission_ground&&currgame&&mission_width==(int)currgame->gm_max_x){
+        int home=plane->ob_original_ob->x+8;
+        for(int x=imax(0,home-110);x<imin(mission_width,home+111);x++)ground[x]=mission_ground[x];
+    }
+}
+int WebVariant_SpawnProtection(void)
+{
+    return enabled&&consoleplayer&&consoleplayer->ob_endsts==PLAYING
+        &&!PlaneIsKilled(consoleplayer->ob_state)?imax(0,spawn_until-countmove):0;
+}
 bool WebVariant_CanCollide(const OBJECTS *a,const OBJECTS *b)
 {
     if(!enabled)return true;
+    if((a==consoleplayer||b==consoleplayer)&&WebVariant_SpawnProtection()>0)return false;
     /* Escort formation and its own weapons must never punish the player
      * for the AI's steering. Hostile weapons and terrain still hit it. */
     const OBJECTS *wa=weapon_owner(a),*wb=weapon_owner(b);
@@ -442,6 +461,8 @@ void WebVariant_Crater(int left,const GRNDTYPE before[8])
     if(!enabled||!ground||!currgame)return;
     for(int i=0;i<8;i++){
         int x=left+i;if(x<0||x>=(int)currgame->gm_max_x)continue;
+        if(consoleplayer&&consoleplayer->ob_original_ob&&mission_ground
+            &&abs(x-consoleplayer->ob_original_ob->x-8)<=110){ground[x]=mission_ground[x];continue;}
         int floor=imax(0,(mission_ground&&x<mission_width?mission_ground[x]:before[i])-20);
         floor=imin(floor,before[i]);
         ground[x]=imax(floor,(int)before[i]-depth[i]);
@@ -486,6 +507,7 @@ static void setup_level(void)
     lower_end_buildings();
     if(mission_width!=(int)currgame->gm_max_x){free(mission_ground);mission_width=currgame->gm_max_x;mission_ground=malloc(sizeof(*mission_ground)*mission_width);}
     if(mission_ground)memcpy(mission_ground,ground,sizeof(*ground)*mission_width);
+    WebVariant_ProtectSpawn(consoleplayer);
     for(int state=0;state<2;state++){
         memset(gun_pixels[state],0,256);
         for(int y=state?11:3;y<16;y++)for(int x=1;x<15;x++)
@@ -552,7 +574,7 @@ void WebVariant_Apply(OBJECTS *player)
     if(!level_ready){WebWingman_ResetLevel();setup_level();}
     WebWingman_Apply(player);
     bool alive=player->ob_state==FLYING||player->ob_state==STALLED||player->ob_state==WOUNDED||player->ob_state==WOUNDSTALL;
-    if(alive&&player_was_dead)grace_until=countmove+30;
+    if(alive&&player_was_dead)grace_until=imax(grace_until,countmove+30);
     player_was_dead=!alive;
     last_tick = countmove;
     OBJECTS *current[512], *owners[128], *bombs[256], *shots[512];

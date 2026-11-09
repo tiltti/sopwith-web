@@ -55,3 +55,34 @@ assert.equal(JSON.parse(storage.get('sopwith.scores.rainbow.practice.wingman'))[
 assert.equal(storage.get('sopwith.scores.rainbow.practice'),saved,'Escort assistance never enters the solo board.');
 get('scores-crew').value='solo';get('scores-crew').listeners.change();await settle();assert.equal(get('scores-rows').children[0].children[1].textContent,'T01');
 console.log('Wingman results persist on a separate local board; crew filtering preserves solo scores.');
+
+get('game').src='runner.html?mode=practice&difficulty=normal&supplies=1&trainer=0&run=supplies-run';message({type:'ready'});await settle();
+get('score-name').value='INF';message({type:'score-ready',score:45000,level:3,ticks:1000,trainerUsed:false,suppliesUsed:true});await settle();
+assert.equal(get('score-form').hidden,false);assert.equal(get('scores-rules').value,'supplies');
+await get('score-form').listeners.submit({preventDefault(){}});
+assert.equal(JSON.parse(storage.get('sopwith.scores.rainbow.practice.supplies'))[0].nickname,'INF');
+assert.equal(storage.get('sopwith.scores.rainbow.practice'),saved,'Infinite supplies never changes the normal board.');
+get('game').src='runner.html?mode=practice&run=late-supplies';message({type:'ready'});await settle();
+message({type:'supplies-state',enabled:true});message({type:'supplies-state',enabled:false});
+get('score-name').value='MID';message({type:'score-ready',score:46000,level:3,ticks:1000,trainerUsed:false});await settle();
+await get('score-form').listeners.submit({preventDefault(){}});
+assert.equal(JSON.parse(storage.get('sopwith.scores.rainbow.practice.supplies'))[0].nickname,'MID','A mid-flight supply cheat remains on its own board after disabling.');
+const beforeDemo=[...storage.entries()];
+get('game').src='runner.html?mode=combat&trainer=1&demo=1&run=demo';message({type:'ready'});await settle();
+message({type:'score-ready',score:9999999,level:3,ticks:1000,trainerUsed:false});await settle();
+assert.equal(get('score-form').hidden,true);assert.deepEqual([...storage.entries()],beforeDemo,'Attract demos never save any score.');
+console.log('Infinite supplies have a separate persisted board; mid-flight changes are latched; demos cannot save scores.');
+
+// Repeat the assisted save with a configured shared service: neither supply
+// runs nor demos may create a server ticket or submit to the standard board.
+const calls=[];scope.AbortSignal=AbortSignal;
+scope.fetch=async(url,options={})=>{calls.push({url,method:options.method});return {ok:true,json:async()=>url.startsWith('leaderboard-config')?{endpoint:'https://scores.test'}:url.endsWith('/api/runs')?{id:'ticket',token:'token'}:{scores:[]}};};
+get('scores-rules').value='supplies';get('game').src='runner.html?mode=practice&supplies=1&run=shared-supply-test';
+vm.runInNewContext(await readFile(new URL('../dist/leaderboard.js',import.meta.url),'utf8'),scope);await settle();
+message({type:'ready'});await settle();get('score-name').value='LOC';
+message({type:'score-ready',score:900,level:2,ticks:1000,trainerUsed:false,suppliesUsed:true});await settle();
+await get('score-form').listeners.submit({preventDefault(){}});
+assert.equal(calls.some(c=>c.method==='POST'),false,'Supply runs never create a shared ticket or upload any score.');
+get('game').src='runner.html?mode=combat&demo=1&run=shared-demo-test';message({type:'ready'});await settle();
+assert.equal(calls.some(c=>c.method==='POST'),false,'Demo runs never create shared tickets.');
+console.log('Configured shared service: assisted supply results and demos cannot issue run tickets or submit to normal shared scores.');

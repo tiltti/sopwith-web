@@ -8,7 +8,7 @@ const event = (code, key = code) => ({ code, key, target:{tagName:'BODY'},
   preventDefault() { this.prevented = true; }, stopImmediatePropagation() { this.stopped = true; } });
 
 async function runnerTests(search='',expectedArgs=['-q'],onlyLaunch=false) {
-  const handlers = {}, sent = [], pressed = [], trainerChanges = [];
+  const handlers = {}, sent = [], pressed = [], trainerChanges = [],suppliesChanges=[];
   let inputMode = 0;const mainArgs=[],easyChanges=[];
   const canvas = { dataset:{}, focus() {} };
   const engine = {
@@ -17,6 +17,7 @@ async function runnerTests(search='',expectedArgs=['-q'],onlyLaunch=false) {
     IDBFS:{}, _web_read:() => 0, _web_input_mode:() => inputMode,
     _web_key:(...args) => pressed.push(args), _web_sound() {}, _web_pause() {},
     _web_palette() {}, _web_trainer:value => trainerChanges.push(value), _web_variant() {}, _web_easy:value=>easyChanges.push(value),callMain(args) {mainArgs.push(...args);},
+    _web_supplies:value=>suppliesChanges.push(value),
   };
   const parent = { postMessage:message => sent.push(message) };
   const scope = { document:{getElementById:() => canvas}, location:{origin,search},
@@ -63,6 +64,10 @@ async function runnerTests(search='',expectedArgs=['-q'],onlyLaunch=false) {
   assert.equal(trainerChanges.at(-1), 1);
   handlers.message({origin:'https://wrong.test',source:parent,data:{sopwith:true,type:'trainer',enabled:false}});
   assert.equal(trainerChanges.at(-1), 1, 'An unrelated origin cannot control the engine.');
+  handlers.message({origin,source:parent,data:{sopwith:true,type:'supplies',enabled:true}});
+  assert.equal(suppliesChanges.at(-1),1);assert.equal(sent.at(-1).type,'supplies-state');
+  handlers.message({origin:'https://wrong.test',source:parent,data:{sopwith:true,type:'supplies',enabled:false}});
+  assert.equal(suppliesChanges.at(-1),1);
   console.log('Runner: native S/arrows/Esc/text entry, flight shortcuts, key release and trainer messaging verified.');
 }
 
@@ -108,6 +113,9 @@ async function pageTests() {
   scope.trainer(false); get('restart').listeners.click(); get('start').listeners.click();
   assert.equal(get('settings-trainer')['aria-pressed'],'false','Console and menu trainer states stay synchronized.');
   assert.match(get('game').src,/trainer=0/);
+  get('settings-supplies').listeners.click();assert.equal(get('settings-supplies')['aria-pressed'],'true');
+  get('start').listeners.click();assert.match(get('game').src,/trainer=0&supplies=1/,'Unlimited supplies launch independently of trainer.');
+  get('settings-supplies').listeners.click();assert.equal(get('settings-supplies')['aria-pressed'],'false');
   message({type:'ready',inputMode:1});
   scope.document.querySelector=()=>({requestFullscreen:async()=>{scope.document.hidden=true;documentHandlers.visibilitychange();}});
   const pauses=()=>sent.filter(x=>x.type==='pause'&&x.value).length;
@@ -126,6 +134,8 @@ async function pageTests() {
   assert.equal(get('complete').hidden,false);
   assert.equal(get('complete-score').textContent,'Pisteet: 250');
   get('play-again').listeners.click();assert.match(get('game').src,/edition=rainbow/);
+  get('watch-demo').listeners.click();assert.match(get('game').src,/demo=1/);assert.equal(get('demo-exit').hidden,false);
+  get('demo-exit').listeners.click();assert.equal(get('game').src,'about:blank');assert.equal(get('launch').hidden,false);
   console.log('Page: quiet default, console trainer on/off/new-game propagation and native-menu shortcut guard verified.');
 }
 

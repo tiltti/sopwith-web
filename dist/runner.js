@@ -7,6 +7,9 @@
   let game, paused = false, stagePaused=false, storage = false, visualRenderer, visualTimeline, sampleMixer, repaint = false;
   let trainerEnabled = params.get('trainer') === '1';
   let trainerUsed = trainerEnabled, scoreSent = false;
+  const demo=params.get('edition')==='rainbow'&&params.get('demo')==='1';
+  let suppliesEnabled=params.get('edition')==='rainbow'&&params.get('supplies')==='1',suppliesUsed=suppliesEnabled;
+  const demoPilot=demo&&window.PatrolDemo?new PatrolDemo():null;
   let lastInputMode = -1;
   let resetMission=()=>{};
   const clock=()=>typeof performance==='undefined'?Date.now():performance.now();
@@ -84,6 +87,7 @@
     game._web_test?.(action);repaint=true;
   }
   window.addEventListener('keydown', event => {
+    if(demo){event.preventDefault();send('demo-exit');return;}
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     // Text entry stays with SDL's native text-input handling. In menus send
     // actual SDL scancodes, never the flight remaps or browser sound shortcut.
@@ -121,6 +125,7 @@
     const scan = physicalHeld.get(event.code);
     if (scan) { event.preventDefault(); event.stopImmediatePropagation(); physicalHeld.delete(event.code); key(scan, false); }
   }, true);
+  if(demo)window.addEventListener('pointerdown',()=>send('demo-exit'));
   window.addEventListener('blur', release);
   window.addEventListener('message', event => {
     if (event.origin !== location.origin || event.source !== parent || !event.data?.sopwith) return;
@@ -136,6 +141,7 @@
       repaint=true;
     }
     if (msg.type === 'trainer') window.trainer(msg.enabled);
+    if (msg.type === 'supplies') {suppliesEnabled=!!msg.enabled;suppliesUsed||=suppliesEnabled;game?._web_supplies?.(suppliesEnabled?1:0);repaint=true;send('supplies-state',{enabled:suppliesEnabled});}
     if (msg.type === 'trainer-action') trainerAction(msg.action);
     if (msg.type === 'focus') { canvas.focus({preventScroll:true}); audio(); }
   });
@@ -146,7 +152,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261108-launch22',
+      locateFile: name => 'engine/' + name + '?v=20261109-flight24',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -170,6 +176,7 @@
     game._web_easy?.(params.get('edition')==='rainbow'&&params.get('difficulty')==='easy'?1:0);
     game._web_wingman?.(params.get('edition')==='rainbow'&&params.get('wingman')==='1'?1:0);
     game._web_trainer(trainerEnabled ? 1 : 0);
+    game._web_supplies?.(suppliesEnabled?1:0);
     if(params.get('edition')==='rainbow'&&window.RainbowAudio)sampleMixer=new RainbowAudio({startup:params.get('muted')==='0'});
     if (params.get('edition') === 'rainbow' && window.RainbowRenderer) {
       if(document.fonts)await Promise.allSettled(['Patrol Engraved','Patrol Chalk'].map(name=>document.fonts.load('16px '+JSON.stringify(name))));
@@ -201,14 +208,22 @@
           else if(snapshot[12]===1){winningMission??=campaignMission;snapshot[18]=winningMission;}
           const effectPtr=game._web_effects()>>>2;effects=game.HEAP32.slice(effectPtr,effectPtr+196);
           const groundPtr=snapshot[24]>>>2;ground=game.HEAP32.slice(groundPtr,groundPtr+snapshot[3]);
+          if(demoPilot){
+            const decision=demoPilot.update(snapshot,ground);
+            if(decision.level){trainerAction(decision.level);requestAnimationFrame(draw);return;}
+            for(const scan of [27,54,56,44])key(scan,decision.scans.includes(scan));
+            if(decision.bomb)game._web_bomb(1);
+          }
           visualTimeline?.push(snapshot,now);sampleMixer?.step(snapshot,effects);
           renderedTick=tick;
+          if(demo&&snapshot[12]===2){trainerAction((campaignMission+1)%3+1);requestAnimationFrame(draw);return;}
           if(snapshot[12]===2&&!endSent) {endSent=true;pause(true);send('round-ended',{score:snapshot[10]});}
           if(snapshot[12]===1&&winningMission===2&&snapshot[25]<=4&&!endSent){
+            if(demo){trainerAction(1);requestAnimationFrame(draw);return;}
             const score=snapshot[10]+25*snapshot[9]*(snapshot[9]+1)/2;
             endSent=scoreSent=true;pause(true);
             send('round-ended',{score,victory:true});
-            send('score-ready',{score,level:3,ticks:snapshot[1],trainerUsed,victory:true});
+            send('score-ready',{score,level:3,ticks:snapshot[1],trainerUsed,suppliesUsed,victory:true});
           }
         }
         if(active&&snapshot&&stages){
@@ -219,6 +234,7 @@
         if(active&&snapshot&&(!paused||repaint||!lastDisplay)) {
           const begin=clock();
           const displayScene=visualTimeline?.sample(now)||snapshot;
+          renderer.unlimitedSupplies=trainerEnabled||suppliesEnabled;renderer.spawnProtection=Math.max(0,game._web_read(14));
           active=renderer.drawScene(displayScene,game.HEAPU8,trainerEnabled,effects,ground);
           lastDisplay=displayScene;repaint=false;frameCount++;drawTotal+=clock()-begin;
         }
@@ -244,11 +260,12 @@
       canvas.dataset.planeState = String(game._web_read(5));
       canvas.dataset.taxiing = String(game._web_read(12)===1);
       canvas.dataset.endStatus = String(game._web_read(9));
-      if(!scoreSent && game._web_read(9)===2 && game._web_read(1)>=0) {
+      if(!demo&&!scoreSent && game._web_read(9)===2 && game._web_read(1)>=0) {
         scoreSent=true;
-        send('score-ready',{score:game._web_read(10),level:game._web_read(11)+1,ticks:game._web_read(0),trainerUsed});
+        send('score-ready',{score:game._web_read(10),level:game._web_read(11)+1,ticks:game._web_read(0),trainerUsed,suppliesUsed});
       }
       canvas.dataset.trainer = String(trainerEnabled);
+      canvas.dataset.supplies=String(suppliesEnabled);canvas.dataset.spawnProtection=String(game._web_read(14));canvas.dataset.demo=String(demo);
       canvas.dataset.audio = sampleMixer?.status || game.SDL2?.audioContext?.state || 'unavailable';
       canvas.dataset.audioVoices = String(sampleMixer?.voices.size || 0);
       canvas.dataset.startups = String(sampleMixer?.startupCount || 0);

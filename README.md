@@ -28,6 +28,22 @@ humanoide9000 / Luis Humanoide (CC BY 4.0), adapted to a 6.816-second stereo
 WAV that fits the departure. Source, license and transformations are retained
 in `dist/assets/audio/victory-v23/`.
 
+New flights receive ten simulation seconds of takeoff cover against object
+collisions, including hostile fire and wreckage. The home runway is kept at
+its prepared terrain profile so repeated crashes cannot dig a respawn pit.
+Landing/refueling does not renew the cover; normal terrain collisions remain.
+
+Settings also offers **Infinite supplies** (ammo, fuel and bombs) independently
+of Trainer. Lives stay limited when Trainer is off. These runs have their own
+local high-score filter and storage, separate from Standard; using the option
+at any time keeps the run in that category, even after disabling it.
+
+**WATCH DEMO** starts a real autonomous combat flight. It takes off, steers,
+fires and drops bombs, cycling coast/winter/storm after forty simulation
+seconds per mission. Click the return prompt or press a key to leave. Demo
+runs never create score tickets or save results. The AI wingman has a blue-teal
+paint scheme in place of a floating number over the aircraft.
+
 ## Rainbow Patrol renderer and variant rules
 
 `web/scene.c` exports a read-only native snapshot: ABI v3 has a 28-integer header,
@@ -91,7 +107,7 @@ The selected pilot briefly salutes. The framed paper briefing charts use
 actual native terrain profiles, home positions and hostile target locations.
 A short Rookie/Ace summary explains return fire and enemy firing behaviour. Controls share one perspective-mapped classroom
 board with the student pilot and instructor. Settings keeps audio, display, sight
-and trainer controls; starting-mission selection stays trainer-only. The website and game UI are
+and trainer/supply controls; starting-mission selection stays trainer-only. The website and game UI are
 English-only; old stored language preferences are ignored.
 Sound controls use matching speaker-on/muted SVG images on the splash, rail and
 settings screen, with a visible on/off label and a gold enabled state.

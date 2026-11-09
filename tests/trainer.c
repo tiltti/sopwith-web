@@ -22,6 +22,7 @@ static void fresh_game(bool trainer)
     playmode = PLAYMODE_SINGLE;
     WebVariant_SetEnabled(false);
     WebTrainer_SetEnabled(trainer);
+    WebTrainer_SetSupplies(false);
     swinitlevel();
     WebTrainer_Apply(consoleplayer);
     compplane = false;
@@ -73,6 +74,19 @@ int main(void)
     for (i = 0; i < MAXCRASH; ++i) crash_and_wait();
     assert(consoleplayer->ob_endsts == LOSER);
     puts("Normal game: fifth crash still ends the game.");
+
+    fresh_game(false);WebTrainer_SetSupplies(true);
+    consoleplayer->ob_rounds=0;consoleplayer->ob_bombs=0;consoleplayer->ob_life=1234;consoleplayer->ob_crashcnt=2;
+    WebTrainer_Apply(consoleplayer);
+    assert(consoleplayer->ob_rounds==MAXROUNDS&&consoleplayer->ob_bombs==MAXBOMBS&&consoleplayer->ob_life==MAXFUEL&&consoleplayer->ob_crashcnt==2);
+    consoleplayer->ob_state=FALLING;consoleplayer->ob_life=7;WebTrainer_Apply(consoleplayer);assert(consoleplayer->ob_life==7);
+    consoleplayer->ob_state=FLYING;consoleplayer->ob_life=QUIT;WebTrainer_Apply(consoleplayer);assert(consoleplayer->ob_life==QUIT);
+    fresh_game(false);WebTrainer_SetSupplies(true);
+    for(i=0;i<MAXCRASH;i++)crash_and_wait();
+    assert(consoleplayer->ob_endsts==LOSER&&consoleplayer->ob_crashcnt==MAXCRASH);
+    fresh_game(false);WebTrainer_SetSupplies(true);WebTrainer_Apply(consoleplayer);WebTrainer_SetSupplies(false);
+    assert(fire_weapon(false));WebTrainer_Apply(consoleplayer);assert(consoleplayer->ob_rounds==MAXROUNDS-1);
+    puts("Infinite supplies: ammo/fuel/bombs refill without trainer; five lives, fall/quit timers and normal consumption after disable remain intact.");
 
     fresh_game(true);
     for (i = 0; i < MAXCRASH + 3; ++i) {

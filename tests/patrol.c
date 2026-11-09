@@ -14,7 +14,8 @@
 #include "variant.h"
 #include "trainer.h"
 char *Vid_GetPrefPath(void){return strdup(WEB_TEST_PREF_PATH);}
-static void fresh(void){playmode=PLAYMODE_SINGLE;WebVariant_SetEnabled(false);gamenum=0;swinitlevel();WebVariant_SetEnabled(true);compplane=false;plyrplane=true;WebVariant_Apply(consoleplayer);}
+/* Existing combat regressions deliberately run after the new spawn shield. */
+static void fresh(void){playmode=PLAYMODE_SINGLE;WebVariant_SetEnabled(false);gamenum=0;swinitlevel();WebVariant_SetEnabled(true);compplane=false;plyrplane=true;WebVariant_Apply(consoleplayer);countmove+=100;WebVariant_Apply(consoleplayer);}
 static OBJECTS *pilot(void){for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(WebVariant_ObjectKind(ob)==21)return ob;return NULL;}
 static OBJECTS *enemy_building(void){for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(ob->ob_type==TARGET&&ob->ob_state==STANDING&&ob->ob_faction!=consoleplayer->ob_faction&&(ob->ob_orient==TARGET_HANGAR||ob->ob_orient==TARGET_FACTORY))return ob;return NULL;}
 static void strike_building(OBJECTS *target,bool bomb){

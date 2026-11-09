@@ -20,6 +20,7 @@ assert.equal(created,0,'No audio context exists before explicit sound enable.');
 await mixer.setEnabled(false);assert.equal(fetched,0);
 await mixer.setEnabled(true);assert.equal(created,1);assert.equal(fetched,13);assert.equal(mixer.status,'samples');
 assert.equal(fetchedUrls.filter(url=>url.includes('victory-v23/victory.wav')).length,1,'The new recorded fanfare replaces the old layered victory mix.');
+assert.equal(fetchedUrls.filter(url=>url.includes('pilot-v24/enemy-argh.wav')).length,1,'Enemy pilots use the real yell WAV in place of spoken Himmel.');
 assert.equal(Object.keys(mixer.buffers).length,16,'Thirteen samples and three original synthesized cues load.');
 const scene=new Int32Array(5000);scene[1]=10;scene[3]=2000;scene[8]=5;scene[11]=5;scene[13]=1;scene[14]=1;
 scene.set([3,0,170,100,0,0,1,1,1,0,0,9,12,0,1,0,123,1],348);

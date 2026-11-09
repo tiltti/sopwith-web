@@ -10151,7 +10151,7 @@ function checkIncomingModuleAPI() {
 }
 
 var ASM_CONSTS = {
-  162924: $0 => {
+  162956: $0 => {
     var str = UTF8ToString($0) + "\n\n" + "Abort/Retry/Ignore/AlwaysIgnore? [ariA] :";
     var reply = window.prompt(str, "i");
     if (reply === null) {
@@ -10159,7 +10159,7 @@ var ASM_CONSTS = {
     }
     return allocate(intArrayFromString(reply), "i8", ALLOC_NORMAL);
   },
-  163149: () => {
+  163181: () => {
     if (typeof (AudioContext) !== "undefined") {
       return true;
     } else if (typeof (webkitAudioContext) !== "undefined") {
@@ -10167,7 +10167,7 @@ var ASM_CONSTS = {
     }
     return false;
   },
-  163296: () => {
+  163328: () => {
     if ((typeof (navigator.mediaDevices) !== "undefined") && (typeof (navigator.mediaDevices.getUserMedia) !== "undefined")) {
       return true;
     } else if (typeof (navigator.webkitGetUserMedia) !== "undefined") {
@@ -10175,7 +10175,7 @@ var ASM_CONSTS = {
     }
     return false;
   },
-  163530: $0 => {
+  163562: $0 => {
     if (typeof (Module["SDL2"]) === "undefined") {
       Module["SDL2"] = {};
     }
@@ -10199,11 +10199,11 @@ var ASM_CONSTS = {
     }
     return SDL2.audioContext === undefined ? -1 : 0;
   },
-  164082: () => {
+  164114: () => {
     var SDL2 = Module["SDL2"];
     return SDL2.audioContext.sampleRate;
   },
-  164150: ($0, $1, $2, $3) => {
+  164182: ($0, $1, $2, $3) => {
     var SDL2 = Module["SDL2"];
     var have_microphone = function(stream) {
       if (SDL2.capture.silenceTimer !== undefined) {
@@ -10245,7 +10245,7 @@ var ASM_CONSTS = {
       }, have_microphone, no_microphone);
     }
   },
-  165843: ($0, $1, $2, $3) => {
+  165875: ($0, $1, $2, $3) => {
     var SDL2 = Module["SDL2"];
     SDL2.audio.scriptProcessorNode = SDL2.audioContext["createScriptProcessor"]($1, 0, $0);
     SDL2.audio.scriptProcessorNode["onaudioprocess"] = function(e) {
@@ -10277,7 +10277,7 @@ var ASM_CONSTS = {
       SDL2.audio.silenceTimer = setInterval(silence_callback, ($1 / SDL2.audioContext.sampleRate) * 1e3);
     }
   },
-  167018: ($0, $1) => {
+  167050: ($0, $1) => {
     var SDL2 = Module["SDL2"];
     var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels;
     for (var c = 0; c < numChannels; ++c) {
@@ -10296,7 +10296,7 @@ var ASM_CONSTS = {
       }
     }
   },
-  167623: ($0, $1) => {
+  167655: ($0, $1) => {
     var SDL2 = Module["SDL2"];
     var buf = $0 >>> 2;
     var numChannels = SDL2.audio.currentOutputBuffer["numberOfChannels"];
@@ -10310,7 +10310,7 @@ var ASM_CONSTS = {
       }
     }
   },
-  168112: $0 => {
+  168144: $0 => {
     var SDL2 = Module["SDL2"];
     if ($0) {
       if (SDL2.capture.silenceTimer !== undefined) {
@@ -10344,7 +10344,7 @@ var ASM_CONSTS = {
       SDL2.audioContext = undefined;
     }
   },
-  169118: ($0, $1, $2) => {
+  169150: ($0, $1, $2) => {
     var w = $0;
     var h = $1;
     var pixels = $2;
@@ -10415,7 +10415,7 @@ var ASM_CONSTS = {
     }
     SDL2.ctx.putImageData(SDL2.image, 0, 0);
   },
-  170586: ($0, $1, $2, $3, $4) => {
+  170618: ($0, $1, $2, $3, $4) => {
     var w = $0;
     var h = $1;
     var hot_x = $2;
@@ -10452,19 +10452,19 @@ var ASM_CONSTS = {
     stringToUTF8(url, urlBuf, url.length + 1);
     return urlBuf;
   },
-  171574: $0 => {
+  171606: $0 => {
     if (Module["canvas"]) {
       Module["canvas"].style["cursor"] = UTF8ToString($0);
     }
   },
-  171657: () => {
+  171689: () => {
     if (Module["canvas"]) {
       Module["canvas"].style["cursor"] = "none";
     }
   },
-  171726: () => window.innerWidth,
-  171756: () => window.innerHeight,
-  171787: ($0, $1) => {
+  171758: () => window.innerWidth,
+  171788: () => window.innerHeight,
+  171819: ($0, $1) => {
     alert(UTF8ToString($0) + "\n\n" + UTF8ToString($1));
   }
 };
@@ -10487,6 +10487,8 @@ var _web_pause = Module["_web_pause"] = makeInvalidEarlyAccess("_web_pause");
 var _web_bomb = Module["_web_bomb"] = makeInvalidEarlyAccess("_web_bomb");
 
 var _web_trainer = Module["_web_trainer"] = makeInvalidEarlyAccess("_web_trainer");
+
+var _web_supplies = Module["_web_supplies"] = makeInvalidEarlyAccess("_web_supplies");
 
 var _web_variant = Module["_web_variant"] = makeInvalidEarlyAccess("_web_variant");
 
@@ -10632,6 +10634,7 @@ function assignWasmExports(wasmExports) {
   Module["_web_pause"] = _web_pause = createExportWrapper("web_pause", 1);
   Module["_web_bomb"] = _web_bomb = createExportWrapper("web_bomb", 1);
   Module["_web_trainer"] = _web_trainer = createExportWrapper("web_trainer", 1);
+  Module["_web_supplies"] = _web_supplies = createExportWrapper("web_supplies", 1);
   Module["_web_variant"] = _web_variant = createExportWrapper("web_variant", 1);
   Module["_web_easy"] = _web_easy = createExportWrapper("web_easy", 1);
   Module["_web_wingman"] = _web_wingman = createExportWrapper("web_wingman", 1);

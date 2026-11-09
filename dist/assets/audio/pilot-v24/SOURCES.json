@@ -1,0 +1,31 @@
+{
+  "acquired": "2026-11-09",
+  "author": "HaelDB",
+  "title": "Male Grunt/Yelling sounds / 3yell9.wav",
+  "sourceUrl": "https://opengameart.org/content/male-gruntyelling-sounds",
+  "downloadUrl": "https://opengameart.org/sites/default/files/yelling%20sounds.zip",
+  "archiveSha256": "e9100a4e3b9dcd146993089970dc6097dcf9935fa4683b196040012bad65d67a",
+  "archiveMember": "yelling sounds/3yell9.wav",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "changes": "Trim 0.32..2 seconds, voice-band EQ, -13 LUFS/-1.5 dBTP normalization, short edge fades; original pitch and tempo; mono PCM16 32 kHz. Replaces the spoken Himmel sample only.",
+  "ffmpegFilters": "atrim=start=0.32:end=2,asetpts=PTS-STARTPTS,highpass=f=80,lowpass=f=7500,loudnorm=I=-13:TP=-1.5:LRA=7,afade=t=in:d=0.012,afade=t=out:st=1.53:d=0.15",
+  "files": [
+    {
+      "path": "enemy-argh.wav",
+      "bytes": 107636,
+      "sha256": "3919363d172d7170dbf230c57c24fc7c756672981ed860fe1701b418b7dd6e5d",
+      "channels": 1,
+      "rate": 32000,
+      "seconds": 1.68
+    },
+    {
+      "path": "original/3yell9.wav",
+      "bytes": 353956,
+      "sha256": "f9c63c26c2dafb9c0dd0859c56c79c9012faf32bf2defdc8b53b19ed23ad0704",
+      "channels": 2,
+      "rate": 44100,
+      "seconds": 2.0
+    }
+  ]
+}

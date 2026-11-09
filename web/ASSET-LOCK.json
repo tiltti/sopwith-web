@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "date": "2026-11-08",
+  "date": "2026-11-09",
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 29926,
-      "sha256": "ac87f9d52dd7a2d9c1bf17c86b6e33cc4f107736eeaf25b66453c97507cb5d0f"
+      "bytes": 30498,
+      "sha256": "b5c8050ff66d20356a39fbea89ea3f130353895bca72fa87e8be588bafb6ed8e"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -14,8 +14,8 @@
     },
     {
       "path": "dist/assets/audio/README.md",
-      "bytes": 8264,
-      "sha256": "452d02c5aab1b93f122691649ee85a10d5bed9c823bfc9d584ce4f462e06ace5"
+      "bytes": 9148,
+      "sha256": "896718b9c403a25c49b5b4ac4d3bac96e6fbc9250964392b0dfe6663259bd8ca"
     },
     {
       "path": "dist/assets/audio/SOURCES.json",
@@ -186,6 +186,21 @@
       "path": "dist/assets/audio/patrol-v06/victory.wav",
       "bytes": 344058,
       "sha256": "50a054a82c57c1867ce8d4446c13a61726699d024b2747ea8c3bd27b7b76331e"
+    },
+    {
+      "path": "dist/assets/audio/pilot-v24/SOURCES.json",
+      "bytes": 1308,
+      "sha256": "f1febc8069cc169a68be4e1e83c628235606e11a654c7e2cbe33bef4d62b42ad"
+    },
+    {
+      "path": "dist/assets/audio/pilot-v24/enemy-argh.wav",
+      "bytes": 107636,
+      "sha256": "3919363d172d7170dbf230c57c24fc7c756672981ed860fe1701b418b7dd6e5d"
+    },
+    {
+      "path": "dist/assets/audio/pilot-v24/original/3yell9.wav",
+      "bytes": 353956,
+      "sha256": "f9c63c26c2dafb9c0dd0859c56c79c9012faf32bf2defdc8b53b19ed23ad0704"
     },
     {
       "path": "dist/assets/audio/victory-v23/SOURCES.json",

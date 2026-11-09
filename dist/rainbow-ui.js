@@ -67,7 +67,7 @@
     $('difficulty-briefing').textContent=value==='easy'?'ROOKIE: ground guns stay quiet. Optional enemy aircraft have shorter range, slower fire and spawn protection. Same flight model.':'ACE: ground guns and enemy pilots fire back from mission 1. Optional enemy aircraft use full range and fire rate. Same flight model.';
     $('mission-preview-image').setAttribute('href','assets/'+info.image);$('mission-preview').setAttribute('aria-label',info.name+' mission landscape');
     $('mission-prev').disabled=$('mission-next').disabled=level.disabled;
-    $('mission-training').textContent=!level.disabled?'TRAINER · UNRANKED FLIGHT':$('ai-wingman').checked?'WINGMAN · SEPARATE LOCAL SCOREBOARD':'RANKED CAMPAIGN · STARTS AT MISSION 1';
+    $('mission-training').textContent=!level.disabled?'TRAINER · UNRANKED FLIGHT':$('settings-supplies')?.getAttribute('aria-pressed')==='true'?'INFINITE SUPPLIES · SEPARATE LOCAL SCOREBOARD':$('ai-wingman').checked?'WINGMAN · SEPARATE LOCAL SCOREBOARD':'RANKED CAMPAIGN · STARTS AT MISSION 1';
     $('ground-fire-toggle').setAttribute('aria-pressed',String(value==='normal'));$('ground-fire-state').textContent=value==='normal'?'ON':'OFF';
     $('panel-flight').dataset.selectedPilot=value;
     for(const actor of document.querySelectorAll('.pilot-actor')){
@@ -101,6 +101,7 @@
   $('ground-fire-toggle').addEventListener('click',()=>{const level=$('difficulty-select');level.value=level.value==='easy'?'normal':'easy';level.dispatchEvent(new Event('change'));});
   for(const actor of document.querySelectorAll('.pilot-actor'))actor.addEventListener('animationend',()=>actor.classList.remove('saluting'));
   new MutationObserver(renderMission).observe($('settings-trainer'),{attributes:true,attributeFilter:['aria-pressed']});
+  new MutationObserver(renderMission).observe($('settings-supplies'),{attributes:true,attributeFilter:['aria-pressed']});
   new ResizeObserver(scheduleLayout).observe($('screen'));
   const boardChanges=new MutationObserver(scheduleLayout);
   for(const id of ['scores-rows','entry-scores-rows','score-form','arcade-score-status'])boardChanges.observe($(id),{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['hidden']});

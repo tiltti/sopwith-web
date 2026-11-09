@@ -3,14 +3,16 @@
   const panel=document.getElementById('leaderboard');if(!panel)return;
   const $=id=>document.getElementById(id),frame=$('game');
   const edition=document.body.dataset.edition==='rainbow'?'rainbow':'classic';
-  let wingman=false,endpoint=null,ticket=null,runKey='',pending=null,trainerUsed=false,mode='practice',difficulty='normal',loading=0,boardRows=[],savedRun='';
+  let wingman=false,endpoint=null,ticket=null,runKey='',pending=null,trainerUsed=false,suppliesUsed=false,demoRun=false,mode='practice',difficulty='normal',loading=0,boardRows=[],savedRun='';
   const arcade=document.body.dataset.layout==='arcade';
   const status=text=>{$('scores-status').textContent=text;if($('arcade-score-status'))$('arcade-score-status').textContent=text;};
   const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}};
   const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}};
   const selectedDifficulty=()=>arcade&&$('scores-difficulty')?.value==='easy'?'easy':'normal';
   const selectedCrew=()=>arcade&&$('scores-crew')?.value==='wingman'?'wingman':'solo';
-  const localKey=(selected=$('scores-mode').value,diff=selectedDifficulty(),crew=selectedCrew())=>`sopwith.scores.${edition}.${selected}`+(diff==='easy'?'.easy':'')+(crew==='wingman'?'.wingman':'');
+  const selectedRules=()=>arcade&&$('scores-rules')?.value==='supplies'?'supplies':'standard';
+  const localKey=(selected=$('scores-mode').value,diff=selectedDifficulty(),crew=selectedCrew(),rules=selectedRules())=>`sopwith.scores.${edition}.${selected}`+(diff==='easy'?'.easy':'')+(crew==='wingman'?'.wingman':'')+(rules==='supplies'?'.supplies':'');
+  function selectRunBoard(){if(arcade){$('scores-mode').value=mode;$('scores-difficulty').value=difficulty;if($('scores-crew'))$('scores-crew').value=wingman?'wingman':'solo';if($('scores-rules'))$('scores-rules').value=suppliesUsed?'supplies':'standard';}}
   async function api(path,body,token) {
     const response=await fetch(endpoint+path,{method:body?'POST':'GET',cache:'no-store',
       headers:body?{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})}:undefined,
@@ -37,7 +39,7 @@
     body.replaceChildren();if(!pending)return;
     const rows=[...boardRows,{...pending,nickname:$('score-name').value.toUpperCase().padEnd(3,'A').slice(0,3),runId:runKey,provisional:true}];
     rows.sort((a,b)=>b.score-a.score||Number(a.provisional)-Number(b.provisional));
-    const rank=rows.findIndex(r=>r.provisional)+1;$('entry-rank').textContent='SIJOITUS: '+rank;
+    const rank=rows.findIndex(r=>r.provisional)+1;$('entry-rank').textContent=(suppliesUsed?'INFINITE SUPPLIES · RANK: ':'SIJOITUS: ')+rank;
     // Keep ten rows visible and include the editable score even below top ten.
     const offset=rank<=10?0:Math.min(Math.max(0,rank-5),Math.max(0,rows.length-10));
     rows.slice(offset,offset+10).forEach((row,i)=>{
@@ -54,22 +56,23 @@
     focused?.focus({preventScroll:true});
   }
   async function refresh() {
-    await ready;const id=++loading,selected=$('scores-mode').value,diff=selectedDifficulty(),crew=selectedCrew();
+    await ready;const id=++loading,selected=$('scores-mode').value,diff=selectedDifficulty(),crew=selectedCrew(),rules=selectedRules();
     try {
-      const rows=endpoint&&crew==='solo'?(await api(`/api/scores?edition=${edition}&mode=${selected}&difficulty=${diff}`)).scores:read(localKey(selected,diff,crew),[]);
-      if(id!==loading)return;$('scores-scope').textContent=crew==='wingman'?'WINGMAN · SCORES IN THIS BROWSER':endpoint?'SHARED LEADERBOARD':'SCORES IN THIS BROWSER';boardRows=rows;draw(rows);drawEntryBoard();status('');
+      const rows=endpoint&&crew==='solo'&&rules==='standard'?(await api(`/api/scores?edition=${edition}&mode=${selected}&difficulty=${diff}`)).scores:read(localKey(selected,diff,crew,rules),[]);
+      if(id!==loading)return;$('scores-scope').textContent=rules==='supplies'?'INFINITE SUPPLIES · '+(crew==='wingman'?'WINGMAN · ':'')+'SCORES IN THIS BROWSER':crew==='wingman'?'WINGMAN · SCORES IN THIS BROWSER':endpoint?'SHARED LEADERBOARD':'SCORES IN THIS BROWSER';boardRows=rows;draw(rows);drawEntryBoard();status('');
       if(arcade&&savedRun){const index=rows.findIndex(row=>row.runId===savedRun);if(index>=0&&index<10)$('scores-rows').children[index].className='current';}
     }catch{if(id===loading)status('Listan lataaminen epäonnistui. Voit yrittää uudelleen.');}
   }
   async function begin() {
-    const params=new URL(frame.src,location.href).searchParams;
+    const params=new URL(frame.src,location.href).searchParams;if(!params.get('run'))return;
     runKey=params.get('run');const key=runKey;
     wingman=edition==='rainbow'&&params.get('wingman')==='1';ticket=null;pending=null;mode=params.get('mode')==='combat'?'combat':'practice';
     difficulty=edition==='rainbow'&&params.get('difficulty')==='easy'?'easy':'normal';
     if($('result-score'))$('result-score').hidden=true;
-    trainerUsed=params.get('trainer')==='1';$('score-form').hidden=true;
-    $('scores-mode').value=mode;if(arcade){$('scores-difficulty').value=difficulty;if($('scores-crew'))$('scores-crew').value=wingman?'wingman':'solo';}await ready;refresh();
-    if(endpoint&&!wingman)try{const result=await api('/api/runs',{edition,mode,difficulty});if(key===runKey)ticket=result;}
+    trainerUsed=params.get('trainer')==='1';suppliesUsed=edition==='rainbow'&&params.get('supplies')==='1';demoRun=params.get('demo')==='1';$('score-form').hidden=true;
+    if(demoRun)return;
+    $('scores-mode').value=mode;selectRunBoard();await ready;refresh();
+    if(endpoint&&!wingman&&!suppliesUsed&&!trainerUsed)try{const result=await api('/api/runs',{edition,mode,difficulty});if(key===runKey)ticket=result;}
       catch{if(key===runKey)status('Pistetallennuksen yhteys ei auennut tälle lennolle.');}
   }
   window.addEventListener('message',event=>{
@@ -77,7 +80,10 @@
     const msg=event.data;
     if(msg.type==='ready')begin();
     if(msg.type==='trainer-state'&&msg.enabled)trainerUsed=true;
+    if(msg.type==='supplies-state'&&msg.enabled)suppliesUsed=true;
     if(msg.type==='score-ready') {
+      if(demoRun)return;
+      suppliesUsed=suppliesUsed||!!msg.suppliesUsed;
       trainerUsed=trainerUsed||msg.trainerUsed;
       if(trainerUsed){
         status('Trainer-lennon tulosta ei lisätä ennätyslistalle.');
@@ -87,10 +93,10 @@
           $('entry-rank').textContent='TRAINER';$('play-again').hidden=false;
         }else if(arcade)window.dispatchEvent(new CustomEvent('sopwith-score-saved'));return;
       }
-      pending={score:msg.score,level:msg.level,ticks:msg.ticks,trainerUsed:false};
-      if(arcade){$('scores-mode').value=mode;$('scores-difficulty').value=difficulty;if($('scores-crew'))$('scores-crew').value=wingman?'wingman':'solo';drawEntryBoard();refresh();}
+      pending={score:msg.score,level:msg.level,ticks:msg.ticks,trainerUsed:false,...(suppliesUsed?{suppliesUsed:true}:{})};
+      if(arcade){selectRunBoard();drawEntryBoard();refresh();}
       $('score-result').textContent=`Lennon tulos: ${msg.score} pistettä.`;
-      $('score-consent').textContent=endpoint&&!wingman?'Nimimerkkisi ja tuloksesi näkyvät kaikille pelaajille.':'Tulos tallennetaan tähän selaimeen.';
+      $('score-consent').textContent=endpoint&&!wingman&&!suppliesUsed?'Nimimerkkisi ja tuloksesi näkyvät kaikille pelaajille.':suppliesUsed?'INFINITE SUPPLIES · SEPARATE SCORES IN THIS BROWSER':'Tulos tallennetaan tähän selaimeen.';
       $('score-form').hidden=false;
       if($('result-score'))$('result-score').hidden=false;
     }
@@ -102,17 +108,17 @@
     if(arcade?!/^[A-Z0-9]{3}$/.test(nickname):!/^[\p{L}\p{N} _.-]{1,18}$/u.test(nickname)){status(arcade?'SYÖTÄ KOLME KIRJAINTA TAI NUMEROA.':'Käytä nimimerkissä 1–18 kirjainta, numeroa, välilyöntiä, pistettä tai viivaa.');return;}
     const result=pending,key=runKey;$('score-submit').disabled=true;
     try {
-      if(endpoint&&!wingman) {
+      if(endpoint&&!wingman&&!suppliesUsed) {
         if(!ticket)throw new Error('Run connection unavailable.');
         await api('/api/scores',{...result,nickname,runId:ticket.id},ticket.token);
       } else {
-        const storageKey=localKey(mode,difficulty,wingman?'wingman':'solo'),rows=read(storageKey,[]);
+        const storageKey=localKey(mode,difficulty,wingman?'wingman':'solo',suppliesUsed?'supplies':'standard'),rows=read(storageKey,[]);
         if(!rows.some(r=>r.runId===key))rows.push({...result,nickname,runId:key,finished_at:Date.now()});
         rows.sort((a,b)=>b.score-a.score||a.finished_at-b.finished_at);
         if(!write(storageKey,rows.slice(0,20)))throw new Error('Browser storage unavailable.');
       }
       write('sopwith.score-name',nickname);
-      if(runKey===key){pending=null;$('score-form').hidden=true;$('scores-mode').value=mode;if(arcade){$('scores-difficulty').value=difficulty;if($('scores-crew'))$('scores-crew').value=wingman?'wingman':'solo';}}
+      if(runKey===key){pending=null;$('score-form').hidden=true;$('scores-mode').value=mode;selectRunBoard();}
       savedRun=key;await refresh();status('Tulos tallennettu.');if(arcade)window.dispatchEvent(new CustomEvent('sopwith-score-saved'));
     } catch {status('Tulosta ei saatu tallennettua. Tulos säilyy lomakkeella uutta yritystä varten.');}
     finally{$('score-submit').disabled=false;}
@@ -125,6 +131,7 @@
   $('scores-mode').addEventListener('change',refresh);
   if(arcade)$('scores-difficulty').addEventListener('change',refresh);
   if(arcade)$('scores-crew')?.addEventListener('change',refresh);
+  if(arcade)$('scores-rules')?.addEventListener('change',refresh);
   setInterval(()=>{if(!document.hidden&&endpoint)refresh();},30000);
   refresh();
 })();

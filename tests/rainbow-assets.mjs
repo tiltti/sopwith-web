@@ -36,6 +36,8 @@ for(let angle=0;angle<16;angle++){
 assert.ok(sizes.every(([w,h])=>w===sizes[0][0]&&h===sizes[0][1]),'Every flight angle retains the same artwork size.');
 record[1]=4;record[4]=13;assets.sprite(record,heap);assert.notEqual(rotations.at(-1),0,'Falling wrecks rotate with their descent.');
 console.log('Aircraft rotation: invariant world dimensions, padded canvas and falling-wreck rotation verified.');
+record[1]=1;record[15]=0;const lead=assets.sprite(record,heap);record[15]=22;const escort=assets.sprite(record,heap);
+assert.notEqual(escort,lead);assert.equal(escort.livery,'blue-teal','The escort uses its own livery cache without changing the leader.');
 record[0]=4;record[1]=5;record[15]=3;record[6]=1;const friendlyTank=assets.sprite(record,heap);
 assert.ok(panels.some(p=>p.at(-1)==='#71cebb'));panels.length=0;
 record[6]=2;const enemyTank=assets.sprite(record,heap);assert.notEqual(enemyTank,friendlyTank,'Opposing tanks cannot share an unmarked cached sprite.');

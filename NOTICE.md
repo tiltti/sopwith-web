@@ -299,3 +299,15 @@ copied unchanged and distributed with this GPL-2.0-or-later game. It depicts
 ground crew hand-pumping fuel into the parked biplane while its pilot hurries
 to depart. The live startup heading/status/bar are separate HTML elements.
 Exact prompt and PNG integrity receipt: `web/launch-v22-*.json`.
+
+## Replacement pilot yell (2026-11-09)
+
+The runtime enemy-pilot reaction now uses **HaelDB, Male Grunt/Yelling sounds,
+3yell9.wav**, under the creator's **CC0 1.0** option:
+https://opengameart.org/content/male-gruntyelling-sounds . The original WAV is
+retained byte-for-byte. The adaptation trims initial silence, applies voice
+EQ, loudness normalization and edge fades, then converts to mono PCM16 32 kHz.
+Pitch and tempo are unchanged. It replaces the earlier spoken Himmel cue;
+that earlier source/adaptation and its CC BY-SA notice remain archived.
+Exact source/archive hashes and processing are in
+`dist/assets/audio/pilot-v24/SOURCES.json`, `scripts/prepare_pilot_v24.py`.

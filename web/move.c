@@ -6,6 +6,7 @@
 #include "swmain.h"
 #include "swmove.h"
 #include "swobject.h"
+#include "swinit.h"
 static double flight_speed;
 static int throttle,last_flight_tick=-1;
 static bool flight_dead,flight_ready;
@@ -16,6 +17,8 @@ static double edge_heading;
 static int edge_direction;
 #define TAKEOFF_SPEED 5.4
 void WebVariant_MoveXY(OBJECTS *ob,int *x,int *y);
+void WebVariant_InitPlayer(OBJECTS *ob,const original_ob_t *origin);
+#define initplyr WebVariant_InitPlayer
 #define gohome WebVariant_GoHome
 #define swauto WebVariant_Auto
 #define aim WebVariant_Aim
@@ -27,6 +30,7 @@ void WebVariant_MoveXY(OBJECTS *ob,int *x,int *y);
 #define movetarg WebNative_MoveTarget
 #define initshot WebVariant_InitShot
 #include "../third_party/sdl-sopwith/src/swmove.c"
+#undef initplyr
 #undef moveshot
 #undef moveox
 #undef movetarg
@@ -36,6 +40,13 @@ void WebVariant_MoveXY(OBJECTS *ob,int *x,int *y);
 #undef swauto
 #undef aim
 #undef swrestart
+
+void WebVariant_InitPlayer(OBJECTS *ob,const original_ob_t *origin)
+{
+    if(WebVariant_IsEnabled()&&ob==consoleplayer&&ob->ob_state==CRASHED&&ob->ob_endsts==PLAYING)
+        WebVariant_ProtectSpawn(ob);
+    initplyr(ob,origin);
+}
 
 void WebVariant_ResetFlight(void){flight_speed=0;throttle=0;last_flight_tick=-1;flight_dead=flight_ready=ground_roll=edge_turn=false;low_speed_ticks=0;}
 int WebVariant_Throttle(void){return WebVariant_IsEnabled()?throttle*100/16:consoleplayer?consoleplayer->ob_accel*100/MAX_THROTTLE:0;}

@@ -1,3 +1,41 @@
+## Pilot yell, safe spawns, supply mode and attract demo — 2026-11-09
+
+- Runtime enemy-pilot reaction now uses HaelDB's CC0 3yell9.wav, retained
+  byte-for-byte with archive/member hashes. Original-pitch 1.68 s / mono /
+  PCM16 32000 Hz adaptation decodes in the real browser OfflineAudioContext.
+  All 13 samples and three cues decode, with no speaker context created.
+- Each new aircraft has 100 native ticks of object-collision protection.
+  Native respawn is hooked before collision traversal, not in the later
+  sleep callback. Expiry and no re-arm on refueling/landing are tested.
+  The prepared home strip is restored before spawn height is calculated
+  and is preserved across native craters. A real native test repeats three
+  crash/respawn cycles in every mission, with normal terrain/Classic rules.
+- Supplies refill ammo/fuel/bombs independently of trainer. Native tests
+  retain five normal lives, falling/crash/quit timers, weapon cooldowns and
+  ordinary consumption after disabling. Browser launch verified trainer=0,
+  supplies=1, ammo=200, bombs=5, fuel=9000 and cover=43 at tick 57.
+- Assisted supply scores use their own local key/filter (including difficulty
+  and crew), retain their classification after disabling mid-flight, and
+  cannot obtain a shared ticket or POST a normal score. Existing solo/crew
+  keys remain intact. Demos cannot save results or obtain tickets.
+- Watch Demo uses the real native simulation and normal flight/weapon inputs,
+  with terrain-aware steering, paced bombing and timed mission changes.
+  Browser review observed autonomous flight in winter and storm, plus coast
+  startup/combat, cycling all three environments. Clicking Return reached the
+  main menu without a new game or score entry. All review stayed windowed
+  with game sound off.
+- The wingman's red paint is selectively rendered blue-teal. Player and escort
+  cache identities differ; collision masks and source PNGs are unchanged.
+  Floating aircraft number removed. Production sprite comparison reviewed.
+- Local settings slate fits 501/501 px; supply score panel fits 313/313 px.
+  Proofs: parent research/review-2026-11-09-{settings-v24-final,scores-v24,
+  demo-flight-v24,livery-v24}.jpg. Normal native patrol/trainer/spawn tests,
+  90/90 Rainbow home cases and 4000 escort stress steps pass. Classic keeps
+  its known 28/30 baseline. All browser/UI suites and JS syntax checks pass.
+- CI requires normal and AddressSanitizer spawn/escort regressions on Linux.
+  macOS local ASan did not complete (system startup errors, then abort); no successful local ASan
+  result is claimed. Normal local native and actual WASM/browser runs pass.
+
 ## Recorded victory fanfare — 2026-11-08
 
 - Replaced the runtime victory cue with humanoide9000 / Luis Humanoide's

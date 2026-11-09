@@ -80,7 +80,7 @@
     const building=type===4&&[0,1,2,7].includes(r[15]);
     const damageStage=building?(state!==5?2:r[11]>0&&r[11]<=12?1:0):0;
     const buildingCell=!building?-1:r[15]===0?mission:r[15]===1?[6,4,5][mission]:r[15]===2?[3,10,11][mission]:[8,9,7][mission];
-    const key=[mission,index,type,state,damageStage,buildingCell,angle,orient,r[6],w,h,ptr,r[12]<0].join(':');
+    const key=[mission,index,type,state,damageStage,buildingCell,angle,orient,r[6],r[15],w,h,ptr,r[12]<0].join(':');
     if(cache.has(key))return cache.get(key);
     const out=document.createElement('canvas');
     const rotating=type===1||type===10,worldSize=type===1?46:type===10?30:0;
@@ -141,6 +141,15 @@
         c.fillStyle='#fff2ce';c.fillRect(px+pw*.46,py+.3,.8,ph-.6);
         if(r[6]===1)c.fillRect(px+pw*.25,py+ph*.45,pw*.5,.8);
         c.globalCompositeOperation='source-over';
+      }
+    }
+    if(type===1&&r[15]===22){
+      out.livery='blue-teal';
+      if(c.getImageData&&c.putImageData){
+        const image=c.getImageData(0,0,out.width,out.height),pixels=image.data;
+        for(let i=0;i<pixels.length;i+=4){const r=pixels[i],g=pixels[i+1],b=pixels[i+2];
+          if(pixels[i+3]&&r>g*1.25&&r>b*1.35&&r-g>30){const l=.3*r+.59*g+.11*b;pixels[i]=Math.min(255,l*.55);pixels[i+1]=Math.min(255,l*1.15);pixels[i+2]=Math.min(255,l*1.27);}}
+        c.putImageData(image,0,0);
       }
     }
     if(building)out.damageStage=damageStage;

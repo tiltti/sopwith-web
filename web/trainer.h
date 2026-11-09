@@ -6,6 +6,8 @@
 
 void WebTrainer_SetEnabled(bool enabled);
 bool WebTrainer_IsEnabled(void);
+void WebTrainer_SetSupplies(bool enabled);
+bool WebTrainer_HasSupplies(void);
 void WebTrainer_Apply(OBJECTS *player_plane);
 
 #endif

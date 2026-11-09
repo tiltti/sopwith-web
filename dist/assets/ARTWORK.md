@@ -455,3 +455,13 @@ Prompt, dimensions and original SHA-256 hash are in `web/launch-v22-*.json`.
 This is original GPL-2.0-or-later project artwork with no third-party source
 images or new audio. The selected Three Fronts title art also appears on the
 site's game card; all earlier title PNGs remain unchanged in the sources.
+
+## Escort livery (2026-11-09)
+
+The optional wingman reuses the original friendly aircraft art with a cached,
+selective blue-teal paint transform in `rainbow-assets.js`. Warm red painted
+areas change color; transparency, cream/metal detail, dimensions and native
+collision masks are retained. Player and escort cache identities are separate.
+The floating 2 above the escort is removed; cockpit escort status remains.
+`tests/wingman-preview.html` shows the two production sprite outputs together.
+No source raster is overwritten or newly generated for this palette change.

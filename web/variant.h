@@ -34,6 +34,8 @@ int WebVariant_Speed(void);
 int WebVariant_SpeedMilli(void);
 bool WebVariant_IsTaxiing(void);
 bool WebVariant_IsTurning(void);
+void WebVariant_ProtectSpawn(OBJECTS *plane);
+int WebVariant_SpawnProtection(void);
 bool WebVariant_TargetSurvives(OBJECTS *target,OBJECTS *weapon);
 int WebVariant_TargetHealth(const OBJECTS *target);
 void WebVariant_Test(int action);

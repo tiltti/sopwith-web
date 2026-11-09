@@ -726,8 +726,7 @@
         if(type===4){this.teamMark(r,camera,sprite);if(r[11]>0&&r[11]<=12&&[0,1,2,7].includes(r[15])&&this.smokeBrush){c.save();c.globalAlpha=.35;for(let p=0;p<3;p++){const t=(time+p*4)%16,s=5+t*.7;c.drawImage(this.smokeBrush,sx+w-s/2+Math.sin(t*.4)*2,sy-t*2-s/2,s,s);}c.restore();}}
         if(type===1)this.drawPlaneFire(r,camera,time);
         if(type===1 && r[10]===0 && r[1]!==3) {
-          if(r[15]===22)hudType(c,'2',sx+w,sy-8,{size:7,color:P.mint,align:'center'});
-          else {rect(c,sx+w-1,sy-6,3,2,P.redShade);rect(c,sx+w,sy-7,1,4,P.redShade);}
+          if(r[15]!==22) {rect(c,sx+w-1,sy-6,3,2,P.redShade);rect(c,sx+w,sy-7,1,4,P.redShade);}
         }
       }
       if(ground?.length)this.terrainWorld(ground,camera,tick);
@@ -783,7 +782,7 @@
       if(hand){c.save();c.translate(cx,cy);c.rotate(a+Math.PI/2);c.drawImage(hand,-radius*.8,-radius*.8,radius*1.6,radius*1.6);c.restore();}
       else{const dx=Math.cos(a),dy=Math.sin(a);polygon(c,[[cx-dy,cy+dx],[cx+dx*radius*.65,cy+dy*radius*.65],[cx+dy,cy-dx]],P.gold);}
       const glass=layer('glass');if(glass){c.save();c.globalAlpha=.7;c.drawImage(glass,cx-diameter/2,cy-diameter/2,diameter,diameter);c.restore();}
-      hudType(c,fuel?Math.round(value)+'%':alt?String(Math.round(value)).padStart(4,'0')+' FT':Math.round(value),cx,cy+radius+4,{size:6,align:'center'});
+      hudType(c,fuel?(this.unlimitedSupplies?'INF':Math.round(value)+'%'):alt?String(Math.round(value)).padStart(4,'0')+' FT':Math.round(value),cx,cy+radius+4,{size:6,align:'center'});
     }
     hud(s,objects,trainer,ground) {
       const c=this.c,art=kind=>window.RainbowAssets?.interfaceArt?.(kind);c.save();c.translate(0,H);
@@ -833,10 +832,10 @@
       this.canvas.dataset.throttle=String(Math.round(throttle));this.canvas.dataset.throttleControl='mechanical-lever';this.canvas.dataset.throttleLeverX=String(leverX);
       this.canvas.dataset.mapWindow=[MAP.x,MAP.y,MAP.w,MAP.h].join(',');
       if(ammo)c.drawImage(ammo,574,10,54,27);else rect(c,578,15,45,18,P.ink);
-      hudType(c,'AMMO',580,23,{size:5.8,serif:true});hudType(c,trainer?'INF':s[7],623,23,{size:6,color:P.gold,align:'right',width:17});
-      hudType(c,trainer?'BOMBS INF':'BOMBS',602,39,{size:5.8,align:'center',serif:true});
+      hudType(c,'AMMO',580,23,{size:5.8,serif:true});hudType(c,trainer||this.unlimitedSupplies?'INF':s[7],623,23,{size:6,color:P.gold,align:'right',width:17});
+      hudType(c,trainer||this.unlimitedSupplies?'BOMBS INF':'BOMBS',602,39,{size:5.8,align:'center',serif:true});
       const rack=art('bombRack');if(rack)c.drawImage(rack,574,45,54,27);
-      const bomb=art('bomb'),count=trainer?5:Math.max(0,Math.min(5,s[8]));
+      const bomb=art('bomb'),count=trainer||this.unlimitedSupplies?5:Math.max(0,Math.min(5,s[8]));
       c.save();c.beginPath();c.moveTo(578,47);c.lineTo(624,47);c.lineTo(624,68);c.lineTo(578,68);c.closePath();c.clip();
       for(let i=0;i<5;i++){if(i<count){if(bomb)c.drawImage(bomb,580+i*8.4,49,6.5,16);else rect(c,581+i*8.4,50,4,15,P.gold);}else rect(c,582+i*8.4,49,2,1,'#7d6948');}c.restore();
       this.canvas.dataset.bombIcons=String(count);
@@ -847,6 +846,7 @@
       if(stalled){hudType(c,'STALL : LOWER NOSE + THROTTLE',310,80,{size:6.5,color:P.red,align:'center',width:205});this.canvas.dataset.notification='STALL';}
       else if(s[12]===0&&[1,8].includes(s[13])&&altitude>50&&s[11]<minimum){hudType(c,'AIRSPEED LOW : ADD POWER',310,80,{size:6.5,color:P.gold,align:'center',width:205});this.canvas.dataset.notification='AIRSPEED LOW';}
       else if(target){const building=[1,2,3,8].includes(Math.abs(target.size)),label=target.size<0?'FRIENDLY TARGET HIT':building?'BUILDING DESTROYED':'TARGET DESTROYED';hudType(c,label,310,80,{size:7,color:target.size<0?P.red:P.gold,align:'center',width:205});this.canvas.dataset.notification=label;}
+      else if(s[12]===0&&this.spawnProtection>0){hudType(c,'TAKEOFF COVER · '+Math.ceil(this.spawnProtection/10)+'s',310,80,{size:6.5,color:P.mint,align:'center',width:205});this.canvas.dataset.notification='TAKEOFF COVER';}
       else {delete this.canvas.dataset.notification;if(s[12]===1)hudType(c,'MISSION COMPLETE',310,80,{size:6.5,color:P.gold,align:'center',width:205});else if(s[13]===3)hudType(c,'PLANE LOST',310,80,{size:6.5,color:P.red,align:'center',width:205});else if(s[16])hudType(c,'RETURNING TO BASE',310,80,{size:6.5,color:P.cream,align:'center',width:205});}
       const escort=objects.find(r=>r[15]===22),separation=escort?Math.hypot(escort[2]-s[4],escort[3]-s[5]):0;
       this.canvas.dataset.wingman=escort?escort[14]===3&&separation>110?'JOINING':['OFF','WAITING','TAKEOFF','FORMATION','ENGAGING','RETURNING','LOST'][escort[14]]||'FORMATION':'OFF';

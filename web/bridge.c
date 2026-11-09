@@ -45,6 +45,11 @@ EMSCRIPTEN_KEEPALIVE void web_trainer(int enabled)
     WebTrainer_SetEnabled(enabled != 0);
     WebTrainer_Apply(consoleplayer);
 }
+EMSCRIPTEN_KEEPALIVE void web_supplies(int enabled)
+{
+    WebTrainer_SetSupplies(enabled!=0);
+    WebTrainer_Apply(consoleplayer);
+}
 
 EMSCRIPTEN_KEEPALIVE void web_variant(int enabled)
 {
@@ -120,6 +125,7 @@ EMSCRIPTEN_KEEPALIVE int web_read(int field)
         case 11: return gamenum;
         case 12: return WebVariant_IsTaxiing();
         case 13: return WebVariant_SpeedMilli(); /* native speed × 1000 */
+        case 14: return WebVariant_SpawnProtection(); /* remaining 100 ms ticks */
         default: return -1;
     }
 }

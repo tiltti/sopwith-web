@@ -52,13 +52,16 @@ jobs:
           node tests/leaderboard-ui.mjs
           node tests/patrol-layout.mjs
           node tests/splash-options.mjs
+          node tests/patrol-demo.mjs
           python scripts/test_trainer.py
           python scripts/test_patrol.py
+          python scripts/test_spawn_safety.py
           python scripts/test_scene.py
           python scripts/test_home.py
           python scripts/test_wingman.py
           python scripts/test_video.py
           SOPWITH_SANITIZE=1 python scripts/test_wingman.py
+          SOPWITH_SANITIZE=1 python scripts/test_spawn_safety.py
           python scripts/prepare_briefings.py
 
       - name: Build game and corresponding source archive
@@ -81,6 +84,7 @@ jobs:
           node --check dist/patrol-layout.js
           node --check dist/splash-options.js
           node --check dist/splash-lab.js
+          node --check dist/patrol-demo.js
           python scripts/verify_release.py
 
       - name: Configure GitHub Pages
