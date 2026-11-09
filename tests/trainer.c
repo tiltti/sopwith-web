@@ -278,6 +278,7 @@ int main(void)
     assert(level_shot->ob_type==SHOT&&level_shot->ob_dy==0&&level_shot->ob_y==cow_floor+6);
     bool cow_hit=false;for(int x=cow->ob_x;x<cow->ob_x+16;x++){level_shot->ob_x=x;cow_hit|=CollisionTest(level_shot,cow);}assert(cow_hit);
     puts("Rainbow end targets: lowered roofs at both ends, smooth hillsides, unchanged middle and walls; low horizontal gunfire can hit the resized cow.");
+    consoleplayer->ob_athome=false;consoleplayer->ob_speed=1;++countmove;WebVariant_Apply(consoleplayer);countmove+=101;WebVariant_Apply(consoleplayer);
     OBJECTS *before_shot=objbot;WebVariant_InitShot(building,consoleplayer);assert(objbot==before_shot);
     consoleplayer->ob_x=gun->ob_x+30;consoleplayer->ob_y=gun->ob_y+25;consoleplayer->ob_dx=consoleplayer->ob_dy=0;
     WebVariant_InitShot(gun,consoleplayer);assert(objbot!=before_shot&&objbot->ob_owner==gun);
@@ -288,7 +289,7 @@ int main(void)
     puts("Bird flock collision: one grouped feather/squawk event with flock intensity.");
     gun->ob_faction=FACTION_PLAYER2;consoleplayer->ob_faction=FACTION_PLAYER1;
     consoleplayer->ob_state=FLYING;consoleplayer->ob_x=gun->ob_x+30;consoleplayer->ob_y=gun->ob_y+25;
-    gamenum=0;countmove=1;WebVariant_SetEasy(true);before_shot=objbot;movetarg(gun);assert(objbot==before_shot);
+    gamenum=0;countmove=1001;WebVariant_SetEasy(true);before_shot=objbot;movetarg(gun);assert(objbot==before_shot);
     WebVariant_SetEasy(false);gamenum=0;targrnge=75*75;movetarg(gun);
     assert(playmode==PLAYMODE_SINGLE&&objbot!=before_shot&&objbot->ob_owner==gun);
     puts("Single player: Easy ground AA stays quiet; Normal AA fires from level 1 without air-combat mode.");
@@ -296,32 +297,32 @@ int main(void)
     enemy_plane->ob_state=FLYING;enemy_plane->ob_faction=FACTION_PLAYER2;enemy_plane->ob_symbol=consoleplayer->ob_symbol;
     enemy_plane->ob_x=gun->ob_x+30;enemy_plane->ob_y=gun->ob_y+25;
     enemy_plane->ob_dx=enemy_plane->ob_dy=0;enemy_plane->ob_rounds=MAXROUNDS;
-    consoleplayer->ob_x=gun->ob_x-25;countmove=3;before_shot=objbot;movetarg(gun);
+    consoleplayer->ob_x=gun->ob_x-25;countmove=1003;before_shot=objbot;movetarg(gun);
     assert(objbot!=before_shot&&gun->ob_firing==enemy_plane&&gun->ob_angle==0);
     OBJECTS *friendly_tank=NULL;for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(ob->ob_type==TARGET&&ob->ob_orient==TARGET_TANK){friendly_tank=ob;break;}
     assert(friendly_tank);friendly_tank->ob_faction=FACTION_PLAYER1;
     enemy_plane->ob_x=friendly_tank->ob_x-30;enemy_plane->ob_y=friendly_tank->ob_y+25;
-    countmove=5;before_shot=objbot;movetarg(friendly_tank);
+    countmove=1005;before_shot=objbot;movetarg(friendly_tank);
     assert(objbot!=before_shot&&friendly_tank->ob_firing==enemy_plane&&friendly_tank->ob_angle==8);
-    enemy_plane->ob_state=CRASHED;countmove=7;before_shot=objbot;movetarg(friendly_tank);assert(objbot==before_shot);
+    enemy_plane->ob_state=CRASHED;countmove=1007;before_shot=objbot;movetarg(friendly_tank);assert(objbot==before_shot);
     puts("Friendly AA and tanks fire at live enemy computer planes, aim at the actual target, and ignore friendly/dead aircraft.");
 
     gun->ob_faction=FACTION_PLAYER2;consoleplayer->ob_x=gun->ob_x+30;consoleplayer->ob_y=gun->ob_y+25;
-    countmove=50;WebVariant_SetEasy(true);before_shot=objbot;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
-    countmove=80;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
-    countmove=81;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
+    countmove=1050;WebVariant_SetEasy(true);before_shot=objbot;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
+    countmove=1080;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
+    countmove=1081;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
     WebVariant_InitShot(consoleplayer,NULL);assert(objbot!=before_shot);
-    before_shot=objbot;countmove=86;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
+    before_shot=objbot;countmove=1086;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
     enemy_plane->ob_state=FLYING;enemy_plane->ob_x=consoleplayer->ob_x+110;enemy_plane->ob_y=consoleplayer->ob_y;
-    before_shot=objbot;countmove=90;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot==before_shot);
+    before_shot=objbot;countmove=1090;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot==before_shot);
     enemy_plane->ob_x=consoleplayer->ob_x+60;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot!=before_shot);before_shot=objbot;
-    countmove=91;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot==before_shot);
-    countmove=94;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot!=before_shot);
-    countmove=100;consoleplayer->ob_state=CRASHED;WebVariant_Apply(consoleplayer);
-    countmove=101;consoleplayer->ob_state=FLYING;WebVariant_Apply(consoleplayer);before_shot=objbot;
-    countmove=110;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
-    countmove=131;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
-    WebVariant_SetEasy(false);countmove=132;WebVariant_InitShot(gun,consoleplayer);assert(objbot!=before_shot);
+    countmove=1091;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot==before_shot);
+    countmove=1094;WebVariant_InitShot(enemy_plane,consoleplayer);assert(objbot!=before_shot);
+    countmove=1100;consoleplayer->ob_state=CRASHED;WebVariant_Apply(consoleplayer);
+    countmove=1101;consoleplayer->ob_state=FLYING;WebVariant_Apply(consoleplayer);before_shot=objbot;
+    countmove=1110;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
+    countmove=1131;WebVariant_InitShot(gun,consoleplayer);assert(objbot==before_shot);
+    WebVariant_SetEasy(false);countmove=1132;WebVariant_InitShot(gun,consoleplayer);assert(objbot!=before_shot);
     puts("Easy combat: shorter hostile range, per-owner shot intervals and three-second spawn grace; player weapons and normal difficulty unchanged.");
     return 0;
 }

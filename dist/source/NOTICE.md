@@ -311,3 +311,12 @@ Pitch and tempo are unchanged. It replaces the earlier spoken Himmel cue;
 that earlier source/adaptation and its CC BY-SA notice remain archived.
 Exact source/archive hashes and processing are in
 `dist/assets/audio/pilot-v24/SOURCES.json`, `scripts/prepare_pilot_v24.py`.
+
+## Weather instrument artwork (2026-11-09)
+
+`rainbow-cockpit-weather-v25.png` is original built-in OpenAI imagegen
+artwork, retained byte-for-byte and distributed with this GPL-2.0-or-later
+game. The six-component atlas supplies transparent frost/glass overlays,
+frozen bezel/edge details and amber-lit night dial/plaque components.
+Live markings, pointers and values are drawn separately. Exact prompt,
+reference description, dimensions and SHA-256: `web/cockpit-v25-*.json`.

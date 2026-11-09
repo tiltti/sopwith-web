@@ -87,3 +87,9 @@
 
 body[data-demo=true] .arcade-rail{visibility:hidden;pointer-events:none}
 .settings-console .supplies-help{margin:0;font-size:clamp(10px,calc(1.1*var(--u)),16px);line-height:1.1}
+
+.loading-status #launch-ready{margin-top:14px;max-width:260px;font:clamp(14px,calc(1.8*var(--u)),25px) var(--engraved);min-height:40px}
+
+.touch-throttle{display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:120px;max-width:190px;font:12px var(--engraved);color:#ecd09b}.touch-throttle input{width:100%;margin:0;accent-color:#d7a64e;touch-action:pan-x}.touch-controls .touch-throttle{flex:1}
+
+body[data-game-state=ready] .touch-controls{display:none}body[data-game-state=ready] .arcade-rail{visibility:hidden}

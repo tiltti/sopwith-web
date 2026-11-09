@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="../dist/"><title>Cockpit climate comparison</title><link rel="stylesheet" href="patrol-fonts.css"><style>body{margin:0;padding:12px 20px;background:#172d3b;color:#eee1bb;font:18px Georgia}h2{font-size:18px;margin:12px 0 5px}canvas{display:block;width:100%;height:auto}</style><script src="rainbow-assets.js"></script><script src="rainbow-renderer.js"></script><script>
+addEventListener('load',async()=>{
+ await RainbowAssets.ready;await document.fonts.load('18px "Patrol Engraved"');
+ for(let mission=0;mission<3;mission++){
+  const title=document.createElement('h2');title.textContent=['DAY','WINTER','NIGHT'][mission];const canvas=document.createElement('canvas');document.body.append(title,canvas);
+  const renderer=new RainbowRenderer(canvas);canvas.width=1920;canvas.height=288;renderer.c.setTransform(3,0,0,3,0,-1200);renderer.mission=mission;renderer.unlimitedSupplies=true;
+  const s=new Int32Array(5000);s[1]=100;s[3]=3000;s[4]=1200;s[5]=130;s[6]=9000;s[7]=200;s[8]=5;s[9]=5;s[10]=12345;s[11]=10;s[13]=1;s[15]=1200;s[18]=mission;s[27]=75;
+  const ground=Int32Array.from({length:3000},(_,x)=>Math.round(45+25*Math.sin(x/160)));
+  renderer.hud(s,[],true,ground);canvas.dataset.complete='true';
+ }
+});
+</script></html>

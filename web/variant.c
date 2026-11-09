@@ -16,6 +16,7 @@ static bool enabled;
 static bool easy_mode,player_was_dead;
 static int grace_until,fire_count;
 static int spawn_until;
+static bool spawn_waiting;
 static struct {OBJECTS *owner;int tick;} fire_times[128];
 static int last_tick = -1;
 static int effects[WEB_EFFECT_HEADER + WEB_EFFECT_CAPACITY * WEB_EFFECT_STRIDE] = {1,0,0,WEB_EFFECT_STRIDE};
@@ -49,7 +50,7 @@ void WebVariant_SetEnabled(bool value)
     enabled = value;level_ready=false;emplacement_count=0;
     WebWingman_Configure(false);
     WebVariant_ResetFlight();
-    easy_mode=false;player_was_dead=false;grace_until=spawn_until=0;fire_count=0;
+    easy_mode=false;player_was_dead=spawn_waiting=false;grace_until=spawn_until=0;fire_count=0;
     memset(pilots,0,sizeof(pilots));plane_count=0;
     building_count=0;
     last_tick = -1;
@@ -143,7 +144,7 @@ static const OBJECTS *weapon_owner(const OBJECTS *ob)
 void WebVariant_ProtectSpawn(OBJECTS *plane)
 {
     if(!enabled||plane!=consoleplayer||!plane->ob_original_ob)return;
-    spawn_until=countmove+100; /* Ten seconds of simulation, excluding pause/READY. */
+    spawn_waiting=true;spawn_until=countmove+100;
     grace_until=imax(grace_until,spawn_until);
     /* A crashed aircraft can excavate its own next spawn. Restore only the
      * player's prepared strip, before native initplyr measures its height. */
@@ -155,7 +156,7 @@ void WebVariant_ProtectSpawn(OBJECTS *plane)
 int WebVariant_SpawnProtection(void)
 {
     return enabled&&consoleplayer&&consoleplayer->ob_endsts==PLAYING
-        &&!PlaneIsKilled(consoleplayer->ob_state)?imax(0,spawn_until-countmove):0;
+        &&!PlaneIsKilled(consoleplayer->ob_state)?spawn_waiting?100:imax(0,spawn_until-countmove):0;
 }
 bool WebVariant_CanCollide(const OBJECTS *a,const OBJECTS *b)
 {
@@ -195,6 +196,14 @@ bool WebVariant_CanCollide(const OBJECTS *a,const OBJECTS *b)
     if(other->ob_owner==pilot)return false;
     if(pilot->ob_life<8&&(other==pilot->ob_owner||other->ob_owner==pilot->ob_owner))return false;
     return other->ob_type!=PLANE||(!PlaneIsKilled(other->ob_state)&&other->ob_endsts==PLAYING);
+}
+
+void WebVariant_InitBomb(OBJECTS *owner)
+{
+    if(enabled&&consoleplayer&&consoleplayer->ob_original_ob&&owner!=consoleplayer
+        &&owner->ob_faction!=consoleplayer->ob_faction&&WebVariant_SpawnProtection()>0
+        &&abs(owner->ob_x-consoleplayer->ob_original_ob->x)<400)return;
+    initbomb(owner);
 }
 
 void WebVariant_PilotHit(OBJECTS *ob,OBJECTS *weapon)
@@ -347,6 +356,7 @@ bool WebVariant_TargetSurvives(OBJECTS *ob,OBJECTS *weapon)
 }
 void WebVariant_InitShot(OBJECTS *owner,OBJECTS *target)
 {
+    if(enabled&&consoleplayer&&target==consoleplayer&&owner->ob_faction!=consoleplayer->ob_faction&&WebVariant_SpawnProtection()>0)return;
     if(enabled&&easy_mode&&(owner->ob_type==TARGET||WebVariant_ObjectKind(owner)==21))return;
     /* Buildings are scenery/targets. Their separate ground emplacements
      * own the defensive guns; only tanks and emplacements fire. */
@@ -574,6 +584,7 @@ void WebVariant_Apply(OBJECTS *player)
     if(!level_ready){WebWingman_ResetLevel();setup_level();}
     WebWingman_Apply(player);
     bool alive=player->ob_state==FLYING||player->ob_state==STALLED||player->ob_state==WOUNDED||player->ob_state==WOUNDSTALL;
+    if(alive&&spawn_waiting&&!player->ob_athome&&player->ob_speed>0){spawn_waiting=false;spawn_until=countmove+100;grace_until=imax(grace_until,spawn_until);}
     if(alive&&player_was_dead)grace_until=imax(grace_until,countmove+30);
     player_was_dead=!alive;
     last_tick = countmove;

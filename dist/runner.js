@@ -8,9 +8,11 @@
   let trainerEnabled = params.get('trainer') === '1';
   let trainerUsed = trainerEnabled, scoreSent = false;
   const demo=params.get('edition')==='rainbow'&&params.get('demo')==='1';
+  paused=!demo&&params.get('edition')==='rainbow'&&params.get('wait')==='1';
   let suppliesEnabled=params.get('edition')==='rainbow'&&params.get('supplies')==='1',suppliesUsed=suppliesEnabled;
   const demoPilot=demo&&window.PatrolDemo?new PatrolDemo():null;
   let lastInputMode = -1;
+  let lastThrottle=-1;
   let resetMission=()=>{};
   const clock=()=>typeof performance==='undefined'?Date.now():performance.now();
   const send = (type, extra = {}) => parent.postMessage({ sopwith: true, type, ...extra }, location.origin);
@@ -141,6 +143,7 @@
       repaint=true;
     }
     if (msg.type === 'trainer') window.trainer(msg.enabled);
+    if(msg.type==='throttle'&&params.get('edition')==='rainbow')game?._web_throttle?.(Math.max(0,Math.min(16,Number(msg.value)||0)));
     if (msg.type === 'supplies') {suppliesEnabled=!!msg.enabled;suppliesUsed||=suppliesEnabled;game?._web_supplies?.(suppliesEnabled?1:0);repaint=true;send('supplies-state',{enabled:suppliesEnabled});}
     if (msg.type === 'trainer-action') trainerAction(msg.action);
     if (msg.type === 'focus') { canvas.focus({preventScroll:true}); audio(); }
@@ -152,7 +155,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261109-flight24',
+      locateFile: name => 'engine/' + name + '?v=20261109-cockpit25',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),
@@ -265,6 +268,7 @@
         send('score-ready',{score:game._web_read(10),level:game._web_read(11)+1,ticks:game._web_read(0),trainerUsed,suppliesUsed});
       }
       canvas.dataset.trainer = String(trainerEnabled);
+      const throttle=game._web_read(15);if(throttle!==lastThrottle){lastThrottle=throttle;send('throttle-state',{value:throttle});}
       canvas.dataset.supplies=String(suppliesEnabled);canvas.dataset.spawnProtection=String(game._web_read(14));canvas.dataset.demo=String(demo);
       canvas.dataset.audio = sampleMixer?.status || game.SDL2?.audioContext?.state || 'unavailable';
       canvas.dataset.audioVoices = String(sampleMixer?.voices.size || 0);
@@ -291,6 +295,7 @@
     if(params.get('edition')==='rainbow'&&['1','2','3'].includes(params.get('level')))args.push('-g'+(Number(params.get('level'))-1));
     // Opening the runner directly preserves the original game's native menu.
     if(params.get('edition')==='rainbow')await window.RainbowAssets?.ready;
+    game._web_pause(paused?1:0);
     game.callMain(args);
   }
   boot().catch(error => send('error', { message: String(error) }));

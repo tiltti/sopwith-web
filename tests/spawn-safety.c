@@ -21,6 +21,11 @@ int main(void){
  char *args[]={"spawn-safety","-s","-q",NULL};SDL_SetMainReady();SDL_SetHint(SDL_HINT_RENDER_DRIVER,"software");swinit(3,args);conf_medals=false;
  for(int mission=0;mission<3;mission++){
   fresh(mission);OBJECTS *p=consoleplayer;assert(WebVariant_SpawnProtection()==100);
+  OBJECTS *raider=planes[1];raider->ob_x=p->ob_x+100;raider->ob_bdelay=0;raider->ob_bombs=5;insertx(raider,deletex(raider));OBJECTS *tail=objbot;
+  WebVariant_InitBomb(raider);assert(objbot==tail&&raider->ob_bombs==5);
+  WebVariant_InitShot(raider,p);assert(objbot==tail);
+  for(int idle=0;idle<500;idle++){++countmove;WebVariant_Apply(p);assert(WebVariant_SpawnProtection()==100);}
+  p->ob_athome=false;p->ob_speed=1;++countmove;WebVariant_Apply(p);assert(WebVariant_SpawnProtection()==100);
   OBJECTS shot={.ob_type=SHOT,.ob_owner=planes[1]},wreck={.ob_type=PLANE,.ob_state=FALLING},debris={.ob_type=EXPLOSION};
   for(int tick=0;tick<100;tick++){
    assert(!WebVariant_CanCollide(p,&shot)&&!WebVariant_CanCollide(&shot,p));
@@ -28,6 +33,7 @@ int main(void){
    int remaining=WebVariant_SpawnProtection();assert(remaining==100-tick);assert(WebVariant_SpawnProtection()==remaining);++countmove;
   }
   assert(WebVariant_SpawnProtection()==0&&WebVariant_CanCollide(p,&shot));
+  raider->ob_bdelay=0;WebVariant_InitBomb(raider);assert(objbot!=tail&&raider->ob_bombs==4);deallobj(objbot);
   p->ob_athome=true;WebVariant_Apply(p);assert(WebVariant_SpawnProtection()==0); /* Landing/refueling cannot re-arm it. */
   int home=p->ob_original_ob->x+8;GRNDTYPE strip[221];memcpy(strip,ground+home-110,sizeof(strip));
   for(int loss=0;loss<3;loss++){

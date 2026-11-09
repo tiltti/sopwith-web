@@ -55,6 +55,12 @@
       window.dispatchEvent?.(new CustomEvent('sopwith-layer',{detail:{layer:id,state}}));
     }
   }
+  function beginFlight(){
+    if(state!=='ready')return;
+    state='playing';showLayer(null);setStatus('Peli käynnissä');
+    $('pause').disabled=false;$('restart').disabled=false;
+    post('pause',{value:false});post('mute',{value:muted});focusGame();
+  }
   function start(demo=false) {
     demoActive=demo===true;
     mode = document.querySelector('input[name="mode"]:checked').value;
@@ -69,8 +75,10 @@
     $('loading-text').textContent = 'Ladataan peliä…';
     $('mode-label').textContent = mode === 'combat' ? '/ ILMATAISTELU' : edition==='rainbow'?'/ YKSINPELI':'/ HARJOITTELU';
     frame.hidden = false;
+    if($('launch-ready'))$('launch-ready').hidden=true;
+    if($('loading-progress'))$('loading-progress').hidden=false;
     const levelQuery=startLevel?'&level='+(trainerEnabled&&['1','2','3'].includes(startLevel.value)?startLevel.value:'1')+'&difficulty='+(difficultySelect?.value==='easy'?'easy':'normal')+'&wingman='+(wingman?.checked?'1':'0'):'';
-    frame.src = demoActive?`runner.html?mode=combat&edition=rainbow&muted=${muted?1:0}&trainer=1&supplies=1&wingman=1&demo=1&level=1&difficulty=normal&run=${Date.now()}`:`runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&trainer=${trainerEnabled ? 1 : 0}&supplies=${suppliesEnabled?1:0}&edition=${edition}&aim=${aimToggle?.checked === false ? 0 : 1}&run=${Date.now()}${levelQuery}`;
+    frame.src = demoActive?`runner.html?mode=combat&edition=rainbow&muted=${muted?1:0}&trainer=1&supplies=1&wingman=1&demo=1&level=1&difficulty=normal&run=${Date.now()}`:`runner.html?mode=${mode}&muted=${muted ? 1 : 0}&palette=${$('palette').value}&trainer=${trainerEnabled ? 1 : 0}&supplies=${suppliesEnabled?1:0}&wait=${edition==='rainbow'?1:0}&edition=${edition}&aim=${aimToggle?.checked === false ? 0 : 1}&run=${Date.now()}${levelQuery}`;
     if($('demo-exit'))$('demo-exit').hidden=!demoActive;
     clearTimeout(bootTimer);
     bootTimer = setTimeout(() => fail('Pelin lataaminen kesti liian kauan. Tarkista yhteys ja yritä uudelleen.'), 45000);
@@ -150,7 +158,12 @@
   }
   trainerToggle?.addEventListener('click',()=>window.trainer(!trainerEnabled));syncTrainer();
   suppliesToggle?.addEventListener('click',()=>setSupplies(!suppliesEnabled));syncSupplies();
+  if(edition==='rainbow'&&$('touch-throttle')){
+    $('touch-throttle').addEventListener('input',()=>post('throttle',{value:Number($('touch-throttle').value)}));
+    $('touch-throttle').addEventListener('change',focusGame);
+  }
   if(edition==='rainbow'){$('watch-demo')?.addEventListener('click',()=>start(true));$('demo-exit')?.addEventListener('click',stopDemo);}
+  if(edition==='rainbow'){$('launch-ready')?.addEventListener('click',beginFlight);$('loading')?.addEventListener('click',()=>{if(state==='ready')beginFlight();});}
   if(enemyAircraft){enemyAircraft.checked=loadPref('rainbow.enemy-aircraft','0')==='1';enemyAircraft.addEventListener('change',()=>savePref('rainbow.enemy-aircraft',enemyAircraft.checked?'1':'0'));}
   if(wingman){wingman.checked=loadPref('rainbow.ai-wingman','0')==='1';wingman.addEventListener('change',()=>savePref('rainbow.ai-wingman',wingman.checked?'1':'0'));}
   if(difficultySelect){
@@ -193,6 +206,7 @@
     });
   }
   document.addEventListener('keydown', event => {
+    if(state==='ready'&&['Space','Enter'].includes(event.code)){event.preventDefault();beginFlight();return;}
     if(demoActive){event.preventDefault();stopDemo();return;}
     if (['SELECT','INPUT','TEXTAREA'].includes(event.target.tagName) || event.ctrlKey || event.metaKey || event.altKey) return;
     if(trainerEnabled&&edition==='rainbow'&&state==='playing'&&(event.code==='KeyE'||/^Digit[1-9]$/.test(event.code))){
@@ -222,6 +236,11 @@
     if(msg.type==='demo-exit'){stopDemo();return;}
     if(demoActive&&msg.type==='score-ready')return;
     if (msg.type === 'ready' && state === 'loading') {
+      if(edition==='rainbow'&&!demoActive){
+        clearTimeout(bootTimer);state='ready';inputMode=msg.inputMode;
+        $('loading-text').textContent='AIRCRAFT READY';$('launch-ready').hidden=false;$('loading-progress').hidden=true;
+        showLayer('loading');setStatus('READY TO START');$('launch-ready').focus({preventScroll:true});return;
+      }
       clearTimeout(bootTimer); state = 'playing'; inputMode = msg.inputMode; showLayer(null); setStatus('Peli käynnissä');
       $('pause').disabled = false; $('restart').disabled = false;
       post('mute', { value:muted }); focusGame();
@@ -232,6 +251,7 @@
     if (msg.type === 'input-mode') inputMode = msg.mode;
     if (msg.type === 'trainer-state'){trainerEnabled = msg.enabled;syncTrainer();}
     if (msg.type === 'supplies-state'){suppliesEnabled=msg.enabled;syncSupplies();}
+    if(msg.type==='throttle-state'&&edition==='rainbow'&&$('touch-throttle'))$('touch-throttle').value=String(Math.round(msg.value*16/100));
     if (msg.type === 'round-ended' && edition==='rainbow' && ['playing','paused'].includes(state)) {
       if(document.body?.dataset)document.body.dataset.campaignComplete=msg.victory?'true':'false';
       if($('honor-title'))$('honor-title').textContent=msg.victory?'BADGE OF HONOR':'HIGH SCORES';

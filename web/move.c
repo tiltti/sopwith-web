@@ -29,12 +29,14 @@ void WebVariant_InitPlayer(OBJECTS *ob,const original_ob_t *origin);
 #define moveox WebNative_MoveOx
 #define movetarg WebNative_MoveTarget
 #define initshot WebVariant_InitShot
+#define initbomb WebVariant_InitBomb
 #include "../third_party/sdl-sopwith/src/swmove.c"
 #undef initplyr
 #undef moveshot
 #undef moveox
 #undef movetarg
 #undef initshot
+#undef initbomb
 #undef moveplyr
 #undef movexy
 #undef swauto
@@ -50,6 +52,7 @@ void WebVariant_InitPlayer(OBJECTS *ob,const original_ob_t *origin)
 
 void WebVariant_ResetFlight(void){flight_speed=0;throttle=0;last_flight_tick=-1;flight_dead=flight_ready=ground_roll=edge_turn=false;low_speed_ticks=0;}
 int WebVariant_Throttle(void){return WebVariant_IsEnabled()?throttle*100/16:consoleplayer?consoleplayer->ob_accel*100/MAX_THROTTLE:0;}
+void WebVariant_SetThrottle(int setting){if(WebVariant_IsEnabled())throttle=clamp_range(0,setting,16);}
 int WebVariant_Speed(void){return (int)round(flight_speed);}
 int WebVariant_SpeedMilli(void){return (int)round(flight_speed*1000);}
 bool WebVariant_IsTaxiing(void){return WebVariant_IsEnabled()&&ground_roll;}

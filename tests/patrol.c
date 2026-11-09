@@ -15,7 +15,7 @@
 #include "trainer.h"
 char *Vid_GetPrefPath(void){return strdup(WEB_TEST_PREF_PATH);}
 /* Existing combat regressions deliberately run after the new spawn shield. */
-static void fresh(void){playmode=PLAYMODE_SINGLE;WebVariant_SetEnabled(false);gamenum=0;swinitlevel();WebVariant_SetEnabled(true);compplane=false;plyrplane=true;WebVariant_Apply(consoleplayer);countmove+=100;WebVariant_Apply(consoleplayer);}
+static void fresh(void){playmode=PLAYMODE_SINGLE;WebVariant_SetEnabled(false);gamenum=0;swinitlevel();WebVariant_SetEnabled(true);compplane=false;plyrplane=true;WebVariant_Apply(consoleplayer);consoleplayer->ob_athome=false;consoleplayer->ob_speed=1;++countmove;WebVariant_Apply(consoleplayer);countmove+=100;WebVariant_Apply(consoleplayer);consoleplayer->ob_athome=true;consoleplayer->ob_speed=0;}
 static OBJECTS *pilot(void){for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(WebVariant_ObjectKind(ob)==21)return ob;return NULL;}
 static OBJECTS *enemy_building(void){for(OBJECTS *ob=objtop;ob;ob=ob->ob_next)if(ob->ob_type==TARGET&&ob->ob_state==STANDING&&ob->ob_faction!=consoleplayer->ob_faction&&(ob->ob_orient==TARGET_HANGAR||ob->ob_orient==TARGET_FACTORY))return ob;return NULL;}
 static void strike_building(OBJECTS *target,bool bomb){
@@ -182,6 +182,9 @@ int main(void){
     int stalled=0;for(int n=0;n<15;n++){++countmove;latest_player_commands[p->ob_plrnum][countmove%MAX_NET_LAG]=0;moveplyr(p);if(p->ob_state==STALLED){stalled=1;break;}}assert(stalled);
     p->ob_y=170;int recovered=0;for(int n=0;n<40;n++){p->ob_angle=12;++countmove;latest_player_commands[p->ob_plrnum][countmove%MAX_NET_LAG]=K_ACCEL;moveplyr(p);if(p->ob_state==FLYING){recovered=1;break;}}assert(recovered);
     puts("Flight envelope: elevator alone cannot take off below 60 mph; a powered ground roll rotates above the threshold; a slow climb stalls and nose-down power recovers.");
+    int measured_speed=WebVariant_SpeedMilli();WebVariant_SetThrottle(8);assert(WebVariant_Throttle()==50&&WebVariant_SpeedMilli()==measured_speed);
+    WebVariant_SetThrottle(99);assert(WebVariant_Throttle()==100);WebVariant_SetThrottle(-3);assert(WebVariant_Throttle()==0);
+    puts("Touch throttle: half/full/idle detents clamp safely and never bypass gradual airspeed physics.");
 
     fresh();WebVariant_SetEasy(true);p=consoleplayer;p->ob_x=300;p->ob_y=170;p->ob_athome=false;p->ob_speed=6;p->ob_accel=0;p->ob_angle=0;
     setdxdy(p,4*256,0);insertx(p,deletex(p));

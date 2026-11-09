@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 30498,
-      "sha256": "b5c8050ff66d20356a39fbea89ea3f130353895bca72fa87e8be588bafb6ed8e"
+      "bytes": 31391,
+      "sha256": "748828a7df7376b9680b6b15ce5e5a50d0c824e0ebbc6f9be849419d38205386"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -336,6 +336,11 @@
       "path": "dist/assets/rainbow-cockpit-v1.png",
       "bytes": 2926858,
       "sha256": "c03a19a9280d9b80247371d5f04807022a48fc73b02e1015b2686d6e3807559d"
+    },
+    {
+      "path": "dist/assets/rainbow-cockpit-weather-v25.png",
+      "bytes": 2275308,
+      "sha256": "467f66792c39c00ec3be8f3bb34d8f711e5ea3b4c590d86cf24d9666719b7de9"
     },
     {
       "path": "dist/assets/rainbow-cow-reaction-v1.png",

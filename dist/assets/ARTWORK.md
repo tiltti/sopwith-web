@@ -465,3 +465,18 @@ collision masks are retained. Player and escort cache identities are separate.
 The floating 2 above the escort is removed; cockpit escort status remains.
 `tests/wingman-preview.html` shows the two production sprite outputs together.
 No source raster is overwritten or newly generated for this palette change.
+
+## Frost and illuminated cockpit components (2026-11-09)
+
+`rainbow-cockpit-weather-v25.png` is a new 1536×1024 RGBA atlas generated
+with built-in OpenAI imagegen. The user's current-dashboard screenshot was
+used only as a material/style reference and is not distributed. The raw PNG
+is unchanged. Three frost components and three night-light components have
+measured crop rectangles in `RainbowAssets.cockpitLayer`; rectangular plaques
+use corner-preserving slices. Live text, scale ticks and decorative pointers
+remain separate layers. The transparent centers protect instrument legibility.
+
+Exact generation prompt, mode, dimensions and original file hash are recorded
+in `web/cockpit-v25-prompts.json` and `web/cockpit-v25-files.json`.
+`tests/cockpit-preview.html` renders the production day/winter/night HUDs at
+the same values for comparison. Original GPL-2.0-or-later project artwork.

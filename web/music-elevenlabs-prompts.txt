@@ -1,0 +1,8 @@
+Rainbow Patrol — optional ElevenLabs music prompts
+These are generation prompts, not new audio assets or a license declaration.
+
+A — Noble / adventurous, 96 BPM
+Instrumental orchestral theme for a colourful WWI biplane adventure game. Noble French horns, bold trumpet melody, deep trombones, rolling snare drums, timpani and warm strings. Memorable, proud and adventurous, with the musical character of a 1990s Amiga game played through rich orchestral samples. Steady 96 BPM. Leave space for engine and weapon sound effects. No vocals. Around 90 seconds, suitable for seamless looping.
+
+B — Weighty / combat, 108 BPM
+Instrumental orchestral flight-combat music above snowy valleys and a storm-damaged city. Powerful low brass, driving cellos, restrained military snare, thunderous timpani and a soaring heroic horn theme. Tense and weighty, with a strong melody and the atmosphere of a classic Amiga war game. Steady 108 BPM. Controlled dynamics with space for gameplay sounds. No vocals. Around 90 seconds, suitable for seamless looping.

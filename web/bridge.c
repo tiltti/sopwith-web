@@ -26,6 +26,7 @@ EMSCRIPTEN_KEEPALIVE void web_pause(int value)
     paused = value != 0;
 }
 EMSCRIPTEN_KEEPALIVE void web_bomb(int release) { WebVariant_BombRelease(release != 0); }
+EMSCRIPTEN_KEEPALIVE void web_throttle(int setting){WebVariant_SetThrottle(setting);}
 
 int Timer_GetMS(void)
 {
@@ -126,6 +127,7 @@ EMSCRIPTEN_KEEPALIVE int web_read(int field)
         case 12: return WebVariant_IsTaxiing();
         case 13: return WebVariant_SpeedMilli(); /* native speed × 1000 */
         case 14: return WebVariant_SpawnProtection(); /* remaining 100 ms ticks */
+        case 15: return WebVariant_Throttle(); /* actual throttle, percent */
         default: return -1;
     }
 }

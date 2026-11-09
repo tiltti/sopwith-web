@@ -591,6 +591,13 @@
       const c=this.c;c.save();c.translate((r[2]-camera)*2+r[7],(199-r[3])*2+r[8]);c.rotate(angle-Math.PI/2);c.drawImage(image,-w/2,-h/2,w,h);c.restore();
       this.canvas.dataset.bombHeading=String(angle);
     }
+    flightNotice(text,color=P.gold){
+      const c=this.c,badge=window.RainbowAssets?.interfaceArt?.('badge'),w=220,h=w*600/1512;
+      c.save();c.translate(0,-H);
+      if(badge)c.drawImage(badge,8,2,w,h);
+      hudType(c,text,8+w/2,2+h*.54,{size:8,color,align:'center',width:108});c.restore();
+      this.canvas.dataset.notification=text;this.canvas.dataset.notificationArea='flight';
+    }
     flightBadge(title,subtitle,y=45){
       const c=this.c,badge=window.RainbowAssets?.interfaceArt?.('badge'),w=340,h=w*600/1512;
       if(badge)c.drawImage(badge,(W-w)/2,y,w,h);
@@ -694,7 +701,11 @@
           }
           continue;
         }
-        if(type===6) {ring(c,sx,sy,3+(r[11]%3),P.darkSmoke);rect(c,sx-1,sy-1,3,3,P.smoke);continue;}
+        if(type===6) {
+          const age=Math.max(0,10-r[11]),size=4+age*.75,brush=this.darkSmokeBrush||this.smokeBrush;
+          c.save();c.globalAlpha=Math.max(0,.5-age*.035);if(brush)c.drawImage(brush,sx-size/2+Math.sin(time*.3+x)*1.2,sy-size/2-age*.25,size,size);c.restore();
+          this.canvas.dataset.smokeStyle='soft-puffs';continue;
+        }
         if(type===5) {if(window.RainbowAssets?.loaded&&window.RainbowAssets?.explosionPose)continue;rect(c,sx-2,sy,4,2,P.redShade);rect(c,sx,sy-1,2,3,P.yellow);rect(c,sx+1,sy,1,1,P.cream);continue;}
         if(type===9&&r[1]!==5&&window.RainbowAssets?.loaded) {
           const age=Math.max(0,time-this.cowDeaths.get(r[16]||r[2])),pose=window.RainbowAssets.cowPose(Math.min(3,Math.floor(age/2)));
@@ -760,10 +771,11 @@
       return true;
     }
     gauge(cx,cy,kind,value,max,label,unit){
-      const c=this.c,layer=kind=>window.RainbowAssets?.gaugeLayer?.(kind),ivory=this.gaugeStyle==='ivory',fuel=kind==='fuel',radius=fuel?27:37;
-      const face=layer(ivory?'ivory':'dark'),ink=ivory?'#392c23':this.mission===2?'#f6ce83':P.cream,diameter=radius*2.24,alt=kind==='altitude';
+      const c=this.c,climate=kind=>window.RainbowAssets?.cockpitLayer?.(kind),layer=kind=>window.RainbowAssets?.gaugeLayer?.(kind),ivory=this.mission!==2&&this.gaugeStyle==='ivory',fuel=kind==='fuel',radius=fuel?27:37;
+      const face=(this.mission===2?climate('nightDial'):null)||layer(ivory?'ivory':'dark'),ink=ivory?'#392c23':this.mission===2?'#f6ce83':P.cream,diameter=radius*2.24,alt=kind==='altitude';
       if(face)c.drawImage(face,cx-diameter/2,cy-diameter/2,diameter,diameter);
       else {c.fillStyle=P.ink;c.beginPath();c.ellipse(cx,cy,radius,radius,0,0,Math.PI*2);c.fill();}
+      c.save();if(this.mission===2){c.shadowColor='#f6a147';c.shadowBlur=1.3;}
       const steps=fuel?8:alt?50:20,major=alt?5:4,outer=fuel?19:27,labels=fuel?12.5:20;
       for(let i=0;i<=steps;i++){
         if(alt&&i===steps)continue;
@@ -781,8 +793,14 @@
       if(alt&&hand){c.save();c.translate(cx,cy);c.rotate((-90+((value%10000+10000)%10000)/10000*360)*Math.PI/180+Math.PI/2);c.drawImage(hand,-radius*.48,-radius*.48,radius*.96,radius*.96);c.restore();this.canvas.dataset.altimeter='two-hand-hundreds-thousands';}
       if(hand){c.save();c.translate(cx,cy);c.rotate(a+Math.PI/2);c.drawImage(hand,-radius*.8,-radius*.8,radius*1.6,radius*1.6);c.restore();}
       else{const dx=Math.cos(a),dy=Math.sin(a);polygon(c,[[cx-dy,cy+dx],[cx+dx*radius*.65,cy+dy*radius*.65],[cx+dy,cy-dx]],P.gold);}
-      const glass=layer('glass');if(glass){c.save();c.globalAlpha=.7;c.drawImage(glass,cx-diameter/2,cy-diameter/2,diameter,diameter);c.restore();}
+      c.restore();
+      const glass=(this.mission===2?climate('nightGlass'):null)||layer('glass');if(glass){c.save();c.globalAlpha=.7;c.drawImage(glass,cx-diameter/2,cy-diameter/2,diameter,diameter);c.restore();}
+      const frost=this.mission===1?climate('frostRing'):null;if(frost)c.drawImage(frost,cx-diameter*.51,cy-diameter*.51,diameter*1.02,diameter*1.02);
       hudType(c,fuel?(this.unlimitedSupplies?'INF':Math.round(value)+'%'):alt?String(Math.round(value)).padStart(4,'0')+' FT':Math.round(value),cx,cy+radius+4,{size:6,align:'center'});
+    }
+    climatePlate(image,x,y,w,h){
+      const c=this.c,b=5,sb=60,sx=[0,sb,image.width-sb,image.width],sy=[0,sb,image.height-sb,image.height],dx=[x,x+b,x+w-b,x+w],dy=[y,y+b,y+h-b,y+h];
+      for(let row=0;row<3;row++)for(let col=0;col<3;col++)c.drawImage(image,sx[col],sy[row],sx[col+1]-sx[col],sy[row+1]-sy[row],dx[col],dy[row],dx[col+1]-dx[col],dy[row+1]-dy[row]);
     }
     hud(s,objects,trainer,ground) {
       const c=this.c,art=kind=>window.RainbowAssets?.interfaceArt?.(kind);c.save();c.translate(0,H);
@@ -791,20 +809,21 @@
         c.globalAlpha=.54;rect(c,0,0,W,HUD,'#0a182a');c.globalAlpha=1;
         for(const x of [144,472,542]){const glow=c.createRadialGradient(x,10,1,x,30,52);glow.addColorStop(0,'rgba(247,166,62,.28)');glow.addColorStop(1,'rgba(247,166,62,0)');c.fillStyle=glow;c.fillRect(x-52,0,104,90);}
       }
+      const climate=kind=>window.RainbowAssets?.cockpitLayer?.(kind),nightPlate=this.mission===2?climate('nightFrame'):null;
       const score=art('score'),nav=art('map'),ammo=art('counter');
-      if(score)c.drawImage(score,6,3,100,46);else rect(c,10,8,92,34,P.ink);
+      if(nightPlate)this.climatePlate(nightPlate,6,3,100,46);else if(score)c.drawImage(score,6,3,100,46);else rect(c,10,8,92,34,P.ink);
       hudType(c,'SCORE',56,17,{size:6,color:P.gold,align:'center',serif:true});
       const digits=s[10]<0?'-'+String(-s[10]).padStart(5,'0'):String(s[10]).padStart(6,'0');
       hudType(c,digits,56,27,{size:12,align:'center',width:78});
-      const lives=art('lives'),level=art('level');if(lives)c.drawImage(lives,10,49,55,23);if(level)c.drawImage(level,70,49,34,23);
-      hudType(c,'LIVES',16,58,{size:5.8,serif:true});hudType(c,trainer?'INF':s[9],49,54,{size:11,color:P.gold,align:'center',width:19});
-      hudType(c,'LVL',75,58,{size:5.5,serif:true});hudType(c,s[18]+1,95,54,{size:11,color:P.gold,align:'center',width:11});
+      const lives=art('lives'),level=art('level');if(nightPlate){this.climatePlate(nightPlate,10,49,55,23);this.climatePlate(nightPlate,70,49,34,23);}else {if(lives)c.drawImage(lives,10,49,55,23);if(level)c.drawImage(level,70,49,34,23);}
+      hudType(c,'LIVES '+(trainer?'INF':s[9]),37.5,57,{size:8,color:P.gold,align:'center',width:44});
+      hudType(c,'LVL '+(s[18]+1),87,57,{size:8,color:P.gold,align:'center',width:27});
       if(nav)c.drawImage(nav,186,3,246,70);
       c.save();c.beginPath();for(const [i,[x,y]] of [[MAP.x+3,MAP.y],[MAP.x+MAP.w-3,MAP.y],[MAP.x+MAP.w,MAP.y+3],[MAP.x+MAP.w,MAP.y+MAP.h-3],[MAP.x+MAP.w-3,MAP.y+MAP.h],[MAP.x+3,MAP.y+MAP.h],[MAP.x,MAP.y+MAP.h-3],[MAP.x,MAP.y+3]].entries())i?c.lineTo(x,y):c.moveTo(x,y);c.closePath();c.clip();
-      rect(c,MAP.x,MAP.y,MAP.w,MAP.h,'#263d43');
+      rect(c,MAP.x,MAP.y,MAP.w,MAP.h,this.mission===2?'#10242b':this.mission===1?'#647c85':'#263d43');
       if(ground?.length)for(let x=0;x<MAP.w;x++){
         const y=MAP.h-1-ground[Math.min(ground.length-1,Math.floor(x/MAP.w*ground.length))]/200*(MAP.h-2);
-        c.fillStyle='#70854c';c.fillRect(MAP.x+x,MAP.y+y,1,MAP.h-y);
+        c.fillStyle=this.mission===2?'#3c4e4c':this.mission===1?'#cfdfdf':'#70854c';c.fillRect(MAP.x+x,MAP.y+y,1,MAP.h-y);
       }
       const faction=objects.find(r=>r[0]===1&&r[10])?.[6]||1;
       for(const r of objects)if([1,4,7,8,9,12].includes(r[0])){
@@ -831,7 +850,7 @@
       else {rect(c,leverX-1,80,2,9,P.gold);rect(c,leverX-3,73,6,8,'#21180f');}
       this.canvas.dataset.throttle=String(Math.round(throttle));this.canvas.dataset.throttleControl='mechanical-lever';this.canvas.dataset.throttleLeverX=String(leverX);
       this.canvas.dataset.mapWindow=[MAP.x,MAP.y,MAP.w,MAP.h].join(',');
-      if(ammo)c.drawImage(ammo,574,10,54,27);else rect(c,578,15,45,18,P.ink);
+      if(nightPlate)this.climatePlate(nightPlate,574,10,54,27);else if(ammo)c.drawImage(ammo,574,10,54,27);else rect(c,578,15,45,18,P.ink);
       hudType(c,'AMMO',580,23,{size:5.8,serif:true});hudType(c,trainer||this.unlimitedSupplies?'INF':s[7],623,23,{size:6,color:P.gold,align:'right',width:17});
       hudType(c,trainer||this.unlimitedSupplies?'BOMBS INF':'BOMBS',602,39,{size:5.8,align:'center',serif:true});
       const rack=art('bombRack');if(rack)c.drawImage(rack,574,45,54,27);
@@ -839,21 +858,28 @@
       c.save();c.beginPath();c.moveTo(578,47);c.lineTo(624,47);c.lineTo(624,68);c.lineTo(578,68);c.closePath();c.clip();
       for(let i=0;i<5;i++){if(i<count){if(bomb)c.drawImage(bomb,580+i*8.4,49,6.5,16);else rect(c,581+i*8.4,50,4,15,P.gold);}else rect(c,582+i*8.4,49,2,1,'#7d6948');}c.restore();
       this.canvas.dataset.bombIcons=String(count);
-      const home=art('home');if(home)c.drawImage(home,517,77,13,13);hudType(c,'HOME',533,81,{size:6,serif:true});hudType(c,s[17]?'ON':s[4]<s[15]?'>':'<',555,81,{size:6,color:P.gold});
+      const home=art('home');if(home)c.drawImage(home,517,77,13,13);hudType(c,'HOME '+(s[17]?'ON':s[4]<s[15]?'>':'<'),550,81,{size:6,color:P.gold,align:'center'});
       const target=this.effects.filter(e=>e.type===6&&s[1]-e.tick<28).at(-1);
       const stalled=[6,9].includes(s[13]),minimum=4.6+2.8*Math.max(0,Math.sin(s[19]*Math.PI/8));
       this.canvas.dataset.flightCondition=s[13]===3?'crashed':s[13]===4?'falling':stalled?'stall':altitude<10?'taxi':s[11]<minimum?'low-airspeed':'flying';
-      if(stalled){hudType(c,'STALL : LOWER NOSE + THROTTLE',310,80,{size:6.5,color:P.red,align:'center',width:205});this.canvas.dataset.notification='STALL';}
-      else if(s[12]===0&&[1,8].includes(s[13])&&altitude>50&&s[11]<minimum){hudType(c,'AIRSPEED LOW : ADD POWER',310,80,{size:6.5,color:P.gold,align:'center',width:205});this.canvas.dataset.notification='AIRSPEED LOW';}
-      else if(target){const building=[1,2,3,8].includes(Math.abs(target.size)),label=target.size<0?'FRIENDLY TARGET HIT':building?'BUILDING DESTROYED':'TARGET DESTROYED';hudType(c,label,310,80,{size:7,color:target.size<0?P.red:P.gold,align:'center',width:205});this.canvas.dataset.notification=label;}
-      else if(s[12]===0&&this.spawnProtection>0){hudType(c,'TAKEOFF COVER · '+Math.ceil(this.spawnProtection/10)+'s',310,80,{size:6.5,color:P.mint,align:'center',width:205});this.canvas.dataset.notification='TAKEOFF COVER';}
-      else {delete this.canvas.dataset.notification;if(s[12]===1)hudType(c,'MISSION COMPLETE',310,80,{size:6.5,color:P.gold,align:'center',width:205});else if(s[13]===3)hudType(c,'PLANE LOST',310,80,{size:6.5,color:P.red,align:'center',width:205});else if(s[16])hudType(c,'RETURNING TO BASE',310,80,{size:6.5,color:P.cream,align:'center',width:205});}
+      let note='',noteColor=P.gold;
+      if(stalled){note='STALL · LOWER NOSE';noteColor=P.red;}
+      else if(s[12]===0&&[1,8].includes(s[13])&&altitude>50&&s[11]<minimum)note='AIRSPEED LOW · ADD POWER';
+      else if(target){const building=[1,2,3,8].includes(Math.abs(target.size));note=target.size<0?'FRIENDLY TARGET HIT':building?'BUILDING DESTROYED':'TARGET DESTROYED';noteColor=target.size<0?P.red:P.gold;}
+      else if(s[12]===0&&this.spawnProtection>0&&!this.readyLevel){note='TAKEOFF COVER · '+Math.ceil(this.spawnProtection/10)+'s';noteColor=P.mint;}
+      else if(s[13]===3){note='PLANE LOST';noteColor=P.red;}
+      else if(s[16]){note='RETURNING TO BASE';noteColor=P.cream;}
+      if(objects.some(r=>r[10]&&r[15]===23))note='TURNING BACK';
+      if(note)this.flightNotice(note,noteColor);else{delete this.canvas.dataset.notification;delete this.canvas.dataset.notificationArea;}
       const escort=objects.find(r=>r[15]===22),separation=escort?Math.hypot(escort[2]-s[4],escort[3]-s[5]):0;
       this.canvas.dataset.wingman=escort?escort[14]===3&&separation>110?'JOINING':['OFF','WAITING','TAKEOFF','FORMATION','ENGAGING','RETURNING','LOST'][escort[14]]||'FORMATION':'OFF';
       this.canvas.dataset.wingmanSeparation=String(Math.round(separation));
       if(escort)hudType(c,'2 '+this.canvas.dataset.wingman,420,88,{size:4.5,color:P.mint,align:'right',width:100});
-      if(objects.some(r=>r[10]&&r[15]===23))hudType(c,'TURNING BACK',310,80,{size:6.5,color:P.gold,align:'center',width:205});
+
       if(this.mission===1){
+        const edge=climate('frostEdge'),bezel=climate('frostFrame');
+        if(edge){c.save();c.beginPath();c.moveTo(0,0);c.lineTo(W,0);c.lineTo(W,12);c.lineTo(0,12);c.closePath();c.clip();for(let x=-20;x<W;x+=180)c.drawImage(edge,x,-27,210,82);c.restore();}
+        if(bezel){this.climatePlate(bezel,574,10,54,27);}
         for(let i=0;i<60;i++){
           const x=(i*113)%W,y=i%3===0?1:HUD-2,w=2+(i%4);
           c.globalAlpha=.24+(i%3)*.08;polygon(c,[[x-w,y],[x,y+(y<10?1:-1)*(3+i%5)],[x+w,y],[x+1,y+(y<10?-2:2)]],'#d6eff3');

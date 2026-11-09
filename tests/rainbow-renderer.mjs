@@ -222,3 +222,8 @@ assert.equal(display.dataset.speedMarks,'stall-52-takeoff-60');assert.equal(disp
 renderer.mission=2;renderer.hud(scene,[],false,ground);assert.equal(display.dataset.cockpitClimate,'night-lit');
 renderer.weather(0,72.2);assert.equal(display.dataset.lightning,'true');renderer.weather(0,80);assert.equal(display.dataset.lightning,undefined);
 console.log('Weather instruments: winter frost/night lighting, nominal stall/takeoff marks, traditional two-hand altitude dial and bounded lightning verified.');
+
+renderer.spawnProtection=100;renderer.readyLevel=null;calls.length=0;renderer.hud(scene,[],false,new Int32Array(2000).fill(40));
+assert.equal(display.dataset.notificationArea,'flight');assert.ok(calls.some(c=>c[0]==='translate'&&c[2]===-400),'Status badge returns to flight coordinates, outside the instrument strip.');
+renderer.spawnProtection=0;
+console.log('Takeoff/status notifications use the flight badge outside the cockpit.');

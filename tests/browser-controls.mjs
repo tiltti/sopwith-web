@@ -9,13 +9,13 @@ const event = (code, key = code) => ({ code, key, target:{tagName:'BODY'},
 
 async function runnerTests(search='',expectedArgs=['-q'],onlyLaunch=false) {
   const handlers = {}, sent = [], pressed = [], trainerChanges = [],suppliesChanges=[];
-  let inputMode = 0;const mainArgs=[],easyChanges=[];
+  let inputMode = 0;const mainArgs=[],easyChanges=[],bootPauses=[],throttles=[];
   const canvas = { dataset:{}, focus() {} };
   const engine = {
     FS:{ mkdir() {}, mount() {}, syncfs(initial, cb) { cb(null); }, mkdirTree() {},
       analyzePath() { return {exists:false}; }, writeFile() {}, readFile() { return 'conf_medals 0'; } },
     IDBFS:{}, _web_read:() => 0, _web_input_mode:() => inputMode,
-    _web_key:(...args) => pressed.push(args), _web_sound() {}, _web_pause() {},
+    _web_key:(...args) => pressed.push(args), _web_sound() {}, _web_pause:value=>bootPauses.push(value),_web_throttle:value=>throttles.push(value),
     _web_palette() {}, _web_trainer:value => trainerChanges.push(value), _web_variant() {}, _web_easy:value=>easyChanges.push(value),callMain(args) {mainArgs.push(...args);},
     _web_supplies:value=>suppliesChanges.push(value),
   };
@@ -26,7 +26,7 @@ async function runnerTests(search='',expectedArgs=['-q'],onlyLaunch=false) {
   scope.window = scope;
   vm.runInNewContext(await readFile(new URL('../dist/runner.js', import.meta.url), 'utf8'), scope);
   await new Promise(resolve => setImmediate(resolve));
-  assert.deepEqual(mainArgs,expectedArgs);assert.deepEqual(easyChanges,[search.includes('edition=rainbow')&&search.includes('difficulty=easy')?1:0]);if(onlyLaunch)return;
+  assert.deepEqual(mainArgs,expectedArgs);assert.deepEqual(bootPauses,[search.includes('edition=rainbow')&&search.includes('wait=1')?1:0]);assert.deepEqual(easyChanges,[search.includes('edition=rainbow')&&search.includes('difficulty=easy')?1:0]);if(onlyLaunch)return;
 
   inputMode = 2;
   for (const code of ['KeyS','KeyP','Escape','ArrowUp','ArrowDown','KeyX','Space']) {
@@ -68,6 +68,16 @@ async function runnerTests(search='',expectedArgs=['-q'],onlyLaunch=false) {
   assert.equal(suppliesChanges.at(-1),1);assert.equal(sent.at(-1).type,'supplies-state');
   handlers.message({origin:'https://wrong.test',source:parent,data:{sopwith:true,type:'supplies',enabled:false}});
   assert.equal(suppliesChanges.at(-1),1);
+  handlers.message({origin,source:parent,data:{sopwith:true,type:'throttle',value:8}});
+  if(search.includes('edition=rainbow')){
+    assert.equal(throttles.at(-1),8);
+    handlers.message({origin,source:parent,data:{sopwith:true,type:'throttle',value:99}});
+    handlers.message({origin,source:parent,data:{sopwith:true,type:'throttle',value:-3}});
+    assert.deepEqual(throttles.slice(-2),[16,0],'Touch throttle stays within native power detents.');
+    const before=throttles.length;
+    handlers.message({origin:'https://wrong.test',source:parent,data:{sopwith:true,type:'throttle',value:12}});
+    assert.equal(throttles.length,before,'Unrelated pages cannot change throttle.');
+  }else assert.equal(throttles.length,0,'Classic keeps its original throttle inputs.');
   console.log('Runner: native S/arrows/Esc/text entry, flight shortcuts, key release and trainer messaging verified.');
 }
 
@@ -105,6 +115,7 @@ async function pageTests() {
   assert.equal(sent.at(-1).type,'aim');assert.equal(sent.at(-1).enabled,false);
   const message = data => windowHandlers.message({origin,source:child,data:{sopwith:true,...data}});
   message({type:'ready',inputMode:0});
+  assert.equal(get('loading').hidden,false);assert.equal(get('launch-ready').hidden,false,'Ready aircraft waits for explicit start.');get('launch-ready').listeners.click();
   documentHandlers.keydown(event('KeyS','s'));
   assert.equal(get('mute')['aria-pressed'], 'true', 'S outside the frame must not mute-toggle over a native menu.');
   message({type:'input-mode',mode:1});
@@ -116,7 +127,12 @@ async function pageTests() {
   get('settings-supplies').listeners.click();assert.equal(get('settings-supplies')['aria-pressed'],'true');
   get('start').listeners.click();assert.match(get('game').src,/trainer=0&supplies=1/,'Unlimited supplies launch independently of trainer.');
   get('settings-supplies').listeners.click();assert.equal(get('settings-supplies')['aria-pressed'],'false');
-  message({type:'ready',inputMode:1});
+  message({type:'ready',inputMode:1});get('launch-ready').listeners.click();
+  get('touch-throttle').value='8';get('touch-throttle').listeners.input();
+  assert.equal(sent.at(-1).type,'throttle');assert.equal(sent.at(-1).value,8);
+  const sliderKey=event('ArrowRight');sliderKey.target.tagName='INPUT';
+  documentHandlers.keydown(sliderKey);assert.equal(sliderKey.prevented,undefined,'The native range control owns its arrow keys.');
+  message({type:'throttle-state',value:75});assert.equal(get('touch-throttle').value,'12','Keyboard/autopilot power changes update the slider.');
   scope.document.querySelector=()=>({requestFullscreen:async()=>{scope.document.hidden=true;documentHandlers.visibilitychange();}});
   const pauses=()=>sent.filter(x=>x.type==='pause'&&x.value).length;
   const beforeFullscreen=pauses();await get('fullscreen').listeners.click();
@@ -141,6 +157,8 @@ async function pageTests() {
 
 await runnerTests();
 await runnerTests('?edition=rainbow&mode=practice&level=2',['-q','-s','-g1'],true);
+await runnerTests('?edition=rainbow&mode=practice&wait=1',['-q','-s'],true);
+await runnerTests('?edition=rainbow&mode=practice',['-q','-s']);
 await runnerTests('?edition=rainbow&mode=combat&level=3&difficulty=easy',['-q','-c','-g2'],true);
 await runnerTests('?edition=rainbow&mode=practice&level=99',['-q','-s'],true);
 await runnerTests('?edition=classic&mode=practice&level=2',['-q','-s'],true);

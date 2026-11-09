@@ -1,3 +1,25 @@
+## Ready screen, departure cover, weather cockpit and touch throttle — 2026-11-09
+
+- The real WASM game waits at tick zero, paused, on the refueling screen until
+  START FLIGHT; waiting for several minutes keeps cover at 100 ticks. Click
+  starts the simulation. No audible or fullscreen tests were performed.
+- Native spawn tests wait 500 parked ticks without consuming cover, then
+  verify its 100-tick departure countdown, hostile nearby bomb/gun suppression
+  and restored normal fire after expiry. Repeated real respawns preserve the
+  runway profile in all three missions. Terrain collisions remain normal.
+- The production HUD fixture compares identical readings in day, winter and
+  night. Frost sprites overlay gauge edges with clear centers; amber lamps,
+  lit dark dials and night plaques replace the day components. LIVES/LVL
+  share a baseline. Status notices use the wing badge in flight coordinates.
+  Proof: parent research/review-2026-11-09-cockpit-v25.jpg. Refueling gate:
+  parent research/review-2026-11-09-ready-v25.jpg.
+- The actual browser slider reaches native throttle 6% and 100% at its first
+  and last power detents. Native tests verify clamping, midpoint 50% and no
+  instantaneous speed change. JS tests cover messages, unrelated-origin
+  rejection, Classic isolation, native range arrow keys and state sync.
+  No physical touchscreen was available. Native smoke records now draw soft
+  expanding puffs instead of the remaining ring/rectangle trail.
+
 ## Pilot yell, safe spawns, supply mode and attract demo — 2026-11-09
 
 - Runtime enemy-pilot reaction now uses HaelDB's CC0 3yell9.wav, retained

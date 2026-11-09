@@ -28,8 +28,10 @@ humanoide9000 / Luis Humanoide (CC BY 4.0), adapted to a 6.816-second stereo
 WAV that fits the departure. Source, license and transformations are retained
 in `dist/assets/audio/victory-v23/`.
 
-New flights receive ten simulation seconds of takeoff cover against object
-collisions, including hostile fire and wreckage. The home runway is kept at
+New flights wait on the refueling screen until START FLIGHT is pressed.
+Takeoff cover stays ready while parked, then lasts ten simulation seconds
+from initial movement. It protects against object collisions, including
+hostile fire and wreckage, and prevents nearby hostile bomb releases. The home runway is kept at
 its prepared terrain profile so repeated crashes cannot dig a respawn pit.
 Landing/refueling does not renew the cover; normal terrain collisions remain.
 
@@ -61,7 +63,8 @@ restored under buildings; foundations bridge slopes instead of cutting abrupt
 platforms. Vehicles follow the slope. Cow collision masks are scaled with the art. The analog altimeter uses a traditional 0–9 face with separate hundreds and
 thousands hands and a numeric FT AGL readout. The airspeed dial marks nominal
 level-flight stall speed (52 MPH) and takeoff (60 MPH); climbs can stall sooner.
-Winter adds subtle frost to the cockpit; storm missions use warm night lighting,
+Winter adds separate frost sprites on the gauge glass and panel edges;
+storm missions use dark instrument faces with glowing amber lamps and plaques,
 animated rain, visible lightning and delayed original synthesized thunder.
 The map plots true world altitude,
 birds and ground objects below the flight area; no instruments hide targets.
@@ -168,6 +171,9 @@ a gently graded departure corridor before its mountain/city terrain.
 ## Manual flight and cockpit throttle
 
 X/Z moves a mechanical brass/bakelite throttle through sixteen power settings.
+Touch mode provides a horizontal throttle slider from idle to full power;
+keyboard/autopilot changes keep its position synchronized. Setting power
+does not instantly change airspeed.
 Takeoff still needs about 60 MPH; a slow climb can stall and recovery requires
 lowering the nose and adding power. Idle descents now exchange altitude for
 speed, including a stable shallow glide. Power blends continuously out of idle
