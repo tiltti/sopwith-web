@@ -1,0 +1,12 @@
+Rainbow Patrol v0.1.0-test.1
+Playtest build — 2026-11-10
+Git tag: v0.1.0-test.1
+
+Three missions: Coast, Winter Valley and Storm City.
+Selected H2 frost glass and Y1 concealed amber instrument illumination.
+Original Sopwith foundation, painted scenery, AI wingman and WATCH DEMO.
+Trainer defaults to off. In flight: 1–3 jumps to a mission; E clears the mission.
+Either shortcut automatically enables Trainer and makes the entire run unranked,
+even if Trainer is turned off again. Settings can also toggle Trainer.
+Sound defaults to off. Scores are stored in the browser; trainer runs are unranked.
+Version/date are visible on the title screen and Info page.

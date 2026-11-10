@@ -12,7 +12,7 @@
   const wingman=edition==='rainbow'?$('ai-wingman'):null;
   const keys = { ArrowUp:54, Comma:54, ArrowDown:56, Slash:56, ArrowRight:27, KeyX:27, ArrowLeft:29, KeyZ:29, Period:55, KeyB:5, Space:44, KeyH:11, KeyS:22 };
   let state = 'idle', muted = true, bootTimer, mode = 'practice';
-  let inputMode = 0, trainerEnabled = edition==='rainbow';
+  let inputMode = 0, trainerEnabled = false;
   let fullscreenTransition = false;
   const loadPref = (name, fallback) => { try { return localStorage.getItem('sopwith.' + name) ?? fallback; } catch { return fallback; } };
   const savePref = (name, value) => { try { localStorage.setItem('sopwith.' + name, String(value)); } catch {} };
@@ -209,8 +209,8 @@
     if(state==='ready'&&['Space','Enter'].includes(event.code)){event.preventDefault();beginFlight();return;}
     if(demoActive){event.preventDefault();stopDemo();return;}
     if (['SELECT','INPUT','TEXTAREA'].includes(event.target.tagName) || event.ctrlKey || event.metaKey || event.altKey) return;
-    if(trainerEnabled&&edition==='rainbow'&&state==='playing'&&(event.code==='KeyE'||/^Digit[1-9]$/.test(event.code))){
-      event.preventDefault();if(!event.repeat)post('trainer-action',{action:event.code==='KeyE'?0:Number(event.code[5])});return;
+    if(edition==='rainbow'&&state==='playing'&&inputMode===1&&(event.code==='KeyE'||/^Digit[1-3]$/.test(event.code)||trainerEnabled&&/^Digit[4-9]$/.test(event.code))){
+      event.preventDefault();if(!event.repeat){if(!trainerEnabled)window.trainer(true);post('trainer-action',{action:event.code==='KeyE'?0:Number(event.code[5])});}return;
     }
     if (edition === 'rainbow' && state === 'idle' && event.code === 'Space' && event.target.tagName !== 'BUTTON') {
       event.preventDefault(); if (!event.repeat) start(); return;

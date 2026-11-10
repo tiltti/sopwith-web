@@ -29,14 +29,14 @@ async function runnerTests(search='',expectedArgs=['-q'],onlyLaunch=false) {
   assert.deepEqual(mainArgs,expectedArgs);assert.deepEqual(bootPauses,[search.includes('edition=rainbow')&&search.includes('wait=1')?1:0]);assert.deepEqual(easyChanges,[search.includes('edition=rainbow')&&search.includes('difficulty=easy')?1:0]);if(onlyLaunch)return;
 
   inputMode = 2;
-  for (const code of ['KeyS','KeyP','Escape','ArrowUp','ArrowDown','KeyX','Space']) {
+  for (const code of ['KeyS','KeyP','Escape','ArrowUp','ArrowDown','KeyX','Space','KeyE','Digit1','Digit2','Digit3']) {
     const key = event(code);
     handlers.keydown(key); handlers.keyup(key);
     assert.equal(key.prevented, undefined, `${code} must remain native text input`);
   }
   assert.equal(pressed.length, 0);
   inputMode = 0;
-  for (const [code, scan] of [['KeyS',22],['Escape',41],['ArrowUp',82],['ArrowDown',81]]) {
+  for (const [code, scan] of [['KeyS',22],['KeyE',8],['Digit3',32],['Escape',41],['ArrowUp',82],['ArrowDown',81]]) {
     const key = event(code);
     handlers.keydown(key); handlers.keyup(key);
     assert.deepEqual(pressed.slice(-2), [[scan,1],[scan,0]], `${code} must reach the original menu without a flight remap.`);
@@ -98,8 +98,9 @@ async function pageTests() {
   scope.requestAnimationFrame=fn=>animationFrames.push(fn);
   vm.runInNewContext(await readFile(new URL('../dist/app.js',import.meta.url),'utf8'),scope);
   assert.equal(get('mute')['aria-pressed'], 'true', 'Sound starts off.');
-  assert.equal(get('settings-trainer')['aria-pressed'],'true','The development trainer starts on in Rainbow.');
-  get('settings-trainer').listeners.click();assert.equal(get('settings-trainer')['aria-pressed'],'false');
+  assert.equal(get('settings-trainer')['aria-pressed'],'false','Trainer starts off for a normal playtest.');
+  get('start').listeners.click();assert.match(get('game').src,/trainer=0/,'The first flight is ranked by default.');
+  get('settings-trainer').listeners.click();assert.equal(get('settings-trainer')['aria-pressed'],'true');
   assert.equal(scope.trainer().unlimitedFuel,true);get('start').listeners.click();
   assert.match(get('game').src,/trainer=1/);
   assert.match(get('game').src,/edition=rainbow/, 'The tribute page must request the new renderer.');
@@ -128,6 +129,13 @@ async function pageTests() {
   get('start').listeners.click();assert.match(get('game').src,/trainer=0&supplies=1/,'Unlimited supplies launch independently of trainer.');
   get('settings-supplies').listeners.click();assert.equal(get('settings-supplies')['aria-pressed'],'false');
   message({type:'ready',inputMode:1});get('launch-ready').listeners.click();
+  for(const [code,action] of [['Digit1',1],['Digit2',2],['Digit3',3],['KeyE',0]]){
+    scope.trainer(false);const before=sent.length;documentHandlers.keydown(event(code));
+    const changes=sent.slice(before);assert.equal(changes[0].type,'trainer');assert.equal(changes[0].enabled,true);
+    assert.equal(changes[1].type,'trainer-action');assert.equal(changes[1].action,action,'The parent frame enables Trainer before the test action.');
+  }
+  scope.trainer(false);const beforeTyping=sent.length,typedE=event('KeyE');typedE.target.tagName='INPUT';documentHandlers.keydown(typedE);
+  assert.equal(sent.length,beforeTyping,'Typing initials cannot enable Trainer.');
   get('touch-throttle').value='8';get('touch-throttle').listeners.input();
   assert.equal(sent.at(-1).type,'throttle');assert.equal(sent.at(-1).value,8);
   const sliderKey=event('ArrowRight');sliderKey.target.tagName='INPUT';
@@ -219,10 +227,12 @@ await pageTests();
   frames.shift()();assert.equal(sent.filter(x=>x.type==='round-ended').length,1);
   console.log('End screen: winner/loser retain Rainbow, native game freezes once, and the score reaches the retry page.');
   const jumps=[];engine._web_test=action=>{jumps.push(action);tick++;if(action){inputMode=1;end=0;heap[12]=0;heap[18]=action-1;}else{inputMode=0;end=1;heap[12]=1;heap[25]=72;}};
-  handlers.keydown(event('Digit3'));assert.equal(jumps.length,0,'Level shortcuts are inert outside trainer mode.');
-  scope.trainer(true);handlers.keydown(event('Digit1'));assert.deepEqual(jumps,[1]);frames.shift()();
+  handlers.keydown(event('Digit3'));assert.equal(jumps.length,0,'Native menus/end screens retain their number keys.');
+  inputMode=1;end=0;heap[12]=0;scope.trainer(false);handlers.message({origin,source:parent,data:{sopwith:true,type:'pause',value:false}});
+  handlers.keydown(event('Digit3'));assert.deepEqual(jumps,[3]);assert.equal(sent.filter(m=>m.type==='trainer-state').at(-1).enabled,true,'Jumping to mission three enables Trainer first.');
+  scope.trainer(false);handlers.keydown(event('Digit1'));assert.deepEqual(jumps,[3,1]);frames.shift()();
   for(let mission=0;mission<2;mission++){
-    handlers.keydown(event('KeyE'));frames.shift()();
+    scope.trainer(false);handlers.keydown(event('KeyE'));assert.equal(sent.filter(m=>m.type==='trainer-state').at(-1).enabled,true,'E also enables Trainer automatically.');frames.shift()();
     heap[25]=4;tick++;frames.shift()();
     assert.equal(sent.filter(x=>x.type==='round-ended'&&x.victory).length,0);
     // Native restart raises gamenum while the old plane still says WINNER.
@@ -233,7 +243,7 @@ await pageTests();
   assert.equal(heap[18],2);handlers.keydown(event('KeyE'));frames.shift()();
   heap[9]=3;heap[10]=500;heap[25]=4;tick++;frames.shift()();
   const victory=sent.filter(x=>x.type==='round-ended'&&x.victory);assert.equal(victory.length,1);assert.equal(victory[0].score,650);
-  assert.equal(sent.filter(x=>x.type==='score-ready'&&x.victory).length,1);frames.shift()();assert.equal(sent.filter(x=>x.type==='score-ready'&&x.victory).length,1);
+  assert.equal(sent.filter(x=>x.type==='score-ready'&&x.victory).length,1);assert.equal(sent.filter(x=>x.type==='score-ready'&&x.victory)[0].trainerUsed,true,'Shortcut-assisted campaigns cannot submit ranked scores.');frames.shift()();assert.equal(sent.filter(x=>x.type==='score-ready'&&x.victory).length,1);
   console.log('Trainer E advances 1→2→3 without early medals, including native boundary frames; mission-three departure freezes once and sends one campaign result including the native remaining-lives bonus.');
 
 }

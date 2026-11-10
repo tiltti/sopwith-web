@@ -93,3 +93,5 @@ body[data-demo=true] .arcade-rail{visibility:hidden;pointer-events:none}
 .touch-throttle{display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:120px;max-width:190px;font:12px var(--engraved);color:#ecd09b}.touch-throttle input{width:100%;margin:0;accent-color:#d7a64e;touch-action:pan-x}.touch-controls .touch-throttle{flex:1}
 
 body[data-game-state=ready] .touch-controls{display:none}body[data-game-state=ready] .arcade-rail{visibility:hidden}
+
+.title-version{position:absolute;left:3%;bottom:8%;margin:0;padding:5px 8px;background:#18232dc4;border:1px solid #b28c4f;color:#ead3aa;font:clamp(9px,calc(.9*var(--u)),11px)/1.35 var(--engraved);letter-spacing:.02em;text-shadow:0 1px #161b21;pointer-events:none;text-align:left;max-width:61%}.title-version span{display:block}.title-version time{color:#c7b58e}

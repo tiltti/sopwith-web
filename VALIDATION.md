@@ -1,3 +1,17 @@
+## Versioned workplace playtest — 2026-11-10
+
+- Trainer defaults off. In-flight 1–3/E shortcuts enable Trainer before the
+  native test action and latch the run as unranked. Normal menus/text entry
+  retain those keys.
+- Public test version v0.1.0-test.1 is recorded in dist/version.json, the
+  title-screen stamp and the Info page. The source tag is v0.1.0-test.1.
+- Real WASM starts with trainer=0. Pressing 2 enables Trainer and selects
+  winter; 3 followed by E reaches the campaign debrief marked TRAINER,
+  with no score-entry form. The extended Controls slate fits 620/620 px.
+  Proof: parent research/review-2026-11-10-auto-trainer-unranked.jpg.
+- Release verification rejects mismatched version/date labels and checks
+  that metadata and release notes are included in corresponding sources.
+
 ## Approved H2 + Y1 instruments — 2026-11-10
 
 - The owner-selected frost glass (H2) and concealed amber night face (Y1)

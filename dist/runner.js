@@ -83,7 +83,8 @@
     return { enabled, unlimitedLives:enabled, unlimitedBombs:enabled, unlimitedAmmo:enabled, unlimitedFuel:enabled, invincible:false };
   };
   function trainerAction(action){
-    if(!trainerEnabled||params.get('edition')!=='rainbow'||!game||!Number.isInteger(action)||action<0||action>9)return;
+    if(params.get('edition')!=='rainbow'||!game||!Number.isInteger(action)||action<0||action>9)return;
+    if(!trainerEnabled){if(action>3)return;window.trainer(true);}
     release();stagePaused=false;game._web_pause(paused?1:0);
     if(action>0){stages=window.RainbowStages?new RainbowStages():null;resetMission(action);}
     game._web_test?.(action);repaint=true;
@@ -95,7 +96,7 @@
     // actual SDL scancodes, never the flight remaps or browser sound shortcut.
     const inputMode = game?._web_input_mode();
     if (inputMode === 2 || !game) return;
-    if(trainerEnabled&&params.get('edition')==='rainbow'&&(event.code==='KeyE'||/^Digit[1-9]$/.test(event.code))){
+    if(inputMode===1&&params.get('edition')==='rainbow'&&(event.code==='KeyE'||/^Digit[1-3]$/.test(event.code)||trainerEnabled&&/^Digit[4-9]$/.test(event.code))){
       event.preventDefault();event.stopImmediatePropagation();
       if(!event.repeat)trainerAction(event.code==='KeyE'?0:Number(event.code[5]));return;
     }
@@ -155,7 +156,7 @@
   async function boot() {
     game = await createSopwith({
       canvas,
-      locateFile: name => 'engine/' + name + '?v=20261110-instruments26',
+      locateFile: name => 'engine/' + name + '?v=20261110-test1-final',
       print: line => console.info('[Sopwith]', line),
       printErr: line => console.warn('[Sopwith]', line),
       onAbort: reason => send('error', { message:String(reason) }),

@@ -1,5 +1,9 @@
 # Sopwith Tribute
 
+Current public playtest: **v0.1.0-test.1 — 2026-11-10**.
+The same version/date appear on Rainbow's title screen and Info page.
+`dist/version.json` records the version and matching Git tag.
+
 **[Play in your browser](https://tiltti.github.io/sopwith-web/)** ·
 [Original project](https://www.sopwith.org/) ·
 [SDL Sopwith](https://github.com/fragglet/sdl-sopwith)
@@ -296,7 +300,10 @@ selection; menu navigation and text entry are handled by the original game.
 ## Playtest and console trainer
 
 Rainbow settings temporarily expose a TRAINER (TESTI) toggle for playtesting.
-During development it starts ON in Rainbow after every page reload, and can be disabled in Settings before a ranked flight. Classic remains off by default. Its UI
+It starts OFF in both editions after every page reload. During Rainbow flight,
+1–3 jumps to a mission and E clears the current mission; either shortcut
+automatically enables Trainer and permanently makes that run unranked.
+Input fields and native menus keep their ordinary keys. Its UI
 must be removed before the final release; see `web/RELEASE-CHECKLIST.md`.
 
 On the game page, enter `trainer()` in the browser's JavaScript developer
@@ -448,8 +455,10 @@ in `web/effects-dashboard-v10-*.json`.
 - Friendly walking crew are safe beside any low departing/taxiing friendly plane,
   including beyond the old 32-pixel airfield exemption. Airborne/hostile contacts
   keep their existing rules.
-- Trainer starts on during development. With it enabled, 1–9 rebuild a selected
-  level, while E clears targets and invokes the native 72-tick departure. The
+- Trainer starts off. In flight, 1–3 or E automatically enables it and excludes
+  the run from high scores. Number keys select a mission; E clears targets
+  and invokes the native 72-tick departure. With Trainer on, keys 4–9 also
+  select development previews. The
   three visual themes cycle for level numbers beyond three as test previews.
   The normal campaign ends after three. Trainer actions are gated again in C.
 - Every spawn gets a 2.5-second winged READY/lives badge; the short boarding
