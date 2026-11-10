@@ -1,3 +1,18 @@
+## Approved H2 + Y1 instruments — 2026-11-10
+
+- The owner-selected frost glass (H2) and concealed amber night face (Y1)
+  are copied unchanged from the original generated candidates. Integrity
+  receipts retain exact SHA-256, dimensions and prompts for both PNGs.
+- Asset tests confirm full-resolution face loading and unavailable old
+  frost-ring, lamp-glass and lamp-plaque layers. Renderer regressions verify
+  all three circular instruments use the selected face, keep square drawing
+  bounds, and receive no duplicate glass overlay. Day glass is retained.
+- All JavaScript suites and dist script syntax checks pass. The production
+  day/winter/night HUD fixture was rendered and visually reviewed, with
+  `instrumentStyle` reporting day / frost-h2 / night-y1 respectively.
+  Proof: parent research/review-2026-11-10-selected-instruments-v26.jpg.
+  Browser work stayed windowed with sound off.
+
 ## Ready screen, departure cover, weather cockpit and touch throttle — 2026-11-09
 
 - The real WASM game waits at tick zero, paused, on the refueling screen until

@@ -1,0 +1,30 @@
+{
+  "generated": "2026-11-09",
+  "selected": "2026-11-10",
+  "files": [
+    {
+      "path": "dist/assets/rainbow-instrument-frost-h2-v26.png",
+      "bytes": 1956537,
+      "sha256": "cfbee6dd76bbbc6fb6213cd94de2bdd26e36fdb9273dee6b81e9c4f3838e4232",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "generatedWith": "built-in imagegen",
+      "rawOutput": "exec-ea17dd79-45eb-405b-9a67-16922b4543c7.png",
+      "selection": "H2 \u2014 huurrelasi",
+      "changes": "None; approved raw PNG copied byte-for-byte."
+    },
+    {
+      "path": "dist/assets/rainbow-instrument-night-y1-v26.png",
+      "bytes": 1717969,
+      "sha256": "3dbcbb1ba4a5410f9fed1981cccbf7260b2802777c251a7c4047256be15b2f5a",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "generatedWith": "built-in imagegen",
+      "rawOutput": "exec-96600181-9c61-420f-b3e4-064e6e07e9cb.png",
+      "selection": "Y1 \u2014 piilotettu meripihkavalo",
+      "changes": "None; approved raw PNG copied byte-for-byte."
+    }
+  ]
+}

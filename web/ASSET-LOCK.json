@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "date": "2026-11-09",
+  "date": "2026-11-10",
   "files": [
     {
       "path": "dist/assets/ARTWORK.md",
-      "bytes": 31391,
-      "sha256": "748828a7df7376b9680b6b15ce5e5a50d0c824e0ebbc6f9be849419d38205386"
+      "bytes": 32731,
+      "sha256": "7a63681a8b1414c72c15203e04f532aec0289e2ca12a256f8923dff85a5314ee"
     },
     {
       "path": "dist/assets/audio/LICENSE.txt",
@@ -391,6 +391,16 @@
       "path": "dist/assets/rainbow-honor-plates-v1.png",
       "bytes": 2236484,
       "sha256": "873680345e71514b5dc2dd6dfb0a3aa0cdd9202e2c5305b5f9d89ce179cde770"
+    },
+    {
+      "path": "dist/assets/rainbow-instrument-frost-h2-v26.png",
+      "bytes": 1956537,
+      "sha256": "cfbee6dd76bbbc6fb6213cd94de2bdd26e36fdb9273dee6b81e9c4f3838e4232"
+    },
+    {
+      "path": "dist/assets/rainbow-instrument-night-y1-v26.png",
+      "bytes": 1717969,
+      "sha256": "3dbcbb1ba4a5410f9fed1981cccbf7260b2802777c251a7c4047256be15b2f5a"
     },
     {
       "path": "dist/assets/rainbow-loading-refuel-v1.png",

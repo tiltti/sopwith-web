@@ -320,3 +320,14 @@ game. The six-component atlas supplies transparent frost/glass overlays,
 frozen bezel/edge details and amber-lit night dial/plaque components.
 Live markings, pointers and values are drawn separately. Exact prompt,
 reference description, dimensions and SHA-256: `web/cockpit-v25-*.json`.
+
+## Selected seasonal dial faces (2026-11-10)
+
+`rainbow-instrument-frost-h2-v26.png` and
+`rainbow-instrument-night-y1-v26.png` are original built-in OpenAI imagegen
+artwork generated on 2026-11-09 and selected by the project owner on
+2026-11-10. Both raw PNGs are unchanged and distributed with this
+GPL-2.0-or-later game. H2 uses restrained edge condensation; Y1 uses concealed
+amber illumination without visible lamp housings. Earlier frost-branch,
+lamp and extra glass layers are retired from the dials. Exact generation
+prompts and integrity receipts: `web/instruments-v26-*.json`.

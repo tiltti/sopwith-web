@@ -480,3 +480,27 @@ Exact generation prompt, mode, dimensions and original file hash are recorded
 in `web/cockpit-v25-prompts.json` and `web/cockpit-v25-files.json`.
 `tests/cockpit-preview.html` renders the production day/winter/night HUDs at
 the same values for comparison. Original GPL-2.0-or-later project artwork.
+
+## Approved H2 frost glass and Y1 concealed lighting (2026-11-10)
+
+The project owner selected H2 + Y1 from six original instrument concepts.
+The two selected 1254×1254 RGBA PNGs are retained byte-for-byte:
+
+- `rainbow-instrument-frost-h2-v26.png`: dark brass dial with restrained
+  condensation around the glass edge and a clear center.
+- `rainbow-instrument-night-y1-v26.png`: dark brass dial lit by a hidden
+  amber source behind the upper bezel, without visible lamp housings.
+
+They were generated with built-in OpenAI imagegen on 2026-11-09 using the
+existing original gauge atlas as a material/style reference. Original PNG
+hashes, dimensions, generation prompts and the 2026-11-10 selection are in
+`web/instruments-v26-files.json` and `web/instruments-v26-prompts.json`.
+
+The renderer retains live ticks, engraved values and ornamental pointers.
+Seasonal faces contain their own subtle glass reflection, so the previous
+glass rim is not drawn over them. Old branching frost and visible lamp
+components are no longer used on dials or counter plaques. Winter's panel
+edge snow and frozen ammo bezel remain separate sprites from the v25 atlas.
+Day instruments retain their existing artwork. Original GPL-2.0-or-later
+project artwork. `tests/cockpit-preview.html` renders the production HUD in
+all three scenes with identical readings.

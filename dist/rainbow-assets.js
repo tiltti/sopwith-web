@@ -1,6 +1,6 @@
 // Rainbow Patrol artwork adapter. GPL-2.0-or-later; provenance: assets/ARTWORK.md.
 (() => {
-  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),airfields=new Image(),water=new Image(),ruins=new Image(),flags=new Image(),damaged=new Image(),extraRuins=new Image(),cityRelics=new Image(),winterRelics=new Image(),throttleArt=new Image(),cockpitWeather=new Image(),cache=new Map(),footprints=new Map();
+  const DETAIL=3,atlas=new Image(),extras=new Image(),cows=new Image(),pilots=new Image(),actors=new Image(),departure=new Image(),canopies=new Image(),badge=new Image(),cockpit=new Image(),scenery=new Image(),clouds=new Image(),soil=new Image(),roll=new Image(),turf=new Image(),instruments=new Image(),details=new Image(),blasts=new Image(),gauges=new Image(),winter=new Image(),storm=new Image(),worldDetails=new Image(),missionTargets=new Image(),materials=new Image(),airfields=new Image(),water=new Image(),ruins=new Image(),flags=new Image(),damaged=new Image(),extraRuins=new Image(),cityRelics=new Image(),winterRelics=new Image(),throttleArt=new Image(),cockpitWeather=new Image(),frostDial=new Image(),nightDial=new Image(),cache=new Map(),footprints=new Map();
   // Measured opaque-component bounds in the immutable 1254×1254 atlas.
   // Explicit rectangles avoid neighbouring art bleeding into a sprite.
   const frames=[[17,95,290,190],[339,89,277,199],[642,94,272,194],[936,113,304,171],
@@ -33,7 +33,7 @@
   }
   let ready;
   function load() { return ready ||= new Promise(resolve=>{
-    let remaining=33,okay=true;
+    let remaining=35,okay=true;
     const done=valid=>{okay=okay&&valid;if(--remaining===0){loaded=okay;resolve(loaded);}};
     atlas.onload=()=>done(atlas.width===1254&&atlas.height===1254);
     extras.onload=()=>done(extras.width===1774&&extras.height===887);
@@ -47,6 +47,7 @@
     details.onload=()=>done(details.width===1536&&details.height===1024);
     blasts.onload=()=>done(blasts.width===1536&&blasts.height===1024);
     for(const img of [winter,storm,worldDetails,missionTargets,materials,airfields,water,ruins,flags,damaged,extraRuins,cityRelics,winterRelics]){img.onload=()=>done(img.width===1536&&img.height===1024);img.onerror=()=>done(false);}
+    for(const [image,path] of [[frostDial,'rainbow-instrument-frost-h2-v26.png'],[nightDial,'rainbow-instrument-night-y1-v26.png']]){image.onload=()=>done(image.width===1254&&image.height===1254);image.onerror=()=>done(false);image.src='assets/'+path;}
     cockpitWeather.onload=()=>done(cockpitWeather.width===1536&&cockpitWeather.height===1024);cockpitWeather.onerror=()=>done(false);cockpitWeather.src='assets/rainbow-cockpit-weather-v25.png';
     throttleArt.onload=()=>done(throttleArt.width===1536&&throttleArt.height===1024);throttleArt.onerror=()=>done(false);
     throttleArt.src='assets/rainbow-throttle-lever-v1.png';
@@ -236,7 +237,9 @@
     out.getContext('2d').drawImage(gauges,pivot[0]-256,pivot[1]-256,512,512,0,0,512,512);cache.set(key,out);return out;
   }
   function cockpitLayer(kind){
-    if(!loaded)return null;const crops={frostRing:[32,24,448,456],frostFrame:[532,136,464,248],frostEdge:[1040,154,480,188],nightDial:[24,532,464,464],nightGlass:[544,536,448,448],nightFrame:[1040,654,480,208]},crop=crops[kind];if(!crop)return null;
+    if(!loaded)return null;
+    if(kind==='frostDial')return frostDial;if(kind==='nightDial')return nightDial;
+    const crops={frostFrame:[532,136,464,248],frostEdge:[1040,154,480,188]},crop=crops[kind];if(!crop)return null;
     const key='climate:'+kind;if(cache.has(key))return cache.get(key);const out=document.createElement('canvas');out.width=crop[2];out.height=crop[3];out.getContext('2d').drawImage(cockpitWeather,...crop,0,0,out.width,out.height);cache.set(key,out);return out;
   }
   function wreckPose(frame,faction=1){

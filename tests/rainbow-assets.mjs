@@ -9,7 +9,7 @@ const scope={window:{},Image,document:{createElement:()=>{const out={};out.getCo
 vm.runInNewContext(await readFile(new URL('../dist/rainbow-assets.js',import.meta.url),'utf8'),scope);
 const assets=scope.window.RainbowAssets;
 assert.equal(sources.length,0,'The classic edition must not fetch the Rainbow atlas.');
-await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,33);
+await assets.ready;assert.equal(assets.loaded,true);assert.equal(sources.length,35);
 const record=new Int32Array(18);record[1]=5;record[6]=1;record[7]=record[8]=16;
 const cases=[[1,0,0],[4,0,4],[4,1,5],[4,2,7],[4,3,6],[4,4,8],[4,5,9],[4,6,16],[4,7,10],[4,18,11],[4,19,17],[9,0,2],[12,0,12],[2,0,13],[10,0,21],[11,0,22]];
 for(const [type,kind,frame] of cases){record[0]=type;record[15]=kind;assert.equal(assets.frameFor(record),frame);}
@@ -123,3 +123,9 @@ const attachment=assets.flagAnchor(roofArt,0,true),px=Math.round(attachment.x*3)
 assert.ok(alpha[(py*90+px)*4+3]>160,'The mast foot touches actual opaque roof pixels, including a sloping roof, rather than floating above an assumed bounding box.');
 assert.equal(assets.flagAnchor(roofArt,0,true),attachment,'The image-specific attachment is cached.');
 console.log('Flag mount: measured roof alpha anchors the mast on the real sprite surface.');
+
+const frostFace=assets.cockpitLayer('frostDial'),nightFace=assets.cockpitLayer('nightDial');
+assert.match(frostFace.source,/instrument-frost-h2-v26/);assert.match(nightFace.source,/instrument-night-y1-v26/);
+assert.equal(frostFace.width,1254);assert.equal(nightFace.height,1254);
+for(const retired of ['frostRing','nightGlass','nightFrame'])assert.equal(assets.cockpitLayer(retired),null,'Retired fern frost and visible lamps cannot return as overlays.');
+console.log('Approved H2 frost glass / Y1 hidden amber light load at original resolution; old frost ring and lamp layers are unavailable.');

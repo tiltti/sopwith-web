@@ -63,8 +63,8 @@ restored under buildings; foundations bridge slopes instead of cutting abrupt
 platforms. Vehicles follow the slope. Cow collision masks are scaled with the art. The analog altimeter uses a traditional 0–9 face with separate hundreds and
 thousands hands and a numeric FT AGL readout. The airspeed dial marks nominal
 level-flight stall speed (52 MPH) and takeoff (60 MPH); climbs can stall sooner.
-Winter adds separate frost sprites on the gauge glass and panel edges;
-storm missions use dark instrument faces with glowing amber lamps and plaques,
+Winter uses the selected H2 glass with soft frost at the dial edges;
+storm missions use Y1 dark instrument faces with concealed amber illumination,
 animated rain, visible lightning and delayed original synthesized thunder.
 The map plots true world altitude,
 birds and ground objects below the flight area; no instruments hide targets.

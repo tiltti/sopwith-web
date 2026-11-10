@@ -227,3 +227,22 @@ renderer.spawnProtection=100;renderer.readyLevel=null;calls.length=0;renderer.hu
 assert.equal(display.dataset.notificationArea,'flight');assert.ok(calls.some(c=>c[0]==='translate'&&c[2]===-400),'Status badge returns to flight coordinates, outside the instrument strip.');
 renderer.spawnProtection=0;
 console.log('Takeoff/status notifications use the flight badge outside the cockpit.');
+
+// Each seasonal dial must use the selected artwork in all three instruments,
+// without a second glass/frost/lamp layer hiding the approved face.
+const previousAssets=scope.window.RainbowAssets;
+const faces={frostDial:{id:'H2'},nightDial:{id:'Y1'}},dayFace={id:'day'},glassFace={id:'glass'},handFace={id:'hand'},requested=[];
+scope.window.RainbowAssets={...previousAssets,cockpitLayer:kind=>{requested.push(kind);return faces[kind]||null;},gaugeLayer:kind=>kind==='glass'?glassFace:kind==='brass'?handFace:dayFace};
+renderer.mission=0;calls.length=0;renderer.gauge(144,43,'speed',112,200,'AIR','MPH');
+assert.ok(calls.some(c=>c[0]==='image'&&c[1]===glassFace),'Day instruments retain their existing glass.');
+for(const [mission,face,style] of [[1,faces.frostDial,'frost-h2'],[2,faces.nightDial,'night-y1']]){
+  renderer.mission=mission;calls.length=0;requested.length=0;renderer.hud(scene,[],false,ground);
+  const dialDraws=calls.filter(c=>c[0]==='image'&&c[1]===face);
+  assert.equal(dialDraws.length,3,'Airspeed, altitude and fuel all use the selected seasonal dial.');
+  assert.ok(dialDraws.every(c=>c[4]===c[5]),'Circular faces keep square destination dimensions.');
+  assert.ok(!calls.some(c=>c[0]==='image'&&c[1]===glassFace),'The baked glass is not overlaid with the earlier bright glass rim.');
+  assert.ok(!requested.some(k=>['frostRing','nightGlass','nightFrame'].includes(k)),'Retired frost branches and visible lamps cannot be drawn.');
+  assert.equal(display.dataset.instrumentStyle,style);
+}
+scope.window.RainbowAssets=previousAssets;
+console.log('Approved H2/Y1 faces cover all three dials without duplicate glass, fern frost or visible lamps; day art remains intact.');
